@@ -115,6 +115,11 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
 .idiomas-text{flex:1;}
 .idiomas-title{display:block;font-size:12px;font-weight:600;color:#37474F;text-transform:uppercase;letter-spacing:.5px;}
 .idiomas-cta{font-size:12px;font-weight:700;color:#0D47A1;white-space:nowrap;}
+
+.nivel-toggle{display:flex;gap:0;border:1.5px solid var(--gris-c);border-radius:var(--rs);overflow:hidden;}
+.nivel-btn{flex:1;padding:9px 12px;font-family:'Sora',sans-serif;font-size:13px;font-weight:600;border:none;background:transparent;cursor:pointer;color:var(--gris-m);transition:all .2s;}
+.nivel-btn.active{background:var(--azul);color:white;}
+.nivel-btn:not(.active):hover{background:var(--azul-s);color:var(--azul);}
 </style>
 </head>
 <body>
@@ -148,6 +153,22 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
         <div class="card-title">Datos del Crédito</div>
         <div id="alert1" class="alert"></div>
 
+        <div class="fg">
+          <label>Nivel de Estudios</label>
+          <div class="nivel-toggle" id="nivel-toggle-1">
+            <button class="nivel-btn active" id="nbtn-1-pre" onclick="setNivel(1,'pregrado')">🎓 Pregrado</button>
+            <button class="nivel-btn" id="nbtn-1-pos" onclick="setNivel(1,'posgrado')">🏛️ Posgrado</button>
+          </div>
+        </div>
+        <div class="fg" id="subnivel-fg-1" style="display:none;">
+          <label>Subnivel</label>
+          <select id="subnivel1" onchange="filtrarProgramas(1)">
+            <option value="">— Todos los subniveles —</option>
+            <option value="Doctorado">Doctorado</option>
+            <option value="Maestría">Maestría</option>
+            <option value="Especialización">Especialización</option>
+          </select>
+        </div>
         <div class="fg">
           <label>Programa Académico</label>
           <select id="prog1" onchange="setMat(1)">
@@ -212,6 +233,22 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
         <div class="card-title">Datos del Crédito Mixto</div>
         <div id="alert2" class="alert"></div>
 
+        <div class="fg">
+          <label>Nivel de Estudios</label>
+          <div class="nivel-toggle" id="nivel-toggle-2">
+            <button class="nivel-btn active" id="nbtn-2-pre" onclick="setNivel(2,'pregrado')">🎓 Pregrado</button>
+            <button class="nivel-btn" id="nbtn-2-pos" onclick="setNivel(2,'posgrado')">🏛️ Posgrado</button>
+          </div>
+        </div>
+        <div class="fg" id="subnivel-fg-2" style="display:none;">
+          <label>Subnivel</label>
+          <select id="subnivel2" onchange="filtrarProgramas(2)">
+            <option value="">— Todos los subniveles —</option>
+            <option value="Doctorado">Doctorado</option>
+            <option value="Maestría">Maestría</option>
+            <option value="Especialización">Especialización</option>
+          </select>
+        </div>
         <div class="fg">
           <label>Programa Académico</label>
           <select id="prog2" onchange="setMat(2)">
@@ -299,6 +336,22 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
         <div class="card-title" style="color:#7B1FA2;">Crédito Banco Aliado</div>
         <div id="alert3" class="alert"></div>
 
+        <div class="fg">
+          <label>Nivel de Estudios</label>
+          <div class="nivel-toggle" id="nivel-toggle-3">
+            <button class="nivel-btn active" id="nbtn-3-pre" onclick="setNivel(3,'pregrado')">🎓 Pregrado</button>
+            <button class="nivel-btn" id="nbtn-3-pos" onclick="setNivel(3,'posgrado')">🏛️ Posgrado</button>
+          </div>
+        </div>
+        <div class="fg" id="subnivel-fg-3" style="display:none;">
+          <label>Subnivel</label>
+          <select id="subnivel3" onchange="filtrarProgramas(3)">
+            <option value="">— Todos los subniveles —</option>
+            <option value="Doctorado">Doctorado</option>
+            <option value="Maestría">Maestría</option>
+            <option value="Especialización">Especialización</option>
+          </select>
+        </div>
         <div class="fg">
           <label>Programa Académico</label>
           <select id="prog3" onchange="setMat(3)">
@@ -389,16 +442,213 @@ const PROGRAMAS = [
   ["Psicología",11976300,1635500],
   ["Relaciones Internacionales",12673500,1635500]
 ];
+const POSGRADOS = [
+  ["Doctorado En Administración","Doctorado",30388900],
+  ["Maestría En Administración De Empresas","Maestría",25324000],
+  ["Maestría En Finanzas","Maestría",25324000],
+  ["Maestría En Mercadeo","Maestría",25324000],
+  ["Maestría En Negocios Internacionales","Maestría",25324000],
+  ["Especialización En Finanzas","Especialización",25324000],
+  ["Especialización En Gerencia De Empresas Comerciales","Especialización",25324000],
+  ["Especialización En Mercadeo","Especialización",25324000],
+  ["Especialización En Logística De Transporte Internacional De Mercancia","Especialización",23557300],
+  ["Especialización En Gerencia Del Talento Humano","Especialización",21915000],
+  ["Especialización En Gerencia Pública","Especialización",21915000],
+  ["Especialización En Gerencia Financiera De Servicios De Salud","Especialización",18909700],
+  ["SM - Especialización En Finanzas","Especialización",18993000],
+  ["SM - Especialización En Dirección Estratégica Empresarial","Especialización",13191200],
+  ["Doctorado En Educación","Doctorado",18623500],
+  ["Maestría En Educación","Maestría",12658900],
+  ["Maestría En Educación Mediada Por Tic","Maestría",11393000],
+  ["Maestría En Pedagogía Social E Intervención Educativa En Contextos Sociales","Maestría",11393000],
+  ["Maestría En La Enseñanza Del Inglés","Maestría",12854100],
+  ["Maestría En Lenguaje Y Sociedad","Maestría",12854100],
+  ["Especialización En La Enseñanza Del Inglés","Especialización",12854100],
+  ["Doctorado En Ingeniería Civil","Doctorado",21914400],
+  ["Doctorado En Ingeniería De Sistemas Y Computación","Doctorado",21914400],
+  ["Doctorado En Ingeniería Eléctrica Y Electrónica","Doctorado",21914400],
+  ["Doctorado En Ingeniería Industrial","Doctorado",21914400],
+  ["Doctorado En Ingeniería Mecánica","Doctorado",21914400],
+  ["Maestría En Análisis Y Gestión De Sistemas Eléctricos","Maestría",21034700],
+  ["Maestría En Analítica De Datos","Maestría",21034700],
+  ["Maestría En Gestión De Riesgos Naturales, Prevención Y Atención De Desastres","Maestría",21034700],
+  ["Maestría En Gobierno De Tecnología Informática","Maestría",21034700],
+  ["Maestría En Ingeniería Administrativa","Maestría",21034700],
+  ["Maestría En Ingeniería Ambiental","Maestría",21034700],
+  ["Maestría En Ingeniería Biomédica","Maestría",21034700],
+  ["Maestría En Ingeniería Civil","Maestría",21034700],
+  ["Maestría En Ingeniería De Sistemas Y Computación","Maestría",21034700],
+  ["Maestría En Ingeniería Eléctrica","Maestría",21034700],
+  ["Maestría En Ingeniería Electrónica","Maestría",21034700],
+  ["Maestría En Ingeniería Industrial","Maestría",21034700],
+  ["Maestría En Ingeniería Mecánica","Maestría",21034700],
+  ["Maestría En Sistemas Integrados De Gestión","Maestría",21034700],
+  ["Especialización En Transformación Digital","Especialización",20495600],
+  ["Especialización En Seguridad De La Información","Especialización",20495600],
+  ["Especialización En Ingeniería Del Software","Especialización",20495600],
+  ["Especialización En Gerencia De Tecnologías De La Información","Especialización",20495600],
+  ["Especialización En Pavimentos Y Geotecnia Vial","Especialización",20495600],
+  ["Especialización En Gerencia De Proyectos","Especialización",20495600],
+  ["Especialización En Gerencia De Proyectos De Construcción","Especialización",20495600],
+  ["Especialización En Análisis Y Diseño De Estructuras","Especialización",20495600],
+  ["Especialización En Diseño Y Evaluación De Proyectos","Especialización",20495600],
+  ["Especialización En Gestión De Sistemas Eléctricos De Potencia","Especialización",20495600],
+  ["Especialización En Ingeniería De Procesos Industriales","Especialización",20495600],
+  ["Especialización En Ingeniería De Sistemas Hídricos Urbanos","Especialización",18638700],
+  ["Especialización En Logística Empresarial","Especialización",18638700],
+  ["Especialización En Dirección De Operaciones","Especialización",17421300],
+  ["SM - Especialización En Gerencia De Proyectos","Especialización",15371800],
+  ["Doctorado En Ciencias Biomédicas","Doctorado",20841700],
+  ["Maestría En Epidemiología Clínica","Maestría",20131400],
+  ["Maestría En Epidemiología","Maestría",19241600],
+  ["Maestría En Ciencias Básicas Biomédicas","Maestría",19241600],
+  ["Maestría En Salud Pública","Maestría",19241600],
+  ["Maestría En Enfermería","Maestría",11490200],
+  ["Especialización En Gerencia De Servicios De Salud","Especialización",18944500],
+  ["Especialización En Gerencia De La Calidad Y Auditoría En Salud","Especialización",18227700],
+  ["Especialización En Seguridad Y Salud En El Trabajo","Especialización",16543700],
+  ["Especialización En Enfermería Del Cuidado Crítico Adulto","Especialización",9640900],
+  ["Especialización En Enfermería Del Cuidado Neonatal","Especialización",9640900],
+  ["SM - Especialización En Gerencia De La Calidad Y Auditoría En Salud","Especialización",13539100],
+  ["SM - Especialización En Seguridad Y Salud En El Trabajo","Especialización",12407700],
+  ["CAR - Especialización En Gerencia De La Calidad Y Auditoría En Salud","Especialización",16543700],
+  ["CAR - Especialización En Seguridad Y Salud En El Trabajo","Especialización",16543700],
+  ["RIO - Especialización En Gerencia De La Calidad Y Auditoría En Salud","Especialización",16543700],
+  ["RIO - Especialización En Seguridad Y Salud En El Trabajo","Especialización",16543700],
+  ["Especialización En Neonatología","Especialización",60377100],
+  ["Especialización En Radiología E Imágenes Diagnósticas","Especialización",54503900],
+  ["Especialización En Oftalmología","Especialización",54503900],
+  ["Especialización En Dermatología","Especialización",52550300],
+  ["Especialización En Medicina Interna","Especialización",52550300],
+  ["Especialización En Pediatría","Especialización",52550300],
+  ["Especialización En Psiquiatría","Especialización",52550300],
+  ["Especialización En Medicina Familiar","Especialización",39362300],
+  ["Doctorado En Ciencias Sociales","Doctorado",22390300],
+  ["Doctorado En Economía","Doctorado",22390300],
+  ["Doctorado En Comunicación","Doctorado",21319300],
+  ["Doctorado En Psicología","Doctorado",21319300],
+  ["Maestría En Desarrollo Social","Maestría",16902400],
+  ["Maestría En Psicología Énfasis Investigativo","Maestría",16640700],
+  ["Maestría En Comunicación","Maestría",16307400],
+  ["Maestría En Economia","Maestría",15743100],
+  ["Maestría En Relaciones Públicas","Maestría",15694100],
+  ["Maestría En Trastornos Cognoscitivos Y Del Aprendizaje","Maestría",15694100],
+  ["Maestría En Periodismo","Maestría",15694100],
+  ["Maestría En Desarrollo Organizacional Y Procesos Humanos","Maestría",15694100],
+  ["Maestría En Historia","Maestría",12883800],
+  ["Maestría En Literatura Y Escrituras Creativas","Maestría",12044800],
+  ["Maestría En Filosofía","Maestría",11173700],
+  ["Especialización En Desarrollo Social","Especialización",16902400],
+  ["Especialización En Desarrollo Organizacional Y Procesos Humanos","Especialización",15971200],
+  ["Especialización En Arqueología","Especialización",15032100],
+  ["Especialización En Comunicación Digital","Especialización",15032100],
+  ["Especialización En Psicología Forense","Especialización",14906800],
+  ["Especialización En Gerencia De La Comunicación Organizacional","Especialización",13800400],
+  ["Especialización En Desarrollo Familiar","Especialización",13454400],
+  ["Doctorado En Ciencias Naturales","Doctorado",18483900],
+  ["Doctorado En Ciencias Del Mar","Doctorado",17509050],
+  ["Maestría En Ciencias De La Tierra","Maestría",14068300],
+  ["Maestría En Ciencias Naturales","Maestría",12658900],
+  ["Maestría En Estadística Aplicada","Maestría",12658900],
+  ["Maestría En Fisica Aplicada","Maestría",12658900],
+  ["Maestría En Matemáticas","Maestría",12658900],
+  ["Maestría En Diseño E Innovación Md+I","Maestría",16089700],
+  ["Maestría En Urbanismo Y Desarrollo Territorial","Maestría",16089700],
+  ["Especialización En Valoración De Bienes","Especialización",14070600],
+  ["Doctorado En Derecho","Doctorado",22347800],
+  ["Maestría En Ciencia Política Y Gobierno","Maestría",17770000],
+  ["Maestría En Tributación Y Aduanas","Maestría",17770000],
+  ["Maestría En Derecho","Maestría",17770000],
+  ["Maestría En Derecho Ambiental Y Urbano-Territorial","Maestría",17770000],
+  ["Maestría En Derecho Del Comercio","Maestría",17770000],
+  ["Maestría En Derecho Del Trabajo Y De La Seguridad Social","Maestría",17770000],
+  ["Maestría En Derecho Público","Maestría",17770000],
+  ["Maestría En Negociación Y Manejo De Conflictos","Maestría",17770000],
+  ["Maestría En Cooperación Internacional Y Gestión De Proyectos","Maestría",15694100],
+  ["Maestría En Relaciones Internacionales","Maestría",15694100],
+  ["Maestría En Derecho Civil Y De Familia","Maestría",14739100],
+  ["Especialización En Derecho Penal","Especialización",16567700],
+  ["Especialización En Derecho Comercial","Especialización",16440000],
+  ["Especialización En Negociación Y Manejo De Conflictos","Especialización",14945800],
+  ["Especialización En Derecho Administrativo","Especialización",14739100],
+  ["Especialización En Derecho Ambiental, Territorial Y Urbanístico","Especialización",14739100],
+  ["Especialización En Derecho Civil Y De Familia","Especialización",14739100],
+  ["Especialización En Derecho Constitucional","Especialización",14739100],
+  ["Especialización En Derecho Contractual","Especialización",14739100],
+  ["Especialización En Derecho De Sociedades","Especialización",14739100],
+  ["Especialización En Derecho Laboral","Especialización",14739100],
+  ["Especialización En Derecho Público","Especialización",14739100],
+  ["Especialización En Derechos Humanos","Especialización",14739100],
+  ["Especialización En Gobierno Y Políticas Públicas","Especialización",14739100],
+  ["Especialización En Responsabilidad Civil Y Seguros","Especialización",14739100],
+  ["Especialización En Tributación","Especialización",14739100],
+  ["SM - Especialización En Derecho Público","Especialización",12528100],
+  ["SM - Especialización En Tributación","Especialización",12528100],
+  ["Especialización En Gerencia De La Calidad Y Auditoría En Salud Virtual","Especialización",14582100],
+  ["Especialización En Seguridad Y Salud En El Trabajo Virtual","Especialización",14582100],
+  ["Especialización En Seguridad De La Información","Especialización",14346600]
+];
+
 const GARANTISA_CP = 0.0417;
 const GARANTISA_LP = 0.0286;
 
 const cop = v => new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0,maximumFractionDigits:0}).format(Math.round(v));
 
 // Populate selects
-[1,2,3].forEach(id => {
-  const sel = document.getElementById('prog'+id);
-  if(sel) PROGRAMAS.forEach(([n,v]) => { const o=document.createElement('option'); o.value=v; o.textContent=n; sel.appendChild(o); });
-});
+// nivel state per tab
+const nivelState = {1:'pregrado', 2:'pregrado', 3:'pregrado'};
+
+function poblarProgramas(tabId) {
+  const sel = document.getElementById('prog'+tabId);
+  if(!sel) return;
+  const nivel = nivelState[tabId];
+  const subnivel = (document.getElementById('subnivel'+tabId)||{}).value || '';
+  sel.innerHTML = '<option value="">— Seleccionar programa —</option>';
+  if(nivel === 'pregrado') {
+    PROGRAMAS.forEach(([n,v,]) => {
+      const o = document.createElement('option');
+      o.value = JSON.stringify({v, idiomas: PROGRAMAS.find(p=>p[0]===n)?.[2]||0, nivel:'pregrado'});
+      o.textContent = n;
+      sel.appendChild(o);
+    });
+  } else {
+    const filtrados = subnivel ? POSGRADOS.filter(p=>p[1]===subnivel) : POSGRADOS;
+    filtrados.forEach(([n,s,v]) => {
+      const o = document.createElement('option');
+      o.value = JSON.stringify({v, idiomas:0, nivel:'posgrado', subnivel:s});
+      o.textContent = n + (subnivel ? '' : ' ('+s+')');
+      sel.appendChild(o);
+    });
+  }
+}
+
+function setNivel(tabId, nivel) {
+  nivelState[tabId] = nivel;
+  document.getElementById('nbtn-'+tabId+'-pre').classList.toggle('active', nivel==='pregrado');
+  document.getElementById('nbtn-'+tabId+'-pos').classList.toggle('active', nivel==='posgrado');
+  const sfg = document.getElementById('subnivel-fg-'+tabId);
+  if(sfg) sfg.style.display = nivel==='posgrado' ? 'block' : 'none';
+  // reset subnivel select
+  const snSel = document.getElementById('subnivel'+tabId);
+  if(snSel) snSel.value = '';
+  // reset idiomas btn
+  const ib = document.getElementById('btn-idiomas-'+tabId);
+  if(ib) ib.style.display = 'none';
+  poblarProgramas(tabId);
+  // clear mat
+  const matEl = document.getElementById('mat'+tabId);
+  if(matEl){ matEl.value=''; fmtLbl('mat'+tabId); }
+}
+
+function filtrarProgramas(tabId) {
+  poblarProgramas(tabId);
+  const matEl = document.getElementById('mat'+tabId);
+  if(matEl){ matEl.value=''; fmtLbl('mat'+tabId); }
+  const ib = document.getElementById('btn-idiomas-'+tabId);
+  if(ib) ib.style.display = 'none';
+}
+
+[1,2,3].forEach(id => poblarProgramas(id));
 
 // Unidad state
 const unidades = { 1: 'a', '2cp': 'a', '2lp': 'a' };
@@ -446,19 +696,21 @@ calcTA(1); calcTA(2); calcTA(3);
 
 function setMat(id) {
   const sel = document.getElementById('prog'+id);
-  const idx = sel.selectedIndex - 1; // -1 for blank option
-  if(idx < 0) return;
-  const [,pregrado,idiomas] = PROGRAMAS[idx];
-  document.getElementById('mat'+id).value = pregrado;
+  if(!sel || !sel.value) return;
+  let data;
+  try { data = JSON.parse(sel.value); } catch(e) { return; }
+  const {v: valor, idiomas, nivel} = data;
+  const progNombre = sel.options[sel.selectedIndex].textContent.replace(/ \(.*\)$/,'');
+  document.getElementById('mat'+id).value = valor;
   fmtLbl('mat'+id);
   if(id < 3) actualizarAportes(id);
-  // Show/hide idiomas button
+  // idiomas only for pregrado
   const btnEl = document.getElementById('btn-idiomas-'+id);
   if(btnEl){
-    if(idiomas > 0){
+    if(nivel==='pregrado' && idiomas > 0){
       btnEl.style.display = 'flex';
       btnEl.dataset.idiomas = idiomas;
-      btnEl.dataset.prog = PROGRAMAS[idx][0];
+      btnEl.dataset.prog = progNombre;
       btnEl.querySelector('.idiomas-val').textContent = cop(idiomas);
     } else {
       btnEl.style.display = 'none';
