@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de Crédito Educativo</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root {
+  --azul:#0D47A1;--azul-c:#1565C0;--azul-s:#E3F2FD;
+  --verde:#1B5E20;--verde-c:#2E7D32;--verde-s:#E8F5E9;
+  --dorado:#F9A825;--dorado-s:#FFFDE7;
+  --naranja:#E65100;--naranja-s:#FFF3E0;
+  --gris:#37474F;--gris-c:#ECEFF1;--gris-m:#90A4AE;
+  --blanco:#FFFFFF;
+  --sombra:0 4px 24px rgba(13,71,161,.10);
+  --sombra-f:0 8px 32px rgba(13,71,161,.18);
+  --r:14px;--rs:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Sora',sans-serif;background:linear-gradient(135deg,#EEF2FF 0%,#E3F2FD 50%,#E8F5E9 100%);min-height:100vh;color:var(--gris);}
+header{background:linear-gradient(90deg,var(--azul) 0%,var(--azul-c) 60%,#0277BD 100%);color:white;position:relative;overflow:hidden;}
+.hdr{max-width:1100px;margin:0 auto;padding:28px 32px 24px;display:flex;align-items:center;gap:20px;position:relative;z-index:1;}
+.hdr-logo{width:56px;height:56px;background:rgba(255,255,255,.15);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;border:1.5px solid rgba(255,255,255,.25);}
+.hdr h1{font-size:22px;font-weight:700;letter-spacing:-.5px;}
+.hdr p{font-size:13px;opacity:.80;margin-top:2px;font-weight:300;}
+.hdr-bg{position:absolute;top:-30px;right:-40px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.06);z-index:0;}
+.tabs-bar{background:var(--blanco);border-bottom:2px solid var(--gris-c);box-shadow:0 2px 8px rgba(13,71,161,.06);}
+.tabs-in{max-width:1100px;margin:0 auto;display:flex;padding:0 20px;}
+.tab-btn{padding:16px 28px;font-family:'Sora',sans-serif;font-size:14px;font-weight:500;border:none;background:transparent;cursor:pointer;color:var(--gris-m);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;display:flex;align-items:center;gap:8px;}
+.tab-btn:hover{color:var(--azul);}
+.tab-btn.active{color:var(--azul);border-bottom-color:var(--azul);}
+main{max-width:1100px;margin:0 auto;padding:28px 20px 60px;}
+.tab-panel{display:none;}.tab-panel.active{display:block;}
+.two-col{display:grid;grid-template-columns:400px 1fr;gap:24px;align-items:start;}
+@media(max-width:900px){.two-col{grid-template-columns:1fr;}}
+.card{background:var(--blanco);border-radius:var(--r);box-shadow:var(--sombra);padding:24px;}
+.card-title{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--azul);margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+.card-title::before{content:'';display:block;width:4px;height:18px;background:var(--azul);border-radius:4px;}
+label{font-size:12px;font-weight:500;color:var(--gris-m);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;}
+.fg{margin-bottom:14px;}
+select,input[type=number]{width:100%;padding:10px 14px;border:1.5px solid var(--gris-c);border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:14px;color:var(--gris);background:var(--blanco);transition:border .2s,box-shadow .2s;outline:none;}
+select:focus,input[type=number]:focus{border-color:var(--azul);box-shadow:0 0 0 3px rgba(13,71,161,.10);}
+.ipfx{display:flex;align-items:center;border:1.5px solid var(--gris-c);border-radius:var(--rs);overflow:hidden;transition:border .2s,box-shadow .2s;}
+.ipfx:focus-within{border-color:var(--azul);box-shadow:0 0 0 3px rgba(13,71,161,.10);}
+.ipfx span{padding:10px 12px;background:var(--gris-c);font-size:13px;font-weight:600;color:var(--gris-m);white-space:nowrap;}
+.ipfx input{border:none;border-radius:0;padding:10px 12px;flex:1;box-shadow:none!important;}
+.ipfx input:focus{border:none;box-shadow:none;}
+.tasa-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.tasa-badge{background:var(--azul-s);border-radius:var(--rs);padding:10px 14px;font-family:'DM Mono',monospace;font-size:14px;color:var(--azul);display:flex;align-items:center;justify-content:space-between;}
+.tasa-badge small{font-size:10px;color:var(--gris-m);display:block;}
+.btn-calc{width:100%;padding:14px;background:linear-gradient(90deg,var(--azul) 0%,var(--azul-c) 100%);color:white;border:none;border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:6px;letter-spacing:.3px;transition:opacity .2s,transform .1s;box-shadow:0 4px 14px rgba(13,71,161,.25);}
+.btn-calc:hover{opacity:.93;}.btn-calc:active{transform:scale(.98);}
+.mgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;}
+@media(max-width:500px){.mgrid{grid-template-columns:1fr;}}
+.mc{background:var(--gris-c);border-radius:var(--rs);padding:14px 16px;}
+.mc.dest{background:var(--azul);color:white;}
+.mc.vrd{background:var(--verde-s);}
+.mc.nar{background:var(--naranja-s);}
+.mc .lbl{font-size:11px;font-weight:500;color:var(--gris-m);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;display:block;}
+.mc.dest .lbl{color:rgba(255,255,255,.7);}
+.mc.vrd .lbl{color:var(--verde-c);}
+.mc.nar .lbl{color:var(--naranja);}
+.mc .val{font-size:18px;font-weight:700;color:var(--gris);font-family:'DM Mono',monospace;letter-spacing:-.5px;}
+.mc.dest .val{color:white;}
+.mc.vrd .val{color:var(--verde);}
+.mc.nar .val{color:var(--naranja);}
+.ssub{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--gris-m);margin:20px 0 12px;}
+.twrap{overflow-x:auto;border-radius:var(--rs);border:1px solid var(--gris-c);}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{background:var(--azul);color:white;padding:10px 12px;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px;text-align:right;}
+thead th:first-child{text-align:center;}
+tbody tr:nth-child(even){background:var(--gris-c);}
+tbody tr:hover{background:var(--azul-s);}
+tbody td{padding:9px 12px;text-align:right;font-family:'DM Mono',monospace;font-size:12px;}
+tbody td:first-child{text-align:center;font-family:'Sora',sans-serif;font-weight:600;color:var(--azul);}
+tfoot td{padding:10px 12px;font-weight:700;font-size:12px;background:var(--dorado-s);color:var(--gris);font-family:'DM Mono',monospace;text-align:right;border-top:2px solid var(--dorado);}
+tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
+.btn-row{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+.btn-exp{padding:10px 18px;border:1.5px solid var(--azul);border-radius:var(--rs);background:transparent;color:var(--azul);font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .2s;}
+.btn-exp:hover{background:var(--azul-s);}
+.btn-exp.vrd{border-color:var(--verde-c);color:var(--verde-c);}
+.btn-exp.vrd:hover{background:var(--verde-s);}
+.alert{background:var(--naranja-s);border-left:4px solid var(--dorado);padding:12px 16px;border-radius:0 var(--rs) var(--rs) 0;font-size:13px;color:var(--naranja);margin-bottom:16px;display:none;}
+.dvl{display:flex;align-items:center;gap:12px;margin:24px 0 16px;}
+.dvl span{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;padding:4px 12px;border-radius:20px;white-space:nowrap;}
+.dvl::before,.dvl::after{content:'';flex:1;height:1px;background:var(--gris-c);}
+.cp-l span{background:var(--azul-s);color:var(--azul);}
+.lp-l span{background:var(--verde-s);color:var(--verde-c);}
+.chart-wrap{position:relative;width:100%;height:280px;margin-top:16px;}
+.total-banner{background:linear-gradient(90deg,var(--azul) 0%,var(--azul-c) 100%);border-radius:var(--r);padding:20px 24px;color:white;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:24px;box-shadow:var(--sombra-f);}
+.total-banner .tl{font-size:13px;opacity:.80;margin-bottom:4px;}
+.total-banner .tv{font-size:28px;font-weight:700;font-family:'DM Mono',monospace;letter-spacing:-1px;}
+.total-banner .ts{font-size:12px;opacity:.70;margin-top:2px;}
+.sub-l{font-size:11px;color:var(--gris-m);margin-top:4px;}
+.info-box{background:var(--azul-s);border-radius:var(--rs);padding:12px 16px;font-size:12px;color:var(--azul);margin-bottom:14px;}
+.info-box strong{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.seg-box{border-radius:var(--rs);padding:14px 16px;margin-bottom:14px;}
+.seg-cp{background:var(--azul-s);}
+.seg-lp{background:var(--verde-s);}
+.seg-box .seg-title{font-size:11px;font-weight:600;color:var(--azul);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;}
+.seg-lp .seg-title{color:var(--verde-c);}
+.unidad-row{display:flex;gap:0;border:1.5px solid var(--gris-c);border-radius:var(--rs);overflow:hidden;margin-bottom:10px;}
+.unidad-btn{flex:1;padding:8px;font-family:'Sora',sans-serif;font-size:12px;font-weight:600;border:none;background:transparent;cursor:pointer;color:var(--gris-m);transition:all .2s;}
+.unidad-btn.active{background:var(--azul);color:white;}
+.seg-lp .unidad-btn.active{background:var(--verde-c);}
+@media(max-width:600px){.hdr{padding:20px 16px;}.hdr h1{font-size:17px;}main{padding:16px 12px 40px;}.card{padding:16px;}.tab-btn{padding:14px 14px;font-size:13px;}.total-banner .tv{font-size:22px;}.row2{grid-template-columns:1fr;}}
+.idiomas-btn{display:flex;align-items:center;gap:12px;background:linear-gradient(90deg,#E3F2FD,#E8F5E9);border:1.5px solid #90CAF9;border-radius:10px;padding:12px 16px;cursor:pointer;margin-bottom:12px;transition:all .2s;}
+.idiomas-btn:hover{border-color:#1565C0;background:linear-gradient(90deg,#BBDEFB,#C8E6C9);}
+.idiomas-icon{font-size:24px;flex-shrink:0;}
+.idiomas-text{flex:1;}
+.idiomas-title{display:block;font-size:12px;font-weight:600;color:#37474F;text-transform:uppercase;letter-spacing:.5px;}
+.idiomas-cta{font-size:12px;font-weight:700;color:#0D47A1;white-space:nowrap;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr">
+    <div class="hdr-logo">🎓</div>
+    <div>
+      <h1>Simulador de Crédito Educativo</h1>
+      <p>Financiamiento académico con Garantisa — Formato COP</p>
+    </div>
+  </div>
+  <div class="hdr-bg"></div>
+</header>
+
+<div class="tabs-bar">
+  <div class="tabs-in">
+    <button class="tab-btn active" onclick="switchTab(1)">📅 Crédito a Corto Plazo</button>
+    <button class="tab-btn" onclick="switchTab(2)">🔀 Corto y Largo Plazo</button>
+    <button class="tab-btn" onclick="switchTab(3)">🏦 Crédito Banco Aliado</button>
+  </div>
+</div>
+
+<main>
+
+<!-- TAB 1 -->
+<div class="tab-panel active" id="tab1">
+  <div class="two-col">
+    <div>
+      <div class="card">
+        <div class="card-title">Datos del Crédito</div>
+        <div id="alert1" class="alert"></div>
+
+        <div class="fg">
+          <label>Programa Académico</label>
+          <select id="prog1" onchange="setMat(1)">
+            <option value="">— Seleccionar programa —</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Valor Matrícula</label>
+          <div class="ipfx"><span>$</span><input type="number" id="mat1" placeholder="0" min="0" step="100" oninput="fmtLbl('mat1')"></div>
+          <div class="sub-l" id="mat1-lbl"></div>
+        </div>
+        <div class="fg">
+          <label>% a Financiar (Corto Plazo)</label>
+          <div class="ipfx"><input type="number" id="pct1" placeholder="80" min="1" max="100" value="80" oninput="actualizarAportes(1)"><span>%</span></div>
+          <div class="sub-l" id="pct1-info"></div>
+        </div>
+        <div class="fg">
+          <label>% Cuota Inicial (Contado)</label>
+          <div class="ipfx"><input type="number" id="cont1" placeholder="0" min="0" max="99" value="0" oninput="actualizarAportes(1)"><span>%</span></div>
+          <div class="sub-l" id="cont1-info"></div>
+        </div>
+
+        <div class="fg">
+          <label>Número de Meses</label>
+          <div class="ipfx"><input type="number" id="plazo1" placeholder="6" min="1" value="6"><span>meses</span></div>
+        </div>
+
+        <div class="fg">
+          <label>Tasa de Interés (Mes Vencido)</label>
+          <div class="tasa-row">
+            <div class="ipfx"><input type="number" id="tasa1" placeholder="1.5" min="0" max="10" step="0.01" value="1.5" oninput="calcTA(1)"><span>%</span></div>
+            <div class="tasa-badge"><div><small>Equiv. Anual</small><span id="ta1">19.56%</span></div><span>📈</span></div>
+          </div>
+        </div>
+
+        <div class="info-box" id="garantisa1-info">
+          <strong>Aporte Garantisa (calculado automáticamente)</strong>
+          <span id="garantisa1-val">—</span>
+        </div>
+
+        <div id="btn-idiomas-1" class="idiomas-btn" style="display:none;" onclick="abrirIdiomas(1)">
+          <div class="idiomas-icon">🌐</div>
+          <div class="idiomas-text">
+            <span class="idiomas-title">Este programa paga idiomas</span>
+            <span class="idiomas-val" style="font-family:'DM Mono',monospace;font-weight:600;">—</span>
+          </div>
+          <div class="idiomas-cta">Simular también →</div>
+        </div>
+
+        <button class="btn-calc" onclick="calcular1()">Calcular Crédito →</button>
+      </div>
+    </div>
+    <div id="res1"><div class="card" style="text-align:center;padding:60px 24px;color:var(--gris-m);"><div style="font-size:48px;margin-bottom:16px;opacity:.3;">📊</div><p style="font-size:14px;">Completa los datos y presiona <strong>Calcular Crédito</strong></p></div></div>
+  </div>
+</div>
+
+<!-- TAB 2 -->
+<div class="tab-panel" id="tab2">
+  <div class="two-col">
+    <div>
+      <div class="card">
+        <div class="card-title">Datos del Crédito Mixto</div>
+        <div id="alert2" class="alert"></div>
+
+        <div class="fg">
+          <label>Programa Académico</label>
+          <select id="prog2" onchange="setMat(2)">
+            <option value="">— Seleccionar programa —</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Valor Matrícula</label>
+          <div class="ipfx"><span>$</span><input type="number" id="mat2" placeholder="0" min="0" step="100" oninput="fmtLbl('mat2');actualizarAportes(2)"></div>
+          <div class="sub-l" id="mat2-lbl"></div>
+        </div>
+
+        <div class="row2">
+          <div class="fg">
+            <label>% Corto Plazo</label>
+            <div class="ipfx"><input type="number" id="pctCP" placeholder="30" min="0" max="99" value="30" oninput="actualizarAportes(2)"><span>%</span></div>
+          </div>
+          <div class="fg">
+            <label>% Largo Plazo</label>
+            <div class="ipfx"><input type="number" id="pctLP" placeholder="20" min="0" max="99" value="20" oninput="actualizarAportes(2)"><span>%</span></div>
+          </div>
+        </div>
+        <div class="fg">
+          <label>% Cuota Inicial (Contado)</label>
+          <div class="ipfx"><input type="number" id="cont2" placeholder="50" min="0" max="99" value="50" oninput="actualizarAportes(2)"><span>%</span></div>
+          <div class="sub-l" id="dist2-info"></div>
+        </div>
+
+        <div class="fg">
+          <label>Tasa de Interés (Mes Vencido)</label>
+          <div class="tasa-row">
+            <div class="ipfx"><input type="number" id="tasa2" placeholder="1.5" min="0" max="10" step="0.01" value="1.5" oninput="calcTA(2)"><span>%</span></div>
+            <div class="tasa-badge"><div><small>Equiv. Anual</small><span id="ta2">19.56%</span></div><span>📈</span></div>
+          </div>
+        </div>
+
+        <div class="seg-box seg-cp">
+          <div class="seg-title">🔵 Segmento Corto Plazo</div>
+          <div class="fg" style="margin-bottom:8px;">
+            <label>Número de Meses</label>
+            <div class="ipfx" style="border-color:var(--azul);"><input type="number" id="plazoCP" placeholder="6" min="1" value="6" oninput="updEqCP()" style="border:none;box-shadow:none;"><span>meses</span></div>
+          </div>
+          <div class="info-box" style="margin-bottom:0;">
+            <strong>Garantisa CP (4.17%)</strong><span id="gCP-val">—</span>
+          </div>
+        </div>
+
+        <div class="seg-box seg-lp" style="margin-top:12px;">
+          <div class="seg-title">🟢 Segmento Largo Plazo</div>
+          <div class="fg" style="margin-bottom:8px;">
+            <label>Plazo</label>
+            <div class="unidad-row" style="border-color:var(--verde-c);">
+              <button class="unidad-btn" id="u2lp-m" onclick="setUnidad(2,'m','lp')">Meses</button>
+              <button class="unidad-btn active" id="u2lp-a" onclick="setUnidad(2,'a','lp')">Años</button>
+            </div>
+            <input type="number" id="plazoLP" placeholder="3" min="1" max="120" value="3" oninput="updEqLP()">
+            <div class="sub-l" id="eqLP">Equivale a 36 meses</div>
+          </div>
+          <div class="info-box" style="background:var(--verde-s);color:var(--verde-c);margin-bottom:0;">
+            <strong style="color:var(--verde-c);">Garantisa LP (2.86%)</strong><span id="gLP-val">—</span>
+          </div>
+        </div>
+
+        <div id="btn-idiomas-2" class="idiomas-btn" style="display:none;margin-top:12px;" onclick="abrirIdiomas(2)">
+          <div class="idiomas-icon">🌐</div>
+          <div class="idiomas-text">
+            <span class="idiomas-title">Este programa paga idiomas</span>
+            <span class="idiomas-val" style="font-family:'DM Mono',monospace;font-weight:600;">—</span>
+          </div>
+          <div class="idiomas-cta">Simular también →</div>
+        </div>
+
+        <button class="btn-calc" style="margin-top:14px;" onclick="calcular2()">Calcular Crédito Mixto →</button>
+      </div>
+    </div>
+    <div id="res2"><div class="card" style="text-align:center;padding:60px 24px;color:var(--gris-m);"><div style="font-size:48px;margin-bottom:16px;opacity:.3;">🔀</div><p style="font-size:14px;">Completa los datos y presiona <strong>Calcular Crédito Mixto</strong></p></div></div>
+  </div>
+</div>
+
+<!-- TAB 3 -->
+<div class="tab-panel" id="tab3">
+  <div class="two-col">
+    <div>
+      <div class="card">
+        <div class="card-title" style="color:#7B1FA2;">Crédito Banco Aliado</div>
+        <div id="alert3" class="alert"></div>
+
+        <div class="fg">
+          <label>Programa Académico</label>
+          <select id="prog3" onchange="setMat(3)">
+            <option value="">— Seleccionar programa —</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Valor Matrícula</label>
+          <div class="ipfx"><span>$</span><input type="number" id="mat3" placeholder="0" min="0" step="100" oninput="fmtLbl('mat3')"></div>
+          <div class="sub-l" id="mat3-lbl"></div>
+        </div>
+        <div class="fg">
+          <label>% a Financiar</label>
+          <div class="ipfx"><input type="number" id="pct3" placeholder="100" min="1" max="100" value="100"><span>%</span></div>
+          <div class="sub-l" id="pct3-info"></div>
+        </div>
+        <div class="fg">
+          <label>% Cuota Inicial (Contado)</label>
+          <div class="ipfx"><input type="number" id="cont3" placeholder="0" min="0" max="99" value="0"><span>%</span></div>
+        </div>
+        <div class="fg">
+          <label>Número de Meses</label>
+          <div class="ipfx" style="border-color:#7B1FA2;"><input type="number" id="plazo3" placeholder="12" min="1" value="12"><span>meses</span></div>
+        </div>
+        <div class="fg">
+          <label>Tasa de Interés (Mes Vencido)</label>
+          <div class="tasa-row">
+            <div class="ipfx"><input type="number" id="tasa3" placeholder="1.5" min="0" max="10" step="0.01" value="1.5" oninput="calcTA(3)"><span>%</span></div>
+            <div class="tasa-badge" style="background:#F3E5F5;color:#7B1FA2;"><div><small>Equiv. Anual</small><span id="ta3">19.56%</span></div><span>📈</span></div>
+          </div>
+        </div>
+        <div class="fg">
+          <label>Otros Cargos Iniciales (opcional)</label>
+          <div class="ipfx"><span>$</span><input type="number" id="cargos3" placeholder="0" min="0" step="1000" value="0"></div>
+          <div class="sub-l">Estudio de crédito, seguro, etc.</div>
+        </div>
+
+        <div id="btn-idiomas-3" class="idiomas-btn" style="display:none;" onclick="abrirIdiomas(3)">
+          <div class="idiomas-icon">🌐</div>
+          <div class="idiomas-text">
+            <span class="idiomas-title">Este programa paga idiomas</span>
+            <span class="idiomas-val" style="font-family:'DM Mono',monospace;font-weight:600;">—</span>
+          </div>
+          <div class="idiomas-cta">Simular también →</div>
+        </div>
+
+        <button class="btn-calc" style="background:linear-gradient(90deg,#6A1B9A 0%,#7B1FA2 100%);box-shadow:0 4px 14px rgba(106,27,154,.25);" onclick="calcular3()">Calcular Crédito →</button>
+      </div>
+    </div>
+    <div id="res3"><div class="card" style="text-align:center;padding:60px 24px;color:var(--gris-m);"><div style="font-size:48px;margin-bottom:16px;opacity:.3;">🏦</div><p style="font-size:14px;">Completa los datos y presiona <strong>Calcular Crédito</strong></p></div></div>
+  </div>
+</div>
+
+
+</main>
+
+<script>
+const PROGRAMAS = [
+  // [nombre, pregrado, idiomas]  — idiomas=0 significa no aplica
+  ["Administración de Empresas",16105200,0],
+  ["Arquitectura",16618800,1635500],
+  ["Ciencia de Datos",13574400,1635500],
+  ["Ciencia Política y Gobierno",13170800,1635500],
+  ["Comunicación Social y Period.",11976300,1635500],
+  ["Contaduría Pública",7945700,0],
+  ["Derecho",13422900,1635500],
+  ["Diseño Gráfico",13342300,1635500],
+  ["Diseño Industrial",16461100,1635500],
+  ["Economía",12553400,1635500],
+  ["Enfermería",7601500,0],
+  ["Filosofía y Humanidades",6917800,0],
+  ["Geología",13331000,1635500],
+  ["Ingeniería Biomédica",15471900,1635500],
+  ["Ingeniería Civil",13574400,1635500],
+  ["Ingeniería Eléctrica",13574400,1635500],
+  ["Ingeniería Electrónica",15471900,1635500],
+  ["Ingeniería Industrial",16641300,1635500],
+  ["Ingeniería Mecánica",13574400,1635500],
+  ["Ingeniería Sistemas Y Computación",13574400,1635500],
+  ["Lenguas Modernas y Cultura",12673500,1635500],
+  ["Licenciatura en Matemática",8009000,1635500],
+  ["Licenciatura en Pedagogía Infantil",8703000,1635500],
+  ["Matemáticas",8153900,1635500],
+  ["Medicina",28431000,1995700],
+  ["Música",13466700,1635500],
+  ["Negocios Internacionales",17922800,1635500],
+  ["Odontología",17877500,1995700],
+  ["Psicología",11976300,1635500],
+  ["Relaciones Internacionales",12673500,1635500]
+];
+const GARANTISA_CP = 0.0417;
+const GARANTISA_LP = 0.0286;
+
+const cop = v => new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0,maximumFractionDigits:0}).format(Math.round(v));
+
+// Populate selects
+[1,2,3].forEach(id => {
+  const sel = document.getElementById('prog'+id);
+  if(sel) PROGRAMAS.forEach(([n,v]) => { const o=document.createElement('option'); o.value=v; o.textContent=n; sel.appendChild(o); });
+});
+
+// Unidad state
+const unidades = { 1: 'a', '2cp': 'a', '2lp': 'a' };
+
+function setUnidad(tab, u, seg) {
+  const key = seg ? tab+seg : String(tab);
+  unidades[key] = u;
+  if (!seg) {
+    document.getElementById('u'+tab+'-m').classList.toggle('active', u==='m');
+    document.getElementById('u'+tab+'-a').classList.toggle('active', u==='a');
+    updEq1();
+  } else if (seg==='cp') {
+    updEqCP(); // CP plazo is meses-only, no toggle
+  } else {
+    document.getElementById('u2lp-m').classList.toggle('active', u==='m');
+    document.getElementById('u2lp-a').classList.toggle('active', u==='a');
+    updEqLP();
+  }
+}
+
+function getMeses(plazoEl, key) {
+  const v = parseInt(document.getElementById(plazoEl).value) || 0;
+  // tab1 (key='1') and plazoCP (key='2cp') are always meses
+  if (key === '1' || key === '2cp') return v;
+  return unidades[key] === 'a' ? v * 12 : v;
+}
+
+function updEq1() { /* tab1 is meses-only, no equiv label needed */ }
+function updEqCP() { /* CP is meses-only */ }
+function updEqLP() {
+  const m = getMeses('plazoLP','2lp');
+  document.getElementById('eqLP').textContent = unidades['2lp']==='a' ? `Equivale a ${m} meses` : `${m} meses`;
+}
+
+function switchTab(n) {
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===n-1));
+  document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===n-1));
+}
+
+function calcTA(id) {
+  const tm = parseFloat(document.getElementById('tasa'+id).value)/100;
+  if(!isNaN(tm)) document.getElementById('ta'+id).textContent = ((Math.pow(1+tm,12)-1)*100).toFixed(2)+'%';
+}
+calcTA(1); calcTA(2); calcTA(3);
+
+function setMat(id) {
+  const sel = document.getElementById('prog'+id);
+  const idx = sel.selectedIndex - 1; // -1 for blank option
+  if(idx < 0) return;
+  const [,pregrado,idiomas] = PROGRAMAS[idx];
+  document.getElementById('mat'+id).value = pregrado;
+  fmtLbl('mat'+id);
+  if(id < 3) actualizarAportes(id);
+  // Show/hide idiomas button
+  const btnEl = document.getElementById('btn-idiomas-'+id);
+  if(btnEl){
+    if(idiomas > 0){
+      btnEl.style.display = 'flex';
+      btnEl.dataset.idiomas = idiomas;
+      btnEl.dataset.prog = PROGRAMAS[idx][0];
+      btnEl.querySelector('.idiomas-val').textContent = cop(idiomas);
+    } else {
+      btnEl.style.display = 'none';
+    }
+  }
+}
+
+function fmtLbl(id) {
+  const v = parseFloat(document.getElementById(id).value);
+  const el = document.getElementById(id+'-lbl');
+  if(el) el.textContent = (!isNaN(v)&&v>0) ? cop(v) : '';
+}
+
+function actualizarAportes(tab) {
+  if(tab===1) {
+    const mat = parseFloat(document.getElementById('mat1').value)||0;
+    const pct = parseFloat(document.getElementById('pct1').value)||0;
+    const cont = parseFloat(document.getElementById('cont1').value)||0;
+    const fin = mat * pct/100;
+    const gar = fin * GARANTISA_CP;
+    document.getElementById('garantisa1-val').textContent = mat>0 ? `${cop(gar)} sobre ${cop(fin)} financiado (4.17% = 3.5% + IVA)` : '—';
+    document.getElementById('pct1-info').textContent = mat>0&&pct>0 ? `Monto a financiar: ${cop(fin)}` : '';
+    document.getElementById('cont1-info').textContent = mat>0&&cont>0 ? `Cuota inicial contado: ${cop(mat*cont/100)}` : '';
+    const total = pct + cont;
+    if(total>100) showAlert(1,'⚠ La suma de % financiado + contado supera 100%');
+  } else {
+    const mat = parseFloat(document.getElementById('mat2').value)||0;
+    const cp = parseFloat(document.getElementById('pctCP').value)||0;
+    const lp = parseFloat(document.getElementById('pctLP').value)||0;
+    const cont = parseFloat(document.getElementById('cont2').value)||0;
+    const finCP = mat*cp/100, finLP = mat*lp/100;
+    document.getElementById('gCP-val').textContent = mat>0 ? `${cop(finCP*GARANTISA_CP)} sobre ${cop(finCP)}` : '—';
+    document.getElementById('gLP-val').textContent = mat>0 ? `${cop(finLP*GARANTISA_LP)} sobre ${cop(finLP)}` : '—';
+    const total = cp+lp+cont;
+    document.getElementById('dist2-info').textContent = mat>0 ? `Distribución: CP ${cop(finCP)} | LP ${cop(finLP)} | Contado ${cop(mat*cont/100)} | Total ${total}%` : '';
+    if(total>100) showAlert(2,'⚠ La suma de CP + LP + Contado supera 100%');
+  }
+}
+
+function showAlert(id,msg){ const el=document.getElementById('alert'+id); el.textContent=msg; el.style.display='block'; setTimeout(()=>el.style.display='none',5000); }
+
+function cuotaMes(P,tm,n){ return tm===0 ? P/n : P*(tm*Math.pow(1+tm,n))/(Math.pow(1+tm,n)-1); }
+
+function amortizacion(P,tm,n){
+  const cuota=cuotaMes(P,tm,n); let saldo=P, totInt=0, totCap=0;
+  const rows=[];
+  for(let i=1;i<=n;i++){
+    const int=saldo*tm, cap=cuota-int;
+    saldo=Math.max(0,saldo-cap);
+    totInt+=int; totCap+=cap;
+    rows.push({i,cuota,capital:cap,interes:int,saldo});
+  }
+  return {rows,cuota,totInt,totCap};
+}
+
+function renderTabla(rows,cuota,totInt,totCap){
+  let h=`<div class="twrap"><table><thead><tr><th style="text-align:center;">Cuota</th><th>Cuota Mensual</th><th>Capital</th><th>Interés</th><th>Saldo</th></tr></thead><tbody>`;
+  rows.forEach(r=>{ h+=`<tr><td>${r.i}</td><td>${cop(r.cuota)}</td><td>${cop(r.capital)}</td><td>${cop(r.interes)}</td><td>${cop(r.saldo)}</td></tr>`; });
+  h+=`</tbody><tfoot><tr><td>TOTAL</td><td>—</td><td>${cop(totCap)}</td><td>${cop(totInt)}</td><td>—</td></tr></tfoot></table></div>`;
+  return h;
+}
+
+function calcular1(){
+  const mat=parseFloat(document.getElementById('mat1').value);
+  const pct=parseFloat(document.getElementById('pct1').value)/100;
+  const cont=parseFloat(document.getElementById('cont1').value)||0;
+  const tm=parseFloat(document.getElementById('tasa1').value)/100;
+  const n=getMeses('plazo1','1');
+
+  if(!mat||mat<=0) return showAlert(1,'Ingresa el valor de matrícula.');
+  if(!pct||pct<=0) return showAlert(1,'Ingresa el porcentaje a financiar.');
+  if(!n||n<=0) return showAlert(1,'Ingresa el plazo de amortización.');
+  if(isNaN(tm)) return showAlert(1,'Ingresa la tasa de interés.');
+  if((pct*100)+(cont)>100) return showAlert(1,'La suma de financiado + contado supera 100%.');
+
+  const financiado = mat*pct;
+  const garantisa = financiado*GARANTISA_CP;   // se cobra al inicio, NO entra al crédito
+  const principal = financiado;                 // el crédito es solo el monto financiado
+  const cuotaInicial = mat*cont/100;
+  const pagoInicial = cuotaInicial + garantisa; // contado + garantisa = pago al momento de desembolso
+
+  const {rows,cuota,totInt,totCap} = amortizacion(principal,tm,n);
+  const totalPagar = totCap+totInt;
+  const totalGeneral = pagoInicial + totalPagar;
+
+  window._d1 = {rows,cuota,totInt,totCap,principal,financiado,garantisa,mat,n,tm,cuotaInicial,pagoInicial,totalGeneral};
+
+  document.getElementById('res1').innerHTML=`
+  <div class="card">
+    <div class="card-title">Resumen Financiero — Corto Plazo</div>
+    <div class="ssub" style="margin-top:0;margin-bottom:10px;color:var(--naranja);">💳 Pago Inicial (al momento del desembolso)</div>
+    <div class="mgrid">
+      <div class="mc"><span class="lbl">Cuota Inicial Contado</span><div class="val">${cop(cuotaInicial)}</div></div>
+      <div class="mc nar"><span class="lbl">Garantisa (4.17% s/financiado)</span><div class="val">${cop(garantisa)}</div></div>
+      <div class="mc nar" style="grid-column:1/-1;"><span class="lbl">Total Pago Inicial</span><div class="val">${cop(pagoInicial)}</div></div>
+    </div>
+    <div class="ssub" style="color:var(--azul);">📅 Crédito a Amortizar</div>
+    <div class="mgrid">
+      <div class="mc"><span class="lbl">Valor Matrícula</span><div class="val">${cop(mat)}</div></div>
+      <div class="mc"><span class="lbl">Monto Financiado</span><div class="val">${cop(financiado)}</div></div>
+      <div class="mc vrd"><span class="lbl">Cuota Mensual</span><div class="val">${cop(cuota)}</div></div>
+      <div class="mc"><span class="lbl">Total Intereses</span><div class="val">${cop(totInt)}</div></div>
+      <div class="mc dest" style="grid-column:1/-1;"><span class="lbl">Total Crédito (capital + intereses)</span><div class="val">${cop(totalPagar)}</div></div>
+    </div>
+    <div class="total-banner" style="margin-bottom:20px;">
+      <div><div class="tl">Pago Inicial</div><div class="tv">${cop(pagoInicial)}</div><div class="ts">Contado + Garantisa</div></div>
+      <div style="font-size:28px;opacity:.5;">+</div>
+      <div><div class="tl">Total Crédito</div><div class="tv">${cop(totalPagar)}</div><div class="ts">${n} cuotas de ${cop(cuota)}</div></div>
+      <div style="font-size:28px;opacity:.5;">=</div>
+      <div style="text-align:right;"><div class="tl">Costo Total Matrícula</div><div class="tv">${cop(totalGeneral)}</div><div class="ts">Todo incluido</div></div>
+    </div>
+    <div class="ssub">Tabla de Amortización (${n} cuotas)</div>
+    ${renderTabla(rows,cuota,totInt,totCap)}
+    <div class="btn-row">
+      <button class="btn-exp" onclick="expPDF1()">📄 Descargar PDF</button>
+      <button class="btn-exp vrd" onclick="expXLS1()">📊 Descargar Excel</button>
+    </div>
+  </div>`;
+}
+
+function calcular2(){
+  const mat=parseFloat(document.getElementById('mat2').value);
+  const pCP=parseFloat(document.getElementById('pctCP').value)||0;
+  const pLP=parseFloat(document.getElementById('pctLP').value)||0;
+  const cont=parseFloat(document.getElementById('cont2').value)||0;
+  const tm=parseFloat(document.getElementById('tasa2').value)/100;
+  const nCP=getMeses('plazoCP','2cp');
+  const nLP=getMeses('plazoLP','2lp');
+
+  if(!mat||mat<=0) return showAlert(2,'Ingresa el valor de matrícula.');
+  if(pCP+pLP<=0) return showAlert(2,'Ingresa al menos un porcentaje (CP o LP).');
+  if(pCP+pLP+cont>100) return showAlert(2,'La suma de CP + LP + Contado supera 100%.');
+  if(pCP>0&&(!nCP||nCP<=0)) return showAlert(2,'Ingresa el plazo para Corto Plazo.');
+  if(pLP>0&&(!nLP||nLP<=0)) return showAlert(2,'Ingresa el plazo para Largo Plazo.');
+
+  const finCP=mat*pCP/100, finLP=mat*pLP/100, cuotaInicial=mat*cont/100;
+  const garCP=finCP*GARANTISA_CP, garLP=finLP*GARANTISA_LP;
+  // Garantisa va al pago inicial, crédito es solo el monto financiado
+  const princCP=finCP, princLP=finLP;
+  const pagoInicial = cuotaInicial + garCP + garLP;
+
+  let CP=null,LP=null;
+  if(pCP>0) CP=amortizacion(princCP,tm,nCP);
+  if(pLP>0) LP=amortizacion(princLP,tm,nLP);
+
+  window._d2={CP,LP,mat,finCP,finLP,garCP,garLP,princCP,princLP,nCP,nLP,tm,cuotaInicial,pagoInicial,pCP,pLP};
+
+  const totCP=CP?(CP.totCap+CP.totInt):0;
+  const totLP=LP?(LP.totCap+LP.totInt):0;
+  const totCredito=totCP+totLP;
+  const totGeneral=pagoInicial+totCredito;
+
+  let html=`<div class="card"><div class="card-title">Resultados Crédito Mixto</div>`;
+
+  // Bloque pago inicial
+  html+=`<div class="ssub" style="margin-top:0;margin-bottom:10px;color:var(--naranja);">💳 Pago Inicial (al momento del desembolso)</div>
+  <div class="mgrid">
+    <div class="mc"><span class="lbl">Cuota Inicial Contado</span><div class="val">${cop(cuotaInicial)}</div></div>
+    ${garCP>0?`<div class="mc nar"><span class="lbl">Garantisa CP (4.17%)</span><div class="val">${cop(garCP)}</div></div>`:''}
+    ${garLP>0?`<div class="mc nar"><span class="lbl">Garantisa LP (2.86%)</span><div class="val">${cop(garLP)}</div></div>`:''}
+    <div class="mc nar" style="grid-column:1/-1;"><span class="lbl">Total Pago Inicial</span><div class="val">${cop(pagoInicial)}</div></div>
+  </div>`;
+
+  if(CP){
+    html+=`<div class="dvl cp-l"><span>🔵 Corto Plazo — ${pCP}% · ${cop(finCP)}</span></div>
+    <div class="mgrid">
+      <div class="mc"><span class="lbl">Monto Financiado CP</span><div class="val">${cop(finCP)}</div></div>
+      <div class="mc vrd"><span class="lbl">Cuota Mensual CP</span><div class="val">${cop(CP.cuota)}</div></div>
+      <div class="mc"><span class="lbl">Intereses CP</span><div class="val">${cop(CP.totInt)}</div></div>
+      <div class="mc" style="grid-column:1/-1;background:var(--azul-s);"><span class="lbl" style="color:var(--azul)">Total Crédito CP</span><div class="val" style="color:var(--azul)">${cop(totCP)}</div></div>
+    </div>
+    <div class="ssub">Tabla Amortización — Corto Plazo (${nCP} cuotas)</div>
+    ${renderTabla(CP.rows,CP.cuota,CP.totInt,CP.totCap)}`;
+  }
+
+  if(LP){
+    html+=`<div class="dvl lp-l" style="margin-top:24px;"><span>🟢 Largo Plazo — ${pLP}% · ${cop(finLP)}</span></div>
+    <div class="mgrid">
+      <div class="mc"><span class="lbl">Monto Financiado LP</span><div class="val">${cop(finLP)}</div></div>
+      <div class="mc vrd"><span class="lbl">Cuota Mensual LP</span><div class="val">${cop(LP.cuota)}</div></div>
+      <div class="mc"><span class="lbl">Intereses LP</span><div class="val">${cop(LP.totInt)}</div></div>
+      <div class="mc" style="grid-column:1/-1;background:var(--verde-s);"><span class="lbl" style="color:var(--verde-c)">Total Crédito LP</span><div class="val" style="color:var(--verde)">${cop(totLP)}</div></div>
+    </div>
+    <div class="ssub">Tabla Amortización — Largo Plazo (${nLP} cuotas)</div>
+    ${renderTabla(LP.rows,LP.cuota,LP.totInt,LP.totCap)}`;
+  }
+
+  if(CP&&LP){
+    html+=`<div class="ssub" style="margin-top:24px;">Comparativa Capital vs Intereses</div>
+    <div class="chart-wrap"><canvas id="chMixto" role="img" aria-label="Comparativa capital vs intereses corto y largo plazo">Gráfica comparativa</canvas></div>`;
+  }
+
+  html+=`<div class="total-banner">
+    <div><div class="tl">Pago Inicial</div><div class="tv">${cop(pagoInicial)}</div><div class="ts">Contado + Garantisa</div></div>
+    <div style="font-size:24px;opacity:.5;">+</div>
+    <div><div class="tl">Total Créditos (CP+LP)</div><div class="tv">${cop(totCredito)}</div><div class="ts">${CP?nCP+' cuotas CP':''} ${CP&&LP?'·':''} ${LP?nLP+' cuotas LP':''}</div></div>
+    <div style="font-size:24px;opacity:.5;">=</div>
+    <div style="text-align:right;"><div class="tl">Costo Total Matrícula</div><div class="tv">${cop(totGeneral)}</div><div class="ts">Todo incluido</div></div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-exp" onclick="expPDF2()">📄 Descargar PDF</button>
+    <button class="btn-exp vrd" onclick="expXLS2()">📊 Descargar Excel</button>
+  </div></div>`;
+
+  document.getElementById('res2').innerHTML=html;
+
+  if(CP&&LP){
+    setTimeout(()=>{
+      const ctx=document.getElementById('chMixto');
+      if(!ctx)return;
+      new Chart(ctx,{type:'bar',data:{
+        labels:['Corto Plazo','Largo Plazo'],
+        datasets:[
+          {label:'Capital',data:[Math.round(CP.totCap),Math.round(LP.totCap)],backgroundColor:'#1565C0',borderRadius:6},
+          {label:'Intereses',data:[Math.round(CP.totInt),Math.round(LP.totInt)],backgroundColor:'#2E7D32',borderRadius:6}
+        ]},
+        options:{responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{display:true,position:'top',labels:{font:{family:'Sora',size:12},boxWidth:12,padding:16}},
+          tooltip:{callbacks:{label:c=>' '+cop(c.raw)}}},
+          scales:{x:{grid:{display:false},ticks:{font:{family:'Sora',size:12}}},
+            y:{ticks:{font:{family:'DM Mono',size:11},callback:v=>cop(v)}}}}
+      });
+    },100);
+  }
+}
+
+// ---- EXPORTS ----
+function expPDF1(){
+  const d=window._d1; if(!d)return;
+  const {jsPDF}=window.jspdf; const doc=new jsPDF();
+  doc.setFont('helvetica','bold'); doc.setFontSize(16);
+  doc.text('Simulador de Crédito Educativo',14,18);
+  doc.setFont('helvetica','normal'); doc.setFontSize(11);
+  doc.text('Crédito a Corto Plazo',14,27);
+  doc.setDrawColor(13,71,161); doc.line(14,30,196,30);
+  let y=38;
+  doc.setFont('helvetica','bold'); doc.text('PAGO INICIAL (al desembolso)',14,y); y+=8;
+  const pi=[['Cuota Inicial Contado',cop(d.cuotaInicial)],['Garantisa 4.17% s/financiado',cop(d.garantisa)],['Total Pago Inicial',cop(d.pagoInicial)]];
+  pi.forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,110,y); y+=7; });
+  y+=4; doc.setFont('helvetica','bold'); doc.text('CRÉDITO A AMORTIZAR',14,y); y+=8;
+  const cr=[['Monto Financiado',cop(d.financiado)],['Cuota Mensual',cop(d.cuota)],['Total Intereses',cop(d.totInt)],['Total Crédito',cop(d.totCap+d.totInt)],['COSTO TOTAL MATRÍCULA',cop(d.totalGeneral)]];
+  cr.forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,110,y); y+=7; });
+  y+=6; doc.setFont('helvetica','bold'); doc.text('Tabla de Amortización',14,y); y+=8;
+  const hw=['#','Cuota','Capital','Interés','Saldo'], cw=[14,42,38,38,44];
+  doc.setFillColor(13,71,161); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
+  let x=14; hw.forEach((h,i)=>{doc.text(h,x+1,y);x+=cw[i];}); doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
+  d.rows.forEach(r=>{ y+=7; if(y>270){doc.addPage();y=20;} x=14;
+    [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(String(v),x+1,y);x+=cw[i];});
+  });
+  doc.save('credito-corto-plazo.pdf');
+}
+
+function expXLS1(){
+  const d=window._d1; if(!d)return;
+  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.aoa_to_sheet([
+    ['Crédito a Corto Plazo'],[''],
+    ['--- PAGO INICIAL ---'],
+    ['Cuota Inicial Contado',Math.round(d.cuotaInicial)],
+    ['Garantisa (4.17% s/financiado)',Math.round(d.garantisa)],
+    ['Total Pago Inicial',Math.round(d.pagoInicial)],[''],
+    ['--- CRÉDITO ---'],
+    ['Monto Financiado',Math.round(d.financiado)],
+    ['Cuota Mensual',Math.round(d.cuota)],
+    ['Total Intereses',Math.round(d.totInt)],
+    ['Total Crédito',Math.round(d.totCap+d.totInt)],
+    ['COSTO TOTAL MATRÍCULA',Math.round(d.totalGeneral)],[''],
+    ['Cuota','Cuota Mensual','Capital','Interés','Saldo'],
+    ...d.rows.map(r=>[r.i,Math.round(r.cuota),Math.round(r.capital),Math.round(r.interes),Math.round(r.saldo)])
+  ]);
+  XLSX.utils.book_append_sheet(wb,ws,'Corto Plazo');
+  XLSX.writeFile(wb,'credito-corto-plazo.xlsx');
+}
+
+function expPDF2(){
+  const d=window._d2; if(!d)return;
+  const {jsPDF}=window.jspdf; const doc=new jsPDF();
+  doc.setFont('helvetica','bold'); doc.setFontSize(16);
+  doc.text('Simulador de Crédito Educativo',14,18);
+  doc.setFont('helvetica','normal'); doc.setFontSize(11);
+  doc.text('Crédito Mixto — Corto y Largo Plazo',14,27);
+  doc.setDrawColor(13,71,161); doc.line(14,30,196,30);
+  let y=38;
+  doc.setFont('helvetica','bold'); doc.text('PAGO INICIAL (al desembolso)',14,y); y+=8;
+  const pi=[
+    ['Cuota Inicial Contado',cop(d.cuotaInicial)],
+    d.garCP>0?['Garantisa CP (4.17%)',cop(d.garCP)]:null,
+    d.garLP>0?['Garantisa LP (2.86%)',cop(d.garLP)]:null,
+    ['Total Pago Inicial',cop(d.pagoInicial)]
+  ].filter(Boolean);
+  pi.forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,110,y); y+=7; });
+  y+=4;
+  if(d.CP){ doc.setFont('helvetica','bold'); doc.text('CORTO PLAZO ('+d.pCP+'%)',14,y); y+=8;
+    [['Monto Financiado CP',cop(d.finCP)],['Cuota Mensual CP',cop(d.CP.cuota)],['Total Crédito CP',cop(d.CP.totCap+d.CP.totInt)]].forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,110,y); y+=7; }); y+=4; }
+  if(d.LP){ doc.setFont('helvetica','bold'); doc.text('LARGO PLAZO ('+d.pLP+'%)',14,y); y+=8;
+    [['Monto Financiado LP',cop(d.finLP)],['Cuota Mensual LP',cop(d.LP.cuota)],['Total Crédito LP',cop(d.LP.totCap+d.LP.totInt)]].forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,110,y); y+=7; }); y+=4; }
+  const totCred=(d.CP?(d.CP.totCap+d.CP.totInt):0)+(d.LP?(d.LP.totCap+d.LP.totInt):0);
+  doc.setFont('helvetica','bold'); doc.text('COSTO TOTAL MATRÍCULA: '+cop(d.pagoInicial+totCred),14,y);
+  doc.save('credito-mixto.pdf');
+}
+
+function expXLS2(){
+  const d=window._d2; if(!d)return;
+  const wb=XLSX.utils.book_new();
+  const resumen=[
+    ['Crédito Mixto — Resumen'],[''],
+    ['--- PAGO INICIAL ---'],
+    ['Cuota Inicial Contado',Math.round(d.cuotaInicial)],
+    ['Garantisa CP (4.17%)',Math.round(d.garCP)],
+    ['Garantisa LP (2.86%)',Math.round(d.garLP)],
+    ['Total Pago Inicial',Math.round(d.pagoInicial)],[''],
+    ['Total Crédito CP',d.CP?Math.round(d.CP.totCap+d.CP.totInt):0],
+    ['Total Crédito LP',d.LP?Math.round(d.LP.totCap+d.LP.totInt):0],
+    ['COSTO TOTAL MATRÍCULA',Math.round(d.pagoInicial+(d.CP?(d.CP.totCap+d.CP.totInt):0)+(d.LP?(d.LP.totCap+d.LP.totInt):0))]
+  ];
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(resumen),'Resumen');
+  if(d.CP){
+    const ws=XLSX.utils.aoa_to_sheet([
+      ['Corto Plazo'],['Monto Financiado',Math.round(d.finCP)],
+      ['Garantisa (pago inicial)',Math.round(d.garCP)],
+      ['Cuota Mensual',Math.round(d.CP.cuota)],
+      ['Total Intereses',Math.round(d.CP.totInt)],
+      ['Total Crédito',Math.round(d.CP.totCap+d.CP.totInt)],[],
+      ['Cuota','Cuota Mensual','Capital','Interés','Saldo'],
+      ...d.CP.rows.map(r=>[r.i,Math.round(r.cuota),Math.round(r.capital),Math.round(r.interes),Math.round(r.saldo)])
+    ]);
+    XLSX.utils.book_append_sheet(wb,ws,'Corto Plazo');
+  }
+  if(d.LP){
+    const ws=XLSX.utils.aoa_to_sheet([
+      ['Largo Plazo'],['Monto Financiado',Math.round(d.finLP)],
+      ['Garantisa (pago inicial)',Math.round(d.garLP)],
+      ['Cuota Mensual',Math.round(d.LP.cuota)],
+      ['Total Intereses',Math.round(d.LP.totInt)],
+      ['Total Crédito',Math.round(d.LP.totCap+d.LP.totInt)],[],
+      ['Cuota','Cuota Mensual','Capital','Interés','Saldo'],
+      ...d.LP.rows.map(r=>[r.i,Math.round(r.cuota),Math.round(r.capital),Math.round(r.interes),Math.round(r.saldo)])
+    ]);
+    XLSX.utils.book_append_sheet(wb,ws,'Largo Plazo');
+  }
+  XLSX.writeFile(wb,'credito-mixto.xlsx');
+}
+
+
+function calcular3(){
+  const mat=parseFloat(document.getElementById('mat3').value);
+  const pct=parseFloat(document.getElementById('pct3').value)/100;
+  const cont=parseFloat(document.getElementById('cont3').value)||0;
+  const tm=parseFloat(document.getElementById('tasa3').value)/100;
+  const n=parseInt(document.getElementById('plazo3').value)||0;
+  const cargos=parseFloat(document.getElementById('cargos3').value)||0;
+
+  if(!mat||mat<=0) return showAlert(3,'Ingresa el valor de matrícula.');
+  if(!pct||pct<=0) return showAlert(3,'Ingresa el porcentaje a financiar.');
+  if(!n||n<=0) return showAlert(3,'Ingresa el número de meses.');
+  if(isNaN(tm)) return showAlert(3,'Ingresa la tasa de interés.');
+  if((pct*100)+cont>100) return showAlert(3,'La suma de financiado + contado supera 100%.');
+
+  const financiado=mat*pct;
+  const cuotaInicial=mat*cont/100;
+  const pagoInicial=cuotaInicial+cargos;
+  const {rows,cuota,totInt,totCap}=amortizacion(financiado,tm,n);
+  const totalCredito=totCap+totInt;
+  const totalGeneral=pagoInicial+totalCredito;
+
+  window._d3={rows,cuota,totInt,totCap,financiado,mat,n,tm,cuotaInicial,cargos,pagoInicial,totalGeneral};
+
+  const morado='#7B1FA2', morado_s='#F3E5F5';
+  document.getElementById('res3').innerHTML=`
+  <div class="card">
+    <div class="card-title" style="color:#7B1FA2;">Resumen — Crédito Banco Aliado</div>
+    <div class="ssub" style="margin-top:0;margin-bottom:10px;color:#7B1FA2;">💳 Pago Inicial</div>
+    <div class="mgrid">
+      <div class="mc"><span class="lbl">Cuota Inicial Contado</span><div class="val">${cop(cuotaInicial)}</div></div>
+      ${cargos>0?`<div class="mc"><span class="lbl">Otros Cargos</span><div class="val">${cop(cargos)}</div></div>`:''}
+      <div class="mc" style="grid-column:1/-1;background:${morado_s};"><span class="lbl" style="color:#6A1B9A;">Total Pago Inicial</span><div class="val" style="color:#6A1B9A;">${cop(pagoInicial)}</div></div>
+    </div>
+    <div class="ssub" style="color:#7B1FA2;">📅 Crédito a Amortizar</div>
+    <div class="mgrid">
+      <div class="mc"><span class="lbl">Valor Matrícula</span><div class="val">${cop(mat)}</div></div>
+      <div class="mc"><span class="lbl">Monto Financiado</span><div class="val">${cop(financiado)}</div></div>
+      <div class="mc" style="background:#EDE7F6;"><span class="lbl" style="color:#7B1FA2;">Cuota Mensual</span><div class="val" style="color:#6A1B9A;">${cop(cuota)}</div></div>
+      <div class="mc"><span class="lbl">Total Intereses</span><div class="val">${cop(totInt)}</div></div>
+      <div class="mc" style="grid-column:1/-1;background:#6A1B9A;"><span class="lbl" style="color:rgba(255,255,255,.7);">Total Crédito (capital + intereses)</span><div class="val" style="color:#fff;">${cop(totalCredito)}</div></div>
+    </div>
+    <div class="total-banner" style="background:linear-gradient(90deg,#6A1B9A,#7B1FA2);margin-bottom:20px;">
+      <div><div class="tl">Pago Inicial</div><div class="tv">${cop(pagoInicial)}</div><div class="ts">Contado + cargos</div></div>
+      <div style="font-size:24px;opacity:.5;">+</div>
+      <div><div class="tl">Total Crédito</div><div class="tv">${cop(totalCredito)}</div><div class="ts">${n} cuotas de ${cop(cuota)}</div></div>
+      <div style="font-size:24px;opacity:.5;">=</div>
+      <div style="text-align:right;"><div class="tl">Costo Total Matrícula</div><div class="tv">${cop(totalGeneral)}</div><div class="ts">Todo incluido</div></div>
+    </div>
+    <div class="ssub">Tabla de Amortización (${n} meses)</div>
+    ${renderTabla(rows,cuota,totInt,totCap)}
+    <div class="btn-row">
+      <button class="btn-exp" style="border-color:#7B1FA2;color:#7B1FA2;" onclick="expPDF3()">📄 Descargar PDF</button>
+      <button class="btn-exp" style="border-color:#7B1FA2;color:#7B1FA2;" onclick="expXLS3()">📊 Descargar Excel</button>
+    </div>
+  </div>`;
+}
+
+function expPDF3(){
+  const d=window._d3; if(!d)return;
+  const {jsPDF}=window.jspdf; const doc=new jsPDF();
+  doc.setFont('helvetica','bold'); doc.setFontSize(16);
+  doc.text('Simulador de Crédito Educativo',14,18);
+  doc.setFont('helvetica','normal'); doc.setFontSize(11);
+  doc.text('Crédito Banco Aliado',14,27);
+  doc.setDrawColor(106,27,154); doc.line(14,30,196,30);
+  let y=38;
+  doc.setFont('helvetica','bold'); doc.text('PAGO INICIAL',14,y); y+=8;
+  [['Cuota Inicial Contado',cop(d.cuotaInicial)],['Otros Cargos',cop(d.cargos)],['Total Pago Inicial',cop(d.pagoInicial)]].forEach(([k,v])=>{
+    doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,110,y); y+=7;
+  });
+  y+=4; doc.setFont('helvetica','bold'); doc.text('CRÉDITO',14,y); y+=8;
+  [['Monto Financiado',cop(d.financiado)],['Cuota Mensual',cop(d.cuota)],
+   ['Total Intereses',cop(d.totInt)],['Total Crédito',cop(d.totCap+d.totInt)],
+   ['COSTO TOTAL MATRÍCULA',cop(d.totalGeneral)]].forEach(([k,v])=>{
+    doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,110,y); y+=7;
+  });
+  y+=6; doc.setFont('helvetica','bold'); doc.text('Tabla de Amortización',14,y); y+=8;
+  const hw=['#','Cuota','Capital','Interés','Saldo'],cw=[14,42,38,38,44];
+  doc.setFillColor(106,27,154); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
+  let x=14; hw.forEach((h,i)=>{doc.text(h,x+1,y);x+=cw[i];}); doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
+  d.rows.forEach(r=>{ y+=7; if(y>270){doc.addPage();y=20;} x=14;
+    [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(String(v),x+1,y);x+=cw[i];});
+  });
+  doc.save('credito-banco-aliado.pdf');
+}
+
+function expXLS3(){
+  const d=window._d3; if(!d)return;
+  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.aoa_to_sheet([
+    ['Crédito Banco Aliado'],[''],
+    ['--- PAGO INICIAL ---'],
+    ['Cuota Inicial Contado',Math.round(d.cuotaInicial)],
+    ['Otros Cargos',Math.round(d.cargos)],
+    ['Total Pago Inicial',Math.round(d.pagoInicial)],[''],
+    ['--- CRÉDITO ---'],
+    ['Monto Financiado',Math.round(d.financiado)],
+    ['Cuota Mensual',Math.round(d.cuota)],
+    ['Total Intereses',Math.round(d.totInt)],
+    ['Total Crédito',Math.round(d.totCap+d.totInt)],
+    ['COSTO TOTAL MATRÍCULA',Math.round(d.totalGeneral)],[''],
+    ['Cuota','Cuota Mensual','Capital','Interés','Saldo'],
+    ...d.rows.map(r=>[r.i,Math.round(r.cuota),Math.round(r.capital),Math.round(r.interes),Math.round(r.saldo)])
+  ]);
+  XLSX.utils.book_append_sheet(wb,ws,'Banco Aliado');
+  XLSX.writeFile(wb,'credito-banco-aliado.xlsx');
+}
+
+
+// ── IDIOMAS ──────────────────────────────────────────────────────────────────
+let _idiomasCtx = {};  // stores {tabId, valorIdiomas, progNombre}
+
+function abrirIdiomas(tabId) {
+  const btn = document.getElementById('btn-idiomas-'+tabId);
+  const valorIdiomas = parseFloat(btn.dataset.idiomas) || 0;
+  const progNombre = btn.dataset.prog || '';
+  _idiomasCtx = {tabId, valorIdiomas, progNombre};
+
+  document.getElementById('modal-val-idiomas').textContent = cop(valorIdiomas);
+  document.getElementById('modal-prog-name').textContent = progNombre;
+  const tabNames = {1:'Crédito Corto Plazo', 2:'Corto y Largo Plazo', 3:'Banco Aliado'};
+  document.getElementById('modal-tab-name').textContent = tabNames[tabId] || '';
+  document.getElementById('res-idiomas').innerHTML = '';
+  document.getElementById('modal-alert').style.display = 'none';
+  calcTaIdiomas();
+  document.getElementById('modal-idiomas').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function cerrarIdiomas() {
+  document.getElementById('modal-idiomas').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function calcTaIdiomas() {
+  const tm = parseFloat(document.getElementById('id-tasa').value)/100;
+  if(!isNaN(tm)) document.getElementById('id-ta').textContent = ((Math.pow(1+tm,12)-1)*100).toFixed(2)+'%';
+}
+
+function calcularIdiomas() {
+  const mat = _idiomasCtx.valorIdiomas;
+  const pct = parseFloat(document.getElementById('id-pct').value)/100;
+  const cont = parseFloat(document.getElementById('id-cont').value)||0;
+  const tm = parseFloat(document.getElementById('id-tasa').value)/100;
+  const n = parseInt(document.getElementById('id-meses').value)||0;
+
+  const alertEl = document.getElementById('modal-alert');
+  const showErr = msg => { alertEl.textContent = msg; alertEl.style.display = 'block'; setTimeout(()=>alertEl.style.display='none',4000); };
+
+  if(!mat||mat<=0) return showErr('Este programa no tiene valor de idiomas registrado.');
+  if(!pct||pct<=0) return showErr('Ingresa el porcentaje a financiar.');
+  if(!n||n<=0) return showErr('Ingresa el número de meses.');
+  if(isNaN(tm)) return showErr('Ingresa la tasa de interés.');
+  if((pct*100)+cont>100) return showErr('La suma de financiado + contado supera 100%.');
+
+  const financiado = mat * pct;
+  const garantisa = financiado * GARANTISA_CP;
+  const cuotaInicial = mat * cont / 100;
+  const pagoInicial = cuotaInicial + garantisa;
+  const {rows, cuota, totInt, totCap} = amortizacion(financiado, tm, n);
+  const totalCredito = totCap + totInt;
+  const totalGeneral = pagoInicial + totalCredito;
+
+  // Retrieve main tab totals for combined scenario
+  let mainPagoInicial = 0, mainTotalCredito = 0, mainCuotaMensual = 0, mainLabel = '';
+  const tabId = _idiomasCtx.tabId;
+  if(tabId===1 && window._d1) {
+    mainPagoInicial = window._d1.pagoInicial||0;
+    mainTotalCredito = (window._d1.totCap||0)+(window._d1.totInt||0);
+    mainCuotaMensual = window._d1.cuota||0;
+    mainLabel = 'Crédito Corto Plazo';
+  } else if(tabId===2 && window._d2) {
+    mainPagoInicial = window._d2.pagoInicial||0;
+    mainTotalCredito = (window._d2.CP?(window._d2.CP.totCap+window._d2.CP.totInt):0)+(window._d2.LP?(window._d2.LP.totCap+window._d2.LP.totInt):0);
+    mainCuotaMensual = (window._d2.CP?window._d2.CP.cuota:0)+(window._d2.LP?window._d2.LP.cuota:0);
+    mainLabel = 'Crédito Mixto (CP+LP)';
+  } else if(tabId===3 && window._d3) {
+    mainPagoInicial = window._d3.pagoInicial||0;
+    mainTotalCredito = (window._d3.totCap||0)+(window._d3.totInt||0);
+    mainCuotaMensual = window._d3.cuota||0;
+    mainLabel = 'Crédito Banco Aliado';
+  }
+
+  const hasMain = mainTotalCredito > 0;
+  const combinedPagoInicial = mainPagoInicial + pagoInicial;
+  const combinedTotal = mainTotalCredito + totalGeneral;
+
+  document.getElementById('res-idiomas').innerHTML = `
+    <div style="border-top:1.5px solid #ECEFF1;padding-top:20px;">
+      <div class="ssub" style="margin-top:0;color:var(--naranja);">💳 Pago Inicial — Idiomas</div>
+      <div class="mgrid">
+        <div class="mc"><span class="lbl">Cuota Inicial Contado</span><div class="val">${cop(cuotaInicial)}</div></div>
+        <div class="mc nar"><span class="lbl">Garantisa (4.17%)</span><div class="val">${cop(garantisa)}</div></div>
+        <div class="mc nar" style="grid-column:1/-1;"><span class="lbl">Total Pago Inicial Idiomas</span><div class="val">${cop(pagoInicial)}</div></div>
+      </div>
+      <div class="ssub" style="color:var(--azul);">📅 Crédito Idiomas</div>
+      <div class="mgrid">
+        <div class="mc"><span class="lbl">Valor Idiomas</span><div class="val">${cop(mat)}</div></div>
+        <div class="mc"><span class="lbl">Monto Financiado</span><div class="val">${cop(financiado)}</div></div>
+        <div class="mc vrd"><span class="lbl">Cuota Mensual</span><div class="val">${cop(cuota)}</div></div>
+        <div class="mc"><span class="lbl">Total Intereses</span><div class="val">${cop(totInt)}</div></div>
+        <div class="mc dest" style="grid-column:1/-1;"><span class="lbl">Total Crédito Idiomas</span><div class="val">${cop(totalCredito)}</div></div>
+      </div>
+
+      <div class="ssub">Tabla de Amortización Idiomas (${n} meses)</div>
+      ${renderTabla(rows, cuota, totInt, totCap)}
+
+      ${hasMain ? `
+      <div style="margin-top:24px;background:linear-gradient(135deg,#E3F2FD,#E8F5E9);border-radius:12px;padding:18px 20px;border:1.5px solid #90CAF9;">
+        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#0D47A1;margin-bottom:14px;">🔗 Escenario Combinado — ${mainLabel} + Idiomas</div>
+        <div class="mgrid">
+          <div class="mc" style="background:white;"><span class="lbl">Pago Inicial (pregrado)</span><div class="val">${cop(mainPagoInicial)}</div></div>
+          <div class="mc" style="background:white;"><span class="lbl">Pago Inicial (idiomas)</span><div class="val">${cop(pagoInicial)}</div></div>
+          <div class="mc nar" style="grid-column:1/-1;"><span class="lbl">Total Pago Inicial Combinado</span><div class="val">${cop(combinedPagoInicial)}</div></div>
+          <div class="mc" style="background:white;"><span class="lbl">Cuota Mensual Pregrado</span><div class="val">${cop(mainCuotaMensual)}</div></div>
+          <div class="mc vrd"><span class="lbl">Cuota Mensual Idiomas</span><div class="val">${cop(cuota)}</div></div>
+          <div class="mc dest" style="grid-column:1/-1;"><span class="lbl">Cuota Mensual Total Combinada</span><div class="val">${cop(mainCuotaMensual+cuota)}</div></div>
+        </div>
+        <div class="total-banner" style="margin-top:14px;margin-bottom:0;">
+          <div><div class="tl">Costo Pregrado</div><div class="tv">${cop(mainPagoInicial+mainTotalCredito)}</div></div>
+          <div style="font-size:20px;opacity:.5;">+</div>
+          <div><div class="tl">Costo Idiomas</div><div class="tv">${cop(totalGeneral)}</div></div>
+          <div style="font-size:20px;opacity:.5;">=</div>
+          <div style="text-align:right;"><div class="tl">Costo Total Semestre</div><div class="tv">${cop(combinedPagoInicial+mainTotalCredito+totalCredito)}</div></div>
+        </div>
+      </div>` : `
+      <div style="background:#FFF3E0;border-radius:10px;padding:14px 16px;font-size:13px;color:#E65100;margin-top:16px;">
+        💡 <strong>Consejo:</strong> Primero calcula el crédito de pregrado en la pestaña correspondiente para ver el escenario combinado aquí.
+      </div>`}
+
+      <div class="btn-row" style="margin-top:16px;">
+        <button class="btn-exp" onclick="expPDFIdiomas()">📄 Descargar PDF</button>
+        <button class="btn-exp vrd" onclick="expXLSIdiomas()">📊 Descargar Excel</button>
+      </div>
+    </div>
+  `;
+
+  window._dIdiomas = {rows,cuota,totInt,totCap,financiado,mat,n,tm,cuotaInicial,garantisa,pagoInicial,totalCredito,totalGeneral,progNombre:_idiomasCtx.progNombre};
+}
+
+function expPDFIdiomas(){
+  const d=window._dIdiomas; if(!d)return;
+  const {jsPDF}=window.jspdf; const doc=new jsPDF();
+  doc.setFont('helvetica','bold'); doc.setFontSize(16);
+  doc.text('Simulador de Crédito Educativo',14,18);
+  doc.setFont('helvetica','normal'); doc.setFontSize(11);
+  doc.text('Crédito Idiomas — '+d.progNombre,14,27);
+  doc.setDrawColor(13,71,161); doc.line(14,30,196,30);
+  let y=38;
+  [['Valor Idiomas',cop(d.mat)],['Financiado',cop(d.financiado)],
+   ['Garantisa (4.17%)',cop(d.garantisa)],['Total Pago Inicial',cop(d.pagoInicial)],
+   ['Cuota Mensual',cop(d.cuota)],['Total Intereses',cop(d.totInt)],
+   ['Total Crédito',cop(d.totalCredito)],['Costo Total',cop(d.totalGeneral)]
+  ].forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',14,y); doc.setFont('helvetica','normal'); doc.text(v,100,y); y+=8; });
+  y+=4; doc.setFont('helvetica','bold'); doc.text('Tabla de Amortización',14,y); y+=8;
+  const hw=['#','Cuota','Capital','Interés','Saldo'],cw=[14,42,38,38,44];
+  doc.setFillColor(13,71,161); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
+  let x=14; hw.forEach((h,i)=>{doc.text(h,x+1,y);x+=cw[i];}); doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
+  d.rows.forEach(r=>{ y+=7; if(y>270){doc.addPage();y=20;} x=14;
+    [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(String(v),x+1,y);x+=cw[i];});
+  });
+  doc.save('credito-idiomas.pdf');
+}
+
+function expXLSIdiomas(){
+  const d=window._dIdiomas; if(!d)return;
+  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.aoa_to_sheet([
+    ['Crédito Idiomas — '+d.progNombre],[''],
+    ['Valor Idiomas',Math.round(d.mat)],['Financiado',Math.round(d.financiado)],
+    ['Garantisa',Math.round(d.garantisa)],['Total Pago Inicial',Math.round(d.pagoInicial)],
+    ['Cuota Mensual',Math.round(d.cuota)],['Total Intereses',Math.round(d.totInt)],
+    ['Total Crédito',Math.round(d.totalCredito)],['Costo Total',Math.round(d.totalGeneral)],[''],
+    ['Cuota','Cuota Mensual','Capital','Interés','Saldo'],
+    ...d.rows.map(r=>[r.i,Math.round(r.cuota),Math.round(r.capital),Math.round(r.interes),Math.round(r.saldo)])
+  ]);
+  XLSX.utils.book_append_sheet(wb,ws,'Idiomas');
+  XLSX.writeFile(wb,'credito-idiomas.xlsx');
+}
+
+// Backdrop click handled via onclick on the modal div (see HTML)
+
+// Init
+updEq1(); updEqCP(); updEqLP();
+document.getElementById('plazo1').addEventListener('input',updEq1);
+document.getElementById('plazoCP').addEventListener('input',updEqCP);
+document.getElementById('plazoLP').addEventListener('input',updEqLP);
+</script>
+
+<!-- MODAL IDIOMAS -->
+<div id="modal-idiomas" onclick="if(event.target===this)cerrarIdiomas()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;overflow-y:auto;padding:24px 16px;">
+  <div style="max-width:760px;margin:0 auto;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3);">
+    <div style="background:linear-gradient(90deg,#0D47A1,#1565C0);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:12px;color:white;">
+        <div style="font-size:26px;">🌐</div>
+        <div>
+          <div style="font-size:16px;font-weight:700;">Simulador de Idiomas</div>
+          <div id="modal-prog-name" style="font-size:12px;opacity:.8;"></div>
+        </div>
+      </div>
+      <button onclick="cerrarIdiomas()" style="background:rgba(255,255,255,.15);border:none;border-radius:8px;color:white;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;">✕ Cerrar</button>
+    </div>
+    <div style="padding:24px;">
+      <div id="modal-alert" class="alert" style="margin-bottom:12px;"></div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px;">
+        <div style="background:#E3F2FD;border-radius:10px;padding:14px 16px;">
+          <div style="font-size:11px;font-weight:600;color:#90A4AE;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Valor Idiomas</div>
+          <div id="modal-val-idiomas" style="font-size:20px;font-weight:700;font-family:'DM Mono',monospace;color:#0D47A1;">—</div>
+        </div>
+        <div style="background:#ECEFF1;border-radius:10px;padding:14px 16px;">
+          <div style="font-size:11px;font-weight:600;color:#90A4AE;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Heredado de Pestaña</div>
+          <div id="modal-tab-name" style="font-size:14px;font-weight:600;color:#37474F;">—</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+        <div>
+          <label>% a Financiar</label>
+          <div class="ipfx"><input type="number" id="id-pct" placeholder="80" min="1" max="100" value="80"><span>%</span></div>
+        </div>
+        <div>
+          <label>% Cuota Inicial</label>
+          <div class="ipfx"><input type="number" id="id-cont" placeholder="0" min="0" max="99" value="0"><span>%</span></div>
+        </div>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label>Número de Meses</label>
+        <div class="ipfx"><input type="number" id="id-meses" placeholder="6" min="1" value="6"><span>meses</span></div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <label>Tasa de Interés (Mes Vencido)</label>
+        <div class="tasa-row">
+          <div class="ipfx"><input type="number" id="id-tasa" placeholder="1.5" min="0" max="10" step="0.01" value="1.5" oninput="calcTaIdiomas()"><span>%</span></div>
+          <div class="tasa-badge"><div><small>Equiv. Anual</small><span id="id-ta">19.56%</span></div><span>📈</span></div>
+        </div>
+      </div>
+
+      <button class="btn-calc" onclick="calcularIdiomas()" style="margin-bottom:20px;">Calcular Crédito Idiomas →</button>
+
+      <div id="res-idiomas"></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
