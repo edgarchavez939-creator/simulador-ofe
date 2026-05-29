@@ -140,6 +140,7 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
     <button class="tab-btn active" onclick="switchTab(1)">📅 Crédito a Corto Plazo</button>
     <button class="tab-btn" onclick="switchTab(2)">🔀 Corto y Largo Plazo</button>
     <button class="tab-btn" onclick="switchTab(3)">🏦 Crédito Banco Aliado</button>
+    <button class="tab-btn" onclick="switchTab(4)">🔁 Conversor de Tasas</button>
   </div>
 </div>
 
@@ -402,6 +403,101 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
       </div>
     </div>
     <div id="res3"><div class="card" style="text-align:center;padding:60px 24px;color:var(--gris-m);"><div style="font-size:48px;margin-bottom:16px;opacity:.3;">🏦</div><p style="font-size:14px;">Completa los datos y presiona <strong>Calcular Crédito</strong></p></div></div>
+  </div>
+</div>
+
+
+<!-- TAB 4: CONVERSOR DE TASAS -->
+<div class="tab-panel" id="tab4">
+  <div style="max-width:780px;margin:0 auto;">
+
+    <div class="card" style="margin-bottom:24px;">
+      <div class="card-title" style="color:#00695C;">🔁 Conversor de Tasas de Interés</div>
+      <p style="font-size:13px;color:var(--gris-m);margin-bottom:20px;">Convierte cualquier tasa entre todos los períodos. Ingresa el valor y el período origen — el sistema calcula todas las equivalencias automáticamente.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+        <div class="fg" style="margin-bottom:0;">
+          <label>Tasa de Origen</label>
+          <div class="ipfx" style="border-color:#00695C;">
+            <input type="number" id="tc-valor" placeholder="1.5" min="0" step="0.0001" value="1.5" oninput="convertirTasas()">
+            <span>%</span>
+          </div>
+        </div>
+        <div class="fg" style="margin-bottom:0;">
+          <label>Período de la Tasa</label>
+          <select id="tc-periodo" onchange="convertirTasas()" style="border-color:#00695C;">
+            <option value="d">Diaria</option>
+            <option value="s">Semanal</option>
+            <option value="q">Quincenal</option>
+            <option value="m" selected>Mensual</option>
+            <option value="b">Bimestral</option>
+            <option value="t">Trimestral</option>
+            <option value="c">Cuatrimestral</option>
+            <option value="sm">Semestral</option>
+            <option value="a">Anual</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+        <div>
+          <label style="margin-bottom:8px;display:block;">Tipo de equivalencia</label>
+          <div style="display:flex;gap:0;border:1.5px solid #00695C;border-radius:var(--rs);overflow:hidden;">
+            <button class="nivel-btn active" id="tc-ev" onclick="setTipoEq('efectiva')" style="flex:1;">Efectiva</button>
+            <button class="nivel-btn" id="tc-nom" onclick="setTipoEq('nominal')" style="flex:1;">Nominal</button>
+          </div>
+        </div>
+        <div id="tc-nom-per-wrap" style="display:none;">
+          <label>Capitalización (para nominal)</label>
+          <select id="tc-nom-per" onchange="convertirTasas()">
+            <option value="d">Diaria</option>
+            <option value="m" selected>Mensual</option>
+            <option value="t">Trimestral</option>
+            <option value="sm">Semestral</option>
+            <option value="a">Anual</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div id="tc-resultados" class="card">
+      <div class="card-title" style="color:#00695C;">Equivalencias</div>
+      <div id="tc-tabla"></div>
+    </div>
+
+    <!-- Reference card -->
+    <div class="card" style="margin-top:24px;background:linear-gradient(135deg,#E0F2F1,#E8F5E9);">
+      <div class="card-title" style="color:#00695C;">📖 Fórmulas de referencia</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;font-size:13px;">
+        <div>
+          <p style="font-weight:600;color:#00695C;margin-bottom:8px;">Tasa Efectiva → Efectiva</p>
+          <p style="font-family:'DM Mono',monospace;background:white;padding:8px;border-radius:6px;font-size:12px;">(1 + i_origen)^(n_destino/n_origen) - 1</p>
+          <p style="color:var(--gris-m);margin-top:6px;font-size:12px;">Donde n es la fracción de año del período</p>
+        </div>
+        <div>
+          <p style="font-weight:600;color:#00695C;margin-bottom:8px;">Tasa Nominal → Efectiva</p>
+          <p style="font-family:'DM Mono',monospace;background:white;padding:8px;border-radius:6px;font-size:12px;">(1 + j/m)^(m·n) - 1</p>
+          <p style="color:var(--gris-m);margin-top:6px;font-size:12px;">j = nominal, m = períodos de capitalización/año</p>
+        </div>
+        <div>
+          <p style="font-weight:600;color:#00695C;margin-bottom:8px;">Tasa Efectiva → Nominal</p>
+          <p style="font-family:'DM Mono',monospace;background:white;padding:8px;border-radius:6px;font-size:12px;">j = m · [(1 + i_ea)^(1/m) - 1]</p>
+          <p style="color:var(--gris-m);margin-top:6px;font-size:12px;">i_ea = tasa efectiva anual</p>
+        </div>
+        <div>
+          <p style="font-weight:600;color:#00695C;margin-bottom:8px;">Períodos por año</p>
+          <div style="font-family:'DM Mono',monospace;background:white;padding:8px;border-radius:6px;font-size:11px;line-height:1.8;">
+            Diaria: 365 &nbsp;|&nbsp; Semanal: 52<br>
+            Quincenal: 24 &nbsp;|&nbsp; Mensual: 12<br>
+            Bimestral: 6 &nbsp;|&nbsp; Trimestral: 4<br>
+            Cuatrimestral: 3 &nbsp;|&nbsp; Semestral: 2<br>
+            Anual: 1
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -947,7 +1043,9 @@ function expPDF1(){
   doc.text('Crédito a Corto Plazo',14,27);
   doc.setDrawColor(13,71,161); doc.line(14,30,196,30);
   let y=38;
-  doc.setFont('helvetica','bold'); doc.text('PAGO INICIAL (al desembolso)',14,y); y+=8;
+  doc.setFont('helvetica','bold'); doc.text('INFORMACIÓN GENERAL',14,y); y+=8;
+  doc.setFont('helvetica','bold'); doc.text('Valor Matrícula:',16,y); doc.setFont('helvetica','normal'); doc.text(cop(d.mat),110,y); y+=7;
+  y+=4; doc.setFont('helvetica','bold'); doc.text('PAGO INICIAL (al desembolso)',14,y); y+=8;
   const pi=[['Cuota Inicial Contado',cop(d.cuotaInicial)],['Garantisa 4.17% s/financiado',cop(d.garantisa)],['Total Pago Inicial',cop(d.pagoInicial)]];
   pi.forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,110,y); y+=7; });
   y+=4; doc.setFont('helvetica','bold'); doc.text('CRÉDITO A AMORTIZAR',14,y); y+=8;
@@ -968,6 +1066,7 @@ function expXLS1(){
   const wb=XLSX.utils.book_new();
   const ws=XLSX.utils.aoa_to_sheet([
     ['Crédito a Corto Plazo'],[''],
+    ['Valor Matrícula',Math.round(d.mat)],[''],
     ['--- PAGO INICIAL ---'],
     ['Cuota Inicial Contado',Math.round(d.cuotaInicial)],
     ['Garantisa (4.17% s/financiado)',Math.round(d.garantisa)],
@@ -994,7 +1093,9 @@ function expPDF2(){
   doc.text('Crédito Mixto — Corto y Largo Plazo',14,27);
   doc.setDrawColor(13,71,161); doc.line(14,30,196,30);
   let y=38;
-  doc.setFont('helvetica','bold'); doc.text('PAGO INICIAL (al desembolso)',14,y); y+=8;
+  doc.setFont('helvetica','bold'); doc.text('INFORMACIÓN GENERAL',14,y); y+=8;
+  doc.setFont('helvetica','bold'); doc.text('Valor Matrícula:',16,y); doc.setFont('helvetica','normal'); doc.text(cop(d.mat),110,y); y+=7;
+  y+=4; doc.setFont('helvetica','bold'); doc.text('PAGO INICIAL (al desembolso)',14,y); y+=8;
   const pi=[
     ['Cuota Inicial Contado',cop(d.cuotaInicial)],
     d.garCP>0?['Garantisa CP (4.17%)',cop(d.garCP)]:null,
@@ -1017,6 +1118,7 @@ function expXLS2(){
   const wb=XLSX.utils.book_new();
   const resumen=[
     ['Crédito Mixto — Resumen'],[''],
+    ['Valor Matrícula',Math.round(d.mat)],[''],
     ['--- PAGO INICIAL ---'],
     ['Cuota Inicial Contado',Math.round(d.cuotaInicial)],
     ['Garantisa CP (4.17%)',Math.round(d.garCP)],
@@ -1029,7 +1131,7 @@ function expXLS2(){
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(resumen),'Resumen');
   if(d.CP){
     const ws=XLSX.utils.aoa_to_sheet([
-      ['Corto Plazo'],['Monto Financiado',Math.round(d.finCP)],
+      ['Corto Plazo'],['Valor Matrícula',Math.round(d.mat)],['Monto Financiado CP',Math.round(d.finCP)],
       ['Garantisa (pago inicial)',Math.round(d.garCP)],
       ['Cuota Mensual',Math.round(d.CP.cuota)],
       ['Total Intereses',Math.round(d.CP.totInt)],
@@ -1041,7 +1143,7 @@ function expXLS2(){
   }
   if(d.LP){
     const ws=XLSX.utils.aoa_to_sheet([
-      ['Largo Plazo'],['Monto Financiado',Math.round(d.finLP)],
+      ['Largo Plazo'],['Valor Matrícula',Math.round(d.mat)],['Monto Financiado LP',Math.round(d.finLP)],
       ['Garantisa (pago inicial)',Math.round(d.garLP)],
       ['Cuota Mensual',Math.round(d.LP.cuota)],
       ['Total Intereses',Math.round(d.LP.totInt)],
@@ -1121,7 +1223,9 @@ function expPDF3(){
   doc.text('Crédito Banco Aliado',14,27);
   doc.setDrawColor(106,27,154); doc.line(14,30,196,30);
   let y=38;
-  doc.setFont('helvetica','bold'); doc.text('PAGO INICIAL',14,y); y+=8;
+  doc.setFont('helvetica','bold'); doc.text('INFORMACIÓN GENERAL',14,y); y+=8;
+  doc.setFont('helvetica','bold'); doc.text('Valor Matrícula:',16,y); doc.setFont('helvetica','normal'); doc.text(cop(d.mat),110,y); y+=7;
+  y+=4; doc.setFont('helvetica','bold'); doc.text('PAGO INICIAL',14,y); y+=8;
   [['Cuota Inicial Contado',cop(d.cuotaInicial)],['Otros Cargos',cop(d.cargos)],['Total Pago Inicial',cop(d.pagoInicial)]].forEach(([k,v])=>{
     doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,110,y); y+=7;
   });
@@ -1146,6 +1250,7 @@ function expXLS3(){
   const wb=XLSX.utils.book_new();
   const ws=XLSX.utils.aoa_to_sheet([
     ['Crédito Banco Aliado'],[''],
+    ['Valor Matrícula',Math.round(d.mat)],[''],
     ['--- PAGO INICIAL ---'],
     ['Cuota Inicial Contado',Math.round(d.cuotaInicial)],
     ['Otros Cargos',Math.round(d.cargos)],
@@ -1337,8 +1442,113 @@ function expXLSIdiomas(){
 
 // Backdrop click handled via onclick on the modal div (see HTML)
 
+
+// ── CONVERSOR DE TASAS ───────────────────────────────────────────────────────
+const TC_PERIODOS = {
+  d:  {label:'Diaria',      n:365},
+  s:  {label:'Semanal',     n:52},
+  q:  {label:'Quincenal',   n:24},
+  m:  {label:'Mensual',     n:12},
+  b:  {label:'Bimestral',   n:6},
+  t:  {label:'Trimestral',  n:4},
+  c:  {label:'Cuatrimestral',n:3},
+  sm: {label:'Semestral',   n:2},
+  a:  {label:'Anual',       n:1},
+};
+
+let _tcTipoEq = 'efectiva';
+
+function setTipoEq(tipo) {
+  _tcTipoEq = tipo;
+  document.getElementById('tc-ev').classList.toggle('active', tipo==='efectiva');
+  document.getElementById('tc-nom').classList.toggle('active', tipo==='nominal');
+  document.getElementById('tc-nom-per-wrap').style.display = tipo==='nominal' ? 'block' : 'none';
+  convertirTasas();
+}
+
+function convertirTasas() {
+  const valorInput = parseFloat(document.getElementById('tc-valor').value);
+  const periodoOrigen = document.getElementById('tc-periodo').value;
+  if(isNaN(valorInput) || valorInput < 0) {
+    document.getElementById('tc-tabla').innerHTML = '<p style="color:var(--gris-m);text-align:center;padding:24px;">Ingresa una tasa válida.</p>';
+    return;
+  }
+
+  const i_input = valorInput / 100;
+  const n_origen = TC_PERIODOS[periodoOrigen].n; // períodos por año del origen
+
+  // Convert input rate to Effective Annual Rate (EAR) first
+  let ear;
+  if(_tcTipoEq === 'efectiva') {
+    // Effective rate of period → EAR
+    ear = Math.pow(1 + i_input, n_origen) - 1;
+  } else {
+    // Nominal rate with capitalization
+    const capPer = document.getElementById('tc-nom-per').value;
+    const m = TC_PERIODOS[capPer].n; // capitalizations per year
+    const i_per_cap = i_input / (n_origen / m); // rate per capitalization period... 
+    // Actually: nominal rate j with m caps/year → EAR = (1 + j/m)^m - 1
+    // Here j is the nominal rate given in the origin period, so annual nominal = i_input * n_origen
+    const j_annual = i_input * n_origen;
+    ear = Math.pow(1 + j_annual / m, m) - 1;
+  }
+
+  // Now compute all equivalences from EAR
+  const results = [];
+  Object.entries(TC_PERIODOS).forEach(([key, {label, n}]) => {
+    // Effective rate for this period
+    const i_ef = Math.pow(1 + ear, 1/n) - 1;
+    // Nominal rate for this period (compounded monthly as reference)
+    // j = n * [(1+ear)^(1/n) - 1]  → that's just n * i_ef
+    const i_nom = n * i_ef; // nominal annual converted to this period = i_nom/n... 
+    // More useful: show nominal annual rate that corresponds
+    const nom_anual = n * i_ef * 100; // nominal annual %
+    results.push({key, label, n, i_ef, nom_anual, isOrigen: key === periodoOrigen});
+  });
+
+  // Build table
+  const fmt = v => (v * 100).toFixed(6).replace(/\.?0+$/, '') + '%';
+  const fmtN = v => v.toFixed(4).replace(/\.?0+$/, '') + '%';
+
+  let html = `<div class="twrap"><table>
+    <thead><tr>
+      <th style="text-align:left;">Período</th>
+      <th>Períodos/Año</th>
+      <th>Tasa Efectiva</th>
+      <th>Nominal Anual</th>
+    </tr></thead><tbody>`;
+
+  results.forEach(r => {
+    const highlight = r.isOrigen ? 'background:#E0F2F1;font-weight:700;' : '';
+    const badge = r.isOrigen ? ' <span style="background:#00695C;color:white;font-size:10px;padding:2px 6px;border-radius:10px;margin-left:4px;">ORIGEN</span>' : '';
+    html += `<tr style="${highlight}">
+      <td style="text-align:left;font-family:'Sora',sans-serif;font-weight:${r.isOrigen?'700':'500'};color:${r.isOrigen?'#00695C':'var(--gris)'};">${r.label}${badge}</td>
+      <td style="text-align:center;font-family:'DM Mono',monospace;">${r.n}</td>
+      <td style="font-family:'DM Mono',monospace;color:${r.isOrigen?'#00695C':'inherit'};">${fmt(r.i_ef)}</td>
+      <td style="font-family:'DM Mono',monospace;color:var(--gris-m);">${fmtN(r.nom_anual)}</td>
+    </tr>`;
+  });
+
+  html += `</tbody></table></div>`;
+
+  // EAR banner
+  html += `<div style="margin-top:14px;background:linear-gradient(90deg,#00695C,#00897B);border-radius:var(--rs);padding:14px 18px;color:white;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+    <div>
+      <div style="font-size:11px;opacity:.8;text-transform:uppercase;letter-spacing:.5px;">Tasa Efectiva Anual equivalente</div>
+      <div style="font-size:26px;font-weight:700;font-family:'DM Mono',monospace;">${(ear*100).toFixed(4)}%</div>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-size:11px;opacity:.8;">Tasa de entrada</div>
+      <div style="font-size:18px;font-weight:600;font-family:'DM Mono',monospace;">${valorInput.toFixed(4)}% ${TC_PERIODOS[periodoOrigen].label}</div>
+    </div>
+  </div>`;
+
+  document.getElementById('tc-tabla').innerHTML = html;
+}
+
 // Init
 updEq1(); updEqCP(); updEqLP();
+convertirTasas();
 document.getElementById('plazo1').addEventListener('input',updEq1);
 document.getElementById('plazoCP').addEventListener('input',updEqCP);
 document.getElementById('plazoLP').addEventListener('input',updEqLP);
