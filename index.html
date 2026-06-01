@@ -120,6 +120,88 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
 .nivel-btn{flex:1;padding:9px 12px;font-family:'Sora',sans-serif;font-size:13px;font-weight:600;border:none;background:transparent;cursor:pointer;color:var(--gris-m);transition:all .2s;}
 .nivel-btn.active{background:var(--azul);color:white;}
 .nivel-btn:not(.active):hover{background:var(--azul-s);color:var(--azul);}
+
+/* ── Limpiar btn ── */
+.btn-clear{width:100%;padding:11px;background:transparent;border:1.5px solid var(--gris-c);border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:13px;font-weight:600;color:var(--gris-m);cursor:pointer;margin-top:8px;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.btn-clear:hover{border-color:var(--rojo,#C62828);color:var(--rojo,#C62828);background:#FFEBEE;}
+/* ── Comparar escenarios ── */
+.esc-panel{background:var(--blanco);border-radius:var(--r);box-shadow:var(--sombra);padding:20px;margin-top:24px;}
+.esc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+.esc-header h3{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--azul);}
+.esc-list{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.esc-item{background:var(--gris-c);border-radius:var(--rs);padding:12px 14px;display:flex;align-items:center;gap:10px;font-size:13px;}
+.esc-item .esc-num{width:24px;height:24px;border-radius:50%;background:var(--azul);color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.esc-item .esc-info{flex:1;}
+.esc-item .esc-info strong{display:block;font-size:13px;color:var(--gris);}
+.esc-item .esc-info span{font-size:11px;color:var(--gris-m);}
+.esc-item .esc-del{background:none;border:none;cursor:pointer;color:var(--gris-m);font-size:16px;padding:0 4px;transition:color .2s;}
+.esc-item .esc-del:hover{color:#C62828;}
+.esc-empty{text-align:center;padding:24px;color:var(--gris-m);font-size:13px;}
+.btn-esc-save{padding:9px 16px;border:1.5px solid var(--azul);border-radius:var(--rs);background:transparent;color:var(--azul);font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;}
+.btn-esc-save:hover{background:var(--azul-s);}
+.btn-esc-compare{padding:9px 16px;border:none;border-radius:var(--rs);background:var(--azul);color:white;font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .2s;}
+.btn-esc-compare:hover{opacity:.88;}
+/* ── Comparison table ── */
+.cmp-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:16px;}
+.cmp-table th{background:var(--azul);color:white;padding:10px 12px;font-size:11px;text-transform:uppercase;letter-spacing:.5px;text-align:right;}
+.cmp-table th:first-child{text-align:left;}
+.cmp-table td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--gris-c);font-family:'DM Mono',monospace;font-size:12px;}
+.cmp-table td:first-child{text-align:left;font-family:'Sora',sans-serif;font-weight:500;color:var(--gris);font-size:12px;}
+.cmp-table tr:last-child td{font-weight:700;background:var(--dorado-s);border-top:2px solid var(--dorado);}
+.cmp-best{color:var(--verde)!important;font-weight:700!important;}
+.cmp-worst{color:var(--naranja)!important;}
+/* ── Fecha ── */
+.fecha-badge{font-size:11px;color:var(--gris-m);text-align:right;margin-bottom:8px;}
+
+/* ── Dual pct/$ input ── */
+.dual-row{display:grid;grid-template-columns:1fr 22px 1fr;align-items:center;gap:6px;}
+.dual-sep{font-size:12px;font-weight:700;color:var(--gris-m);text-align:center;}
+/* ── Beneficios ── */
+.benef-box{background:var(--verde-s);border-radius:var(--rs);padding:14px 16px;margin-bottom:12px;}
+.benef-title{font-size:11px;font-weight:700;color:var(--verde-c);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;}
+.benef-items{display:flex;flex-direction:column;gap:8px;margin-bottom:8px;}
+.benef-item{display:flex;gap:6px;align-items:flex-start;flex-wrap:wrap;}
+.benef-item-name{flex:1;min-width:120px;padding:8px 10px;border:1.5px solid var(--gris-c);border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:13px;outline:none;}
+.benef-item-name:focus{border-color:var(--verde-c);}
+.benef-item-inputs{display:grid;grid-template-columns:80px 18px 110px 24px;align-items:center;gap:4px;}
+.benef-inp{padding:8px 8px;border:1.5px solid var(--gris-c);border-radius:var(--rs);font-family:'DM Mono',monospace;font-size:12px;outline:none;text-align:right;width:100%;}
+.benef-inp:focus{border-color:var(--verde-c);}
+.benef-inp-pct{border-color:var(--verde-c);}
+.benef-del{background:none;border:none;cursor:pointer;color:var(--gris-m);font-size:16px;padding:0;transition:color .2s;align-self:center;}
+.benef-del:hover{color:#C62828;}
+.btn-add-benef{background:none;border:1.5px dashed var(--verde-c);border-radius:var(--rs);color:var(--verde-c);font-family:'Sora',sans-serif;font-size:12px;font-weight:600;padding:7px;cursor:pointer;width:100%;transition:all .2s;}
+.btn-add-benef:hover{background:#C8E6C9;}
+.benef-subtotal{font-size:12px;font-weight:600;color:var(--verde);text-align:right;margin-top:4px;}
+/* ── Contado dual input ── */
+.contado-box{background:var(--dorado-s);border-radius:var(--rs);padding:12px 14px;margin-bottom:12px;border:1.5px solid var(--dorado);}
+.contado-title{font-size:11px;font-weight:700;color:#7C5800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+/* ── Breakdown panel ── */
+.breakdown-panel{background:var(--azul-s);border-radius:var(--rs);padding:14px 16px;margin-bottom:12px;border:1.5px solid #90CAF9;}
+.breakdown-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:4px 0;}
+.breakdown-row.separator{border-top:1px solid #90CAF9;margin-top:6px;padding-top:8px;}
+.breakdown-row.total{font-weight:700;font-size:14px;color:var(--azul);}
+.breakdown-row.total .bd-val{font-family:'DM Mono',monospace;font-size:15px;}
+.breakdown-lbl{color:var(--gris);}
+.breakdown-lbl.indent{padding-left:12px;color:#555;}
+.bd-val{font-family:'DM Mono',monospace;font-weight:600;color:var(--gris);}
+.bd-val.neg{color:var(--naranja);}
+.bd-val.pos{color:var(--verde);}
+.bd-val.blue{color:var(--azul);}
+/* ── pct bar (stacked for breakdown) ── */
+.stack-bar{height:12px;border-radius:8px;overflow:hidden;display:flex;margin:8px 0 4px;background:var(--gris-c);}
+.stack-seg{height:100%;transition:width .3s;}
+.stack-seg.s-benef{background:#2E7D32;}
+.stack-seg.s-cont{background:#F9A825;}
+.stack-seg.s-fin{background:#0D47A1;}
+.stack-bar-labels{display:flex;gap:12px;font-size:10px;font-weight:600;flex-wrap:wrap;}
+.stack-bar-labels span{display:flex;align-items:center;gap:4px;}
+.stack-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+/* ── Tab2 split ── */
+.split-box{background:var(--gris-c);border-radius:var(--rs);padding:12px 14px;margin-bottom:10px;}
+.split-title{font-size:11px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+/* ── Pct bar total indicator ── */
+.pct-total-ok{color:var(--verde-c);font-weight:700;font-size:12px;text-align:center;margin-top:4px;}
+.pct-total-over{color:var(--naranja);font-weight:700;font-size:12px;text-align:center;margin-top:4px;}
 </style>
 </head>
 <body>
@@ -178,25 +260,63 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
         </div>
         <div class="fg">
           <label>Valor Matrícula</label>
-          <div class="ipfx"><span>$</span><input type="number" id="mat1" placeholder="0" min="0" step="100" oninput="fmtLbl('mat1')"></div>
+          <div class="ipfx"><span>$</span><input type="number" id="mat1" placeholder="0" min="0" step="100" oninput="fmtLbl('mat1');recalcAll(1);"></div>
           <div class="sub-l" id="mat1-lbl"></div>
         </div>
-        <div class="fg">
-          <label>% a Financiar (Corto Plazo)</label>
-          <div class="ipfx"><input type="number" id="pct1" placeholder="80" min="1" max="100" value="80" oninput="actualizarAportes(1)"><span>%</span></div>
-          <div class="sub-l" id="pct1-info"></div>
+
+        <div class="benef-box">
+          <div class="benef-title">🎁 Beneficios / Descuentos</div>
+          <div class="benef-items" id="benef-items-1"></div>
+          <button class="btn-add-benef" onclick="addBenef(1)">+ Agregar beneficio o descuento</button>
+          <div class="benef-subtotal" id="benef-subtotal-1"></div>
         </div>
-        <div class="fg">
-          <label>% Cuota Inicial (Contado)</label>
-          <div class="ipfx"><input type="number" id="cont1" placeholder="0" min="0" max="99" value="0" oninput="actualizarAportes(1)"><span>%</span></div>
-          <div class="sub-l" id="cont1-info"></div>
+        <div class="contado-box">
+          <div class="contado-title">💵 Pago de Contado / Cuota Inicial</div>
+          <div class="dual-row">
+            <div class="ipfx" style="border-color:var(--dorado);">
+              <input type="number" id="cont1-pct" placeholder="0" min="0" max="100" step="0.1" value="50"
+                oninput="syncContadoFromPct(1)"><span>%</span>
+            </div>
+            <div class="dual-sep">↔</div>
+            <div class="ipfx" style="border-color:var(--dorado);">
+              <span>$</span><input type="number" id="cont1-val" placeholder="0" min="0" step="1000"
+                oninput="syncContadoFromVal(1)">
+            </div>
+          </div>
+        </div>
+        <div class="breakdown-panel" id="breakdown-1" style="display:none;">
+          <div class="breakdown-row">
+            <span class="breakdown-lbl">📋 Matrícula bruta</span>
+            <span class="bd-val" id="bd-mat-1">—</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-lbl indent">- Beneficios/Descuentos</span>
+            <span class="bd-val neg" id="bd-benef-1">—</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-lbl indent">- Pago de Contado</span>
+            <span class="bd-val neg" id="bd-cont-1">—</span>
+          </div>
+          <div class="breakdown-row separator total">
+            <span class="breakdown-lbl">= Monto Financiado</span>
+            <span class="bd-val blue" id="bd-fin-1">—</span>
+          </div>
+          <div class="stack-bar" id="sbar-1">
+            <div class="stack-seg s-benef" id="sb-benef-1" style="width:0%"></div>
+            <div class="stack-seg s-cont"  id="sb-cont-1"  style="width:25%"></div>
+            <div class="stack-seg s-fin"   id="sb-fin-1"   style="width:75%"></div>
+          </div>
+          <div class="stack-bar-labels">
+            <span><span class="stack-dot" style="background:#2E7D32"></span><span id="sbl-benef-1">Beneficios</span></span>
+            <span><span class="stack-dot" style="background:#F9A825"></span><span id="sbl-cont-1">Contado</span></span>
+            <span><span class="stack-dot" style="background:#0D47A1"></span><span id="sbl-fin-1">Financiado</span></span>
+          </div>
         </div>
 
         <div class="fg">
           <label>Número de Meses</label>
           <div class="ipfx"><input type="number" id="plazo1" placeholder="6" min="1" value="6"><span>meses</span></div>
         </div>
-
         <div class="fg">
           <label>Tasa de Interés (Mes Vencido)</label>
           <div class="tasa-row">
@@ -204,12 +324,10 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
             <div class="tasa-badge"><div><small>Equiv. Anual</small><span id="ta1">19.56%</span></div><span>📈</span></div>
           </div>
         </div>
-
         <div class="info-box" id="garantisa1-info">
           <strong>Aporte Garantisa (calculado automáticamente)</strong>
           <span id="garantisa1-val">—</span>
         </div>
-
         <div id="btn-idiomas-1" class="idiomas-btn" style="display:none;" onclick="abrirIdiomas(1)">
           <div class="idiomas-icon">🌐</div>
           <div class="idiomas-text">
@@ -218,12 +336,14 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
           </div>
           <div class="idiomas-cta">Simular también →</div>
         </div>
-
         <button class="btn-calc" onclick="calcular1()">Calcular Crédito →</button>
+        <button class="btn-clear" onclick="limpiarTab(1)">🗑️ Limpiar / Nueva simulación</button>
       </div>
     </div>
     <div id="res1"><div class="card" style="text-align:center;padding:60px 24px;color:var(--gris-m);"><div style="font-size:48px;margin-bottom:16px;opacity:.3;">📊</div><p style="font-size:14px;">Completa los datos y presiona <strong>Calcular Crédito</strong></p></div></div>
   </div>
+  <!-- Escenarios Tab 1 -->
+  <div id="esc-panel-1" class="esc-panel" style="display:none;"></div>
 </div>
 
 <!-- TAB 2 -->
@@ -231,7 +351,7 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
   <div class="two-col">
     <div>
       <div class="card">
-        <div class="card-title">Datos del Crédito Mixto</div>
+        <div class="card-title">Crédito Mixto</div>
         <div id="alert2" class="alert"></div>
 
         <div class="fg">
@@ -258,24 +378,89 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
         </div>
         <div class="fg">
           <label>Valor Matrícula</label>
-          <div class="ipfx"><span>$</span><input type="number" id="mat2" placeholder="0" min="0" step="100" oninput="fmtLbl('mat2');actualizarAportes(2)"></div>
+          <div class="ipfx"><span>$</span><input type="number" id="mat2" placeholder="0" min="0" step="100" oninput="fmtLbl('mat2');recalcAll(2);"></div>
           <div class="sub-l" id="mat2-lbl"></div>
         </div>
 
-        <div class="row2">
-          <div class="fg">
-            <label>% Corto Plazo</label>
-            <div class="ipfx"><input type="number" id="pctCP" placeholder="30" min="0" max="99" value="30" oninput="actualizarAportes(2)"><span>%</span></div>
-          </div>
-          <div class="fg">
-            <label>% Largo Plazo</label>
-            <div class="ipfx"><input type="number" id="pctLP" placeholder="20" min="0" max="99" value="20" oninput="actualizarAportes(2)"><span>%</span></div>
+        <div class="benef-box">
+          <div class="benef-title">🎁 Beneficios / Descuentos</div>
+          <div class="benef-items" id="benef-items-2"></div>
+          <button class="btn-add-benef" onclick="addBenef(2)">+ Agregar beneficio o descuento</button>
+          <div class="benef-subtotal" id="benef-subtotal-2"></div>
+        </div>
+        <div class="contado-box">
+          <div class="contado-title">💵 Pago de Contado / Cuota Inicial</div>
+          <div class="dual-row">
+            <div class="ipfx" style="border-color:var(--dorado);">
+              <input type="number" id="cont2-pct" placeholder="0" min="0" max="100" step="0.1" value="50"
+                oninput="syncContadoFromPct(2)"><span>%</span>
+            </div>
+            <div class="dual-sep">↔</div>
+            <div class="ipfx" style="border-color:var(--dorado);">
+              <span>$</span><input type="number" id="cont2-val" placeholder="0" min="0" step="1000"
+                oninput="syncContadoFromVal(2)">
+            </div>
           </div>
         </div>
-        <div class="fg">
-          <label>% Cuota Inicial (Contado)</label>
-          <div class="ipfx"><input type="number" id="cont2" placeholder="50" min="0" max="99" value="50" oninput="actualizarAportes(2)"><span>%</span></div>
-          <div class="sub-l" id="dist2-info"></div>
+        <div class="breakdown-panel" id="breakdown-2" style="display:none;">
+          <div class="breakdown-row">
+            <span class="breakdown-lbl">📋 Matrícula bruta</span>
+            <span class="bd-val" id="bd-mat-2">—</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-lbl indent">- Beneficios/Descuentos</span>
+            <span class="bd-val neg" id="bd-benef-2">—</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-lbl indent">- Pago de Contado</span>
+            <span class="bd-val neg" id="bd-cont-2">—</span>
+          </div>
+          <div class="breakdown-row separator total">
+            <span class="breakdown-lbl">= Monto Financiado</span>
+            <span class="bd-val blue" id="bd-fin-2">—</span>
+          </div>
+          <div class="stack-bar" id="sbar-2">
+            <div class="stack-seg s-benef" id="sb-benef-2" style="width:0%"></div>
+            <div class="stack-seg s-cont"  id="sb-cont-2"  style="width:25%"></div>
+            <div class="stack-seg s-fin"   id="sb-fin-2"   style="width:75%"></div>
+          </div>
+          <div class="stack-bar-labels">
+            <span><span class="stack-dot" style="background:#2E7D32"></span><span id="sbl-benef-2">Beneficios</span></span>
+            <span><span class="stack-dot" style="background:#F9A825"></span><span id="sbl-cont-2">Contado</span></span>
+            <span><span class="stack-dot" style="background:#0D47A1"></span><span id="sbl-fin-2">Financiado</span></span>
+          </div>
+        </div>
+
+        <div class="split-box">
+          <div class="split-title">✂️ División CP / LP (sobre monto financiado)</div>
+
+          <div class="fg" style="margin-bottom:10px;">
+            <label style="color:var(--azul);">🔵 % / $ Corto Plazo</label>
+            <div class="dual-row">
+              <div class="ipfx" style="border-color:var(--azul);">
+                <input type="number" id="pctCP" placeholder="40" min="0" max="100" step="0.1" value="40" oninput="syncSplitFromPct('CP')"><span>%</span>
+              </div>
+              <div class="dual-sep">↔</div>
+              <div class="ipfx" style="border-color:var(--azul);">
+                <span>$</span><input type="number" id="finvalCP" placeholder="0" min="0" step="1000" oninput="syncSplitFromVal('CP')">
+              </div>
+            </div>
+          </div>
+
+          <div class="fg" style="margin-bottom:8px;">
+            <label style="color:var(--verde-c);">🟢 % / $ Largo Plazo</label>
+            <div class="dual-row">
+              <div class="ipfx" style="border-color:var(--verde-c);">
+                <input type="number" id="pctLP" placeholder="60" min="0" max="100" step="0.1" value="60" oninput="syncSplitFromPct('LP')"><span>%</span>
+              </div>
+              <div class="dual-sep">↔</div>
+              <div class="ipfx" style="border-color:var(--verde-c);">
+                <span>$</span><input type="number" id="finvalLP" placeholder="0" min="0" step="1000" oninput="syncSplitFromVal('LP')">
+              </div>
+            </div>
+          </div>
+
+          <div id="split-total-2" class="pct-total-ok" style="display:none;"></div>
         </div>
 
         <div class="fg">
@@ -292,21 +477,16 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
             <label>Número de Meses</label>
             <div class="ipfx" style="border-color:var(--azul);"><input type="number" id="plazoCP" placeholder="6" min="1" value="6" oninput="updEqCP()" style="border:none;box-shadow:none;"><span>meses</span></div>
           </div>
-          <div class="info-box" style="margin-bottom:0;">
-            <strong>Garantisa CP (4.17%)</strong><span id="gCP-val">—</span>
-          </div>
+          <div class="info-box" style="margin-bottom:0;"><strong>Garantisa CP (4.17%)</strong><span id="gCP-val">—</span></div>
         </div>
-
         <div class="seg-box seg-lp" style="margin-top:12px;">
           <div class="seg-title">🟢 Segmento Largo Plazo</div>
           <div class="fg" style="margin-bottom:8px;">
-            <label>Plazo</label>
-            <div class="unidad-row" style="border-color:var(--verde-c);">
-              <button class="unidad-btn" id="u2lp-m" onclick="setUnidad(2,'m','lp')">Meses</button>
-              <button class="unidad-btn active" id="u2lp-a" onclick="setUnidad(2,'a','lp')">Años</button>
+            <label>Número de Meses</label>
+            <div class="ipfx" style="border-color:var(--verde-c);">
+              <input type="number" id="plazoLP" placeholder="9" min="1" max="120" value="9"
+                oninput="updEqLP()" style="border:none;box-shadow:none;"><span>meses</span>
             </div>
-            <input type="number" id="plazoLP" placeholder="3" min="1" max="120" value="3" oninput="updEqLP()">
-            <div class="sub-l" id="eqLP">Equivale a 36 meses</div>
           </div>
           <div class="info-box" style="background:var(--verde-s);color:var(--verde-c);margin-bottom:0;">
             <strong style="color:var(--verde-c);">Garantisa LP (2.86%)</strong><span id="gLP-val">—</span>
@@ -321,12 +501,14 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
           </div>
           <div class="idiomas-cta">Simular también →</div>
         </div>
-
         <button class="btn-calc" style="margin-top:14px;" onclick="calcular2()">Calcular Crédito Mixto →</button>
+        <button class="btn-clear" onclick="limpiarTab(2)">🗑️ Limpiar / Nueva simulación</button>
       </div>
     </div>
     <div id="res2"><div class="card" style="text-align:center;padding:60px 24px;color:var(--gris-m);"><div style="font-size:48px;margin-bottom:16px;opacity:.3;">🔀</div><p style="font-size:14px;">Completa los datos y presiona <strong>Calcular Crédito Mixto</strong></p></div></div>
   </div>
+  <!-- Escenarios Tab 2 -->
+  <div id="esc-panel-2" class="esc-panel" style="display:none;"></div>
 </div>
 
 <!-- TAB 3 -->
@@ -361,18 +543,59 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
         </div>
         <div class="fg">
           <label>Valor Matrícula</label>
-          <div class="ipfx"><span>$</span><input type="number" id="mat3" placeholder="0" min="0" step="100" oninput="fmtLbl('mat3')"></div>
+          <div class="ipfx"><span>$</span><input type="number" id="mat3" placeholder="0" min="0" step="100" oninput="fmtLbl('mat3');recalcAll(3);"></div>
           <div class="sub-l" id="mat3-lbl"></div>
         </div>
-        <div class="fg">
-          <label>% a Financiar</label>
-          <div class="ipfx"><input type="number" id="pct3" placeholder="100" min="1" max="100" value="100"><span>%</span></div>
-          <div class="sub-l" id="pct3-info"></div>
+
+        <div class="benef-box">
+          <div class="benef-title">🎁 Beneficios / Descuentos</div>
+          <div class="benef-items" id="benef-items-3"></div>
+          <button class="btn-add-benef" onclick="addBenef(3)">+ Agregar beneficio o descuento</button>
+          <div class="benef-subtotal" id="benef-subtotal-3"></div>
         </div>
-        <div class="fg">
-          <label>% Cuota Inicial (Contado)</label>
-          <div class="ipfx"><input type="number" id="cont3" placeholder="0" min="0" max="99" value="0"><span>%</span></div>
+        <div class="contado-box">
+          <div class="contado-title">💵 Pago de Contado / Cuota Inicial</div>
+          <div class="dual-row">
+            <div class="ipfx" style="border-color:var(--dorado);">
+              <input type="number" id="cont3-pct" placeholder="0" min="0" max="100" step="0.1" value="50"
+                oninput="syncContadoFromPct(3)"><span>%</span>
+            </div>
+            <div class="dual-sep">↔</div>
+            <div class="ipfx" style="border-color:var(--dorado);">
+              <span>$</span><input type="number" id="cont3-val" placeholder="0" min="0" step="1000"
+                oninput="syncContadoFromVal(3)">
+            </div>
+          </div>
         </div>
+        <div class="breakdown-panel" id="breakdown-3" style="display:none;">
+          <div class="breakdown-row">
+            <span class="breakdown-lbl">📋 Matrícula bruta</span>
+            <span class="bd-val" id="bd-mat-3">—</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-lbl indent">- Beneficios/Descuentos</span>
+            <span class="bd-val neg" id="bd-benef-3">—</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-lbl indent">- Pago de Contado</span>
+            <span class="bd-val neg" id="bd-cont-3">—</span>
+          </div>
+          <div class="breakdown-row separator total">
+            <span class="breakdown-lbl">= Monto Financiado</span>
+            <span class="bd-val blue" id="bd-fin-3">—</span>
+          </div>
+          <div class="stack-bar" id="sbar-3">
+            <div class="stack-seg s-benef" id="sb-benef-3" style="width:0%"></div>
+            <div class="stack-seg s-cont"  id="sb-cont-3"  style="width:25%"></div>
+            <div class="stack-seg s-fin"   id="sb-fin-3"   style="width:75%"></div>
+          </div>
+          <div class="stack-bar-labels">
+            <span><span class="stack-dot" style="background:#2E7D32"></span><span id="sbl-benef-3">Beneficios</span></span>
+            <span><span class="stack-dot" style="background:#F9A825"></span><span id="sbl-cont-3">Contado</span></span>
+            <span><span class="stack-dot" style="background:#0D47A1"></span><span id="sbl-fin-3">Financiado</span></span>
+          </div>
+        </div>
+
         <div class="fg">
           <label>Número de Meses</label>
           <div class="ipfx" style="border-color:#7B1FA2;"><input type="number" id="plazo3" placeholder="12" min="1" value="12"><span>meses</span></div>
@@ -389,7 +612,6 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
           <div class="ipfx"><span>$</span><input type="number" id="cargos3" placeholder="0" min="0" step="1000" value="0"></div>
           <div class="sub-l">Estudio de crédito, seguro, etc.</div>
         </div>
-
         <div id="btn-idiomas-3" class="idiomas-btn" style="display:none;" onclick="abrirIdiomas(3)">
           <div class="idiomas-icon">🌐</div>
           <div class="idiomas-text">
@@ -398,12 +620,14 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
           </div>
           <div class="idiomas-cta">Simular también →</div>
         </div>
-
         <button class="btn-calc" style="background:linear-gradient(90deg,#6A1B9A 0%,#7B1FA2 100%);box-shadow:0 4px 14px rgba(106,27,154,.25);" onclick="calcular3()">Calcular Crédito →</button>
+        <button class="btn-clear" onclick="limpiarTab(3)">🗑️ Limpiar / Nueva simulación</button>
       </div>
     </div>
     <div id="res3"><div class="card" style="text-align:center;padding:60px 24px;color:var(--gris-m);"><div style="font-size:48px;margin-bottom:16px;opacity:.3;">🏦</div><p style="font-size:14px;">Completa los datos y presiona <strong>Calcular Crédito</strong></p></div></div>
   </div>
+  <!-- Escenarios Tab 3 -->
+  <div id="esc-panel-3" class="esc-panel" style="display:none;"></div>
 </div>
 
 
@@ -500,6 +724,7 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
 
   </div>
 </div>
+
 
 
 </main>
@@ -747,7 +972,7 @@ function filtrarProgramas(tabId) {
 [1,2,3].forEach(id => poblarProgramas(id));
 
 // Unidad state
-const unidades = { 1: 'a', '2cp': 'a', '2lp': 'a' };
+const unidades = { 1: 'm', '2cp': 'm', '2lp': 'm' };
 
 function setUnidad(tab, u, seg) {
   const key = seg ? tab+seg : String(tab);
@@ -759,25 +984,19 @@ function setUnidad(tab, u, seg) {
   } else if (seg==='cp') {
     updEqCP(); // CP plazo is meses-only, no toggle
   } else {
-    document.getElementById('u2lp-m').classList.toggle('active', u==='m');
-    document.getElementById('u2lp-a').classList.toggle('active', u==='a');
     updEqLP();
   }
 }
 
 function getMeses(plazoEl, key) {
   const v = parseInt(document.getElementById(plazoEl).value) || 0;
-  // tab1 (key='1') and plazoCP (key='2cp') are always meses
-  if (key === '1' || key === '2cp') return v;
-  return unidades[key] === 'a' ? v * 12 : v;
+  // All short-term fields are meses-only; '2lp' now also meses-only
+  return v;
 }
 
 function updEq1() { /* tab1 is meses-only, no equiv label needed */ }
 function updEqCP() { /* CP is meses-only */ }
-function updEqLP() {
-  const m = getMeses('plazoLP','2lp');
-  document.getElementById('eqLP').textContent = unidades['2lp']==='a' ? `Equivale a ${m} meses` : `${m} meses`;
-}
+function updEqLP() { /* LP is meses-only */ }
 
 function switchTab(n) {
   document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===n-1));
@@ -822,28 +1041,79 @@ function fmtLbl(id) {
 
 function actualizarAportes(tab) {
   if(tab===1) {
-    const mat = parseFloat(document.getElementById('mat1').value)||0;
-    const pct = parseFloat(document.getElementById('pct1').value)||0;
-    const cont = parseFloat(document.getElementById('cont1').value)||0;
-    const fin = mat * pct/100;
-    const gar = fin * GARANTISA_CP;
-    document.getElementById('garantisa1-val').textContent = mat>0 ? `${cop(gar)} sobre ${cop(fin)} financiado (4.17% = 3.5% + IVA)` : '—';
-    document.getElementById('pct1-info').textContent = mat>0&&pct>0 ? `Monto a financiar: ${cop(fin)}` : '';
-    document.getElementById('cont1-info').textContent = mat>0&&cont>0 ? `Cuota inicial contado: ${cop(mat*cont/100)}` : '';
+    const mat  = parseFloat(document.getElementById('mat1').value)||0;
+    const neta = getMatNeta(1);  // mat after descuentos
+    const pct  = parseFloat(document.getElementById('pct1').value)||0;
+    const fin  = neta * pct/100;
+    const gar  = fin * GARANTISA_CP;
+    const contAuto = Math.max(0, 100 - pct);
+    document.getElementById('cont1').value = contAuto;
+    const cont = contAuto;
+    // Sync $ field
+    const fvEl = document.getElementById('finval1');
+    if(fvEl && document.activeElement !== fvEl) fvEl.value = fin > 0 ? Math.round(fin) : '';
+    document.getElementById('garantisa1-val').textContent = neta>0 ? `${cop(gar)} sobre ${cop(fin)} financiado (4.17% = 3.5% + IVA)` : '—';
+    document.getElementById('pct1-info').textContent = neta>0&&pct>0 ? `Monto a financiar: ${cop(fin)} (base neta: ${cop(neta)})` : '';
+    document.getElementById('cont1-info').textContent = neta>0&&cont>0 ? `Cuota inicial contado: ${cop(neta*cont/100)}` : '';
     const total = pct + cont;
+    const finW = Math.min(pct,100), ctW = Math.min(cont, Math.max(0,100-pct));
+    document.getElementById('pb1-fin').style.width = finW+'%';
+    document.getElementById('pb1-ct').style.width  = ctW+'%';
+    document.getElementById('pb1-fin-lbl').textContent = `Financiado ${pct}%`;
+    document.getElementById('pb1-ct-lbl').textContent  = `Contado ${cont}%`;
+    const tEl = document.getElementById('pb1-total-lbl');
+    tEl.textContent = `= ${total}%`+(total===100?' ✅':total>100?' ⚠️':'');
+    tEl.className = 'pct-simple-total '+(total===100?'ok':total>100?'over':'under');
     if(total>100) showAlert(1,'⚠ La suma de % financiado + contado supera 100%');
   } else {
-    const mat = parseFloat(document.getElementById('mat2').value)||0;
-    const cp = parseFloat(document.getElementById('pctCP').value)||0;
-    const lp = parseFloat(document.getElementById('pctLP').value)||0;
-    const cont = parseFloat(document.getElementById('cont2').value)||0;
-    const finCP = mat*cp/100, finLP = mat*lp/100;
-    document.getElementById('gCP-val').textContent = mat>0 ? `${cop(finCP*GARANTISA_CP)} sobre ${cop(finCP)}` : '—';
-    document.getElementById('gLP-val').textContent = mat>0 ? `${cop(finLP*GARANTISA_LP)} sobre ${cop(finLP)}` : '—';
+    const mat  = parseFloat(document.getElementById('mat2').value)||0;
+    const neta = getMatNeta(2);
+    const cp   = parseFloat(document.getElementById('pctCP').value)||0;
+    const lp   = parseFloat(document.getElementById('pctLP').value)||0;
+    const contAuto = Math.max(0, 100 - cp - lp);
+    document.getElementById('cont2').value = contAuto;
+    const cont = contAuto;
+    const finCP = neta*cp/100, finLP = neta*lp/100;
+    // Sync $ fields for CP and LP
+    const fcpEl = document.getElementById('finvalCP');
+    const flpEl = document.getElementById('finvalLP');
+    if(fcpEl && document.activeElement!==fcpEl) fcpEl.value = finCP>0 ? Math.round(finCP) : '';
+    if(flpEl && document.activeElement!==flpEl) flpEl.value = finLP>0 ? Math.round(finLP) : '';
+    document.getElementById('gCP-val').textContent = neta>0 ? `${cop(finCP*GARANTISA_CP)} sobre ${cop(finCP)}` : '—';
+    document.getElementById('gLP-val').textContent = neta>0 ? `${cop(finLP*GARANTISA_LP)} sobre ${cop(finLP)}` : '—';
     const total = cp+lp+cont;
-    document.getElementById('dist2-info').textContent = mat>0 ? `Distribución: CP ${cop(finCP)} | LP ${cop(finLP)} | Contado ${cop(mat*cont/100)} | Total ${total}%` : '';
-    if(total>100) showAlert(2,'⚠ La suma de CP + LP + Contado supera 100%');
+    document.getElementById('dist2-info').textContent = neta>0 ? `CP ${cop(finCP)} | LP ${cop(finLP)} | Contado ${cop(neta*cont/100)}` : '';
+    const cpW=Math.min(cp,100), lpW=Math.min(lp,Math.max(0,100-cp)), ctW=Math.min(cont,Math.max(0,100-cp-lp));
+    document.getElementById('pb2-cp').style.width = cpW+'%';
+    document.getElementById('pb2-lp').style.width = lpW+'%';
+    document.getElementById('pb2-ct').style.width = ctW+'%';
+    document.getElementById('pb2-cp-lbl').textContent = `CP ${cp}%`;
+    document.getElementById('pb2-lp-lbl').textContent = `LP ${lp}%`;
+    document.getElementById('pb2-ct-lbl').textContent = `Contado ${cont}%`;
+    const tEl = document.getElementById('pb2-total');
+    tEl.textContent = `= ${total}%`+(total===100?' ✅':total>100?' ⚠️':'');
+    tEl.className = 'pct-bar-total '+(total===100?'ok':total>100?'over':'under');
+    if(total>100) showAlert(2,'⚠ La suma de CP + LP supera 100%');
   }
+}
+
+function actualizarPctBar3() {
+  const neta = getMatNeta(3);
+  const pct  = parseFloat(document.getElementById('pct3').value)||0;
+  const contAuto = Math.max(0, 100 - pct);
+  document.getElementById('cont3').value = contAuto;
+  const fin = neta * pct/100;
+  // Sync $ field
+  const fvEl = document.getElementById('finval3');
+  if(fvEl && document.activeElement!==fvEl) fvEl.value = fin>0 ? Math.round(fin) : '';
+  const total = pct + contAuto;
+  document.getElementById('pb3-fin').style.width = Math.min(pct,100)+'%';
+  document.getElementById('pb3-ct').style.width  = Math.min(contAuto,Math.max(0,100-pct))+'%';
+  document.getElementById('pb3-fin-lbl').textContent = `Financiado ${pct}%`;
+  document.getElementById('pb3-ct-lbl').textContent  = `Contado ${contAuto}%`;
+  const tEl = document.getElementById('pb3-total-lbl');
+  tEl.textContent = `= ${total}%`+(total===100?' ✅':total>100?' ⚠️':'');
+  tEl.className = 'pct-simple-total '+(total===100?'ok':total>100?'over':'under');
 }
 
 function showAlert(id,msg){ const el=document.getElementById('alert'+id); el.textContent=msg; el.style.display='block'; setTimeout(()=>el.style.display='none',5000); }
@@ -870,32 +1140,37 @@ function renderTabla(rows,cuota,totInt,totCap){
 }
 
 function calcular1(){
-  const mat=parseFloat(document.getElementById('mat1').value);
-  const pct=parseFloat(document.getElementById('pct1').value)/100;
-  const cont=parseFloat(document.getElementById('cont1').value)||0;
+  const mat=getMat(1);
   const tm=parseFloat(document.getElementById('tasa1').value)/100;
   const n=getMeses('plazo1','1');
+  const financiado=getFinanciado(1);
+  const cuotaInicial=getContadoVal(1);
+  const pct=mat>0?Math.round((financiado/mat)*1000)/10:0;
 
   if(!mat||mat<=0) return showAlert(1,'Ingresa el valor de matrícula.');
-  if(!pct||pct<=0) return showAlert(1,'Ingresa el porcentaje a financiar.');
+  if(financiado<=0) return showAlert(1,'El monto financiado es cero. Revisa beneficios y pago de contado.');
   if(!n||n<=0) return showAlert(1,'Ingresa el plazo de amortización.');
   if(isNaN(tm)) return showAlert(1,'Ingresa la tasa de interés.');
-  if((pct*100)+(cont)>100) return showAlert(1,'La suma de financiado + contado supera 100%.');
 
-  const financiado = mat*pct;
-  const garantisa = financiado*GARANTISA_CP;   // se cobra al inicio, NO entra al crédito
-  const principal = financiado;                 // el crédito es solo el monto financiado
-  const cuotaInicial = mat*cont/100;
-  const pagoInicial = cuotaInicial + garantisa; // contado + garantisa = pago al momento de desembolso
-
+  const garantisa = financiado*GARANTISA_CP;
+  const principal = financiado;
+  const pagoInicial = cuotaInicial + garantisa;
   const {rows,cuota,totInt,totCap} = amortizacion(principal,tm,n);
   const totalPagar = totCap+totInt;
   const totalGeneral = pagoInicial + totalPagar;
 
-  window._d1 = {rows,cuota,totInt,totCap,principal,financiado,garantisa,mat,n,tm,cuotaInicial,pagoInicial,totalGeneral};
+  const _prog1 = document.getElementById('prog1');
+  const _prog1Nombre = _prog1.options[_prog1.selectedIndex]?.textContent?.replace(/ \(.*\)$/,'') || 'Programa';
+  const _benef1snap = _benefs[1].map(b=>({nombre:b.nombre||'Descuento',val:b.val||0,pct:b.pct||0}));
+  const _benef1total = getTotalBeneficios(1);
+  const _matNeta1 = Math.max(0, mat - _benef1total);
+  window._d1 = {rows,cuota,totInt,totCap,principal,financiado,garantisa,mat,n,tm,cuotaInicial,pagoInicial,totalGeneral,
+    progNombre:_prog1Nombre, pct:Math.round(pct*10)/10,
+    beneficios:_benef1snap, benefTotal:_benef1total, matNeta:_matNeta1};
 
   document.getElementById('res1').innerHTML=`
   <div class="card">
+    ${fechaBadgeHtml()}
     <div class="card-title">Resumen Financiero — Corto Plazo</div>
     <div class="ssub" style="margin-top:0;margin-bottom:10px;color:var(--naranja);">💳 Pago Inicial (al momento del desembolso)</div>
     <div class="mgrid">
@@ -925,26 +1200,31 @@ function calcular1(){
       <button class="btn-exp vrd" onclick="expXLS1()">📊 Descargar Excel</button>
     </div>
   </div>`;
+  // render save btn + existing scenarios
+  setTimeout(()=>{ const p=document.getElementById('esc-panel-1'); if(p){ const sb=document.createElement('div'); sb.style='margin-top:14px;'; sb.innerHTML=`<button class="btn-esc-save" onclick="guardarEscenario(1)">💾 Guardar como escenario para comparar</button>`; document.getElementById('res1').querySelector('.card').appendChild(sb); } renderEscenarios(1); },50);
 }
 
 function calcular2(){
-  const mat=parseFloat(document.getElementById('mat2').value);
+  const mat=getMat(2);
   const pCP=parseFloat(document.getElementById('pctCP').value)||0;
   const pLP=parseFloat(document.getElementById('pctLP').value)||0;
-  const cont=parseFloat(document.getElementById('cont2').value)||0;
   const tm=parseFloat(document.getElementById('tasa2').value)/100;
   const nCP=getMeses('plazoCP','2cp');
   const nLP=getMeses('plazoLP','2lp');
+  const finTotal=getFinanciado(2);
+  const cuotaInicial=getContadoVal(2);
 
   if(!mat||mat<=0) return showAlert(2,'Ingresa el valor de matrícula.');
-  if(pCP+pLP<=0) return showAlert(2,'Ingresa al menos un porcentaje (CP o LP).');
-  if(pCP+pLP+cont>100) return showAlert(2,'La suma de CP + LP + Contado supera 100%.');
+  if(finTotal<=0) return showAlert(2,'El monto financiado es cero. Revisa beneficios y pago de contado.');
+  if(pCP+pLP<=0) return showAlert(2,'Define al menos un tramo (CP o LP).');
+  if(pCP+pLP>100) return showAlert(2,'La suma CP + LP supera 100% del monto financiado.');
+  if(Math.abs(pCP+pLP-100)>0.1) { showAlert(2,'⚠ CP + LP = '+(pCP+pLP).toFixed(1)+'% del financiado (debería sumar 100%). El cálculo continuará con los valores ingresados.'); }
   if(pCP>0&&(!nCP||nCP<=0)) return showAlert(2,'Ingresa el plazo para Corto Plazo.');
   if(pLP>0&&(!nLP||nLP<=0)) return showAlert(2,'Ingresa el plazo para Largo Plazo.');
 
-  const finCP=mat*pCP/100, finLP=mat*pLP/100, cuotaInicial=mat*cont/100;
+  // CP/LP are now % of finTotal (not of mat)
+  const finCP=finTotal*pCP/100, finLP=finTotal*pLP/100;
   const garCP=finCP*GARANTISA_CP, garLP=finLP*GARANTISA_LP;
-  // Garantisa va al pago inicial, crédito es solo el monto financiado
   const princCP=finCP, princLP=finLP;
   const pagoInicial = cuotaInicial + garCP + garLP;
 
@@ -952,14 +1232,21 @@ function calcular2(){
   if(pCP>0) CP=amortizacion(princCP,tm,nCP);
   if(pLP>0) LP=amortizacion(princLP,tm,nLP);
 
-  window._d2={CP,LP,mat,finCP,finLP,garCP,garLP,princCP,princLP,nCP,nLP,tm,cuotaInicial,pagoInicial,pCP,pLP};
+  const _prog2 = document.getElementById('prog2');
+  const _prog2Nombre = _prog2.options[_prog2.selectedIndex]?.textContent?.replace(/ \(.*\)$/,'') || 'Programa';
+  const _benef2snap = _benefs[2].map(b=>({nombre:b.nombre||'Descuento',val:b.val||0,pct:b.pct||0}));
+  const _benef2total = getTotalBeneficios(2);
+  const _matNeta2 = Math.max(0, mat - _benef2total);
+  window._d2={CP,LP,mat,finCP,finLP,garCP,garLP,princCP,princLP,nCP,nLP,tm,cuotaInicial,pagoInicial,pCP,pLP,
+    progNombre:_prog2Nombre,
+    beneficios:_benef2snap, benefTotal:_benef2total, matNeta:_matNeta2};
 
   const totCP=CP?(CP.totCap+CP.totInt):0;
   const totLP=LP?(LP.totCap+LP.totInt):0;
   const totCredito=totCP+totLP;
   const totGeneral=pagoInicial+totCredito;
 
-  let html=`<div class="card"><div class="card-title">Resultados Crédito Mixto</div>`;
+  let html=`<div class="card">${fechaBadgeHtml()}<div class="card-title">Resultados Crédito Mixto</div>`;
 
   // Bloque pago inicial
   html+=`<div class="ssub" style="margin-top:0;margin-bottom:10px;color:var(--naranja);">💳 Pago Inicial (al momento del desembolso)</div>
@@ -1012,6 +1299,7 @@ function calcular2(){
   </div></div>`;
 
   document.getElementById('res2').innerHTML=html;
+  setTimeout(()=>{ const p=document.getElementById('esc-panel-2'); if(p){ const sb=document.createElement('div'); sb.style='margin-top:14px;'; sb.innerHTML=`<button class="btn-esc-save" onclick="guardarEscenario(2)">💾 Guardar como escenario para comparar</button>`; document.getElementById('res2').querySelector('.card').appendChild(sb); } renderEscenarios(2); },50);
 
   if(CP&&LP){
     setTimeout(()=>{
@@ -1034,45 +1322,72 @@ function calcular2(){
 }
 
 // ---- EXPORTS ----
+
+function pdfBenefSection(doc, y, mat, beneficios, benefTotal, matNeta, cuotaInicial) {
+  // Breakdown: mat → beneficios → contado → financiado
+  if(beneficios && beneficios.length > 0) {
+    y = pdfSectionBar(doc, 'BENEFICIOS / DESCUENTOS APLICADOS', y, [46,125,50]);
+    doc.setFont('helvetica','bold'); doc.text('Valor Matrícula Bruta:', 16, y);
+    doc.setFont('helvetica','normal'); doc.text(cop(mat), 150, y, {align:'right'}); y+=7;
+    beneficios.forEach(b => {
+      if((b.val||0) > 0) {
+        const label = (b.nombre||'Descuento').substring(0,35);
+        doc.setFont('helvetica','normal'); doc.text('  - '+label+':', 16, y);
+        doc.setFont('helvetica','bold'); doc.setTextColor(46,125,50);
+        doc.text('-'+cop(b.val)+(mat>0?' ('+b.pct.toFixed(1)+'%)':''), 150, y, {align:'right'});
+        doc.setTextColor(0,0,0); y+=6;
+      }
+    });
+    doc.setFont('helvetica','bold'); doc.text('= Matrícula Neta:', 16, y);
+    doc.text(cop(matNeta), 150, y, {align:'right'}); y+=7;
+  }
+  return y;
+}
 function expPDF1(){
   const d=window._d1; if(!d)return;
   const {jsPDF}=window.jspdf; const doc=new jsPDF();
-  doc.setFont('helvetica','bold'); doc.setFontSize(16);
-  doc.text('Simulador de Crédito Educativo',14,18);
-  doc.setFont('helvetica','normal'); doc.setFontSize(11);
-  doc.text('Crédito a Corto Plazo',14,27);
-  doc.setDrawColor(13,71,161); doc.line(14,30,196,30);
-  let y=38;
-  doc.setFont('helvetica','bold'); doc.text('INFORMACIÓN GENERAL',14,y); y+=8;
-  doc.setFont('helvetica','bold'); doc.text('Valor Matrícula:',16,y); doc.setFont('helvetica','normal'); doc.text(cop(d.mat),110,y); y+=7;
-  y+=4; doc.setFont('helvetica','bold'); doc.text('PAGO INICIAL (al desembolso)',14,y); y+=8;
-  const pi=[['Cuota Inicial Contado',cop(d.cuotaInicial)],['Garantisa 4.17% s/financiado',cop(d.garantisa)],['Total Pago Inicial',cop(d.pagoInicial)]];
-  pi.forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,110,y); y+=7; });
-  y+=4; doc.setFont('helvetica','bold'); doc.text('CRÉDITO A AMORTIZAR',14,y); y+=8;
-  const cr=[['Monto Financiado',cop(d.financiado)],['Cuota Mensual',cop(d.cuota)],['Total Intereses',cop(d.totInt)],['Total Crédito',cop(d.totCap+d.totInt)],['COSTO TOTAL MATRÍCULA',cop(d.totalGeneral)]];
-  cr.forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,110,y); y+=7; });
-  y+=6; doc.setFont('helvetica','bold'); doc.text('Tabla de Amortización',14,y); y+=8;
+  let y=pdfHeader(doc,'Crédito a Corto Plazo', (d.progNombre||'')+(d.pct?' — '+d.pct+'% financiado':''));
+  y=addFechaToDoc(doc,y); y+=2;
+  y=pdfBenefSection(doc,y,d.mat,d.beneficios||[],d.benefTotal||0,d.matNeta||d.mat,d.cuotaInicial);
+  y+=2; y=pdfSectionBar(doc,'PAGO INICIAL — al momento del desembolso',y);
+  const pi=[
+    ...(d.benefTotal>0?[['Matrícula Neta (después descuentos)',cop(d.matNeta||d.mat)]]:
+                      [['Valor Matrícula',cop(d.mat)]]),
+    ['Pago de Contado',cop(d.cuotaInicial)],
+    ['Garantisa 4.17% s/financiado',cop(d.garantisa)],
+    ['Total Pago Inicial',cop(d.pagoInicial)]];
+  pi.forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,150,y,{align:'right'}); y+=7; });
+  y+=2; y=pdfSectionBar(doc,'CRÉDITO A AMORTIZAR',y);
+  const cr=[['Monto Financiado',cop(d.financiado)+'  ('+d.pct+'% de matrícula)'],['Cuota Mensual',cop(d.cuota)],['Total Intereses',cop(d.totInt)],['Total Crédito',cop(d.totCap+d.totInt)],['COSTO TOTAL MATRÍCULA',cop(d.totalGeneral)]];
+  cr.forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,150,y,{align:'right'}); y+=7; });
+  y=pdfCostoFootnote(doc,y);
+  y+=2; y=pdfSectionBar(doc,'TABLA DE AMORTIZACIÓN',y);
   const hw=['#','Cuota','Capital','Interés','Saldo'], cw=[14,42,38,38,44];
   doc.setFillColor(13,71,161); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
   let x=14; hw.forEach((h,i)=>{doc.text(h,x+1,y);x+=cw[i];}); doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
   d.rows.forEach(r=>{ y+=7; if(y>270){doc.addPage();y=20;} x=14;
     [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(String(v),x+1,y);x+=cw[i];});
   });
-  doc.save('credito-corto-plazo.pdf');
+  const fn1 = (d.progNombre+' - '+d.pct+'%').replace(/[^a-zA-Z0-9\-_ áéíóúÁÉÍÓÚñÑ]/g,'').trim();
+  doc.save(fn1+'.pdf');
 }
 
 function expXLS1(){
   const d=window._d1; if(!d)return;
   const wb=XLSX.utils.book_new();
+  const benefRows1 = (d.beneficios||[]).filter(b=>b.val>0).map(b=>['  - '+(b.nombre||'Descuento')+' ('+b.pct.toFixed(1)+'%)',-Math.round(b.val)]);
   const ws=XLSX.utils.aoa_to_sheet([
     ['Crédito a Corto Plazo'],[''],
-    ['Valor Matrícula',Math.round(d.mat)],[''],
+    ['--- MATRÍCULA ---'],
+    ['Valor Matrícula Bruta',Math.round(d.mat)],
+    ...(benefRows1.length>0?[['--- BENEFICIOS / DESCUENTOS ---'],...benefRows1,['Total Descuentos',-Math.round(d.benefTotal||0)],['Matrícula Neta',Math.round(d.matNeta||d.mat)],['']]:
+      [['']]),
     ['--- PAGO INICIAL ---'],
-    ['Cuota Inicial Contado',Math.round(d.cuotaInicial)],
+    ['Pago de Contado',Math.round(d.cuotaInicial)],
     ['Garantisa (4.17% s/financiado)',Math.round(d.garantisa)],
     ['Total Pago Inicial',Math.round(d.pagoInicial)],[''],
     ['--- CRÉDITO ---'],
-    ['Monto Financiado',Math.round(d.financiado)],
+    ['Monto Financiado ('+d.pct+'% de matrícula)',Math.round(d.financiado)],
     ['Cuota Mensual',Math.round(d.cuota)],
     ['Total Intereses',Math.round(d.totInt)],
     ['Total Crédito',Math.round(d.totCap+d.totInt)],
@@ -1081,46 +1396,52 @@ function expXLS1(){
     ...d.rows.map(r=>[r.i,Math.round(r.cuota),Math.round(r.capital),Math.round(r.interes),Math.round(r.saldo)])
   ]);
   XLSX.utils.book_append_sheet(wb,ws,'Corto Plazo');
-  XLSX.writeFile(wb,'credito-corto-plazo.xlsx');
+  const fn1x = (d.progNombre+' - '+d.pct+'%').replace(/[^a-zA-Z0-9\-_ áéíóúÁÉÍÓÚñÑ]/g,'').trim();
+  XLSX.writeFile(wb,fn1x+'.xlsx');
 }
 
 function expPDF2(){
   const d=window._d2; if(!d)return;
   const {jsPDF}=window.jspdf; const doc=new jsPDF();
-  doc.setFont('helvetica','bold'); doc.setFontSize(16);
-  doc.text('Simulador de Crédito Educativo',14,18);
-  doc.setFont('helvetica','normal'); doc.setFontSize(11);
-  doc.text('Crédito Mixto — Corto y Largo Plazo',14,27);
-  doc.setDrawColor(13,71,161); doc.line(14,30,196,30);
-  let y=38;
-  doc.setFont('helvetica','bold'); doc.text('INFORMACIÓN GENERAL',14,y); y+=8;
-  doc.setFont('helvetica','bold'); doc.text('Valor Matrícula:',16,y); doc.setFont('helvetica','normal'); doc.text(cop(d.mat),110,y); y+=7;
-  y+=4; doc.setFont('helvetica','bold'); doc.text('PAGO INICIAL (al desembolso)',14,y); y+=8;
+  let y=pdfHeader(doc,'Crédito Mixto — Corto y Largo Plazo', (d.progNombre||'')+(d.pCP||d.pLP?' — CP'+d.pCP+'% / LP'+d.pLP+'%':''));
+  y=addFechaToDoc(doc,y); y+=2;
+  y=pdfBenefSection(doc,y,d.mat,d.beneficios||[],d.benefTotal||0,d.matNeta||d.mat,d.cuotaInicial);
+  y+=2; y=pdfSectionBar(doc,'PAGO INICIAL — al momento del desembolso',y);
   const pi=[
-    ['Cuota Inicial Contado',cop(d.cuotaInicial)],
+    ...(d.benefTotal>0?[['Matrícula Neta',cop(d.matNeta||d.mat)]]:
+                      [['Valor Matrícula',cop(d.mat)]]),
+    ['Pago de Contado',cop(d.cuotaInicial)],
     d.garCP>0?['Garantisa CP (4.17%)',cop(d.garCP)]:null,
     d.garLP>0?['Garantisa LP (2.86%)',cop(d.garLP)]:null,
     ['Total Pago Inicial',cop(d.pagoInicial)]
   ].filter(Boolean);
-  pi.forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,110,y); y+=7; });
-  y+=4;
-  if(d.CP){ doc.setFont('helvetica','bold'); doc.text('CORTO PLAZO ('+d.pCP+'%)',14,y); y+=8;
-    [['Monto Financiado CP',cop(d.finCP)],['Cuota Mensual CP',cop(d.CP.cuota)],['Total Crédito CP',cop(d.CP.totCap+d.CP.totInt)]].forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,110,y); y+=7; }); y+=4; }
-  if(d.LP){ doc.setFont('helvetica','bold'); doc.text('LARGO PLAZO ('+d.pLP+'%)',14,y); y+=8;
-    [['Monto Financiado LP',cop(d.finLP)],['Cuota Mensual LP',cop(d.LP.cuota)],['Total Crédito LP',cop(d.LP.totCap+d.LP.totInt)]].forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,110,y); y+=7; }); y+=4; }
+  pi.forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,150,y,{align:'right'}); y+=7; });
+  y+=2;
+  if(d.CP){ y=pdfSectionBar(doc,'CORTO PLAZO — '+d.pCP+'%',y);
+    [['Monto Financiado CP',cop(d.finCP)],['Cuota Mensual CP',cop(d.CP.cuota)],['Total Crédito CP',cop(d.CP.totCap+d.CP.totInt)]].forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,150,y,{align:'right'}); y+=7; }); y+=4; }
+  if(d.LP){ y=pdfSectionBar(doc,'LARGO PLAZO — '+d.pLP+'%',y,[46,125,50]);
+    [['Monto Financiado LP',cop(d.finLP)],['Cuota Mensual LP',cop(d.LP.cuota)],['Total Crédito LP',cop(d.LP.totCap+d.LP.totInt)]].forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,150,y,{align:'right'}); y+=7; }); y+=4; }
   const totCred=(d.CP?(d.CP.totCap+d.CP.totInt):0)+(d.LP?(d.LP.totCap+d.LP.totInt):0);
-  doc.setFont('helvetica','bold'); doc.text('COSTO TOTAL MATRÍCULA: '+cop(d.pagoInicial+totCred),14,y);
-  doc.save('credito-mixto.pdf');
+  y=pdfSectionBar(doc,'COSTO TOTAL MATRÍCULA',y);
+  doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.text(cop(d.pagoInicial+totCred),150,y,{align:'right'}); doc.setFontSize(11); y+=8;
+  y=pdfCostoFootnote(doc,y);
+  const fn2 = (d.progNombre+' - CP'+d.pCP+'% LP'+d.pLP+'%').replace(/[^a-zA-Z0-9\-_ áéíóúÁÉÍÓÚñÑ]/g,'').trim();
+  doc.save(fn2+'.pdf');
 }
 
 function expXLS2(){
   const d=window._d2; if(!d)return;
   const wb=XLSX.utils.book_new();
+  const benefRows2 = (d.beneficios||[]).filter(b=>b.val>0).map(b=>['  - '+(b.nombre||'Descuento')+' ('+b.pct.toFixed(1)+'%)',-Math.round(b.val)]);
   const resumen=[
     ['Crédito Mixto — Resumen'],[''],
-    ['Valor Matrícula',Math.round(d.mat)],[''],
+    ['Valor Matrícula Bruta',Math.round(d.mat)],
+    ...(benefRows2.length>0?[['--- BENEFICIOS / DESCUENTOS ---'],...benefRows2,
+      ['Total Descuentos',-Math.round(d.benefTotal||0)],
+      ['Matrícula Neta',Math.round(d.matNeta||d.mat)],['']]:
+      [['']]),
     ['--- PAGO INICIAL ---'],
-    ['Cuota Inicial Contado',Math.round(d.cuotaInicial)],
+    ['Pago de Contado',Math.round(d.cuotaInicial)],
     ['Garantisa CP (4.17%)',Math.round(d.garCP)],
     ['Garantisa LP (2.86%)',Math.round(d.garLP)],
     ['Total Pago Inicial',Math.round(d.pagoInicial)],[''],
@@ -1153,36 +1474,42 @@ function expXLS2(){
     ]);
     XLSX.utils.book_append_sheet(wb,ws,'Largo Plazo');
   }
-  XLSX.writeFile(wb,'credito-mixto.xlsx');
+  const fn2x = (d.progNombre+' - CP'+d.pCP+'% LP'+d.pLP+'%').replace(/[^a-zA-Z0-9\-_ áéíóúÁÉÍÓÚñÑ]/g,'').trim();
+  XLSX.writeFile(wb,fn2x+'.xlsx');
 }
 
 
 function calcular3(){
-  const mat=parseFloat(document.getElementById('mat3').value);
-  const pct=parseFloat(document.getElementById('pct3').value)/100;
-  const cont=parseFloat(document.getElementById('cont3').value)||0;
+  const mat=getMat(3);
   const tm=parseFloat(document.getElementById('tasa3').value)/100;
   const n=parseInt(document.getElementById('plazo3').value)||0;
   const cargos=parseFloat(document.getElementById('cargos3').value)||0;
+  const financiado=getFinanciado(3);
+  const cuotaInicial=getContadoVal(3);
+  const pct=mat>0?Math.round((financiado/mat)*1000)/10:0;
 
   if(!mat||mat<=0) return showAlert(3,'Ingresa el valor de matrícula.');
-  if(!pct||pct<=0) return showAlert(3,'Ingresa el porcentaje a financiar.');
+  if(financiado<=0) return showAlert(3,'El monto financiado es cero. Revisa beneficios y pago de contado.');
   if(!n||n<=0) return showAlert(3,'Ingresa el número de meses.');
   if(isNaN(tm)) return showAlert(3,'Ingresa la tasa de interés.');
-  if((pct*100)+cont>100) return showAlert(3,'La suma de financiado + contado supera 100%.');
-
-  const financiado=mat*pct;
-  const cuotaInicial=mat*cont/100;
   const pagoInicial=cuotaInicial+cargos;
   const {rows,cuota,totInt,totCap}=amortizacion(financiado,tm,n);
   const totalCredito=totCap+totInt;
   const totalGeneral=pagoInicial+totalCredito;
 
-  window._d3={rows,cuota,totInt,totCap,financiado,mat,n,tm,cuotaInicial,cargos,pagoInicial,totalGeneral};
+  const _prog3 = document.getElementById('prog3');
+  const _prog3Nombre = _prog3.options[_prog3.selectedIndex]?.textContent?.replace(/ \(.*\)$/,'') || 'Programa';
+  const _benef3snap = _benefs[3].map(b=>({nombre:b.nombre||'Descuento',val:b.val||0,pct:b.pct||0}));
+  const _benef3total = getTotalBeneficios(3);
+  const _matNeta3 = Math.max(0, mat - _benef3total);
+  window._d3={rows,cuota,totInt,totCap,financiado,mat,n,tm,cuotaInicial,cargos,pagoInicial,totalGeneral,
+    progNombre:_prog3Nombre, pct:Math.round(pct*10)/10,
+    beneficios:_benef3snap, benefTotal:_benef3total, matNeta:_matNeta3};
 
   const morado='#7B1FA2', morado_s='#F3E5F5';
   document.getElementById('res3').innerHTML=`
   <div class="card">
+    ${fechaBadgeHtml()}
     <div class="card-title" style="color:#7B1FA2;">Resumen — Crédito Banco Aliado</div>
     <div class="ssub" style="margin-top:0;margin-bottom:10px;color:#7B1FA2;">💳 Pago Inicial</div>
     <div class="mgrid">
@@ -1212,37 +1539,35 @@ function calcular3(){
       <button class="btn-exp" style="border-color:#7B1FA2;color:#7B1FA2;" onclick="expXLS3()">📊 Descargar Excel</button>
     </div>
   </div>`;
+  setTimeout(()=>{ const p=document.getElementById('esc-panel-3'); if(p){ const sb=document.createElement('div'); sb.style='margin-top:14px;'; sb.innerHTML=`<button class="btn-esc-save" onclick="guardarEscenario(3)">💾 Guardar como escenario para comparar</button>`; document.getElementById('res3').querySelector('.card').appendChild(sb); } renderEscenarios(3); },50);
 }
 
 function expPDF3(){
   const d=window._d3; if(!d)return;
   const {jsPDF}=window.jspdf; const doc=new jsPDF();
-  doc.setFont('helvetica','bold'); doc.setFontSize(16);
-  doc.text('Simulador de Crédito Educativo',14,18);
-  doc.setFont('helvetica','normal'); doc.setFontSize(11);
-  doc.text('Crédito Banco Aliado',14,27);
-  doc.setDrawColor(106,27,154); doc.line(14,30,196,30);
-  let y=38;
-  doc.setFont('helvetica','bold'); doc.text('INFORMACIÓN GENERAL',14,y); y+=8;
-  doc.setFont('helvetica','bold'); doc.text('Valor Matrícula:',16,y); doc.setFont('helvetica','normal'); doc.text(cop(d.mat),110,y); y+=7;
-  y+=4; doc.setFont('helvetica','bold'); doc.text('PAGO INICIAL',14,y); y+=8;
+  let y=pdfHeader(doc,'Crédito Banco Aliado', (d.progNombre||'')+(d.pct?' — '+d.pct+'% financiado':''));
+  y=addFechaToDoc(doc,y); y+=2;
+  y=pdfBenefSection(doc,y,d.mat,d.beneficios||[],d.benefTotal||0,d.matNeta||d.mat,d.cuotaInicial);
+  y+=2; y=pdfSectionBar(doc,'PAGO INICIAL — al momento del desembolso',y);
   [['Cuota Inicial Contado',cop(d.cuotaInicial)],['Otros Cargos',cop(d.cargos)],['Total Pago Inicial',cop(d.pagoInicial)]].forEach(([k,v])=>{
-    doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,110,y); y+=7;
+    doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,150,y,{align:'right'}); y+=7;
   });
-  y+=4; doc.setFont('helvetica','bold'); doc.text('CRÉDITO',14,y); y+=8;
+  y+=2; y=pdfSectionBar(doc,'CRÉDITO A AMORTIZAR',y);
   [['Monto Financiado',cop(d.financiado)],['Cuota Mensual',cop(d.cuota)],
    ['Total Intereses',cop(d.totInt)],['Total Crédito',cop(d.totCap+d.totInt)],
    ['COSTO TOTAL MATRÍCULA',cop(d.totalGeneral)]].forEach(([k,v])=>{
-    doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,110,y); y+=7;
+    doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,150,y,{align:'right'}); y+=7;
   });
-  y+=6; doc.setFont('helvetica','bold'); doc.text('Tabla de Amortización',14,y); y+=8;
+  y=pdfCostoFootnote(doc,y);
+  y+=2; y=pdfSectionBar(doc,'TABLA DE AMORTIZACIÓN',y);
   const hw=['#','Cuota','Capital','Interés','Saldo'],cw=[14,42,38,38,44];
-  doc.setFillColor(106,27,154); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
+  doc.setFillColor(13,71,161); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
   let x=14; hw.forEach((h,i)=>{doc.text(h,x+1,y);x+=cw[i];}); doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
   d.rows.forEach(r=>{ y+=7; if(y>270){doc.addPage();y=20;} x=14;
     [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(String(v),x+1,y);x+=cw[i];});
   });
-  doc.save('credito-banco-aliado.pdf');
+  const fn3 = (d.progNombre+' - '+d.pct+'%').replace(/[^a-zA-Z0-9\-_ áéíóúÁÉÍÓÚñÑ]/g,'').trim();
+  doc.save(fn3+'.pdf');
 }
 
 function expXLS3(){
@@ -1250,7 +1575,10 @@ function expXLS3(){
   const wb=XLSX.utils.book_new();
   const ws=XLSX.utils.aoa_to_sheet([
     ['Crédito Banco Aliado'],[''],
-    ['Valor Matrícula',Math.round(d.mat)],[''],
+    ['Valor Matrícula Bruta',Math.round(d.mat)],
+    ...((d.beneficios||[]).filter(b=>b.val>0).length>0?
+      [['--- BENEFICIOS / DESCUENTOS ---'],...(d.beneficios||[]).filter(b=>b.val>0).map(b=>['  - '+(b.nombre||'Descuento')+' ('+b.pct.toFixed(1)+'%)',-Math.round(b.val)]),
+       ['Total Descuentos',-Math.round(d.benefTotal||0)],['Matrícula Neta',Math.round(d.matNeta||d.mat)],['']]:[['']]),
     ['--- PAGO INICIAL ---'],
     ['Cuota Inicial Contado',Math.round(d.cuotaInicial)],
     ['Otros Cargos',Math.round(d.cargos)],
@@ -1265,12 +1593,103 @@ function expXLS3(){
     ...d.rows.map(r=>[r.i,Math.round(r.cuota),Math.round(r.capital),Math.round(r.interes),Math.round(r.saldo)])
   ]);
   XLSX.utils.book_append_sheet(wb,ws,'Banco Aliado');
-  XLSX.writeFile(wb,'credito-banco-aliado.xlsx');
+  const fn3x = (d.progNombre+' - '+d.pct+'%').replace(/[^a-zA-Z0-9\-_ áéíóúÁÉÍÓÚñÑ]/g,'').trim();
+  XLSX.writeFile(wb,fn3x+'.xlsx');
 }
 
 
 // ── IDIOMAS ──────────────────────────────────────────────────────────────────
 let _idiomasCtx = {};  // stores {tabId, valorIdiomas, progNombre}
+
+// ── Idiomas beneficios state ─────────────────────────────────────
+const _benefsId = [];  // [{id, nombre, pct, val}]
+
+function addBenefId() {
+  const id = Date.now();
+  _benefsId.push({id, nombre:'', pct:0, val:0});
+  renderBenefId();
+  setTimeout(()=>{
+    const rows = document.querySelectorAll('#benef-items-id .benef-item-name');
+    if(rows.length) rows[rows.length-1].focus();
+  }, 40);
+}
+function delBenefId(id) {
+  const i = _benefsId.findIndex(b=>b.id===id);
+  if(i>=0) _benefsId.splice(i,1);
+  renderBenefId(); recalcId();
+}
+function updateBenefIdField(id, field, rawVal) {
+  const b = _benefsId.find(x=>x.id===id);
+  if(!b) return;
+  const mat = _idiomasCtx.valorIdiomas || 0;
+  if(field==='nombre'){ b.nombre=rawVal; return; }
+  if(field==='pct'){
+    b.pct = Math.max(0,parseFloat(rawVal)||0);
+    b.val = mat>0 ? Math.round(mat*b.pct/100) : 0;
+    const vEl=document.getElementById('benef-id-val-'+id);
+    if(vEl && document.activeElement!==vEl) vEl.value = b.val||'';
+  } else {
+    b.val = Math.max(0,parseFloat(rawVal)||0);
+    b.pct = mat>0 ? Math.round((b.val/mat)*1000)/10 : 0;
+    const pEl=document.getElementById('benef-id-pct-'+id);
+    if(pEl && document.activeElement!==pEl) pEl.value = b.pct||'';
+  }
+  recalcId();
+}
+function renderBenefId() {
+  const container = document.getElementById('benef-items-id');
+  if(!container) return;
+  container.innerHTML = _benefsId.map(b => `
+    <div class="benef-item">
+      <input class="benef-item-name" type="text" placeholder="Ej: Beca, descuento..." value="${b.nombre}"
+        oninput="updateBenefIdField(${b.id},'nombre',this.value)">
+      <div class="benef-item-inputs">
+        <div class="ipfx" style="border-color:var(--verde-c);">
+          <input id="benef-id-pct-${b.id}" class="benef-inp" type="number" placeholder="0" min="0" max="100" step="0.1"
+            value="${b.pct||''}" oninput="updateBenefIdField(${b.id},'pct',this.value)"><span style="padding:6px 6px;background:var(--gris-c);font-size:11px;">%</span>
+        </div>
+        <div class="dual-sep" style="font-size:11px;">↔</div>
+        <div class="ipfx" style="border-color:var(--verde-c);">
+          <span>$</span><input id="benef-id-val-${b.id}" class="benef-inp" type="number" placeholder="0" min="0" step="1000"
+            value="${b.val||''}" oninput="updateBenefIdField(${b.id},'val',this.value)">
+        </div>
+        <button class="benef-del" onclick="delBenefId(${b.id})" title="Eliminar">✕</button>
+      </div>
+    </div>`).join('');
+  const total = _benefsId.reduce((s,b)=>s+(parseFloat(b.val)||0),0);
+  const mat   = _idiomasCtx.valorIdiomas||0;
+  const sub   = document.getElementById('benef-subtotal-id');
+  if(sub) sub.textContent = total>0 ? 'Total descuentos: '+cop(total)+(mat>0?' ('+((total/mat)*100).toFixed(1)+'%)':'') : '';
+}
+function syncContadoId(from) {
+  const mat = _idiomasCtx.valorIdiomas||0;
+  if(from==='pct'){
+    const pct = Math.max(0,parseFloat(document.getElementById('id-cont-pct').value)||0);
+    const val = mat>0 ? Math.round(mat*pct/100) : 0;
+    const vEl = document.getElementById('id-cont-val');
+    if(vEl) vEl.value = val||'';
+  } else {
+    const val = Math.max(0,parseFloat(document.getElementById('id-cont-val').value)||0);
+    const pct = mat>0 ? Math.round((val/mat)*1000)/10 : 0;
+    const pEl = document.getElementById('id-cont-pct');
+    if(pEl) pEl.value = pct||'';
+  }
+  recalcId();
+}
+function recalcId() {
+  const mat    = _idiomasCtx.valorIdiomas||0;
+  const benef  = _benefsId.reduce((s,b)=>s+(parseFloat(b.val)||0),0);
+  const cont   = Math.max(0,parseFloat(document.getElementById('id-cont-val')?.value)||0);
+  const fin    = Math.max(0, mat - benef - cont);
+  const bp = document.getElementById('breakdown-id');
+  if(!bp) return;
+  bp.style.display = mat>0 ? 'block' : 'none';
+  document.getElementById('bd-mat-id').textContent   = cop(mat);
+  document.getElementById('bd-benef-id').textContent = benef>0 ? cop(benef)+(mat>0?' ('+((benef/mat)*100).toFixed(1)+'%)':'') : cop(0);
+  document.getElementById('bd-cont-id').textContent  = cont>0  ? cop(cont) +(mat>0?' ('+((cont/mat)*100).toFixed(1)+'%)':'') : cop(0);
+  const finPct = mat>0 ? ((fin/mat)*100).toFixed(1) : 0;
+  document.getElementById('bd-fin-id').textContent   = cop(fin)+' ('+finPct+'% de idiomas)';
+}
 
 function abrirIdiomas(tabId) {
   const btn = document.getElementById('btn-idiomas-'+tabId);
@@ -1280,11 +1699,71 @@ function abrirIdiomas(tabId) {
 
   document.getElementById('modal-val-idiomas').textContent = cop(valorIdiomas);
   document.getElementById('modal-prog-name').textContent = progNombre;
-  const tabNames = {1:'Crédito Corto Plazo', 2:'Corto y Largo Plazo', 3:'Banco Aliado'};
+  const tabNames = {1:'Crédito Corto Plazo', 2:'Crédito Mixto', 3:'Banco Aliado'};
   document.getElementById('modal-tab-name').textContent = tabNames[tabId] || '';
   document.getElementById('res-idiomas').innerHTML = '';
   document.getElementById('modal-alert').style.display = 'none';
+
+  // ── Inherit ALL conditions from parent tab ──────────────────────
+  // Always reset beneficios idiomas first
+  _benefsId.length = 0;
+
+  if(tabId === 1) {
+    // Inherit tasa, meses, contado, beneficios from Tab1
+    const tasa1 = parseFloat(document.getElementById('tasa1').value)||1.5;
+    const meses1 = parseInt(document.getElementById('plazo1').value)||6;
+    document.getElementById('id-tasa').value = tasa1.toFixed(2);
+    document.getElementById('id-meses').value = meses1;
+    // Inherit contado
+    const cont1pct = parseFloat(document.getElementById('cont1-pct').value)||0;
+    document.getElementById('id-cont-pct').value = cont1pct || '';
+    document.getElementById('id-cont-val').value  = cont1pct > 0 ? Math.round(valorIdiomas * cont1pct / 100) : '';
+    // Inherit beneficios (copy from tab1, scaled to idiomas value)
+    _benefs[1].forEach(b => {
+      _benefsId.push({id: Date.now()+Math.random(), nombre: b.nombre,
+        pct: b.pct, val: Math.round(valorIdiomas * b.pct / 100)});
+    });
+
+  } else if(tabId === 2) {
+    // Tab2 Mixto: inherit tasa, CP meses, contado, beneficios
+    const tasa2 = parseFloat(document.getElementById('tasa2').value)||1.5;
+    const mesesCP = parseInt(document.getElementById('plazoCP').value)||6;
+    document.getElementById('id-tasa').value  = tasa2.toFixed(2);
+    document.getElementById('id-meses').value = mesesCP;
+    // Inherit contado
+    const cont2pct = parseFloat(document.getElementById('cont2-pct').value)||0;
+    document.getElementById('id-cont-pct').value = cont2pct || '';
+    document.getElementById('id-cont-val').value  = cont2pct > 0 ? Math.round(valorIdiomas * cont2pct / 100) : '';
+    // Inherit beneficios scaled to idiomas value
+    _benefs[2].forEach(b => {
+      _benefsId.push({id: Date.now()+Math.random(), nombre: b.nombre,
+        pct: b.pct, val: Math.round(valorIdiomas * b.pct / 100)});
+    });
+    // Store CP/LP split for combined display
+    _idiomasCtx.pctCP = parseFloat(document.getElementById('pctCP').value)||40;
+    _idiomasCtx.pctLP = parseFloat(document.getElementById('pctLP').value)||60;
+    _idiomasCtx.mesesLP = parseInt(document.getElementById('plazoLP').value)||9;
+
+  } else if(tabId === 3) {
+    const tasa3 = parseFloat(document.getElementById('tasa3').value)||1.5;
+    const meses3 = parseInt(document.getElementById('plazo3').value)||12;
+    document.getElementById('id-tasa').value  = tasa3.toFixed(2);
+    document.getElementById('id-meses').value = meses3;
+    const cont3pct = parseFloat(document.getElementById('cont3-pct').value)||0;
+    document.getElementById('id-cont-pct').value = cont3pct || '';
+    document.getElementById('id-cont-val').value  = cont3pct > 0 ? Math.round(valorIdiomas * cont3pct / 100) : '';
+    _benefs[3].forEach(b => {
+      _benefsId.push({id: Date.now()+Math.random(), nombre: b.nombre,
+        pct: b.pct, val: Math.round(valorIdiomas * b.pct / 100)});
+    });
+  } else {
+    document.getElementById('id-cont-pct').value = 0;
+    document.getElementById('id-cont-val').value = '';
+  }
+
+  renderBenefId();
   calcTaIdiomas();
+  recalcId();
   document.getElementById('modal-idiomas').style.display = 'block';
   document.body.style.overflow = 'hidden';
 }
@@ -1300,32 +1779,57 @@ function calcTaIdiomas() {
 }
 
 function calcularIdiomas() {
-  const mat = _idiomasCtx.valorIdiomas;
-  const pct = parseFloat(document.getElementById('id-pct').value)/100;
-  const cont = parseFloat(document.getElementById('id-cont').value)||0;
-  const tm = parseFloat(document.getElementById('id-tasa').value)/100;
-  const n = parseInt(document.getElementById('id-meses').value)||0;
+  const mat   = _idiomasCtx.valorIdiomas;
+  const tabId = _idiomasCtx.tabId;
+  const benef = _benefsId.reduce((s,b)=>s+(parseFloat(b.val)||0),0);
+  const cont  = Math.max(0,parseFloat(document.getElementById('id-cont-val')?.value)||0);
+  const tm    = parseFloat(document.getElementById('id-tasa').value)/100;
+  const n     = parseInt(document.getElementById('id-meses').value)||0;
 
   const alertEl = document.getElementById('modal-alert');
   const showErr = msg => { alertEl.textContent = msg; alertEl.style.display = 'block'; setTimeout(()=>alertEl.style.display='none',4000); };
 
   if(!mat||mat<=0) return showErr('Este programa no tiene valor de idiomas registrado.');
-  if(!pct||pct<=0) return showErr('Ingresa el porcentaje a financiar.');
-  if(!n||n<=0) return showErr('Ingresa el número de meses.');
-  if(isNaN(tm)) return showErr('Ingresa la tasa de interés.');
-  if((pct*100)+cont>100) return showErr('La suma de financiado + contado supera 100%.');
+  if(!n||n<=0)    return showErr('Ingresa el número de meses.');
+  if(isNaN(tm))   return showErr('Ingresa la tasa de interés.');
+  if(benef > mat) return showErr('Los beneficios superan el valor de idiomas.');
+  const matNeta = mat - benef;
+  if(cont > matNeta) return showErr('El pago de contado supera el valor neto de idiomas.');
 
-  const financiado = mat * pct;
-  const garantisa = financiado * GARANTISA_CP;
-  const cuotaInicial = mat * cont / 100;
-  const pagoInicial = cuotaInicial + garantisa;
-  const {rows, cuota, totInt, totCap} = amortizacion(financiado, tm, n);
-  const totalCredito = totCap + totInt;
+  const financiado = Math.max(0, matNeta - cont);
+  if(financiado <= 0) return showErr('El monto financiado es cero. Revisa beneficios y pago de contado.');
+
+  const garantisa    = financiado * GARANTISA_CP;
+  const cuotaInicial = cont;
+  const pagoInicial  = cuotaInicial + garantisa;
+
+  // ── Tab2 Mixto: apply CP/LP split to idiomas financing ──────────
+  let isMixto = (tabId === 2);
+  let pctCP = _idiomasCtx.pctCP || 40;
+  let pctLP = _idiomasCtx.pctLP || 60;
+  let mesesLP = _idiomasCtx.mesesLP || 9;
+  let finCP, finLP, idCP, idLP, cuota, totInt, totCap, rows, totalCredito;
+
+  if(isMixto) {
+    finCP = financiado * pctCP / 100;
+    finLP = financiado * pctLP / 100;
+    idCP = amortizacion(finCP, tm, n);
+    idLP = amortizacion(finLP, tm, mesesLP);
+    cuota = idCP.cuota + idLP.cuota;
+    totInt = idCP.totInt + idLP.totInt;
+    totCap = idCP.totCap + idLP.totCap;
+    rows = idCP.rows; // primary table
+    totalCredito = totCap + totInt;
+  } else {
+    const res = amortizacion(financiado, tm, n);
+    rows = res.rows; cuota = res.cuota; totInt = res.totInt; totCap = res.totCap;
+    totalCredito = totCap + totInt;
+  }
+
   const totalGeneral = pagoInicial + totalCredito;
 
   // Retrieve main tab totals for combined scenario
   let mainPagoInicial = 0, mainTotalCredito = 0, mainCuotaMensual = 0, mainLabel = '';
-  const tabId = _idiomasCtx.tabId;
   if(tabId===1 && window._d1) {
     mainPagoInicial = window._d1.pagoInicial||0;
     mainTotalCredito = (window._d1.totCap||0)+(window._d1.totInt||0);
@@ -1349,6 +1853,7 @@ function calcularIdiomas() {
 
   document.getElementById('res-idiomas').innerHTML = `
     <div style="border-top:1.5px solid #ECEFF1;padding-top:20px;">
+      ${fechaBadgeHtml()}
       <div class="ssub" style="margin-top:0;color:var(--naranja);">💳 Pago Inicial — Idiomas</div>
       <div class="mgrid">
         <div class="mc"><span class="lbl">Cuota Inicial Contado</span><div class="val">${cop(cuotaInicial)}</div></div>
@@ -1359,13 +1864,25 @@ function calcularIdiomas() {
       <div class="mgrid">
         <div class="mc"><span class="lbl">Valor Idiomas</span><div class="val">${cop(mat)}</div></div>
         <div class="mc"><span class="lbl">Monto Financiado</span><div class="val">${cop(financiado)}</div></div>
-        <div class="mc vrd"><span class="lbl">Cuota Mensual</span><div class="val">${cop(cuota)}</div></div>
-        <div class="mc"><span class="lbl">Total Intereses</span><div class="val">${cop(totInt)}</div></div>
+        ${isMixto ? `
+          <div class="mc" style="background:var(--azul-s);"><span class="lbl" style="color:var(--azul);">🔵 Cuota Mensual CP</span><div class="val" style="color:var(--azul);">${cop(idCP.cuota)}</div></div>
+          <div class="mc" style="background:var(--verde-s);"><span class="lbl" style="color:var(--verde-c);">🟢 Cuota Mensual LP</span><div class="val" style="color:var(--verde);">${cop(idLP.cuota)}</div></div>
+        ` : `
+          <div class="mc vrd"><span class="lbl">Cuota Mensual</span><div class="val">${cop(cuota)}</div></div>
+          <div class="mc"><span class="lbl">Total Intereses</span><div class="val">${cop(totInt)}</div></div>
+        `}
         <div class="mc dest" style="grid-column:1/-1;"><span class="lbl">Total Crédito Idiomas</span><div class="val">${cop(totalCredito)}</div></div>
       </div>
 
-      <div class="ssub">Tabla de Amortización Idiomas (${n} meses)</div>
-      ${renderTabla(rows, cuota, totInt, totCap)}
+      ${isMixto ? `
+        <div class="ssub" style="color:var(--azul);">🔵 Tabla CP Idiomas (${n} meses · ${cop(finCP)})</div>
+        ${renderTabla(idCP.rows, idCP.cuota, idCP.totInt, idCP.totCap)}
+        <div class="ssub" style="color:var(--verde-c);margin-top:12px;">🟢 Tabla LP Idiomas (${mesesLP} meses · ${cop(finLP)})</div>
+        ${renderTabla(idLP.rows, idLP.cuota, idLP.totInt, idLP.totCap)}
+      ` : `
+        <div class="ssub">Tabla de Amortización Idiomas (${n} meses)</div>
+        ${renderTabla(rows, cuota, totInt, totCap)}
+      `}
 
       ${hasMain ? `
       <div style="margin-top:24px;background:linear-gradient(135deg,#E3F2FD,#E8F5E9);border-radius:12px;padding:18px 20px;border:1.5px solid #90CAF9;">
@@ -1391,53 +1908,72 @@ function calcularIdiomas() {
       </div>`}
 
       <div class="btn-row" style="margin-top:16px;">
-        <button class="btn-exp" onclick="expPDFIdiomas()">📄 Descargar PDF</button>
-        <button class="btn-exp vrd" onclick="expXLSIdiomas()">📊 Descargar Excel</button>
+        <button class="btn-exp" onclick="expPDFIdiomas()">📄 PDF Idiomas</button>
+        <button class="btn-exp vrd" onclick="expXLSIdiomas()">📊 Excel Idiomas</button>
+        <button class="btn-exp" style="border-color:#0D47A1;color:#0D47A1;background:var(--azul-s);" onclick="expPDFCombinado()">📑 PDF Combinado (Pregrado + Idiomas)</button>
       </div>
     </div>
   `;
 
-  window._dIdiomas = {rows,cuota,totInt,totCap,financiado,mat,n,tm,cuotaInicial,garantisa,pagoInicial,totalCredito,totalGeneral,progNombre:_idiomasCtx.progNombre};
+  window._dIdiomas = {rows,cuota,totInt,totCap,financiado,mat,n,tm,cuotaInicial,garantisa,pagoInicial,totalCredito,totalGeneral,progNombre:_idiomasCtx.progNombre,beneficios:benef,isMixto,idCP:isMixto?idCP:null,idLP:isMixto?idLP:null};
 }
 
 function expPDFIdiomas(){
   const d=window._dIdiomas; if(!d)return;
   const {jsPDF}=window.jspdf; const doc=new jsPDF();
-  doc.setFont('helvetica','bold'); doc.setFontSize(16);
-  doc.text('Simulador de Crédito Educativo',14,18);
-  doc.setFont('helvetica','normal'); doc.setFontSize(11);
-  doc.text('Crédito Idiomas — '+d.progNombre,14,27);
-  doc.setDrawColor(13,71,161); doc.line(14,30,196,30);
-  let y=38;
-  [['Valor Idiomas',cop(d.mat)],['Financiado',cop(d.financiado)],
-   ['Garantisa (4.17%)',cop(d.garantisa)],['Total Pago Inicial',cop(d.pagoInicial)],
-   ['Cuota Mensual',cop(d.cuota)],['Total Intereses',cop(d.totInt)],
-   ['Total Crédito',cop(d.totalCredito)],['Costo Total',cop(d.totalGeneral)]
-  ].forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',14,y); doc.setFont('helvetica','normal'); doc.text(v,100,y); y+=8; });
-  y+=4; doc.setFont('helvetica','bold'); doc.text('Tabla de Amortización',14,y); y+=8;
+  const pctLabel = Math.round((d.financiado/d.mat)*100)+'%';
+  const filename = (d.progNombre+' - Idiomas '+pctLabel).replace(/[^a-zA-Z0-9\-_ áéíóúÁÉÍÓÚñÑ]/g,'').trim();
+  let y=pdfHeader(doc,'Crédito Idiomas', (d.progNombre||'')+' — '+Math.round((d.financiado/d.mat)*100)+'% financiado');
+  y=addFechaToDoc(doc,y); y+=2;
+  y=pdfSectionBar(doc,'INFORMACIÓN GENERAL',y);
+  doc.setFont('helvetica','bold'); doc.text('Programa:',16,y); doc.setFont('helvetica','normal'); doc.text(d.progNombre,70,y); y+=7;
+  doc.setFont('helvetica','bold'); doc.text('Valor Idiomas:',16,y); doc.setFont('helvetica','normal'); doc.text(cop(d.mat),150,y,{align:'right'}); y+=7;
+  y+=2; y=pdfSectionBar(doc,'PAGO INICIAL — al momento del desembolso',y);
+  [['Cuota Inicial Contado',cop(d.cuotaInicial)],
+   ['Garantisa 4.17% s/financiado',cop(d.garantisa)],
+   ['Total Pago Inicial',cop(d.pagoInicial)]
+  ].forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,150,y,{align:'right'}); y+=7; });
+  y+=2; y=pdfSectionBar(doc,'CRÉDITO A AMORTIZAR',y);
+  [['Monto Financiado',cop(d.financiado)],
+   ['Cuota Mensual',cop(d.cuota)],
+   ['Total Intereses',cop(d.totInt)],
+   ['Total Crédito',cop(d.totalCredito)],
+   ['COSTO TOTAL IDIOMAS',cop(d.totalGeneral)]
+  ].forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,150,y,{align:'right'}); y+=7; });
+  y=pdfCostoFootnote(doc,y,'* Valor idiomas + Aporte Garantisa + Intereses del crédito');
+  y+=2; y=pdfSectionBar(doc,'TABLA DE AMORTIZACIÓN ('+d.n+' meses)',y);
   const hw=['#','Cuota','Capital','Interés','Saldo'],cw=[14,42,38,38,44];
   doc.setFillColor(13,71,161); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
   let x=14; hw.forEach((h,i)=>{doc.text(h,x+1,y);x+=cw[i];}); doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
   d.rows.forEach(r=>{ y+=7; if(y>270){doc.addPage();y=20;} x=14;
     [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(String(v),x+1,y);x+=cw[i];});
   });
-  doc.save('credito-idiomas.pdf');
+  doc.save(filename+'.pdf');
 }
 
 function expXLSIdiomas(){
   const d=window._dIdiomas; if(!d)return;
+  const pctLabel = Math.round((d.financiado/d.mat)*100)+'%';
+  const filename = (d.progNombre+' - Idiomas '+pctLabel).replace(/[^a-zA-Z0-9\-_ áéíóúÁÉÍÓÚñÑ]/g,'').trim();
   const wb=XLSX.utils.book_new();
   const ws=XLSX.utils.aoa_to_sheet([
     ['Crédito Idiomas — '+d.progNombre],[''],
-    ['Valor Idiomas',Math.round(d.mat)],['Financiado',Math.round(d.financiado)],
-    ['Garantisa',Math.round(d.garantisa)],['Total Pago Inicial',Math.round(d.pagoInicial)],
-    ['Cuota Mensual',Math.round(d.cuota)],['Total Intereses',Math.round(d.totInt)],
-    ['Total Crédito',Math.round(d.totalCredito)],['Costo Total',Math.round(d.totalGeneral)],[''],
+    ['Valor Idiomas',Math.round(d.mat)],[''],
+    ['--- PAGO INICIAL ---'],
+    ['Cuota Inicial Contado',Math.round(d.cuotaInicial)],
+    ['Garantisa (4.17% s/financiado)',Math.round(d.garantisa)],
+    ['Total Pago Inicial',Math.round(d.pagoInicial)],[''],
+    ['--- CRÉDITO ---'],
+    ['Monto Financiado',Math.round(d.financiado)],
+    ['Cuota Mensual',Math.round(d.cuota)],
+    ['Total Intereses',Math.round(d.totInt)],
+    ['Total Crédito',Math.round(d.totalCredito)],
+    ['COSTO TOTAL IDIOMAS',Math.round(d.totalGeneral)],[''],
     ['Cuota','Cuota Mensual','Capital','Interés','Saldo'],
     ...d.rows.map(r=>[r.i,Math.round(r.cuota),Math.round(r.capital),Math.round(r.interes),Math.round(r.saldo)])
   ]);
   XLSX.utils.book_append_sheet(wb,ws,'Idiomas');
-  XLSX.writeFile(wb,'credito-idiomas.xlsx');
+  XLSX.writeFile(wb,filename+'.xlsx');
 }
 
 // Backdrop click handled via onclick on the modal div (see HTML)
@@ -1546,9 +2082,735 @@ function convertirTasas() {
   document.getElementById('tc-tabla').innerHTML = html;
 }
 
+
+// ── DATE HELPER ──────────────────────────────────────────────────────────────
+function fechaSimulacion() {
+  const now = new Date();
+  return now.toLocaleDateString('es-CO', {day:'2-digit',month:'long',year:'numeric'}) +
+         ' ' + now.toLocaleTimeString('es-CO', {hour:'2-digit',minute:'2-digit'});
+}
+function fechaBadgeHtml() {
+  return `<div class="fecha-badge">📅 Simulación generada el ${fechaSimulacion()}</div>`;
+}
+function pdfHeader(doc, subtitulo, subtitulo2='') {
+  // Blue banner header — same as combined PDF
+  doc.setFillColor(13,71,161); doc.rect(0,0,210,40,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFont('helvetica','bold'); doc.setFontSize(18);
+  doc.text('Simulador de Crédito Educativo',14,18);
+  doc.setFont('helvetica','normal'); doc.setFontSize(11);
+  doc.text(subtitulo, 14, 28);
+  if(subtitulo2) { doc.setFontSize(9); doc.text(subtitulo2, 14, 35); }
+  doc.setTextColor(0,0,0);
+  return 48; // starting y after header
+}
+
+function pdfCostoFootnote(doc, y, texto) {
+  // Small footnote below COSTO TOTAL explaining what's included
+  const nota = texto || '* Valor matrícula + Aporte Garantisa + Intereses del crédito';
+  doc.setFont('helvetica','italic'); doc.setFontSize(8);
+  doc.setTextColor(100,100,100);
+  doc.text(nota, 16, y);
+  doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(11);
+  return y + 6;
+}
+
+function pdfSectionBar(doc, label, y, color) {
+  // Draws a colored bar with white label text for section headings
+  const rgb = color || [13,71,161];
+  doc.setFillColor(...rgb);
+  doc.rect(14, y-5, 180, 8, 'F');
+  doc.setTextColor(255,255,255);
+  doc.setFont('helvetica','bold'); doc.setFontSize(10);
+  doc.text(label, 16, y);
+  doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(11);
+  return y + 10;
+}
+
+function addFechaToDoc(doc, y) {
+  doc.setFont('helvetica','italic'); doc.setFontSize(9);
+  doc.setTextColor(144,164,174);
+  doc.text('Generado el ' + fechaSimulacion(), 14, y);
+  doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(11);
+  return y + 6;
+}
+
+// ── LIMPIAR TAB ───────────────────────────────────────────────────────────────
+function limpiarTab(tabId) {
+  if(!confirm('¿Limpiar todos los campos y resultados de esta pestaña?')) return;
+  // Reset nivel
+  setNivel(tabId, 'pregrado');
+  // Reset selects
+  const prog = document.getElementById('prog'+tabId);
+  if(prog) prog.value = '';
+  const sn = document.getElementById('subnivel'+tabId);
+  if(sn) sn.value = '';
+  // Reset mat
+  const mat = document.getElementById('mat'+tabId);
+  if(mat){ mat.value=''; fmtLbl('mat'+tabId); }
+  // Reset common fields
+  const fields = {
+    1: [['cont1-pct','0'],['cont1-val',''],['plazo1','6'],['tasa1','1.5']],
+    2: [['cont2-pct','0'],['cont2-val',''],['pctCP','40'],['finvalCP',''],['pctLP','60'],['finvalLP',''],['plazoCP','6'],['plazoLP','9'],['tasa2','1.5']],
+    3: [['cont3-pct','0'],['cont3-val',''],['plazo3','12'],['tasa3','1.5'],['cargos3','0']]
+  };
+  (fields[tabId]||[]).forEach(([id,val]) => {
+    const el = document.getElementById(id);
+    if(el) el.value = val;
+  });
+  calcTA(tabId);
+  // Clear results
+  const resPlaceholders = {
+    1: '<div class="card" style="text-align:center;padding:60px 24px;color:var(--gris-m);"><div style="font-size:48px;margin-bottom:16px;opacity:.3;">📊</div><p style="font-size:14px;">Completa los datos y presiona <strong>Calcular Crédito</strong></p></div>',
+    2: '<div class="card" style="text-align:center;padding:60px 24px;color:var(--gris-m);"><div style="font-size:48px;margin-bottom:16px;opacity:.3;">🔀</div><p style="font-size:14px;">Completa los datos y presiona <strong>Calcular Crédito Mixto</strong></p></div>',
+    3: '<div class="card" style="text-align:center;padding:60px 24px;color:var(--gris-m);"><div style="font-size:48px;margin-bottom:16px;opacity:.3;">🏦</div><p style="font-size:14px;">Completa los datos y presiona <strong>Calcular Crédito</strong></p></div>'
+  };
+  document.getElementById('res'+tabId).innerHTML = resPlaceholders[tabId];
+  // Hide idiomas btn
+  const ib = document.getElementById('btn-idiomas-'+tabId);
+  if(ib) ib.style.display='none';
+  // Reset data objects
+  if(tabId===1) window._d1=null;
+  if(tabId===2) window._d2=null;
+  if(tabId===3) window._d3=null;
+  // Clear beneficios
+  _benefs[tabId] = [];
+  renderBeneficios(tabId);
+  recalcAll(tabId);
+  // Clear saved scenarios for this tab
+  _escenarios[tabId] = [];
+  const escPanel = document.getElementById('esc-panel-'+tabId);
+  if(escPanel){ escPanel.innerHTML=''; escPanel.style.display='none'; }
+  // Reset aportes info
+  if(tabId<=2) actualizarAportes(tabId);
+}
+
+// ── ESCENARIOS ENGINE ─────────────────────────────────────────────────────────
+const _escenarios = {1:[], 2:[], 3:[]};
+
+function guardarEscenario(tabId) {
+  let snapshot = null;
+  if(tabId===1 && window._d1) {
+    snapshot = {
+      label: (_d1.progNombre||'Programa') + ' — ' + _d1.pct + '%',
+      sub: _d1.n + ' meses · tasa ' + (_d1.tm*100).toFixed(2) + '%',
+      cuota: _d1.cuota, totalCredito: _d1.totCap+_d1.totInt,
+      pagoInicial: _d1.pagoInicial, totalGeneral: _d1.totalGeneral,
+      financiado: _d1.financiado, intereses: _d1.totInt,
+      data: JSON.parse(JSON.stringify(_d1))
+    };
+  } else if(tabId===2 && window._d2) {
+    const totCred = (_d2.CP?(_d2.CP.totCap+_d2.CP.totInt):0)+(_d2.LP?(_d2.LP.totCap+_d2.LP.totInt):0);
+    snapshot = {
+      label: (_d2.progNombre||'Programa') + ' — CP' + _d2.pCP + '% LP' + _d2.pLP + '%',
+      sub: (_d2.nCP||0) + ' m CP · ' + (_d2.nLP||0) + ' m LP · tasa ' + (_d2.tm*100).toFixed(2) + '%',
+      cuota: (_d2.CP?_d2.CP.cuota:0)+(_d2.LP?_d2.LP.cuota:0),
+      totalCredito: totCred, pagoInicial: _d2.pagoInicial,
+      totalGeneral: _d2.pagoInicial+totCred,
+      financiado: _d2.finCP+_d2.finLP, intereses: (_d2.CP?_d2.CP.totInt:0)+(_d2.LP?_d2.LP.totInt:0),
+      data: JSON.parse(JSON.stringify(_d2))
+    };
+  } else if(tabId===3 && window._d3) {
+    snapshot = {
+      label: (_d3.progNombre||'Programa') + ' — ' + _d3.pct + '%',
+      sub: _d3.n + ' meses · tasa ' + (_d3.tm*100).toFixed(2) + '%',
+      cuota: _d3.cuota, totalCredito: _d3.totCap+_d3.totInt,
+      pagoInicial: _d3.pagoInicial, totalGeneral: _d3.totalGeneral,
+      financiado: _d3.financiado, intereses: _d3.totInt,
+      data: JSON.parse(JSON.stringify(_d3))
+    };
+  }
+  if(!snapshot) return alert('Primero calcula un crédito antes de guardar el escenario.');
+  if(_escenarios[tabId].length >= 3) {
+    if(!confirm('Ya tienes 3 escenarios guardados. ¿Reemplazar el más antiguo?')) return;
+    _escenarios[tabId].shift();
+  }
+  _escenarios[tabId].push(snapshot);
+  renderEscenarios(tabId);
+}
+
+function eliminarEscenario(tabId, idx) {
+  _escenarios[tabId].splice(idx, 1);
+  renderEscenarios(tabId);
+}
+
+function renderEscenarios(tabId) {
+  const panel = document.getElementById('esc-panel-'+tabId);
+  if(!panel) return;
+  const list = _escenarios[tabId];
+  if(list.length === 0) { panel.style.display='none'; return; }
+  panel.style.display = 'block';
+  const colors = ['#0D47A1','#2E7D32','#6A1B9A'];
+  let html = `<div class="esc-header">
+    <h3>📋 Escenarios Guardados (${list.length}/3)</h3>
+    ${list.length >= 2 ? `<button class="btn-esc-compare" onclick="compararEscenarios(${tabId})">⚖️ Comparar</button>` : ''}
+  </div>
+  <div class="esc-list">`;
+  list.forEach((e,i) => {
+    html += `<div class="esc-item">
+      <div class="esc-num" style="background:${colors[i]}">${i+1}</div>
+      <div class="esc-info">
+        <strong>${e.label}</strong>
+        <span>${e.sub}</span>
+      </div>
+      <div style="text-align:right;margin-right:8px;">
+        <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:${colors[i]};">${cop(e.cuota)}/mes</div>
+        <div style="font-size:11px;color:var(--gris-m);">Total: ${cop(e.totalGeneral)}</div>
+      </div>
+      <button class="esc-del" onclick="eliminarEscenario(${tabId},${i})" title="Eliminar">✕</button>
+    </div>`;
+  });
+  html += '</div>';
+  // Save as escenario btn
+  html += `<button class="btn-esc-save" onclick="guardarEscenario(${tabId})">💾 Guardar simulación actual como escenario</button>`;
+  panel.innerHTML = html;
+}
+
+function compararEscenarios(tabId) {
+  const list = _escenarios[tabId];
+  if(list.length < 2) return;
+  const fields = [
+    {key:'financiado',     label:'Monto Financiado'},
+    {key:'pagoInicial',    label:'Pago Inicial'},
+    {key:'cuota',          label:'Cuota Mensual'},
+    {key:'intereses',      label:'Total Intereses'},
+    {key:'totalCredito',   label:'Total Crédito'},
+    {key:'totalGeneral',   label:'COSTO TOTAL'},
+  ];
+  const colors = ['#0D47A1','#2E7D32','#6A1B9A'];
+  let html = `<div class="esc-header" style="margin-top:20px;border-top:1.5px solid var(--gris-c);padding-top:16px;">
+    <h3>⚖️ Comparativa de Escenarios</h3>
+  </div>
+  <div style="overflow-x:auto;"><table class="cmp-table"><thead><tr>
+    <th style="text-align:left;">Concepto</th>
+    ${list.map((e,i)=>`<th style="background:${colors[i]};">Escenario ${i+1}<br><span style="font-size:10px;opacity:.8;font-weight:400;">${e.label}</span></th>`).join('')}
+  </tr></thead><tbody>`;
+
+  fields.forEach(f => {
+    const vals = list.map(e => e[f.key]);
+    const minVal = Math.min(...vals);
+    const maxVal = Math.max(...vals);
+    const isCost = f.key !== 'financiado'; // lower is better for costs, higher for financiado
+    html += `<tr><td>${f.label}</td>`;
+    vals.forEach(v => {
+      let cls = '';
+      if(vals.filter(x=>x===v).length < vals.length) { // only highlight if different
+        if(isCost) cls = v===minVal ? 'cmp-best' : (v===maxVal ? 'cmp-worst' : '');
+        else cls = v===maxVal ? 'cmp-best' : '';
+      }
+      html += `<td class="${cls}">${cop(v)}</td>`;
+    });
+    html += '</tr>';
+  });
+
+  // Savings row
+  if(list.length >= 2) {
+    const savings = list[0].totalGeneral - list[1].totalGeneral;
+    html += `<tr><td>Diferencia vs Esc.1</td><td>—</td>
+      ${list.slice(1).map((_,i)=>{
+        const d = list[0].totalGeneral - list[i+1].totalGeneral;
+        const color = d>0?'var(--verde)':'var(--naranja)';
+        return `<td style="color:${color};font-weight:700;">${d>0?'-':'+'}${cop(Math.abs(d))}</td>`;
+      }).join('')}
+    </tr>`;
+  }
+
+  html += '</tbody></table></div>';
+
+  const panel = document.getElementById('esc-panel-'+tabId);
+  // Remove old comparison if exists
+  const oldCmp = panel.querySelector('.cmp-wrap');
+  if(oldCmp) oldCmp.remove();
+  const wrap = document.createElement('div');
+  wrap.className = 'cmp-wrap';
+  wrap.innerHTML = html;
+  panel.appendChild(wrap);
+  wrap.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+// ── COMBINED PDF (pregrado + idiomas) ────────────────────────────────────────
+function expPDFCombinado() {
+  const dp = window._dIdiomas;
+  const tabId = _idiomasCtx.tabId;
+  let dm = null, tipoLabel = '';
+  if(tabId===1 && window._d1)  { dm=window._d1; tipoLabel='Crédito Corto Plazo'; }
+  if(tabId===2 && window._d2)  { dm=window._d2; tipoLabel='Crédito Mixto'; }
+  if(tabId===3 && window._d3)  { dm=window._d3; tipoLabel='Crédito Banco Aliado'; }
+  if(!dp||!dm) return alert('Primero calcula ambos créditos (pregrado e idiomas) para generar el PDF combinado.');
+
+  const {jsPDF} = window.jspdf;
+  const doc = new jsPDF();
+  const pctLabel = Math.round((dp.financiado/dp.mat)*100)+'%';
+  const filename = (dp.progNombre+' - Combinado '+pctLabel).replace(/[^a-zA-Z0-9\-_ áéíóúÁÉÍÓÚñÑ]/g,'').trim();
+
+  const hw = ['#','Cuota','Capital','Interés','Saldo'], cw = [14,42,38,38,44];
+
+  // ── PORTADA / RESUMEN COMBINADO ──
+  doc.setFillColor(13,71,161); doc.rect(0,0,210,40,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFont('helvetica','bold'); doc.setFontSize(18);
+  doc.text('Simulador de Crédito Educativo',14,18);
+  doc.setFontSize(11); doc.setFont('helvetica','normal');
+  doc.text('Reporte Combinado — Pregrado + Idiomas',14,28);
+  doc.setTextColor(0,0,0);
+
+  let y = 50;
+  y = addFechaToDoc(doc, y); y += 4;
+
+  doc.setFont('helvetica','bold'); doc.setFontSize(13);
+  doc.text(dp.progNombre, 14, y); y += 8;
+  doc.setFont('helvetica','normal'); doc.setFontSize(10);
+  doc.setTextColor(144,164,174);
+  doc.text(tipoLabel + ' · ' + pctLabel + ' financiado', 14, y); y += 10;
+  doc.setTextColor(0,0,0);
+
+  // Combined summary box
+  const totCredPre = dm.totCap ? (dm.totCap+dm.totInt) : ((dm.CP?(dm.CP.totCap+dm.CP.totInt):0)+(dm.LP?(dm.LP.totCap+dm.LP.totInt):0));
+  const pagoIniPre = dm.pagoInicial||0;
+  const cuotaPre = dm.cuota || ((dm.CP?dm.CP.cuota:0)+(dm.LP?dm.LP.cuota:0));
+  const totGenPre = pagoIniPre + totCredPre;
+
+  doc.setFont('helvetica','bold'); doc.setFontSize(11);
+  doc.text('RESUMEN COMBINADO', 14, y); y += 10;
+
+  const totalPagoInicial = pagoIniPre + dp.pagoInicial;
+  const totalCredito     = totCredPre + dp.totalCredito;
+  const costoTotal       = totalPagoInicial + totalCredito;
+  const cuotaTotal       = cuotaPre + dp.cuota;
+
+  // Helper: draw one row
+  function drawRow(label, valor, opts) {
+    // opts: {bold, fillRGB, textRGB, fontSize, indent}
+    const fs   = opts.fontSize  || 10;
+    const ind  = opts.indent    || 16;
+    const fRGB = opts.fillRGB;
+    const tRGB = opts.textRGB   || [55,71,79];
+    if(fRGB) { doc.setFillColor(...fRGB); doc.rect(14,y-5,180,8,'F'); }
+    doc.setTextColor(...tRGB);
+    doc.setFont('helvetica', opts.bold ? 'bold' : 'normal');
+    doc.setFontSize(fs);
+    doc.text(label+':', ind, y);
+    doc.setFont('helvetica', opts.bold ? 'bold' : 'normal');
+    doc.text(valor, 150, y, {align:'right'});
+    doc.setTextColor(0,0,0); doc.setFontSize(11);
+    y += 8;
+  }
+
+  // ── GRUPO 1: PAGO INICIAL ──────────────────────────────────────
+  doc.setFont('helvetica','bold'); doc.setFontSize(9);
+  doc.setTextColor(180,140,0);
+  doc.text('① PAGO AL MOMENTO DEL DESEMBOLSO', 14, y); y += 6;
+  doc.setTextColor(0,0,0);
+  drawRow('  Pago Inicial Pregrado', cop(pagoIniPre),    {indent:18});
+  drawRow('  Pago Inicial Idiomas',  cop(dp.pagoInicial),{indent:18});
+  drawRow('Total Pago Inicial',      cop(totalPagoInicial),
+    {bold:true, fillRGB:[255,248,220], textRGB:[120,90,0], fontSize:10});
+  y += 2;
+
+  // ── GRUPO 2: CRÉDITO ───────────────────────────────────────────
+  doc.setFont('helvetica','bold'); doc.setFontSize(9);
+  doc.setTextColor(13,71,161);
+  doc.text('② CRÉDITO A AMORTIZAR', 14, y); y += 6;
+  doc.setTextColor(0,0,0);
+  drawRow('  Total Crédito Pregrado', cop(totCredPre),       {indent:18});
+  drawRow('  Total Crédito Idiomas',  cop(dp.totalCredito),  {indent:18});
+  drawRow('Total Crédito',            cop(totalCredito),
+    {bold:true, fillRGB:[220,235,255], textRGB:[13,71,161], fontSize:10});
+  y += 2;
+
+  // ── CUOTA MENSUAL ──────────────────────────────────────────────
+  doc.setFont('helvetica','bold'); doc.setFontSize(9);
+  doc.setTextColor(46,125,50);
+  doc.text('③ CUOTA MENSUAL COMBINADA', 14, y); y += 6;
+  doc.setTextColor(0,0,0);
+  drawRow('  Cuota Mensual Pregrado', cop(cuotaPre),  {indent:18});
+  drawRow('  Cuota Mensual Idiomas',  cop(dp.cuota),  {indent:18});
+  drawRow('Cuota Mensual Total',      cop(cuotaTotal),
+    {bold:true, fillRGB:[220,245,220], textRGB:[27,94,32], fontSize:10});
+  y += 4;
+
+  // ── COSTO TOTAL SEMESTRE ───────────────────────────────────────
+  const barH = 22;
+  doc.setFillColor(13,71,161); doc.rect(14, y-7, 180, barH, 'F');
+  doc.setTextColor(255,255,255);
+  // Line 1: label left, value right — same baseline
+  doc.setFont('helvetica','bold'); doc.setFontSize(11);
+  doc.text('COSTO TOTAL SEMESTRE', 18, y);
+  doc.text(cop(costoTotal), 190, y, {align:'right'});
+  // Line 2: equation — plain ASCII only, centered between x=14 and x=194
+  doc.setFont('helvetica','normal'); doc.setFontSize(8);
+  doc.text('(Total Pago Inicial  +  Total Credito)', 104, y+9, {align:'center'});
+  doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(11);
+  y += barH + 2;
+
+  y=pdfCostoFootnote(doc,y,'* Valor matrícula + Aporte Garantisa pregrado + Aporte Garantisa idiomas + Intereses de ambos créditos');
+  y += 4;
+
+  // ── PAGE 2: PREGRADO DETAIL ──
+  doc.addPage();
+  doc.setFillColor(13,71,161); doc.rect(0,0,210,14,'F');
+  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(11);
+  doc.text('DETALLE — ' + tipoLabel.toUpperCase(), 14, 10);
+  doc.setTextColor(0,0,0); y = 22;
+
+  // Pago inicial pregrado
+  doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.text('PAGO INICIAL (al desembolso)', 14, y); y += 7;
+  const piPre = dm.cuotaInicial !== undefined
+    ? [['Cuota Inicial Contado', cop(dm.cuotaInicial)], ['Garantisa', cop(dm.garantisa||dm.garCP||0)], ['Total Pago Inicial', cop(dm.pagoInicial)]]
+    : [['Total Pago Inicial', cop(dm.pagoInicial)]];
+  piPre.forEach(([k,v]) => { doc.setFont('helvetica','bold'); doc.text(k+':', 16, y); doc.setFont('helvetica','normal'); doc.text(v, 150, y, {align:'right'}); y+=6; });
+  y += 4;
+  doc.setFont('helvetica','bold'); doc.text('CRÉDITO A AMORTIZAR', 14, y); y += 7;
+  [['Monto Financiado', cop(dm.financiado||(dm.finCP+dm.finLP))], ['Cuota Mensual', cop(cuotaPre)], ['Total Intereses', cop(dm.totInt||(dm.CP?dm.CP.totInt:0)+(dm.LP?dm.LP.totInt:0))], ['Total Crédito', cop(totCredPre)]].forEach(([k,v]) => {
+    doc.setFont('helvetica','bold'); doc.text(k+':', 16, y); doc.setFont('helvetica','normal'); doc.text(v, 150, y, {align:'right'}); y+=6;
+  });
+  y += 6;
+
+  // Amortization table pregrado (only _d1 or _d3 have rows directly; _d2 has CP.rows and LP.rows)
+  const preRows = dm.rows || (dm.CP ? dm.CP.rows : []);
+  if(preRows.length > 0) {
+    doc.setFont('helvetica','bold'); doc.text('Tabla de Amortización — ' + (dm.rows ? tipoLabel : 'Corto Plazo'), 14, y); y += 7;
+    doc.setFillColor(13,71,161); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
+    let x=14; hw.forEach((h,i)=>{doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text(h,x+1,y);x+=cw[i];});
+    doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(9);
+    preRows.forEach(r=>{ y+=6; if(y>270){doc.addPage();y=20;} x=14;
+      [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(String(v),x+1,y);x+=cw[i];});
+    });
+    // LP table if exists
+    if(dm.LP && dm.LP.rows) {
+      y += 10; if(y>250){doc.addPage();y=20;}
+      doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.text('Tabla de Amortización — Largo Plazo', 14, y); y += 7;
+      doc.setFillColor(46,125,50); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
+      x=14; hw.forEach((h,i)=>{doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text(h,x+1,y);x+=cw[i];});
+      doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(9);
+      dm.LP.rows.forEach(r=>{ y+=6; if(y>270){doc.addPage();y=20;} x=14;
+        [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(String(v),x+1,y);x+=cw[i];});
+      });
+    }
+  }
+
+  // ── IDIOMAS DETAIL ──
+  doc.addPage();
+  doc.setFillColor(13,71,161); doc.rect(0,0,210,14,'F');
+  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(11);
+  doc.text('DETALLE — CRÉDITO IDIOMAS', 14, 10);
+  doc.setTextColor(0,0,0); y = 22;
+
+  doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.text('INFORMACIÓN GENERAL', 14, y); y += 7;
+  doc.setFont('helvetica','bold'); doc.text('Programa:', 16, y); doc.setFont('helvetica','normal'); doc.text(dp.progNombre, 70, y); y += 6;
+  doc.setFont('helvetica','bold'); doc.text('Valor Idiomas:', 16, y); doc.setFont('helvetica','normal'); doc.text(cop(dp.mat), 150, y, {align:'right'}); y += 6;
+  y += 4;
+  doc.setFont('helvetica','bold'); doc.text('PAGO INICIAL (al desembolso)', 14, y); y += 7;
+  [['Cuota Inicial Contado', cop(dp.cuotaInicial)], ['Garantisa 4.17%', cop(dp.garantisa)], ['Total Pago Inicial', cop(dp.pagoInicial)]].forEach(([k,v])=>{
+    doc.setFont('helvetica','bold'); doc.text(k+':', 16, y); doc.setFont('helvetica','normal'); doc.text(v, 150, y, {align:'right'}); y+=6;
+  });
+  y += 4;
+  doc.setFont('helvetica','bold'); doc.text('CRÉDITO A AMORTIZAR', 14, y); y += 7;
+  [['Monto Financiado', cop(dp.financiado)], ['Cuota Mensual', cop(dp.cuota)], ['Total Intereses', cop(dp.totInt)], ['Total Crédito', cop(dp.totalCredito)], ['COSTO TOTAL IDIOMAS', cop(dp.totalGeneral)]].forEach(([k,v])=>{
+    doc.setFont('helvetica','bold'); doc.text(k+':', 16, y); doc.setFont('helvetica','normal'); doc.text(v, 150, y, {align:'right'}); y+=6;
+  });
+  y += 6;
+  doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.text('Tabla de Amortización Idiomas ('+dp.n+' meses)', 14, y); y += 7;
+  doc.setFillColor(13,71,161); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
+  let x=14; hw.forEach((h,i)=>{doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text(h,x+1,y);x+=cw[i];});
+  doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(9);
+  dp.rows.forEach(r=>{ y+=6; if(y>270){doc.addPage();y=20;} x=14;
+    [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(String(v),x+1,y);x+=cw[i];});
+  });
+
+  doc.save(filename+'.pdf');
+}
+
+
+// ── BENEFICIOS / DESCUENTOS ──────────────────────────────────────────────────
+const _beneficios = {1:[], 2:[], 3:[]};
+
+function addBenef(tabId) {
+  const id = Date.now();
+  _beneficios[tabId].push({id, nombre:'', valor:0});
+  renderBeneficios(tabId);
+  // focus the new name input
+  setTimeout(()=>{
+    const inputs = document.querySelectorAll(`#benef-items-${tabId} .benef-item input[type=text]`);
+    if(inputs.length) inputs[inputs.length-1].focus();
+  }, 50);
+}
+
+function delBenef(tabId, id) {
+  _beneficios[tabId] = _beneficios[tabId].filter(b=>b.id!==id);
+  renderBeneficios(tabId);
+  recalcMatNeta(tabId);
+}
+
+function renderBeneficios(tabId) {
+  const container = document.getElementById('benef-items-'+tabId);
+  if(!container) return;
+  container.innerHTML = _beneficios[tabId].map(b => `
+    <div class="benef-item">
+      <input type="text" placeholder="Ej: Beca institucional, Caja compensación..." value="${b.nombre}"
+        oninput="updateBenef(${tabId},${b.id},'nombre',this.value)">
+      <input type="number" class="benef-val" placeholder="0" min="0" step="1000" value="${b.valor||''}"
+        oninput="updateBenef(${tabId},${b.id},'valor',parseFloat(this.value)||0)">
+      <button class="btn-del-benef" onclick="delBenef(${tabId},${b.id})" title="Eliminar">✕</button>
+    </div>`).join('');
+  recalcMatNeta(tabId);
+}
+
+function updateBenef(tabId, id, field, val) {
+  const b = _beneficios[tabId].find(x=>x.id===id);
+  if(b) b[field] = val;
+  recalcMatNeta(tabId);
+}
+
+function totalBeneficios(tabId) {
+  return _beneficios[tabId].reduce((s,b)=>s+(parseFloat(b.valor)||0), 0);
+}
+
+function recalcMatNeta(tabId) {
+  const matEl = document.getElementById('mat'+tabId);
+  const mat = parseFloat(matEl?.value)||0;
+  const total = totalBeneficios(tabId);
+  const neta = Math.max(0, mat - total);
+  const tEl = document.getElementById('benef-total-'+tabId);
+  if(tEl) tEl.textContent = total > 0 ? `Total descuentos: ${cop(total)}` : '';
+  const netaBadge = document.getElementById('mat-neta-'+tabId);
+  const netaVal   = document.getElementById('mat-neta-val-'+tabId);
+  if(netaBadge && netaVal) {
+    netaBadge.style.display = (total>0 && mat>0) ? 'flex' : 'none';
+    netaVal.textContent = cop(neta);
+  }
+  // Re-sync dual inputs with new neta base
+  if(tabId===1) actualizarAportes(1);
+  else if(tabId===2) actualizarAportes(2);
+  else if(tabId===3) actualizarPctBar3();
+}
+
+function getMatNeta(tabId) {
+  const mat = parseFloat(document.getElementById('mat'+tabId)?.value)||0;
+  return Math.max(0, mat - totalBeneficios(tabId));
+}
+
+// ── SYNC: % ↔ $ for financing inputs ─────────────────────────────────────────
+// Tab 1 & 3: pct → val, or val → pct, using matNeta as base
+
+// Tab2: pctCP → valCP (on % change); valCP → pctCP (on $ change)
+
+// ══════════════════════════════════════════════════════════════════
+// FINANCING INPUT ENGINE — v3
+// Model: financiado = mat - sum(beneficios) - contado
+// ══════════════════════════════════════════════════════════════════
+
+// ── State ────────────────────────────────────────────────────────
+const _benefs = {1:[], 2:[], 3:[]};  // [{id, nombre, pct, val}]
+
+// ── Getters ──────────────────────────────────────────────────────
+function getMat(tabId) {
+  return Math.max(0, parseFloat(document.getElementById('mat'+tabId)?.value)||0);
+}
+function getTotalBeneficios(tabId) {
+  return _benefs[tabId].reduce((s,b) => s + (parseFloat(b.val)||0), 0);
+}
+function getContadoVal(tabId) {
+  return Math.max(0, parseFloat(document.getElementById('cont'+tabId+'-val')?.value)||0);
+}
+function getFinanciado(tabId) {
+  const mat = getMat(tabId);
+  const benef = getTotalBeneficios(tabId);
+  const cont = getContadoVal(tabId);
+  return Math.max(0, mat - benef - cont);
+}
+
+// ── Main recalc ───────────────────────────────────────────────────
+function recalcAll(tabId) {
+  const mat   = getMat(tabId);
+  const benef = getTotalBeneficios(tabId);
+  const cont  = getContadoVal(tabId);
+  const matNeta = Math.max(0, mat - benef);
+  const fin   = Math.max(0, matNeta - cont);
+
+  // Validations
+  if(mat > 0 && benef > mat) {
+    showAlert(tabId, '⚠ Los beneficios superan el valor de la matrícula.');
+  }
+  if(mat > 0 && cont > matNeta) {
+    showAlert(tabId, '⚠ El pago de contado supera la matrícula neta (después de beneficios).');
+  }
+
+  // Sync contado % from value
+  const cPctEl = document.getElementById('cont'+tabId+'-pct');
+  if(cPctEl && mat > 0 && document.activeElement !== cPctEl) {
+    cPctEl.value = mat > 0 ? Math.round((cont/mat)*1000)/10 : 0;
+  }
+
+  // Update breakdown panel
+  const bp = document.getElementById('breakdown-'+tabId);
+  if(bp) {
+    bp.style.display = mat > 0 ? 'block' : 'none';
+    const finPct = mat > 0 ? ((fin/mat)*100).toFixed(1) : 0;
+    document.getElementById('bd-mat-'+tabId).textContent   = cop(mat);
+    document.getElementById('bd-benef-'+tabId).textContent = benef > 0 ? cop(benef)+' ('+(mat>0?((benef/mat)*100).toFixed(1):0)+'%)' : cop(0);
+    document.getElementById('bd-cont-'+tabId).textContent  = cont  > 0 ? cop(cont) +' ('+(mat>0?((cont/mat)*100).toFixed(1):0)+'%)' : cop(0);
+    document.getElementById('bd-fin-'+tabId).textContent   = cop(fin)+' ('+finPct+'% de matrícula)';
+
+    // Stacked bar
+    const bPct = mat > 0 ? Math.min(100, (benef/mat)*100) : 0;
+    const cPct = mat > 0 ? Math.min(100-bPct, (cont/mat)*100) : 0;
+    const fPct = Math.max(0, 100 - bPct - cPct);
+    document.getElementById('sb-benef-'+tabId).style.width = bPct.toFixed(1)+'%';
+    document.getElementById('sb-cont-'+tabId).style.width  = cPct.toFixed(1)+'%';
+    document.getElementById('sb-fin-'+tabId).style.width   = fPct.toFixed(1)+'%';
+    document.getElementById('sbl-benef-'+tabId).textContent= 'Benef. '+bPct.toFixed(0)+'%';
+    document.getElementById('sbl-cont-'+tabId).textContent = 'Contado '+cPct.toFixed(0)+'%';
+    document.getElementById('sbl-fin-'+tabId).textContent  = 'Financiado '+fPct.toFixed(0)+'%';
+  }
+
+  // Garantisa display (tabs 1 & 2)
+  if(tabId === 1) {
+    const gar = fin * GARANTISA_CP;
+    document.getElementById('garantisa1-val').textContent =
+      fin > 0 ? cop(gar)+' sobre '+cop(fin)+' financiado (4.17% = 3.5%+IVA)' : '—';
+  }
+  if(tabId === 2) {
+    updateSplit2(fin);
+  }
+}
+
+// ── Contado sync ─────────────────────────────────────────────────
+function syncContadoFromPct(tabId) {
+  const mat  = getMat(tabId);
+  const pct  = Math.max(0, parseFloat(document.getElementById('cont'+tabId+'-pct')?.value)||0);
+  const val  = mat > 0 ? Math.round(mat * pct / 100) : 0;
+  const vEl  = document.getElementById('cont'+tabId+'-val');
+  if(vEl) vEl.value = val || '';
+  recalcAll(tabId);
+}
+function syncContadoFromVal(tabId) {
+  const mat = getMat(tabId);
+  const val = Math.max(0, parseFloat(document.getElementById('cont'+tabId+'-val')?.value)||0);
+  const pct = mat > 0 ? Math.round((val/mat)*1000)/10 : 0;
+  const pEl = document.getElementById('cont'+tabId+'-pct');
+  if(pEl && document.activeElement !== pEl) pEl.value = pct || '';
+  recalcAll(tabId);
+}
+
+// ── Tab2 CP/LP split ──────────────────────────────────────────────
+function updateSplit2(fin) {
+  const pCP = parseFloat(document.getElementById('pctCP')?.value)||0;
+  const pLP = parseFloat(document.getElementById('pctLP')?.value)||0;
+  const valCP = Math.round(fin * pCP / 100);
+  const valLP = Math.round(fin * pLP / 100);
+  const fcpEl = document.getElementById('finvalCP');
+  const flpEl = document.getElementById('finvalLP');
+  if(fcpEl && document.activeElement !== fcpEl) fcpEl.value = valCP || '';
+  if(flpEl && document.activeElement !== flpEl) flpEl.value = valLP || '';
+  const total = pCP + pLP;
+  const tEl = document.getElementById('split-total-2');
+  if(tEl) {
+    tEl.style.display = (fin > 0) ? 'block' : 'none';
+    tEl.textContent = 'CP + LP = '+total.toFixed(1)+'%'+(total===100?' ✅':total>100?' ⚠️ Supera 100%':' (falta '+(100-total).toFixed(1)+'%)');
+    tEl.className = total === 100 ? 'pct-total-ok' : 'pct-total-over';
+  }
+  // Garantisa display
+  document.getElementById('gCP-val').textContent = valCP > 0 ? cop(valCP*GARANTISA_CP)+' sobre '+cop(valCP) : '—';
+  document.getElementById('gLP-val').textContent = valLP > 0 ? cop(valLP*GARANTISA_LP)+' sobre '+cop(valLP) : '—';
+}
+function syncSplitFromPct(which) {
+  const fin = getFinanciado(2);
+  const id  = which==='CP' ? 'pctCP' : 'pctLP';
+  const vid = which==='CP' ? 'finvalCP' : 'finvalLP';
+  const pct = Math.max(0, parseFloat(document.getElementById(id)?.value)||0);
+  const vel = document.getElementById(vid);
+  if(vel) vel.value = Math.round(fin * pct / 100) || '';
+  updateSplit2(fin);
+}
+function syncSplitFromVal(which) {
+  const fin = getFinanciado(2);
+  const id  = which==='CP' ? 'pctCP' : 'pctLP';
+  const vid = which==='CP' ? 'finvalCP' : 'finvalLP';
+  const val = Math.max(0, parseFloat(document.getElementById(vid)?.value)||0);
+  const pel = document.getElementById(id);
+  if(pel && fin > 0) pel.value = Math.round((val/fin)*1000)/10 || '';
+  updateSplit2(fin);
+}
+
+// ── Beneficios engine ─────────────────────────────────────────────
+function addBenef(tabId) {
+  const id = Date.now();
+  _benefs[tabId].push({id, nombre:'', pct:0, val:0});
+  renderBeneficios(tabId);
+  setTimeout(()=>{
+    const rows = document.querySelectorAll('#benef-items-'+tabId+' .benef-item-name');
+    if(rows.length) rows[rows.length-1].focus();
+  }, 40);
+}
+function delBenef(tabId, id) {
+  _benefs[tabId] = _benefs[tabId].filter(b=>b.id!==id);
+  renderBeneficios(tabId);
+  recalcAll(tabId);
+}
+function updateBenefField(tabId, id, field, rawVal) {
+  const b = _benefs[tabId].find(x=>x.id===id);
+  if(!b) return;
+  const mat = getMat(tabId);
+  if(field === 'nombre') {
+    b.nombre = rawVal; return;
+  }
+  if(field === 'pct') {
+    const pct = Math.max(0, parseFloat(rawVal)||0);
+    b.pct = pct;
+    b.val = mat > 0 ? Math.round(mat * pct / 100) : 0;
+    // update the $ input in the DOM
+    const vEl = document.getElementById('benef-val-'+id);
+    if(vEl && document.activeElement !== vEl) vEl.value = b.val || '';
+  } else if(field === 'val') {
+    const val = Math.max(0, parseFloat(rawVal)||0);
+    b.val = val;
+    b.pct = mat > 0 ? Math.round((val/mat)*1000)/10 : 0;
+    const pEl = document.getElementById('benef-pct-'+id);
+    if(pEl && document.activeElement !== pEl) pEl.value = b.pct || '';
+  }
+  recalcAll(tabId);
+}
+function renderBeneficios(tabId) {
+  const container = document.getElementById('benef-items-'+tabId);
+  if(!container) return;
+  container.innerHTML = _benefs[tabId].map(b => `
+    <div class="benef-item">
+      <input class="benef-item-name" type="text" placeholder="Ej: Beca, Caja compensación..." value="${b.nombre}"
+        oninput="updateBenefField(${tabId},${b.id},'nombre',this.value)">
+      <div class="benef-item-inputs">
+        <div class="ipfx" style="border-color:var(--verde-c);">
+          <input id="benef-pct-${b.id}" class="benef-inp" type="number" placeholder="0" min="0" max="100" step="0.1"
+            value="${b.pct||''}" oninput="updateBenefField(${tabId},${b.id},'pct',this.value)"><span style="padding:6px 6px;background:var(--gris-c);font-size:11px;">%</span>
+        </div>
+        <div class="dual-sep" style="font-size:11px;">↔</div>
+        <div class="ipfx" style="border-color:var(--verde-c);">
+          <span>$</span><input id="benef-val-${b.id}" class="benef-inp" type="number" placeholder="0" min="0" step="1000"
+            value="${b.val||''}" oninput="updateBenefField(${tabId},${b.id},'val',this.value)">
+        </div>
+        <button class="benef-del" onclick="delBenef(${tabId},${b.id})" title="Eliminar">✕</button>
+      </div>
+    </div>`).join('');
+  // update subtotal
+  const total = getTotalBeneficios(tabId);
+  const mat   = getMat(tabId);
+  const sub   = document.getElementById('benef-subtotal-'+tabId);
+  if(sub) sub.textContent = total>0 ? 'Total descuentos: '+cop(total)+(mat>0?' ('+((total/mat)*100).toFixed(1)+'%)':'') : '';
+}
+
+// ── Compatibility shims (called from old HTML event handlers still present) ──
+function actualizarAportes(tab) { recalcAll(tab); }
+function actualizarPctBar3()    { recalcAll(3); }
+function recalcMatNeta(tab)     { recalcAll(tab); }
+function getMatNeta(tab) {
+  return Math.max(0, getMat(tab) - getTotalBeneficios(tab));
+}
+function totalBeneficios(tab) { return getTotalBeneficios(tab); }
+
 // Init
 updEq1(); updEqCP(); updEqLP();
 convertirTasas();
+recalcAll(1); recalcAll(2); recalcAll(3);
 document.getElementById('plazo1').addEventListener('input',updEq1);
 document.getElementById('plazoCP').addEventListener('input',updEqCP);
 document.getElementById('plazoLP').addEventListener('input',updEqLP);
@@ -1580,16 +2842,50 @@ document.getElementById('plazoLP').addEventListener('input',updEqLP);
         </div>
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
-        <div>
-          <label>% a Financiar</label>
-          <div class="ipfx"><input type="number" id="id-pct" placeholder="80" min="1" max="100" value="80"><span>%</span></div>
-        </div>
-        <div>
-          <label>% Cuota Inicial</label>
-          <div class="ipfx"><input type="number" id="id-cont" placeholder="0" min="0" max="99" value="0"><span>%</span></div>
+      <!-- Beneficios idiomas -->
+      <div class="benef-box" style="margin-bottom:12px;">
+        <div class="benef-title">🎁 Beneficios / Descuentos sobre Idiomas</div>
+        <div class="benef-items" id="benef-items-id"></div>
+        <button class="btn-add-benef" onclick="addBenefId()">+ Agregar beneficio o descuento</button>
+        <div class="benef-subtotal" id="benef-subtotal-id"></div>
+      </div>
+
+      <!-- Pago de contado idiomas -->
+      <div class="contado-box" style="margin-bottom:12px;">
+        <div class="contado-title">💵 Pago de Contado — Idiomas</div>
+        <div class="dual-row">
+          <div class="ipfx" style="border-color:var(--dorado);">
+            <input type="number" id="id-cont-pct" placeholder="0" min="0" max="100" step="0.1" value="0"
+              oninput="syncContadoId('pct')"><span>%</span>
+          </div>
+          <div class="dual-sep">↔</div>
+          <div class="ipfx" style="border-color:var(--dorado);">
+            <span>$</span><input type="number" id="id-cont-val" placeholder="0" min="0" step="1000"
+              oninput="syncContadoId('val')">
+          </div>
         </div>
       </div>
+
+      <!-- Breakdown idiomas -->
+      <div class="breakdown-panel" id="breakdown-id" style="display:none;margin-bottom:14px;">
+        <div class="breakdown-row">
+          <span class="breakdown-lbl">📋 Valor Idiomas</span>
+          <span class="bd-val" id="bd-mat-id">—</span>
+        </div>
+        <div class="breakdown-row">
+          <span class="breakdown-lbl indent">- Beneficios/Descuentos</span>
+          <span class="bd-val neg" id="bd-benef-id">—</span>
+        </div>
+        <div class="breakdown-row">
+          <span class="breakdown-lbl indent">- Pago de Contado</span>
+          <span class="bd-val neg" id="bd-cont-id">—</span>
+        </div>
+        <div class="breakdown-row separator total">
+          <span class="breakdown-lbl">= Monto Financiado</span>
+          <span class="bd-val blue" id="bd-fin-id">—</span>
+        </div>
+      </div>
+
       <div style="margin-bottom:14px;">
         <label>Número de Meses</label>
         <div class="ipfx"><input type="number" id="id-meses" placeholder="6" min="1" value="6"><span>meses</span></div>
@@ -1608,5 +2904,6 @@ document.getElementById('plazoLP').addEventListener('input',updEqLP);
     </div>
   </div>
 </div>
+
 </body>
 </html>
