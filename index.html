@@ -297,9 +297,22 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
             <span class="breakdown-lbl indent">- Pago de Contado</span>
             <span class="bd-val neg" id="bd-cont-1">—</span>
           </div>
-          <div class="breakdown-row separator total">
+          <div class="breakdown-row separator total" style="align-items:flex-start;flex-direction:column;gap:6px;">
             <span class="breakdown-lbl">= Monto Financiado</span>
-            <span class="bd-val blue" id="bd-fin-1">—</span>
+            <div style="width:100%;">
+              <div class="dual-row" style="margin-bottom:4px;">
+                <div class="ipfx" style="border-color:var(--azul);">
+                  <input type="number" id="finpct1" placeholder="0" min="0" max="100" step="0.1"
+                    oninput="syncFinPctToVal(1)" style="font-family:'DM Mono',monospace;"><span>%</span>
+                </div>
+                <div class="dual-sep">↔</div>
+                <div class="ipfx" style="border-color:var(--azul);">
+                  <span>$</span><input type="number" id="finval1" placeholder="0" min="0" step="1000"
+                    oninput="syncFinanciadoFromVal(1)" style="font-family:'DM Mono',monospace;">
+                </div>
+              </div>
+              <div class="sub-l" id="bd-fin-1" style="text-align:right;color:var(--azul);font-weight:600;"></div>
+            </div>
           </div>
           <div class="stack-bar" id="sbar-1">
             <div class="stack-seg s-benef" id="sb-benef-1" style="width:0%"></div>
@@ -442,7 +455,7 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
               </div>
               <div class="dual-sep">↔</div>
               <div class="ipfx" style="border-color:var(--azul);">
-                <span>$</span><input type="number" id="finvalCP" placeholder="0" min="0" step="1000" oninput="syncSplitFromVal('CP')">
+                <span>$</span><input type="number" id="finvalCP" placeholder="0" min="0" step="1000" oninput="syncFinanciadoCP()">
               </div>
             </div>
           </div>
@@ -455,7 +468,7 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
               </div>
               <div class="dual-sep">↔</div>
               <div class="ipfx" style="border-color:var(--verde-c);">
-                <span>$</span><input type="number" id="finvalLP" placeholder="0" min="0" step="1000" oninput="syncSplitFromVal('LP')">
+                <span>$</span><input type="number" id="finvalLP" placeholder="0" min="0" step="1000" oninput="syncFinanciadoLP()">
               </div>
             </div>
           </div>
@@ -580,9 +593,22 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
             <span class="breakdown-lbl indent">- Pago de Contado</span>
             <span class="bd-val neg" id="bd-cont-3">—</span>
           </div>
-          <div class="breakdown-row separator total">
+          <div class="breakdown-row separator total" style="align-items:flex-start;flex-direction:column;gap:6px;">
             <span class="breakdown-lbl">= Monto Financiado</span>
-            <span class="bd-val blue" id="bd-fin-3">—</span>
+            <div style="width:100%;">
+              <div class="dual-row" style="margin-bottom:4px;">
+                <div class="ipfx" style="border-color:#7B1FA2;">
+                  <input type="number" id="finpct3" placeholder="0" min="0" max="100" step="0.1"
+                    oninput="syncFinPctToVal(3)" style="font-family:'DM Mono',monospace;"><span>%</span>
+                </div>
+                <div class="dual-sep">↔</div>
+                <div class="ipfx" style="border-color:#7B1FA2;">
+                  <span>$</span><input type="number" id="finval3" placeholder="0" min="0" step="1000"
+                    oninput="syncFinanciadoFromVal(3)" style="font-family:'DM Mono',monospace;">
+                </div>
+              </div>
+              <div class="sub-l" id="bd-fin-3" style="text-align:right;color:#7B1FA2;font-weight:600;"></div>
+            </div>
           </div>
           <div class="stack-bar" id="sbar-3">
             <div class="stack-seg s-benef" id="sb-benef-3" style="width:0%"></div>
@@ -765,123 +791,35 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
 ];/*%%PROGRAMAS_END%%*/
 /*%%POSGRADOS_START%%*/const POSGRADOS = [
   ["Doctorado En Administración","Doctorado",30388900],
-  ["Doctorado En Ciencias Biomédicas","Doctorado",20841700],
-  ["Doctorado En Ciencias Del Mar","Doctorado",17509050],
-  ["Doctorado En Ciencias Naturales","Doctorado",18483900],
-  ["Doctorado En Ciencias Sociales","Doctorado",22390300],
-  ["Doctorado En Comunicación","Doctorado",21319300],
-  ["Doctorado En Derecho","Doctorado",22347800],
-  ["Doctorado En Economía","Doctorado",22390300],
+  ["Maestría En Administración De Empresas","Maestría",25324000],
+  ["Maestría En Finanzas","Maestría",25324000],
+  ["Maestría En Mercadeo","Maestría",25324000],
+  ["Maestría En Negocios Internacionales","Maestría",25324000],
+  ["Especialización En Finanzas","Especialización",25324000],
+  ["Especialización En Gerencia De Empresas Comerciales","Especialización",25324000],
+  ["Especialización En Mercadeo","Especialización",25324000],
+  ["Especialización En Logística De Transporte Internacional De Mercancia","Especialización",23557300],
+  ["Especialización En Gerencia Del Talento Humano","Especialización",21915000],
+  ["Especialización En Gerencia Pública","Especialización",21915000],
+  ["Especialización En Gerencia Financiera De Servicios De Salud","Especialización",18909700],
+  ["SM - Especialización En Finanzas","Especialización",18993000],
+  ["SM - Especialización En Dirección Estratégica Empresarial","Especialización",13191200],
   ["Doctorado En Educación","Doctorado",18623500],
+  ["Maestría En Educación","Maestría",12658900],
+  ["Maestría En Educación Mediada Por Tic","Maestría",11393000],
+  ["Maestría En Pedagogía Social E Intervención Educativa En Contextos Sociales","Maestría",11393000],
+  ["Maestría En La Enseñanza Del Inglés","Maestría",12854100],
+  ["Maestría En Lenguaje Y Sociedad","Maestría",12854100],
+  ["Especialización En La Enseñanza Del Inglés","Especialización",12854100],
   ["Doctorado En Ingeniería Civil","Doctorado",21914400],
   ["Doctorado En Ingeniería De Sistemas Y Computación","Doctorado",21914400],
   ["Doctorado En Ingeniería Eléctrica Y Electrónica","Doctorado",21914400],
   ["Doctorado En Ingeniería Industrial","Doctorado",21914400],
   ["Doctorado En Ingeniería Mecánica","Doctorado",21914400],
-  ["Doctorado En Psicología","Doctorado",21319300],
-  ["CAR - Especialización En Gerencia De La Calidad Y Auditoría En Salud","Especialización",16543700],
-  ["CAR - Especialización En Seguridad Y Salud En El Trabajo","Especialización",16543700],
-  ["Especialización En Análisis Y Diseño De Estructuras","Especialización",20495600],
-  ["Especialización En Arqueología","Especialización",15032100],
-  ["Especialización En Comunicación Digital","Especialización",15032100],
-  ["Especialización En Derecho Administrativo","Especialización",14739100],
-  ["Especialización En Derecho Ambiental, Territorial Y Urbanístico","Especialización",14739100],
-  ["Especialización En Derecho Civil Y De Familia","Especialización",14739100],
-  ["Especialización En Derecho Comercial","Especialización",16440000],
-  ["Especialización En Derecho Constitucional","Especialización",14739100],
-  ["Especialización En Derecho Contractual","Especialización",14739100],
-  ["Especialización En Derecho De Sociedades","Especialización",14739100],
-  ["Especialización En Derecho Laboral","Especialización",14739100],
-  ["Especialización En Derecho Penal","Especialización",16567700],
-  ["Especialización En Derecho Público","Especialización",14739100],
-  ["Especialización En Derechos Humanos","Especialización",14739100],
-  ["Especialización En Dermatología","Especialización",52550300],
-  ["Especialización En Desarrollo Familiar","Especialización",13454400],
-  ["Especialización En Desarrollo Organizacional Y Procesos Humanos","Especialización",15971200],
-  ["Especialización En Desarrollo Social","Especialización",16902400],
-  ["Especialización En Dirección De Operaciones","Especialización",17421300],
-  ["Especialización En Diseño Y Evaluación De Proyectos","Especialización",20495600],
-  ["Especialización En Enfermería Del Cuidado Crítico Adulto","Especialización",9640900],
-  ["Especialización En Enfermería Del Cuidado Neonatal","Especialización",9640900],
-  ["Especialización En Finanzas","Especialización",25324000],
-  ["Especialización En Gerencia De Empresas Comerciales","Especialización",25324000],
-  ["Especialización En Gerencia De La Calidad Y Auditoría En Salud","Especialización",18227700],
-  ["Especialización En Gerencia De La Calidad Y Auditoría En Salud Virtual","Especialización",14582100],
-  ["Especialización En Gerencia De La Comunicación Organizacional","Especialización",13800400],
-  ["Especialización En Gerencia De Proyectos","Especialización",20495600],
-  ["Especialización En Gerencia De Proyectos De Construcción","Especialización",20495600],
-  ["Especialización En Gerencia De Servicios De Salud","Especialización",18944500],
-  ["Especialización En Gerencia De Tecnologías De La Información","Especialización",20495600],
-  ["Especialización En Gerencia Del Talento Humano","Especialización",21915000],
-  ["Especialización En Gerencia Financiera De Servicios De Salud","Especialización",18909700],
-  ["Especialización En Gerencia Pública","Especialización",21915000],
-  ["Especialización En Gestión De Sistemas Eléctricos De Potencia","Especialización",20495600],
-  ["Especialización En Gobierno Y Políticas Públicas","Especialización",14739100],
-  ["Especialización En Ingeniería De Procesos Industriales","Especialización",20495600],
-  ["Especialización En Ingeniería De Sistemas Hídricos Urbanos","Especialización",18638700],
-  ["Especialización En Ingeniería Del Software","Especialización",20495600],
-  ["Especialización En La Enseñanza Del Inglés","Especialización",12854100],
-  ["Especialización En Logística De Transporte Internacional De Mercancia","Especialización",23557300],
-  ["Especialización En Logística Empresarial","Especialización",18638700],
-  ["Especialización En Medicina Familiar","Especialización",39362300],
-  ["Especialización En Medicina Interna","Especialización",52550300],
-  ["Especialización En Mercadeo","Especialización",25324000],
-  ["Especialización En Negociación Y Manejo De Conflictos","Especialización",14945800],
-  ["Especialización En Neonatología","Especialización",60377100],
-  ["Especialización En Oftalmología","Especialización",54503900],
-  ["Especialización En Pavimentos Y Geotecnia Vial","Especialización",20495600],
-  ["Especialización En Pediatría","Especialización",52550300],
-  ["Especialización En Psicología Forense","Especialización",14906800],
-  ["Especialización En Psiquiatría","Especialización",52550300],
-  ["Especialización En Radiología E Imágenes Diagnósticas","Especialización",54503900],
-  ["Especialización En Responsabilidad Civil Y Seguros","Especialización",14739100],
-  ["Especialización En Seguridad De La Información","Especialización",20495600],
-  ["Especialización En Seguridad De La Información","Especialización",14346600],
-  ["Especialización En Seguridad Y Salud En El Trabajo","Especialización",16543700],
-  ["Especialización En Seguridad Y Salud En El Trabajo Virtual","Especialización",14582100],
-  ["Especialización En Transformación Digital","Especialización",20495600],
-  ["Especialización En Tributación","Especialización",14739100],
-  ["Especialización En Valoración De Bienes","Especialización",14070600],
-  ["RIO - Especialización En Gerencia De La Calidad Y Auditoría En Salud","Especialización",16543700],
-  ["RIO - Especialización En Seguridad Y Salud En El Trabajo","Especialización",16543700],
-  ["SM - Especialización En Derecho Público","Especialización",12528100],
-  ["SM - Especialización En Dirección Estratégica Empresarial","Especialización",13191200],
-  ["SM - Especialización En Finanzas","Especialización",18993000],
-  ["SM - Especialización En Gerencia De La Calidad Y Auditoría En Salud","Especialización",13539100],
-  ["SM - Especialización En Gerencia De Proyectos","Especialización",15371800],
-  ["SM - Especialización En Seguridad Y Salud En El Trabajo","Especialización",12407700],
-  ["SM - Especialización En Tributación","Especialización",12528100],
-  ["Maestría En Administración De Empresas","Maestría",25324000],
   ["Maestría En Análisis Y Gestión De Sistemas Eléctricos","Maestría",21034700],
   ["Maestría En Analítica De Datos","Maestría",21034700],
-  ["Maestría En Ciencia Política Y Gobierno","Maestría",17770000],
-  ["Maestría En Ciencias Básicas Biomédicas","Maestría",19241600],
-  ["Maestría En Ciencias De La Tierra","Maestría",14068300],
-  ["Maestría En Ciencias Naturales","Maestría",12658900],
-  ["Maestría En Comunicación","Maestría",16307400],
-  ["Maestría En Cooperación Internacional Y Gestión De Proyectos","Maestría",15694100],
-  ["Maestría En Derecho","Maestría",17770000],
-  ["Maestría En Derecho Ambiental Y Urbano-Territorial","Maestría",17770000],
-  ["Maestría En Derecho Civil Y De Familia","Maestría",14739100],
-  ["Maestría En Derecho Del Comercio","Maestría",17770000],
-  ["Maestría En Derecho Del Trabajo Y De La Seguridad Social","Maestría",17770000],
-  ["Maestría En Derecho Público","Maestría",17770000],
-  ["Maestría En Desarrollo Organizacional Y Procesos Humanos","Maestría",15694100],
-  ["Maestría En Desarrollo Social","Maestría",16902400],
-  ["Maestría En Diseño E Innovación Md+I","Maestría",16089700],
-  ["Maestría En Economia","Maestría",15743100],
-  ["Maestría En Educación","Maestría",12658900],
-  ["Maestría En Educación Mediada Por Tic","Maestría",11393000],
-  ["Maestría En Enfermería","Maestría",11490200],
-  ["Maestría En Epidemiología","Maestría",19241600],
-  ["Maestría En Epidemiología Clínica","Maestría",20131400],
-  ["Maestría En Estadística Aplicada","Maestría",12658900],
-  ["Maestría En Filosofía","Maestría",11173700],
-  ["Maestría En Finanzas","Maestría",25324000],
-  ["Maestría En Fisica Aplicada","Maestría",12658900],
   ["Maestría En Gestión De Riesgos Naturales, Prevención Y Atención De Desastres","Maestría",21034700],
   ["Maestría En Gobierno De Tecnología Informática","Maestría",21034700],
-  ["Maestría En Historia","Maestría",12883800],
   ["Maestría En Ingeniería Administrativa","Maestría",21034700],
   ["Maestría En Ingeniería Ambiental","Maestría",21034700],
   ["Maestría En Ingeniería Biomédica","Maestría",21034700],
@@ -891,23 +829,111 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
   ["Maestría En Ingeniería Electrónica","Maestría",21034700],
   ["Maestría En Ingeniería Industrial","Maestría",21034700],
   ["Maestría En Ingeniería Mecánica","Maestría",21034700],
-  ["Maestría En La Enseñanza Del Inglés","Maestría",12854100],
-  ["Maestría En Lenguaje Y Sociedad","Maestría",12854100],
-  ["Maestría En Literatura Y Escrituras Creativas","Maestría",12044800],
-  ["Maestría En Matemáticas","Maestría",12658900],
-  ["Maestría En Mercadeo","Maestría",25324000],
-  ["Maestría En Negociación Y Manejo De Conflictos","Maestría",17770000],
-  ["Maestría En Negocios Internacionales","Maestría",25324000],
-  ["Maestría En Pedagogía Social E Intervención Educativa En Contextos Sociales","Maestría",11393000],
-  ["Maestría En Periodismo","Maestría",15694100],
-  ["Maestría En Psicología Énfasis Investigativo","Maestría",16640700],
-  ["Maestría En Relaciones Internacionales","Maestría",15694100],
-  ["Maestría En Relaciones Públicas","Maestría",15694100],
-  ["Maestría En Salud Pública","Maestría",19241600],
   ["Maestría En Sistemas Integrados De Gestión","Maestría",21034700],
+  ["Especialización En Transformación Digital","Especialización",20495600],
+  ["Especialización En Seguridad De La Información","Especialización",20495600],
+  ["Especialización En Ingeniería Del Software","Especialización",20495600],
+  ["Especialización En Gerencia De Tecnologías De La Información","Especialización",20495600],
+  ["Especialización En Pavimentos Y Geotecnia Vial","Especialización",20495600],
+  ["Especialización En Gerencia De Proyectos","Especialización",20495600],
+  ["Especialización En Gerencia De Proyectos De Construcción","Especialización",20495600],
+  ["Especialización En Análisis Y Diseño De Estructuras","Especialización",20495600],
+  ["Especialización En Diseño Y Evaluación De Proyectos","Especialización",20495600],
+  ["Especialización En Gestión De Sistemas Eléctricos De Potencia","Especialización",20495600],
+  ["Especialización En Ingeniería De Procesos Industriales","Especialización",20495600],
+  ["Especialización En Ingeniería De Sistemas Hídricos Urbanos","Especialización",18638700],
+  ["Especialización En Logística Empresarial","Especialización",18638700],
+  ["Especialización En Dirección De Operaciones","Especialización",17421300],
+  ["SM - Especialización En Gerencia De Proyectos","Especialización",15371800],
+  ["Doctorado En Ciencias Biomédicas","Doctorado",20841700],
+  ["Maestría En Epidemiología Clínica","Maestría",20131400],
+  ["Maestría En Epidemiología","Maestría",19241600],
+  ["Maestría En Ciencias Básicas Biomédicas","Maestría",19241600],
+  ["Maestría En Salud Pública","Maestría",19241600],
+  ["Maestría En Enfermería","Maestría",11490200],
+  ["Especialización En Gerencia De Servicios De Salud","Especialización",18944500],
+  ["Especialización En Gerencia De La Calidad Y Auditoría En Salud","Especialización",18227700],
+  ["Especialización En Seguridad Y Salud En El Trabajo","Especialización",16543700],
+  ["Especialización En Enfermería Del Cuidado Crítico Adulto","Especialización",9640900],
+  ["Especialización En Enfermería Del Cuidado Neonatal","Especialización",9640900],
+  ["SM - Especialización En Gerencia De La Calidad Y Auditoría En Salud","Especialización",13539100],
+  ["SM - Especialización En Seguridad Y Salud En El Trabajo","Especialización",12407700],
+  ["CAR - Especialización En Gerencia De La Calidad Y Auditoría En Salud","Especialización",16543700],
+  ["CAR - Especialización En Seguridad Y Salud En El Trabajo","Especialización",16543700],
+  ["RIO - Especialización En Gerencia De La Calidad Y Auditoría En Salud","Especialización",16543700],
+  ["RIO - Especialización En Seguridad Y Salud En El Trabajo","Especialización",16543700],
+  ["Especialización En Neonatología","Especialización",60377100],
+  ["Especialización En Radiología E Imágenes Diagnósticas","Especialización",54503900],
+  ["Especialización En Oftalmología","Especialización",54503900],
+  ["Especialización En Dermatología","Especialización",52550300],
+  ["Especialización En Medicina Interna","Especialización",52550300],
+  ["Especialización En Pediatría","Especialización",52550300],
+  ["Especialización En Psiquiatría","Especialización",52550300],
+  ["Especialización En Medicina Familiar","Especialización",39362300],
+  ["Doctorado En Ciencias Sociales","Doctorado",22390300],
+  ["Doctorado En Economía","Doctorado",22390300],
+  ["Doctorado En Comunicación","Doctorado",21319300],
+  ["Doctorado En Psicología","Doctorado",21319300],
+  ["Maestría En Desarrollo Social","Maestría",16902400],
+  ["Maestría En Psicología Énfasis Investigativo","Maestría",16640700],
+  ["Maestría En Comunicación","Maestría",16307400],
+  ["Maestría En Economia","Maestría",15743100],
+  ["Maestría En Relaciones Públicas","Maestría",15694100],
   ["Maestría En Trastornos Cognoscitivos Y Del Aprendizaje","Maestría",15694100],
+  ["Maestría En Periodismo","Maestría",15694100],
+  ["Maestría En Desarrollo Organizacional Y Procesos Humanos","Maestría",15694100],
+  ["Maestría En Historia","Maestría",12883800],
+  ["Maestría En Literatura Y Escrituras Creativas","Maestría",12044800],
+  ["Maestría En Filosofía","Maestría",11173700],
+  ["Especialización En Desarrollo Social","Especialización",16902400],
+  ["Especialización En Desarrollo Organizacional Y Procesos Humanos","Especialización",15971200],
+  ["Especialización En Arqueología","Especialización",15032100],
+  ["Especialización En Comunicación Digital","Especialización",15032100],
+  ["Especialización En Psicología Forense","Especialización",14906800],
+  ["Especialización En Gerencia De La Comunicación Organizacional","Especialización",13800400],
+  ["Especialización En Desarrollo Familiar","Especialización",13454400],
+  ["Doctorado En Ciencias Naturales","Doctorado",18483900],
+  ["Doctorado En Ciencias Del Mar","Doctorado",17509050],
+  ["Maestría En Ciencias De La Tierra","Maestría",14068300],
+  ["Maestría En Ciencias Naturales","Maestría",12658900],
+  ["Maestría En Estadística Aplicada","Maestría",12658900],
+  ["Maestría En Fisica Aplicada","Maestría",12658900],
+  ["Maestría En Matemáticas","Maestría",12658900],
+  ["Maestría En Diseño E Innovación Md+I","Maestría",16089700],
+  ["Maestría En Urbanismo Y Desarrollo Territorial","Maestría",16089700],
+  ["Especialización En Valoración De Bienes","Especialización",14070600],
+  ["Doctorado En Derecho","Doctorado",22347800],
+  ["Maestría En Ciencia Política Y Gobierno","Maestría",17770000],
   ["Maestría En Tributación Y Aduanas","Maestría",17770000],
-  ["Maestría En Urbanismo Y Desarrollo Territorial","Maestría",16089700]
+  ["Maestría En Derecho","Maestría",17770000],
+  ["Maestría En Derecho Ambiental Y Urbano-Territorial","Maestría",17770000],
+  ["Maestría En Derecho Del Comercio","Maestría",17770000],
+  ["Maestría En Derecho Del Trabajo Y De La Seguridad Social","Maestría",17770000],
+  ["Maestría En Derecho Público","Maestría",17770000],
+  ["Maestría En Negociación Y Manejo De Conflictos","Maestría",17770000],
+  ["Maestría En Cooperación Internacional Y Gestión De Proyectos","Maestría",15694100],
+  ["Maestría En Relaciones Internacionales","Maestría",15694100],
+  ["Maestría En Derecho Civil Y De Familia","Maestría",14739100],
+  ["Especialización En Derecho Penal","Especialización",16567700],
+  ["Especialización En Derecho Comercial","Especialización",16440000],
+  ["Especialización En Negociación Y Manejo De Conflictos","Especialización",14945800],
+  ["Especialización En Derecho Administrativo","Especialización",14739100],
+  ["Especialización En Derecho Ambiental, Territorial Y Urbanístico","Especialización",14739100],
+  ["Especialización En Derecho Civil Y De Familia","Especialización",14739100],
+  ["Especialización En Derecho Constitucional","Especialización",14739100],
+  ["Especialización En Derecho Contractual","Especialización",14739100],
+  ["Especialización En Derecho De Sociedades","Especialización",14739100],
+  ["Especialización En Derecho Laboral","Especialización",14739100],
+  ["Especialización En Derecho Público","Especialización",14739100],
+  ["Especialización En Derechos Humanos","Especialización",14739100],
+  ["Especialización En Gobierno Y Políticas Públicas","Especialización",14739100],
+  ["Especialización En Responsabilidad Civil Y Seguros","Especialización",14739100],
+  ["Especialización En Tributación","Especialización",14739100],
+  ["SM - Especialización En Derecho Público","Especialización",12528100],
+  ["SM - Especialización En Tributación","Especialización",12528100],
+  ["Especialización En Gerencia De La Calidad Y Auditoría En Salud Virtual","Especialización",14582100],
+  ["Especialización En Seguridad Y Salud En El Trabajo Virtual","Especialización",14582100],
+  ["Especialización En Seguridad De La Información","Especialización",14346600]
 ];/*%%POSGRADOS_END%%*/
 
 const GARANTISA_CP = 0.0417;
@@ -1217,13 +1243,13 @@ function calcular2(){
   if(!mat||mat<=0) return showAlert(2,'Ingresa el valor de matrícula.');
   if(finTotal<=0) return showAlert(2,'El monto financiado es cero. Revisa beneficios y pago de contado.');
   if(pCP+pLP<=0) return showAlert(2,'Define al menos un tramo (CP o LP).');
-  if(pCP+pLP>100) return showAlert(2,'La suma CP + LP supera 100% del monto financiado.');
-  if(Math.abs(pCP+pLP-100)>0.1) { showAlert(2,'⚠ CP + LP = '+(pCP+pLP).toFixed(1)+'% del financiado (debería sumar 100%). El cálculo continuará con los valores ingresados.'); }
+  const totalPct2 = pCP + pLP + (mat>0?getTotalBeneficios(2)/mat*100:0) + (mat>0?cuotaInicial/mat*100:0);
+  if(pCP+pLP > mat > 0 ? (1-(getTotalBeneficios(2)/mat))*100 : 100) showAlert(2,'⚠ CP+LP supera el monto neto disponible para financiar.');
   if(pCP>0&&(!nCP||nCP<=0)) return showAlert(2,'Ingresa el plazo para Corto Plazo.');
   if(pLP>0&&(!nLP||nLP<=0)) return showAlert(2,'Ingresa el plazo para Largo Plazo.');
 
-  // CP/LP are now % of finTotal (not of mat)
-  const finCP=finTotal*pCP/100, finLP=finTotal*pLP/100;
+  // CP/LP are % of total matrícula (fix 3)
+  const finCP=mat*pCP/100, finLP=mat*pLP/100;
   const garCP=finCP*GARANTISA_CP, garLP=finLP*GARANTISA_LP;
   const princCP=finCP, princLP=finLP;
   const pagoInicial = cuotaInicial + garCP + garLP;
@@ -1689,6 +1715,28 @@ function recalcId() {
   document.getElementById('bd-cont-id').textContent  = cont>0  ? cop(cont) +(mat>0?' ('+((cont/mat)*100).toFixed(1)+'%)':'') : cop(0);
   const finPct = mat>0 ? ((fin/mat)*100).toFixed(1) : 0;
   document.getElementById('bd-fin-id').textContent   = cop(fin)+' ('+finPct+'% de idiomas)';
+  // Update Mixto split check display
+  const isMId = (_idiomasCtx.tabId === 2);
+  if(isMId) {
+    const matId = _idiomasCtx.valorIdiomas || 0;
+    const pCP2 = parseFloat(document.getElementById('id-pctCP')?.value)||0;
+    const pLP2 = parseFloat(document.getElementById('id-pctLP')?.value)||0;
+    const benefId = _benefsId.reduce((s,b)=>s+(b.val||0),0);
+    const contId  = Math.max(0,parseFloat(document.getElementById('id-cont-val')?.value)||0);
+    const benefPctId = matId>0 ? Math.round((benefId/matId)*1000)/10 : 0;
+    const contPctId  = matId>0 ? Math.round((contId/matId)*1000)/10  : 0;
+    const total2 = pCP2+pLP2+benefPctId+contPctId;
+    const chkEl = document.getElementById('id-split-check');
+    if(chkEl) {
+      chkEl.textContent = 'Benef.'+benefPctId.toFixed(0)+'%+Contado'+contPctId.toFixed(0)+'%+CP'+pCP2.toFixed(0)+'%+LP'+pLP2.toFixed(0)+'% = '+total2.toFixed(1)+'%'+(Math.abs(total2-100)<0.5?' ✅':' ⚠️');
+      chkEl.style.color = Math.abs(total2-100)<0.5 ? 'var(--verde-c)' : 'var(--naranja)';
+    }
+    const finCPId = matId*pCP2/100, finLPId = matId*pLP2/100;
+    const lbl1 = document.getElementById('id-finCP-lbl');
+    const lbl2 = document.getElementById('id-finLP-lbl');
+    if(lbl1) lbl1.textContent = matId>0 ? cop(finCPId) : '';
+    if(lbl2) lbl2.textContent = matId>0 ? cop(finLPId) : '';
+  }
 }
 
 function abrirIdiomas(tabId) {
@@ -1706,7 +1754,7 @@ function abrirIdiomas(tabId) {
 
   // ── Inherit ALL conditions from parent tab ──────────────────────
   // Always reset beneficios idiomas first
-  _benefsId.length = 0;
+  _benefsId.splice(0, _benefsId.length);  // fully empty the array
 
   if(tabId === 1) {
     // Inherit tasa, meses, contado, beneficios from Tab1
@@ -1720,7 +1768,7 @@ function abrirIdiomas(tabId) {
     document.getElementById('id-cont-val').value  = cont1pct > 0 ? Math.round(valorIdiomas * cont1pct / 100) : '';
     // Inherit beneficios (copy from tab1, scaled to idiomas value)
     _benefs[1].forEach(b => {
-      _benefsId.push({id: Date.now()+Math.random(), nombre: b.nombre,
+      _benefsId.push({id: Date.now()*1000+_benefsId.length, nombre: b.nombre,
         pct: b.pct, val: Math.round(valorIdiomas * b.pct / 100)});
     });
 
@@ -1736,12 +1784,13 @@ function abrirIdiomas(tabId) {
     document.getElementById('id-cont-val').value  = cont2pct > 0 ? Math.round(valorIdiomas * cont2pct / 100) : '';
     // Inherit beneficios scaled to idiomas value
     _benefs[2].forEach(b => {
-      _benefsId.push({id: Date.now()+Math.random(), nombre: b.nombre,
+      _benefsId.push({id: Date.now()*1000+_benefsId.length, nombre: b.nombre,
         pct: b.pct, val: Math.round(valorIdiomas * b.pct / 100)});
     });
     // Store CP/LP split for combined display
-    _idiomasCtx.pctCP = parseFloat(document.getElementById('pctCP').value)||40;
-    _idiomasCtx.pctLP = parseFloat(document.getElementById('pctLP').value)||60;
+    _idiomasCtx.pctCP  = parseFloat(document.getElementById('pctCP').value)||40;
+    _idiomasCtx.pctLP  = parseFloat(document.getElementById('pctLP').value)||60;
+    _idiomasCtx.mesesCP = parseInt(document.getElementById('plazoCP').value)||6;
     _idiomasCtx.mesesLP = parseInt(document.getElementById('plazoLP').value)||9;
 
   } else if(tabId === 3) {
@@ -1753,7 +1802,7 @@ function abrirIdiomas(tabId) {
     document.getElementById('id-cont-pct').value = cont3pct || '';
     document.getElementById('id-cont-val').value  = cont3pct > 0 ? Math.round(valorIdiomas * cont3pct / 100) : '';
     _benefs[3].forEach(b => {
-      _benefsId.push({id: Date.now()+Math.random(), nombre: b.nombre,
+      _benefsId.push({id: Date.now()*1000+_benefsId.length, nombre: b.nombre,
         pct: b.pct, val: Math.round(valorIdiomas * b.pct / 100)});
     });
   } else {
@@ -1763,6 +1812,27 @@ function abrirIdiomas(tabId) {
 
   renderBenefId();
   calcTaIdiomas();
+
+  // Show/hide Mixto-specific fields
+  const isM = (tabId === 2);
+  document.getElementById('id-mixto-block').style.display   = isM ? 'block' : 'none';
+  document.getElementById('id-mesesLP-block').style.display = isM ? 'block' : 'none';
+  if(isM) {
+    document.getElementById('id-pctCP').value  = _idiomasCtx.pctCP  || 40;
+    document.getElementById('id-pctLP').value  = _idiomasCtx.pctLP  || 60;
+    document.getElementById('id-meses').value  = _idiomasCtx.mesesCP || 6;
+    document.getElementById('id-mesesLP').value= _idiomasCtx.mesesLP || 9;
+    const label = document.getElementById('id-meses-label');
+    const hint  = document.getElementById('id-meses-hint');
+    if(label) label.childNodes[0].nodeValue = 'Meses Corto Plazo ';
+    if(hint)  hint.textContent = '(mientras estudia)';
+  } else {
+    const label = document.getElementById('id-meses-label');
+    const hint  = document.getElementById('id-meses-hint');
+    if(label) label.childNodes[0].nodeValue = 'Número de Meses ';
+    if(hint)  hint.textContent = '';
+  }
+
   recalcId();
   document.getElementById('modal-idiomas').style.display = 'block';
   document.body.style.overflow = 'hidden';
@@ -1803,23 +1873,94 @@ function calcularIdiomas() {
   const cuotaInicial = cont;
   const pagoInicial  = cuotaInicial + garantisa;
 
-  // ── Tab2 Mixto: apply CP/LP split to idiomas financing ──────────
+  // ── Tab2 Mixto: CP/LP % are of mat (valor idiomas), same logic as pregrado ──
   let isMixto = (tabId === 2);
-  let pctCP = _idiomasCtx.pctCP || 40;
-  let pctLP = _idiomasCtx.pctLP || 60;
-  let mesesLP = _idiomasCtx.mesesLP || 9;
-  let finCP, finLP, idCP, idLP, cuota, totInt, totCap, rows, totalCredito;
+  // Read from modal inputs (user can edit after inheriting)
+  let pctCP   = parseFloat(document.getElementById('id-pctCP')?.value)  || _idiomasCtx.pctCP  || 40;
+  let pctLP   = parseFloat(document.getElementById('id-pctLP')?.value)  || _idiomasCtx.pctLP  || 60;
+  let mesesLP = parseInt(document.getElementById('id-mesesLP')?.value)  || _idiomasCtx.mesesLP || 9;
+  let finCP, finLP, garCP, garLP, idCP, idLP, cuota, totInt, totCap, rows, totalCredito;
 
   if(isMixto) {
-    finCP = financiado * pctCP / 100;
-    finLP = financiado * pctLP / 100;
+    // pctCP and pctLP are % of mat (valor idiomas total)
+    finCP = mat * pctCP / 100;
+    finLP = mat * pctLP / 100;
+    garCP = finCP * GARANTISA_CP;   // 4.17% — pago mientras estudia
+    garLP = finLP * GARANTISA_LP;   // 2.86% — pago al graduarse
+    // Override garantisa to sum of both tramos
+    const garantisaMixto = garCP + garLP;
+    // pagoInicial already calculated above — recalculate with separate garantisa
+    const pagoInicialMixto = cuotaInicial + garantisaMixto;
     idCP = amortizacion(finCP, tm, n);
     idLP = amortizacion(finLP, tm, mesesLP);
     cuota = idCP.cuota + idLP.cuota;
     totInt = idCP.totInt + idLP.totInt;
     totCap = idCP.totCap + idLP.totCap;
-    rows = idCP.rows; // primary table
+    rows = idCP.rows; // primary table (CP)
     totalCredito = totCap + totInt;
+    // Store corrected values for result display
+    Object.assign(_idiomasCtx, {pctCP, pctLP, mesesCP: n, mesesLP});
+    // Update pagoInicial for display
+    // (we'll pass pagoInicialMixto to results instead of pagoInicial)
+    const _pagoInicialId = pagoInicialMixto;
+    const _totalGeneralId = _pagoInicialId + totalCredito;
+
+    // ── Build results for Mixto ──────────────────────────────────
+    const splitCheck = pctCP + pctLP;
+    const splitOk = Math.abs(splitCheck - (1 - (benef/mat) - (cont/mat))*100) < 2;
+
+    window._dIdiomas = {rows,cuota,totInt,totCap,financiado: finCP+finLP, mat,n,tm,
+      cuotaInicial,garantisa:garantisaMixto,garCP,garLP,finCP,finLP,
+      pagoInicial:_pagoInicialId,totalCredito,totalGeneral:_totalGeneralId,
+      progNombre:_idiomasCtx.progNombre,beneficios:benef,isMixto,
+      idCP,idLP,pctCP,pctLP,mesesLP};
+
+    document.getElementById('res-idiomas').innerHTML = `
+    <div style="border-top:1.5px solid #ECEFF1;padding-top:20px;">
+      ${fechaBadgeHtml()}
+      <div class="ssub" style="margin-top:0;color:var(--naranja);">💳 Pago Inicial — Idiomas Mixto</div>
+      <div class="mgrid">
+        <div class="mc"><span class="lbl">Valor Idiomas</span><div class="val">${cop(mat)}</div></div>
+        <div class="mc"><span class="lbl">Financiado CP + LP</span><div class="val">${cop(finCP+finLP)}</div></div>
+        <div class="mc"><span class="lbl">Pago de Contado</span><div class="val">${cop(cuotaInicial)}</div></div>
+        <div class="mc nar"><span class="lbl">Garantisa CP (4.17%)</span><div class="val">${cop(garCP)}</div></div>
+        <div class="mc nar"><span class="lbl">Garantisa LP (2.86%)</span><div class="val">${cop(garLP)}</div></div>
+        <div class="mc nar" style="grid-column:1/-1;"><span class="lbl">Total Pago Inicial</span><div class="val">${cop(_pagoInicialId)}</div></div>
+      </div>
+
+      <div class="dvl cp-l"><span>🔵 CP Idiomas — ${pctCP.toFixed(1)}% · ${cop(finCP)} · ${n} meses (mientras estudia)</span></div>
+      <div class="mgrid">
+        <div class="mc vrd"><span class="lbl">Cuota Mensual CP</span><div class="val">${cop(idCP.cuota)}</div></div>
+        <div class="mc"><span class="lbl">Intereses CP</span><div class="val">${cop(idCP.totInt)}</div></div>
+        <div class="mc" style="grid-column:1/-1;background:var(--azul-s);"><span class="lbl" style="color:var(--azul);">Total Crédito CP Idiomas</span><div class="val" style="color:var(--azul);">${cop(idCP.totCap+idCP.totInt)}</div></div>
+      </div>
+      <div class="ssub">Tabla CP Idiomas (${n} meses)</div>
+      ${renderTabla(idCP.rows, idCP.cuota, idCP.totInt, idCP.totCap)}
+
+      <div class="dvl lp-l" style="margin-top:16px;"><span>🟢 LP Idiomas — ${pctLP.toFixed(1)}% · ${cop(finLP)} · ${mesesLP} meses (al graduarse)</span></div>
+      <div class="mgrid">
+        <div class="mc vrd"><span class="lbl">Cuota Mensual LP</span><div class="val">${cop(idLP.cuota)}</div></div>
+        <div class="mc"><span class="lbl">Intereses LP</span><div class="val">${cop(idLP.totInt)}</div></div>
+        <div class="mc" style="grid-column:1/-1;background:var(--verde-s);"><span class="lbl" style="color:var(--verde-c);">Total Crédito LP Idiomas</span><div class="val" style="color:var(--verde);">${cop(idLP.totCap+idLP.totInt)}</div></div>
+      </div>
+      <div class="ssub">Tabla LP Idiomas (${mesesLP} meses)</div>
+      ${renderTabla(idLP.rows, idLP.cuota, idLP.totInt, idLP.totCap)}
+
+      <div class="total-banner" style="margin-top:16px;">
+        <div><div class="tl">Pago Inicial</div><div class="tv">${cop(_pagoInicialId)}</div></div>
+        <div style="font-size:20px;opacity:.5;">+</div>
+        <div><div class="tl">Total Crédito</div><div class="tv">${cop(totalCredito)}</div></div>
+        <div style="font-size:20px;opacity:.5;">=</div>
+        <div style="text-align:right;"><div class="tl">Costo Total Idiomas</div><div class="tv">${cop(_totalGeneralId)}</div></div>
+      </div>
+
+      <div class="btn-row" style="margin-top:16px;">
+        <button class="btn-exp" onclick="expPDFIdiomas()">📄 PDF Idiomas</button>
+        <button class="btn-exp vrd" onclick="expXLSIdiomas()">📊 Excel Idiomas</button>
+        <button class="btn-exp" style="border-color:#0D47A1;color:#0D47A1;background:var(--azul-s);" onclick="expPDFCombinado()">📑 PDF Combinado (Pregrado + Idiomas)</button>
+      </div>
+    </div>`;
+    return; // Mixto rendering done — exit early
   } else {
     const res = amortizacion(financiado, tm, n);
     rows = res.rows; cuota = res.cuota; totInt = res.totInt; totCap = res.totCap;
@@ -2201,6 +2342,7 @@ function guardarEscenario(tabId) {
     };
   } else if(tabId===2 && window._d2) {
     const totCred = (_d2.CP?(_d2.CP.totCap+_d2.CP.totInt):0)+(_d2.LP?(_d2.LP.totCap+_d2.LP.totInt):0);
+    const lpGracePeriod = _d2.nLP ? Math.round(_d2.nLP * 1.5) : null;
     snapshot = {
       label: (_d2.progNombre||'Programa') + ' — CP' + _d2.pCP + '% LP' + _d2.pLP + '%',
       sub: (_d2.nCP||0) + ' m CP · ' + (_d2.nLP||0) + ' m LP · tasa ' + (_d2.tm*100).toFixed(2) + '%',
@@ -2208,6 +2350,14 @@ function guardarEscenario(tabId) {
       totalCredito: totCred, pagoInicial: _d2.pagoInicial,
       totalGeneral: _d2.pagoInicial+totCred,
       financiado: _d2.finCP+_d2.finLP, intereses: (_d2.CP?_d2.CP.totInt:0)+(_d2.LP?_d2.LP.totInt:0),
+      isMixto: true,
+      finCP: _d2.finCP||0,       finLP: _d2.finLP||0,
+      nCP:   _d2.nCP||0,         nLP:   _d2.nLP||0,
+      cuotaCP: _d2.CP?_d2.CP.cuota:0,   cuotaLP: _d2.LP?_d2.LP.cuota:0,
+      intCP:   _d2.CP?_d2.CP.totInt:0,  intLP:   _d2.LP?_d2.LP.totInt:0,
+      totCP:   _d2.CP?(_d2.CP.totCap+_d2.CP.totInt):0,
+      totLP:   _d2.LP?(_d2.LP.totCap+_d2.LP.totInt):0,
+      lpGrace: lpGracePeriod,
       data: JSON.parse(JSON.stringify(_d2))
     };
   } else if(tabId===3 && window._d3) {
@@ -2269,32 +2419,82 @@ function renderEscenarios(tabId) {
 function compararEscenarios(tabId) {
   const list = _escenarios[tabId];
   if(list.length < 2) return;
-  const fields = [
-    {key:'financiado',     label:'Monto Financiado'},
-    {key:'pagoInicial',    label:'Pago Inicial'},
-    {key:'cuota',          label:'Cuota Mensual'},
-    {key:'intereses',      label:'Total Intereses'},
-    {key:'totalCredito',   label:'Total Crédito'},
-    {key:'totalGeneral',   label:'COSTO TOTAL'},
-  ];
   const colors = ['#0D47A1','#2E7D32','#6A1B9A'];
+  const isMixto = tabId === 2 && list.every(e => e.isMixto);
+
+  // Build field definitions — mixto gets CP/LP breakdown
+  let fields;
+  if(isMixto) {
+    fields = [
+      {key:'financiado',  label:'Monto Financiado Total', hint:''},
+      {key:'finCP',       label:'  🔵 Monto CP', hint:'', indent:true},
+      {key:'finLP',       label:'  🟢 Monto LP', hint:'', indent:true},
+      {key:'pagoInicial', label:'Pago Inicial', hint:''},
+      // CP block
+      {key:'cuotaCP',     label:'  🔵 Cuota Mensual CP', hint:'Mientras estudia', indent:true, tag:'cp'},
+      {key:'intCP',       label:'  🔵 Intereses CP', hint:'', indent:true},
+      {key:'totCP',       label:'  🔵 Total Crédito CP', hint:'', indent:true},
+      // LP block
+      {key:'cuotaLP',     label:'  🟢 Cuota Mensual LP', hint:'Al graduarse', indent:true, tag:'lp'},
+      {key:'intLP',       label:'  🟢 Intereses LP', hint:'', indent:true},
+      {key:'totLP',       label:'  🟢 Total Crédito LP', hint:'', indent:true},
+      {key:'totalCredito',label:'Total Crédito (CP+LP)', hint:''},
+      {key:'totalGeneral',label:'COSTO TOTAL', hint:''},
+    ];
+  } else {
+    fields = [
+      {key:'financiado',   label:'Monto Financiado'},
+      {key:'pagoInicial',  label:'Pago Inicial'},
+      {key:'cuota',        label:'Cuota Mensual'},
+      {key:'intereses',    label:'Total Intereses'},
+      {key:'totalCredito', label:'Total Crédito'},
+      {key:'totalGeneral', label:'COSTO TOTAL'},
+    ];
+  }
+
   let html = `<div class="esc-header" style="margin-top:20px;border-top:1.5px solid var(--gris-c);padding-top:16px;">
     <h3>⚖️ Comparativa de Escenarios</h3>
-  </div>
-  <div style="overflow-x:auto;"><table class="cmp-table"><thead><tr>
+  </div>`;
+
+  // Context note for mixto
+  if(isMixto) {
+    const nCP0 = list[0].nCP, nLP0 = list[0].nLP;
+    const grace0 = list[0].lpGrace;
+    html += `<div style="background:#E3F2FD;border-radius:var(--rs);padding:10px 14px;font-size:12px;margin-bottom:12px;color:var(--gris);">
+      <strong>🔵 Corto Plazo:</strong> se paga <em>mientras estudia</em> (${nCP0} meses) &nbsp;|&nbsp;
+      <strong>🟢 Largo Plazo:</strong> se paga <em>al graduarse</em>${grace0?' — comienza aprox. después de '+grace0+' meses (1.5× el plazo LP)':''}</div>`;
+  }
+
+  html += `<div style="overflow-x:auto;"><table class="cmp-table"><thead><tr>
     <th style="text-align:left;">Concepto</th>
-    ${list.map((e,i)=>`<th style="background:${colors[i]};">Escenario ${i+1}<br><span style="font-size:10px;opacity:.8;font-weight:400;">${e.label}</span></th>`).join('')}
+    ${list.map((e,i)=>{
+      const sub = isMixto
+        ? `CP ${e.nCP}m · LP ${e.nLP}m · ${(e.data.tm*100).toFixed(2)}%`
+        : e.label;
+      return `<th style="background:${colors[i]};font-size:11px;">Escenario ${i+1}<br>
+        <span style="font-size:9px;opacity:.85;font-weight:400;">${e.label.replace('% LP','% · LP ')}</span><br>
+        <span style="font-size:9px;opacity:.7;font-weight:400;">${sub}</span></th>`;
+    }).join('')}
   </tr></thead><tbody>`;
 
   fields.forEach(f => {
-    const vals = list.map(e => e[f.key]);
-    const minVal = Math.min(...vals);
-    const maxVal = Math.max(...vals);
-    const isCost = f.key !== 'financiado'; // lower is better for costs, higher for financiado
-    html += `<tr><td>${f.label}</td>`;
+    const vals = list.map(e => e[f.key] || 0);
+    const allSame = vals.every(v=>v===vals[0]);
+    const minVal = Math.min(...vals), maxVal = Math.max(...vals);
+    const isCost = f.key !== 'financiado' && f.key !== 'finCP' && f.key !== 'finLP';
+    const isSection = f.key==='cuotaCP' || f.key==='cuotaLP';
+    const rowStyle = f.indent
+      ? 'background:#F8F9FA;'
+      : (f.key==='totalGeneral'?'font-weight:700;background:var(--dorado-s);border-top:2px solid var(--dorado);':'');
+
+    const hintSpan = f.hint
+      ? `<span style="font-size:10px;color:var(--gris-m);font-weight:400;display:block;">${f.hint}</span>` : '';
+
+    html += `<tr style="${rowStyle}">`;
+    html += `<td style="${f.indent?'padding-left:20px;color:#555;':''}">${f.label.replace(/^\s+/,'')}${hintSpan}</td>`;
     vals.forEach(v => {
       let cls = '';
-      if(vals.filter(x=>x===v).length < vals.length) { // only highlight if different
+      if(!allSame) {
         if(isCost) cls = v===minVal ? 'cmp-best' : (v===maxVal ? 'cmp-worst' : '');
         else cls = v===maxVal ? 'cmp-best' : '';
       }
@@ -2303,13 +2503,12 @@ function compararEscenarios(tabId) {
     html += '</tr>';
   });
 
-  // Savings row
+  // Difference row
   if(list.length >= 2) {
-    const savings = list[0].totalGeneral - list[1].totalGeneral;
-    html += `<tr><td>Diferencia vs Esc.1</td><td>—</td>
+    html += `<tr><td style="font-weight:700;">Diferencia vs Esc.1</td><td>—</td>
       ${list.slice(1).map((_,i)=>{
         const d = list[0].totalGeneral - list[i+1].totalGeneral;
-        const color = d>0?'var(--verde)':'var(--naranja)';
+        const color = d>0 ? 'var(--verde)' : 'var(--naranja)';
         return `<td style="color:${color};font-weight:700;">${d>0?'-':'+'}${cop(Math.abs(d))}</td>`;
       }).join('')}
     </tr>`;
@@ -2318,7 +2517,6 @@ function compararEscenarios(tabId) {
   html += '</tbody></table></div>';
 
   const panel = document.getElementById('esc-panel-'+tabId);
-  // Remove old comparison if exists
   const oldCmp = panel.querySelector('.cmp-wrap');
   if(oldCmp) oldCmp.remove();
   const wrap = document.createElement('div');
@@ -2330,7 +2528,7 @@ function compararEscenarios(tabId) {
 
 // ── COMBINED PDF (pregrado + idiomas) ────────────────────────────────────────
 function expPDFCombinado() {
-  const dp = window._dIdiomas;
+  const dp   = window._dIdiomas;
   const tabId = _idiomasCtx.tabId;
   let dm = null, tipoLabel = '';
   if(tabId===1 && window._d1)  { dm=window._d1; tipoLabel='Crédito Corto Plazo'; }
@@ -2340,183 +2538,175 @@ function expPDFCombinado() {
 
   const {jsPDF} = window.jspdf;
   const doc = new jsPDF();
-  const pctLabel = Math.round((dp.financiado/dp.mat)*100)+'%';
-  const filename = (dp.progNombre+' - Combinado '+pctLabel).replace(/[^a-zA-Z0-9\-_ áéíóúÁÉÍÓÚñÑ]/g,'').trim();
-
+  const filename = (dp.progNombre+' - Combinado').replace(/[^a-zA-Z0-9\-_ áéíóúÁÉÍÓÚñÑ]/g,'').trim();
   const hw = ['#','Cuota','Capital','Interés','Saldo'], cw = [14,42,38,38,44];
 
-  // ── PORTADA / RESUMEN COMBINADO ──
-  doc.setFillColor(13,71,161); doc.rect(0,0,210,40,'F');
-  doc.setTextColor(255,255,255);
-  doc.setFont('helvetica','bold'); doc.setFontSize(18);
-  doc.text('Simulador de Crédito Educativo',14,18);
-  doc.setFontSize(11); doc.setFont('helvetica','normal');
-  doc.text('Reporte Combinado — Pregrado + Idiomas',14,28);
-  doc.setTextColor(0,0,0);
-
-  let y = 50;
-  y = addFechaToDoc(doc, y); y += 4;
-
-  doc.setFont('helvetica','bold'); doc.setFontSize(13);
-  doc.text(dp.progNombre, 14, y); y += 8;
-  doc.setFont('helvetica','normal'); doc.setFontSize(10);
-  doc.setTextColor(144,164,174);
-  doc.text(tipoLabel + ' · ' + pctLabel + ' financiado', 14, y); y += 10;
-  doc.setTextColor(0,0,0);
-
-  // Combined summary box
-  const totCredPre = dm.totCap ? (dm.totCap+dm.totInt) : ((dm.CP?(dm.CP.totCap+dm.CP.totInt):0)+(dm.LP?(dm.LP.totCap+dm.LP.totInt):0));
-  const pagoIniPre = dm.pagoInicial||0;
-  const cuotaPre = dm.cuota || ((dm.CP?dm.CP.cuota:0)+(dm.LP?dm.LP.cuota:0));
-  const totGenPre = pagoIniPre + totCredPre;
-
-  doc.setFont('helvetica','bold'); doc.setFontSize(11);
-  doc.text('RESUMEN COMBINADO', 14, y); y += 10;
-
-  const totalPagoInicial = pagoIniPre + dp.pagoInicial;
-  const totalCredito     = totCredPre + dp.totalCredito;
-  const costoTotal       = totalPagoInicial + totalCredito;
-  const cuotaTotal       = cuotaPre + dp.cuota;
-
-  // Helper: draw one row
-  function drawRow(label, valor, opts) {
-    // opts: {bold, fillRGB, textRGB, fontSize, indent}
-    const fs   = opts.fontSize  || 10;
-    const ind  = opts.indent    || 16;
-    const fRGB = opts.fillRGB;
-    const tRGB = opts.textRGB   || [55,71,79];
-    if(fRGB) { doc.setFillColor(...fRGB); doc.rect(14,y-5,180,8,'F'); }
-    doc.setTextColor(...tRGB);
-    doc.setFont('helvetica', opts.bold ? 'bold' : 'normal');
-    doc.setFontSize(fs);
-    doc.text(label+':', ind, y);
-    doc.setFont('helvetica', opts.bold ? 'bold' : 'normal');
-    doc.text(valor, 150, y, {align:'right'});
-    doc.setTextColor(0,0,0); doc.setFontSize(11);
-    y += 8;
-  }
-
-  // ── GRUPO 1: PAGO INICIAL ──────────────────────────────────────
-  doc.setFont('helvetica','bold'); doc.setFontSize(9);
-  doc.setTextColor(180,140,0);
-  doc.text('① PAGO AL MOMENTO DEL DESEMBOLSO', 14, y); y += 6;
-  doc.setTextColor(0,0,0);
-  drawRow('  Pago Inicial Pregrado', cop(pagoIniPre),    {indent:18});
-  drawRow('  Pago Inicial Idiomas',  cop(dp.pagoInicial),{indent:18});
-  drawRow('Total Pago Inicial',      cop(totalPagoInicial),
-    {bold:true, fillRGB:[255,248,220], textRGB:[120,90,0], fontSize:10});
-  y += 2;
-
-  // ── GRUPO 2: CRÉDITO ───────────────────────────────────────────
-  doc.setFont('helvetica','bold'); doc.setFontSize(9);
-  doc.setTextColor(13,71,161);
-  doc.text('② CRÉDITO A AMORTIZAR', 14, y); y += 6;
-  doc.setTextColor(0,0,0);
-  drawRow('  Total Crédito Pregrado', cop(totCredPre),       {indent:18});
-  drawRow('  Total Crédito Idiomas',  cop(dp.totalCredito),  {indent:18});
-  drawRow('Total Crédito',            cop(totalCredito),
-    {bold:true, fillRGB:[220,235,255], textRGB:[13,71,161], fontSize:10});
-  y += 2;
-
-  // ── CUOTA MENSUAL ──────────────────────────────────────────────
-  doc.setFont('helvetica','bold'); doc.setFontSize(9);
-  doc.setTextColor(46,125,50);
-  doc.text('③ CUOTA MENSUAL COMBINADA', 14, y); y += 6;
-  doc.setTextColor(0,0,0);
-  drawRow('  Cuota Mensual Pregrado', cop(cuotaPre),  {indent:18});
-  drawRow('  Cuota Mensual Idiomas',  cop(dp.cuota),  {indent:18});
-  drawRow('Cuota Mensual Total',      cop(cuotaTotal),
-    {bold:true, fillRGB:[220,245,220], textRGB:[27,94,32], fontSize:10});
-  y += 4;
-
-  // ── COSTO TOTAL SEMESTRE ───────────────────────────────────────
-  const barH = 22;
-  doc.setFillColor(13,71,161); doc.rect(14, y-7, 180, barH, 'F');
-  doc.setTextColor(255,255,255);
-  // Line 1: label left, value right — same baseline
-  doc.setFont('helvetica','bold'); doc.setFontSize(11);
-  doc.text('COSTO TOTAL SEMESTRE', 18, y);
-  doc.text(cop(costoTotal), 190, y, {align:'right'});
-  // Line 2: equation — plain ASCII only, centered between x=14 and x=194
-  doc.setFont('helvetica','normal'); doc.setFontSize(8);
-  doc.text('(Total Pago Inicial  +  Total Credito)', 104, y+9, {align:'center'});
-  doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(11);
-  y += barH + 2;
-
-  y=pdfCostoFootnote(doc,y,'* Valor matrícula + Aporte Garantisa pregrado + Aporte Garantisa idiomas + Intereses de ambos créditos');
-  y += 4;
-
-  // ── PAGE 2: PREGRADO DETAIL ──
-  doc.addPage();
-  doc.setFillColor(13,71,161); doc.rect(0,0,210,14,'F');
-  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(11);
-  doc.text('DETALLE — ' + tipoLabel.toUpperCase(), 14, 10);
-  doc.setTextColor(0,0,0); y = 22;
-
-  // Pago inicial pregrado
-  doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.text('PAGO INICIAL (al desembolso)', 14, y); y += 7;
-  const piPre = dm.cuotaInicial !== undefined
-    ? [['Cuota Inicial Contado', cop(dm.cuotaInicial)], ['Garantisa', cop(dm.garantisa||dm.garCP||0)], ['Total Pago Inicial', cop(dm.pagoInicial)]]
-    : [['Total Pago Inicial', cop(dm.pagoInicial)]];
-  piPre.forEach(([k,v]) => { doc.setFont('helvetica','bold'); doc.text(k+':', 16, y); doc.setFont('helvetica','normal'); doc.text(v, 150, y, {align:'right'}); y+=6; });
-  y += 4;
-  doc.setFont('helvetica','bold'); doc.text('CRÉDITO A AMORTIZAR', 14, y); y += 7;
-  [['Monto Financiado', cop(dm.financiado||(dm.finCP+dm.finLP))], ['Cuota Mensual', cop(cuotaPre)], ['Total Intereses', cop(dm.totInt||(dm.CP?dm.CP.totInt:0)+(dm.LP?dm.LP.totInt:0))], ['Total Crédito', cop(totCredPre)]].forEach(([k,v]) => {
-    doc.setFont('helvetica','bold'); doc.text(k+':', 16, y); doc.setFont('helvetica','normal'); doc.text(v, 150, y, {align:'right'}); y+=6;
-  });
-  y += 6;
-
-  // Amortization table pregrado (only _d1 or _d3 have rows directly; _d2 has CP.rows and LP.rows)
-  const preRows = dm.rows || (dm.CP ? dm.CP.rows : []);
-  if(preRows.length > 0) {
-    doc.setFont('helvetica','bold'); doc.text('Tabla de Amortización — ' + (dm.rows ? tipoLabel : 'Corto Plazo'), 14, y); y += 7;
+  function drawTable(doc, rows, y) {
     doc.setFillColor(13,71,161); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
     let x=14; hw.forEach((h,i)=>{doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text(h,x+1,y);x+=cw[i];});
     doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(9);
-    preRows.forEach(r=>{ y+=6; if(y>270){doc.addPage();y=20;} x=14;
+    rows.forEach(r=>{ y+=6; if(y>270){doc.addPage();y=20;} x=14;
       [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(String(v),x+1,y);x+=cw[i];});
     });
-    // LP table if exists
-    if(dm.LP && dm.LP.rows) {
-      y += 10; if(y>250){doc.addPage();y=20;}
-      doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.text('Tabla de Amortización — Largo Plazo', 14, y); y += 7;
-      doc.setFillColor(46,125,50); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
-      x=14; hw.forEach((h,i)=>{doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text(h,x+1,y);x+=cw[i];});
-      doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(9);
-      dm.LP.rows.forEach(r=>{ y+=6; if(y>270){doc.addPage();y=20;} x=14;
-        [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(String(v),x+1,y);x+=cw[i];});
-      });
-    }
+    doc.setFontSize(11);
+    return y + 8;
   }
 
-  // ── IDIOMAS DETAIL ──
-  doc.addPage();
-  doc.setFillColor(13,71,161); doc.rect(0,0,210,14,'F');
-  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(11);
-  doc.text('DETALLE — CRÉDITO IDIOMAS', 14, 10);
-  doc.setTextColor(0,0,0); y = 22;
+  function drawKV(doc, rows, y, valX) {
+    const vx = valX || 150;
+    rows.filter(Boolean).forEach(([k,v])=>{
+      doc.setFont('helvetica','bold'); doc.text(k+':', 16, y);
+      doc.setFont('helvetica','normal'); doc.text(v, vx, y, {align:'right'}); y+=7;
+    });
+    return y;
+  }
 
-  doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.text('INFORMACIÓN GENERAL', 14, y); y += 7;
-  doc.setFont('helvetica','bold'); doc.text('Programa:', 16, y); doc.setFont('helvetica','normal'); doc.text(dp.progNombre, 70, y); y += 6;
-  doc.setFont('helvetica','bold'); doc.text('Valor Idiomas:', 16, y); doc.setFont('helvetica','normal'); doc.text(cop(dp.mat), 150, y, {align:'right'}); y += 6;
-  y += 4;
-  doc.setFont('helvetica','bold'); doc.text('PAGO INICIAL (al desembolso)', 14, y); y += 7;
-  [['Cuota Inicial Contado', cop(dp.cuotaInicial)], ['Garantisa 4.17%', cop(dp.garantisa)], ['Total Pago Inicial', cop(dp.pagoInicial)]].forEach(([k,v])=>{
-    doc.setFont('helvetica','bold'); doc.text(k+':', 16, y); doc.setFont('helvetica','normal'); doc.text(v, 150, y, {align:'right'}); y+=6;
-  });
-  y += 4;
-  doc.setFont('helvetica','bold'); doc.text('CRÉDITO A AMORTIZAR', 14, y); y += 7;
-  [['Monto Financiado', cop(dp.financiado)], ['Cuota Mensual', cop(dp.cuota)], ['Total Intereses', cop(dp.totInt)], ['Total Crédito', cop(dp.totalCredito)], ['COSTO TOTAL IDIOMAS', cop(dp.totalGeneral)]].forEach(([k,v])=>{
-    doc.setFont('helvetica','bold'); doc.text(k+':', 16, y); doc.setFont('helvetica','normal'); doc.text(v, 150, y, {align:'right'}); y+=6;
-  });
-  y += 6;
-  doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.text('Tabla de Amortización Idiomas ('+dp.n+' meses)', 14, y); y += 7;
-  doc.setFillColor(13,71,161); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
-  let x=14; hw.forEach((h,i)=>{doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text(h,x+1,y);x+=cw[i];});
-  doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(9);
-  dp.rows.forEach(r=>{ y+=6; if(y>270){doc.addPage();y=20;} x=14;
-    [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(String(v),x+1,y);x+=cw[i];});
-  });
+  // ══ PAGE 1: RESUMEN COMBINADO ══════════════════════════════════
+  let y = pdfHeader(doc, 'Reporte Combinado — Pregrado + Idiomas', dp.progNombre+' · '+tipoLabel);
+  y = addFechaToDoc(doc, y); y+=4;
+
+  const cuotaPre = dm.cuota || ((dm.CP?dm.CP.cuota:0)+(dm.LP?dm.LP.cuota:0));
+  const totCredPre = dm.totCap ? (dm.totCap+dm.totInt) : ((dm.CP?(dm.CP.totCap+dm.CP.totInt):0)+(dm.LP?(dm.LP.totCap+dm.LP.totInt):0));
+  const pagoIniPre = dm.pagoInicial||0;
+  const totGenPre  = pagoIniPre + totCredPre;
+  const costoTotal = pagoIniPre + dp.pagoInicial + totCredPre + dp.totalCredito;
+
+  y = pdfSectionBar(doc, 'RESUMEN COMBINADO', y); y+=2;
+
+  // Group 1: Pago inicial
+  doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(120,90,0);
+  doc.text('① PAGO AL MOMENTO DEL DESEMBOLSO', 16, y); doc.setTextColor(0,0,0); doc.setFontSize(11); y+=7;
+  y = drawKV(doc, [
+    ['  Pago Inicial Pregrado', cop(pagoIniPre)],
+    ['  Pago Inicial Idiomas', cop(dp.pagoInicial)],
+  ], y);
+  doc.setFillColor(255,248,220); doc.rect(14,y-5,180,8,'F');
+  doc.setFont('helvetica','bold'); doc.text('Total Pago Inicial:', 16, y);
+  doc.text(cop(pagoIniPre+dp.pagoInicial), 150, y, {align:'right'}); y+=10;
+
+  // Group 2: Crédito
+  doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(13,71,161);
+  doc.text('② CRÉDITO A AMORTIZAR', 16, y); doc.setTextColor(0,0,0); doc.setFontSize(11); y+=7;
+  y = drawKV(doc, [
+    ['  Total Crédito Pregrado', cop(totCredPre)],
+    ['  Total Crédito Idiomas', cop(dp.totalCredito)],
+  ], y);
+  doc.setFillColor(220,235,255); doc.rect(14,y-5,180,8,'F');
+  doc.setFont('helvetica','bold'); doc.text('Total Crédito:', 16, y);
+  doc.text(cop(totCredPre+dp.totalCredito), 150, y, {align:'right'}); y+=10;
+
+  // Group 3: Cuota mensual
+  doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(46,125,50);
+  doc.text('③ CUOTA MENSUAL COMBINADA', 16, y); doc.setTextColor(0,0,0); doc.setFontSize(11); y+=7;
+  y = drawKV(doc, [
+    ['  Cuota Mensual Pregrado', cop(cuotaPre)],
+    ['  Cuota Mensual Idiomas', cop(dp.cuota)],
+  ], y);
+  doc.setFillColor(220,245,220); doc.rect(14,y-5,180,8,'F');
+  doc.setFont('helvetica','bold'); doc.text('Cuota Mensual Total:', 16, y);
+  doc.text(cop(cuotaPre+dp.cuota), 150, y, {align:'right'}); y+=12;
+
+  // Costo total
+  const barH = 22;
+  doc.setFillColor(13,71,161); doc.rect(14, y-7, 180, barH, 'F');
+  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(11);
+  doc.text('COSTO TOTAL SEMESTRE', 18, y);
+  doc.text(cop(costoTotal), 190, y, {align:'right'});
+  doc.setFont('helvetica','normal'); doc.setFontSize(8);
+  doc.text('(Total Pago Inicial  +  Total Credito)', 104, y+9, {align:'center'});
+  doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(11);
+  y += barH + 4;
+  y = pdfCostoFootnote(doc, y, '* Valor matrícula + Garantisa pregrado + Garantisa idiomas + Intereses de ambos créditos');
+
+  // ══ PAGE 2: PREGRADO DETAIL ════════════════════════════════════
+  doc.addPage();
+  y = pdfHeader(doc, 'Detalle — '+tipoLabel, dp.progNombre);
+  y = addFechaToDoc(doc, y); y+=2;
+
+  if(tabId === 1 || tabId === 3) {
+    // Single amortization
+    y = pdfBenefSection(doc,y,dm.mat,dm.beneficios||[],dm.benefTotal||0,dm.matNeta||dm.mat,dm.cuotaInicial);
+    y += 2; y = pdfSectionBar(doc,'PAGO INICIAL — al momento del desembolso',y);
+    y = drawKV(doc,[
+      dm.benefTotal>0?['Matrícula Neta',cop(dm.matNeta||dm.mat)]:['Valor Matrícula',cop(dm.mat)],
+      ['Pago de Contado',cop(dm.cuotaInicial)],
+      ['Garantisa 4.17%',cop(dm.garantisa)],
+      ['Total Pago Inicial',cop(dm.pagoInicial)]
+    ], y);
+    y += 2; y = pdfSectionBar(doc,'CRÉDITO A AMORTIZAR',y);
+    y = drawKV(doc,[
+      ['Monto Financiado',cop(dm.financiado)+'  ('+dm.pct+'% de matrícula)'],
+      ['Cuota Mensual',cop(dm.cuota)],
+      ['Total Intereses',cop(dm.totInt)],
+      ['Total Crédito',cop(dm.totCap+dm.totInt)],
+      ['COSTO TOTAL PREGRADO',cop(dm.totalGeneral)]
+    ], y);
+    y = pdfCostoFootnote(doc, y);
+    y += 2; y = pdfSectionBar(doc,'TABLA DE AMORTIZACIÓN',y);
+    y = drawTable(doc, dm.rows, y);
+  } else if(tabId === 2) {
+    // Mixto: CP + LP
+    y = pdfBenefSection(doc,y,dm.mat,dm.beneficios||[],dm.benefTotal||0,dm.matNeta||dm.mat,dm.cuotaInicial);
+    y += 2; y = pdfSectionBar(doc,'PAGO INICIAL — al momento del desembolso',y);
+    y = drawKV(doc,[
+      dm.benefTotal>0?['Matrícula Neta',cop(dm.matNeta||dm.mat)]:['Valor Matrícula',cop(dm.mat)],
+      ['Pago de Contado',cop(dm.cuotaInicial)],
+      dm.garCP>0?['Garantisa CP (4.17%)',cop(dm.garCP)]:null,
+      dm.garLP>0?['Garantisa LP (2.86%)',cop(dm.garLP)]:null,
+      ['Total Pago Inicial',cop(dm.pagoInicial)]
+    ], y);
+    if(dm.CP) {
+      y += 2; y = pdfSectionBar(doc,'CORTO PLAZO — '+dm.pCP+'%',y);
+      y = drawKV(doc,[['Monto CP',cop(dm.finCP)],['Cuota CP',cop(dm.CP.cuota)],['Total CP',cop(dm.CP.totCap+dm.CP.totInt)]],y);
+      y += 2; y = pdfSectionBar(doc,'TABLA AMORTIZACIÓN — CORTO PLAZO',y);
+      y = drawTable(doc, dm.CP.rows, y);
+    }
+    if(dm.LP) {
+      if(y > 200) { doc.addPage(); y=20; }
+      y = pdfSectionBar(doc,'LARGO PLAZO — '+dm.pLP+'%',y,[46,125,50]);
+      y = drawKV(doc,[['Monto LP',cop(dm.finLP)],['Cuota LP',cop(dm.LP.cuota)],['Total LP',cop(dm.LP.totCap+dm.LP.totInt)]],y);
+      y += 2; y = pdfSectionBar(doc,'TABLA AMORTIZACIÓN — LARGO PLAZO',y,[46,125,50]);
+      y = drawTable(doc, dm.LP.rows, y);
+    }
+    const totCred2 = (dm.CP?(dm.CP.totCap+dm.CP.totInt):0)+(dm.LP?(dm.LP.totCap+dm.LP.totInt):0);
+    y = pdfCostoFootnote(doc, y);
+  }
+
+  // ══ PAGE 3: IDIOMAS DETAIL ═════════════════════════════════════
+  doc.addPage();
+  y = pdfHeader(doc, 'Detalle — Crédito Idiomas', dp.progNombre);
+  y = addFechaToDoc(doc, y); y+=2;
+
+  // Beneficios idiomas
+  const benefsIdSnap = _benefsId.filter(b=>b.val>0);
+  y = pdfBenefSection(doc,y,dp.mat,benefsIdSnap,_benefsId.reduce((s,b)=>s+(b.val||0),0),dp.mat-_benefsId.reduce((s,b)=>s+(b.val||0),0),dp.cuotaInicial);
+  y += 2; y = pdfSectionBar(doc,'PAGO INICIAL — al momento del desembolso',y);
+  y = drawKV(doc,[
+    ['Pago de Contado',cop(dp.cuotaInicial)],
+    ['Garantisa 4.17%',cop(dp.garantisa)],
+    ['Total Pago Inicial',cop(dp.pagoInicial)]
+  ], y);
+  y += 2; y = pdfSectionBar(doc,'CRÉDITO A AMORTIZAR',y);
+  y = drawKV(doc,[
+    ['Valor Idiomas',cop(dp.mat)],
+    ['Monto Financiado',cop(dp.financiado)],
+    ['Cuota Mensual',cop(dp.cuota)],
+    ['Total Intereses',cop(dp.totInt)],
+    ['Total Crédito Idiomas',cop(dp.totalCredito)],
+    ['COSTO TOTAL IDIOMAS',cop(dp.totalGeneral)]
+  ], y);
+  y = pdfCostoFootnote(doc, y, '* Valor idiomas + Garantisa + Intereses del crédito');
+
+  if(dp.isMixto && dp.idCP && dp.idLP) {
+    y += 2; y = pdfSectionBar(doc,'TABLA CP IDIOMAS ('+Math.round((_idiomasCtx.pctCP||40))+'%)',y);
+    y = drawTable(doc, dp.idCP.rows, y);
+    if(y > 200) { doc.addPage(); y=20; }
+    y = pdfSectionBar(doc,'TABLA LP IDIOMAS ('+Math.round((_idiomasCtx.pctLP||60))+'%)',y,[46,125,50]);
+    y = drawTable(doc, dp.idLP.rows, y);
+  } else {
+    y += 2; y = pdfSectionBar(doc,'TABLA DE AMORTIZACIÓN IDIOMAS ('+dp.n+' meses)',y);
+    y = drawTable(doc, dp.rows, y);
+  }
 
   doc.save(filename+'.pdf');
 }
@@ -2620,6 +2810,55 @@ function getFinanciado(tabId) {
   return Math.max(0, mat - benef - cont);
 }
 
+
+// ── Sync financed amount → contado (bidirectional) ───────────────
+function syncFinPctToVal(tabId) {
+  // % financiado es sobre mat total (no sobre neta)
+  const mat    = getMat(tabId);
+  const benef  = getTotalBeneficios(tabId);
+  const pct    = Math.max(0, parseFloat(document.getElementById('finpct'+tabId)?.value)||0);
+  const fin    = Math.round(mat * pct / 100);                // % of mat
+  const fvEl   = document.getElementById('finval'+tabId);
+  if(fvEl) fvEl.value = fin > 0 ? fin : '';
+  const cont   = Math.max(0, mat - benef - fin);             // contado = mat - benef - fin
+  const cpEl   = document.getElementById('cont'+tabId+'-pct');
+  const cvEl   = document.getElementById('cont'+tabId+'-val');
+  if(cvEl) cvEl.value = cont > 0 ? Math.round(cont) : '';
+  if(cpEl) cpEl.value = mat > 0 ? Math.round((cont/mat)*1000)/10 : '';
+  recalcAll(tabId);
+}
+
+// When user types financed $ directly → contado = mat - benef - fin
+function syncFinanciadoFromVal(tabId) {
+  const mat    = getMat(tabId);
+  const benef  = getTotalBeneficios(tabId);
+  const fin    = Math.max(0, parseFloat(document.getElementById('finval'+tabId)?.value)||0);
+  const cont   = Math.max(0, mat - benef - fin);             // contado = mat - benef - fin
+  const cpEl   = document.getElementById('cont'+tabId+'-pct');
+  const cvEl   = document.getElementById('cont'+tabId+'-val');
+  if(cvEl) cvEl.value = cont > 0 ? Math.round(cont) : '';
+  if(cpEl) cpEl.value = mat > 0 ? Math.round((cont/mat)*1000)/10 : '';
+  recalcAll(tabId);
+}
+// For Tab2 CP financed $ → update CP% based on total financiado
+function syncFinanciadoCP() {
+  // CP/LP $ → update % based on mat
+  const mat = getMat(2);
+  const valCP = Math.max(0, parseFloat(document.getElementById('finvalCP')?.value)||0);
+  const pct  = mat > 0 ? Math.round((valCP/mat)*1000)/10 : 0;
+  const pEl  = document.getElementById('pctCP');
+  if(pEl) pEl.value = pct || '';
+  autoContado2();
+}
+function syncFinanciadoLP() {
+  const mat = getMat(2);
+  const valLP = Math.max(0, parseFloat(document.getElementById('finvalLP')?.value)||0);
+  const pct  = mat > 0 ? Math.round((valLP/mat)*1000)/10 : 0;
+  const pEl  = document.getElementById('pctLP');
+  if(pEl) pEl.value = pct || '';
+  autoContado2();
+}
+
 // ── Main recalc ───────────────────────────────────────────────────
 function recalcAll(tabId) {
   const mat   = getMat(tabId);
@@ -2651,6 +2890,11 @@ function recalcAll(tabId) {
     document.getElementById('bd-benef-'+tabId).textContent = benef > 0 ? cop(benef)+' ('+(mat>0?((benef/mat)*100).toFixed(1):0)+'%)' : cop(0);
     document.getElementById('bd-cont-'+tabId).textContent  = cont  > 0 ? cop(cont) +' ('+(mat>0?((cont/mat)*100).toFixed(1):0)+'%)' : cop(0);
     document.getElementById('bd-fin-'+tabId).textContent   = cop(fin)+' ('+finPct+'% de matrícula)';
+    // Sync the editable financed $ and % fields if not active
+    const fvEl2 = document.getElementById('finval'+tabId);
+    if(fvEl2 && document.activeElement !== fvEl2) fvEl2.value = fin > 0 ? Math.round(fin) : '';
+    const fpEl2 = document.getElementById('finpct'+tabId);
+    if(fpEl2 && document.activeElement !== fpEl2) fpEl2.value = (mat>0&&fin>0) ? Math.round((fin/mat)*1000)/10 : '';  // % of mat
 
     // Stacked bar
     const bPct = mat > 0 ? Math.min(100, (benef/mat)*100) : 0;
@@ -2695,33 +2939,54 @@ function syncContadoFromVal(tabId) {
 
 // ── Tab2 CP/LP split ──────────────────────────────────────────────
 function updateSplit2(fin) {
-  const pCP = parseFloat(document.getElementById('pctCP')?.value)||0;
-  const pLP = parseFloat(document.getElementById('pctLP')?.value)||0;
-  const valCP = Math.round(fin * pCP / 100);
-  const valLP = Math.round(fin * pLP / 100);
+  // CP% and LP% are % of total matrícula, not of financed amount
+  const mat   = getMat(2);
+  const benef = getTotalBeneficios(2);
+  const pCP   = parseFloat(document.getElementById('pctCP')?.value)||0;
+  const pLP   = parseFloat(document.getElementById('pctLP')?.value)||0;
+  const valCP = Math.round(mat * pCP / 100);
+  const valLP = Math.round(mat * pLP / 100);
+  const cont  = getContadoVal(2);
+  const contPct = mat > 0 ? Math.round((cont/mat)*1000)/10 : 0;
+  const benefPct = mat > 0 ? Math.round((benef/mat)*1000)/10 : 0;
+  const totalPct = pCP + pLP + contPct + benefPct;
   const fcpEl = document.getElementById('finvalCP');
   const flpEl = document.getElementById('finvalLP');
   if(fcpEl && document.activeElement !== fcpEl) fcpEl.value = valCP || '';
   if(flpEl && document.activeElement !== flpEl) flpEl.value = valLP || '';
-  const total = pCP + pLP;
   const tEl = document.getElementById('split-total-2');
-  if(tEl) {
-    tEl.style.display = (fin > 0) ? 'block' : 'none';
-    tEl.textContent = 'CP + LP = '+total.toFixed(1)+'%'+(total===100?' ✅':total>100?' ⚠️ Supera 100%':' (falta '+(100-total).toFixed(1)+'%)');
-    tEl.className = total === 100 ? 'pct-total-ok' : 'pct-total-over';
+  if(tEl && mat > 0) {
+    tEl.style.display = 'block';
+    tEl.textContent = 'Benef.'+benefPct.toFixed(0)+'% + Contado'+contPct.toFixed(0)+'% + CP'+pCP.toFixed(0)+'% + LP'+pLP.toFixed(0)+'% = '+totalPct.toFixed(1)+'%'+(Math.abs(totalPct-100)<0.2?' ✅':totalPct>100?' ⚠️':' (falta '+(100-totalPct).toFixed(1)+'%)');
+    tEl.className = Math.abs(totalPct-100)<0.2 ? 'pct-total-ok' : 'pct-total-over';
   }
   // Garantisa display
   document.getElementById('gCP-val').textContent = valCP > 0 ? cop(valCP*GARANTISA_CP)+' sobre '+cop(valCP) : '—';
   document.getElementById('gLP-val').textContent = valLP > 0 ? cop(valLP*GARANTISA_LP)+' sobre '+cop(valLP) : '—';
 }
 function syncSplitFromPct(which) {
-  const fin = getFinanciado(2);
+  const mat = getMat(2);  // CP/LP % are of total matrícula
   const id  = which==='CP' ? 'pctCP' : 'pctLP';
   const vid = which==='CP' ? 'finvalCP' : 'finvalLP';
   const pct = Math.max(0, parseFloat(document.getElementById(id)?.value)||0);
   const vel = document.getElementById(vid);
-  if(vel) vel.value = Math.round(fin * pct / 100) || '';
-  updateSplit2(fin);
+  if(vel) vel.value = Math.round(mat * pct / 100) || '';
+  updateSplit2(getFinanciado(2));
+  // Auto-update contado as complement
+  autoContado2();
+}
+function autoContado2() {
+  const mat   = getMat(2);
+  const benef = getTotalBeneficios(2);
+  const pCP   = parseFloat(document.getElementById('pctCP')?.value)||0;
+  const pLP   = parseFloat(document.getElementById('pctLP')?.value)||0;
+  const finCP = mat*pCP/100, finLP = mat*pLP/100;
+  const cont  = Math.max(0, mat - benef - finCP - finLP);
+  const cvEl  = document.getElementById('cont2-val');
+  const cpEl  = document.getElementById('cont2-pct');
+  if(cvEl) cvEl.value = cont > 0 ? Math.round(cont) : '';
+  if(cpEl) cpEl.value = mat > 0 ? Math.round((cont/mat)*1000)/10 : '';
+  recalcAll(2);
 }
 function syncSplitFromVal(which) {
   const fin = getFinanciado(2);
@@ -2886,9 +3151,38 @@ document.getElementById('plazoLP').addEventListener('input',updEqLP);
         </div>
       </div>
 
+      <!-- Mixto CP/LP split (shown only when from Tab2) -->
+      <div id="id-mixto-block" style="display:none;background:#E3F2FD;border-radius:var(--rs);padding:14px 16px;margin-bottom:14px;">
+        <div style="font-size:11px;font-weight:700;color:var(--azul);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">✂️ División CP / LP — Idiomas (heredado del crédito mixto)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <label style="color:var(--azul);">🔵 % Corto Plazo</label>
+            <div class="ipfx" style="border-color:var(--azul);">
+              <input type="number" id="id-pctCP" placeholder="40" min="0" max="100" step="0.1" value="40" oninput="recalcId()"><span>%</span>
+            </div>
+            <div class="sub-l" id="id-finCP-lbl"></div>
+          </div>
+          <div>
+            <label style="color:var(--verde-c);">🟢 % Largo Plazo</label>
+            <div class="ipfx" style="border-color:var(--verde-c);">
+              <input type="number" id="id-pctLP" placeholder="60" min="0" max="100" step="0.1" value="60" oninput="recalcId()"><span>%</span>
+            </div>
+            <div class="sub-l" id="id-finLP-lbl"></div>
+          </div>
+        </div>
+        <div id="id-split-check" style="font-size:12px;font-weight:600;text-align:center;margin-top:6px;"></div>
+      </div>
+
       <div style="margin-bottom:14px;">
-        <label>Número de Meses</label>
+        <label id="id-meses-label">Número de Meses <span id="id-meses-hint" style="font-weight:400;color:var(--gris-m);font-size:11px;"></span></label>
         <div class="ipfx"><input type="number" id="id-meses" placeholder="6" min="1" value="6"><span>meses</span></div>
+      </div>
+      <!-- LP meses (only for Mixto) -->
+      <div id="id-mesesLP-block" style="display:none;margin-bottom:14px;">
+        <label style="color:var(--verde-c);">🟢 Meses Largo Plazo <span style="font-weight:400;color:var(--gris-m);font-size:11px;">(al graduarse)</span></label>
+        <div class="ipfx" style="border-color:var(--verde-c);">
+          <input type="number" id="id-mesesLP" placeholder="9" min="1" value="9" oninput="recalcId()"><span>meses</span>
+        </div>
       </div>
       <div style="margin-bottom:16px;">
         <label>Tasa de Interés (Mes Vencido)</label>
