@@ -495,11 +495,27 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
         <div class="seg-box seg-lp" style="margin-top:12px;">
           <div class="seg-title">🟢 Segmento Largo Plazo</div>
           <div class="fg" style="margin-bottom:8px;">
-            <label>Número de Meses</label>
-            <div class="ipfx" style="border-color:var(--verde-c);">
-              <input type="number" id="plazoLP" placeholder="9" min="1" max="120" value="9"
-                oninput="updEqLP()" style="border:none;box-shadow:none;"><span>meses</span>
+            <label>Duración del Programa (semestres o años)
+              <span style="font-size:10px;color:var(--gris-m);font-weight:400;display:block;margin-top:2px;">
+                El plazo de pago LP = 1.5 × duración del programa
+              </span>
+            </label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <div class="ipfx" style="border-color:var(--verde-c);">
+                <input type="number" id="plazoLP" placeholder="8" min="1" max="20" value="8"
+                  oninput="calcPlazoLPAuto()" style="border:none;box-shadow:none;"><span>sem.</span>
+              </div>
+              <div class="tasa-badge" style="background:var(--verde-s);color:var(--verde-c);">
+                <div>
+                  <small>Plazo pago LP</small>
+                  <span id="plazo-lp-auto">72 meses</span>
+                </div>
+                <span>📅</span>
+              </div>
             </div>
+          </div>
+          <div style="background:var(--verde-s);border-left:4px solid var(--verde-c);border-radius:0 var(--rs) var(--rs) 0;padding:10px 14px;font-size:12px;color:var(--verde);margin-bottom:8px;">
+            <strong>Período de gracia:</strong> 1 año después de graduarse — durante este período se causan intereses a la tasa vigente en esa fecha.
           </div>
           <div class="info-box" style="background:var(--verde-s);color:var(--verde-c);margin-bottom:0;">
             <strong style="color:var(--verde-c);">Garantisa LP (2.86%)</strong><span id="gLP-val">—</span>
@@ -757,37 +773,36 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
 
 <script>
 /*%%PROGRAMAS_START%%*/const PROGRAMAS = [
-  // [nombre, pregrado, idiomas]  — idiomas=0 significa no aplica
-  ["Administración de Empresas",16105200,0],
-  ["Arquitectura",16618800,1635500],
-  ["Ciencia de Datos",13574400,1635500],
-  ["Ciencia Política y Gobierno",13170800,1635500],
-  ["Comunicación Social y Period.",11976300,1635500],
-  ["Contaduría Pública",7945700,0],
-  ["Derecho",13422900,1635500],
-  ["Diseño Gráfico",13342300,1635500],
-  ["Diseño Industrial",16461100,1635500],
-  ["Economía",12553400,1635500],
-  ["Enfermería",7601500,0],
-  ["Filosofía y Humanidades",6917800,0],
-  ["Geología",13331000,1635500],
-  ["Ingeniería Biomédica",15471900,1635500],
-  ["Ingeniería Civil",13574400,1635500],
-  ["Ingeniería Eléctrica",13574400,1635500],
-  ["Ingeniería Electrónica",15471900,1635500],
-  ["Ingeniería Industrial",16641300,1635500],
-  ["Ingeniería Mecánica",13574400,1635500],
-  ["Ingeniería Sistemas Y Computación",13574400,1635500],
-  ["Lenguas Modernas y Cultura",12673500,1635500],
-  ["Licenciatura en Matemática",8009000,1635500],
-  ["Licenciatura en Pedagogía Infantil",8703000,1635500],
-  ["Matemáticas",8153900,1635500],
-  ["Medicina",28431000,1995700],
-  ["Música",13466700,1635500],
-  ["Negocios Internacionales",17922800,1635500],
-  ["Odontología",17877500,1995700],
-  ["Psicología",11976300,1635500],
-  ["Relaciones Internacionales",12673500,1635500]
+  // [nombre, pregrado, idiomas, semestres]
+  ["Administración de Empresas",16105200,0,10],
+  ["Arquitectura",16618800,1635500,9],
+  ["Ciencia de Datos",13574400,1635500,8],
+  ["Ciencia Política y Gobierno",13170800,1635500,8],
+  ["Comunicación Social y Period.",11976300,1635500,9],
+  ["Contaduría Pública",7945700,0,8],
+  ["Derecho",13422900,1635500,10],
+  ["Diseño Gráfico",13342300,1635500,8],
+  ["Diseño Industrial",16461100,1635500,8],
+  ["Economía",12553400,1635500,8],
+  ["Enfermería",7601500,0,8],
+  ["Filosofía y Humanidades",6917800,0,8],
+  ["Geología",13331000,1635500,9],
+  ["Ingeniería Biomédica",15471900,1635500,8],
+  ["Ingeniería Civil",13574400,1635500,10],
+  ["Ingeniería Eléctrica",13574400,1635500,10],
+  ["Ingeniería Electrónica",15471900,1635500,10],
+  ["Ingeniería Industrial",16641300,1635500,10],
+  ["Ingeniería Mecánica",13574400,1635500,10],
+  ["Ingeniería Sistemas Y Computación",13574400,1635500,10],
+  ["Lenguas Modernas y Cultura",12673500,1635500,8],
+  ["Licenciatura en Pedagogía Infantil",8703000,1635500,8],
+  ["Matemáticas",8153900,1635500,8],
+  ["Medicina",28431000,1995700,12],
+  ["Música",13466700,1635500,8],
+  ["Negocios Internacionales",17922800,1635500,10],
+  ["Odontología",17877500,1995700,10],
+  ["Psicología",11976300,1635500,10],
+  ["Relaciones Internacionales",12673500,1635500,10]
 ];/*%%PROGRAMAS_END%%*/
 /*%%POSGRADOS_START%%*/const POSGRADOS = [
   ["Doctorado En Administración","Doctorado",30388900],
@@ -952,9 +967,9 @@ function poblarProgramas(tabId) {
   const subnivel = (document.getElementById('subnivel'+tabId)||{}).value || '';
   sel.innerHTML = '<option value="">— Seleccionar programa —</option>';
   if(nivel === 'pregrado') {
-    PROGRAMAS.forEach(([n,v,]) => {
+    PROGRAMAS.forEach(([n, v, idiomas, sem]) => {
       const o = document.createElement('option');
-      o.value = JSON.stringify({v, idiomas: PROGRAMAS.find(p=>p[0]===n)?.[2]||0, nivel:'pregrado'});
+      o.value = JSON.stringify({v, idiomas: idiomas||0, semestres: sem||8, nivel:'pregrado'});
       o.textContent = n;
       sel.appendChild(o);
     });
@@ -1040,11 +1055,24 @@ function setMat(id) {
   if(!sel || !sel.value) return;
   let data;
   try { data = JSON.parse(sel.value); } catch(e) { return; }
-  const {v: valor, idiomas, nivel} = data;
+  const {v: valor, idiomas, nivel, semestres, subnivel} = data;
   const progNombre = sel.options[sel.selectedIndex].textContent.replace(/ \(.*\)$/,'');
+  // Set matrícula
   document.getElementById('mat'+id).value = valor;
   fmtLbl('mat'+id);
-  if(id < 3) actualizarAportes(id);
+  // Set plazoLP — always look up directly from PROGRAMAS array (most reliable)
+  if(id === 2 && nivel === 'pregrado') {
+    // First try to get from option value (new format), fall back to PROGRAMAS lookup
+    const semFromOption = semestres;
+    const semFromArray  = (PROGRAMAS.find(p => p[0] === progNombre) || [])[3];
+    const sem = semFromArray || semFromOption || 8;
+    const plazoEl = document.getElementById('plazoLP');
+    if(plazoEl) {
+      plazoEl.value = sem;
+      calcPlazoLPAuto();
+    }
+  }
+  if(id < 3) recalcAll(id);
   // idiomas only for pregrado
   const btnEl = document.getElementById('btn-idiomas-'+id);
   if(btnEl){
@@ -1256,7 +1284,12 @@ function calcular2(){
 
   let CP=null,LP=null;
   if(pCP>0) CP=amortizacion(princCP,tm,nCP);
-  if(pLP>0) LP=amortizacion(princLP,tm,nLP);
+  // LP: DO NOT amortize — rate is unknown at simulation time (will be rate at graduation)
+  // Only store capital and estimated payoff period
+  const nLP_pago = getLPPlazoMeses();  // 1.5 × semestres × 6
+  // LP placeholder object (no rows, no interest)
+  if(pLP>0) LP = { capital: princLP, nPago: nLP_pago, noAmortize: true,
+    cuota: null, totInt: 0, totCap: princLP, rows: [] };
 
   const _prog2 = document.getElementById('prog2');
   const _prog2Nombre = _prog2.options[_prog2.selectedIndex]?.textContent?.replace(/ \(.*\)$/,'') || 'Programa';
@@ -1268,7 +1301,7 @@ function calcular2(){
     beneficios:_benef2snap, benefTotal:_benef2total, matNeta:_matNeta2};
 
   const totCP=CP?(CP.totCap+CP.totInt):0;
-  const totLP=LP?(LP.totCap+LP.totInt):0;
+  const totLP=LP?LP.capital:0;  // LP: only capital shown (no interest at simulation time)
   const totCredito=totCP+totLP;
   const totGeneral=pagoInicial+totCredito;
 
@@ -1296,15 +1329,27 @@ function calcular2(){
   }
 
   if(LP){
+    const semLP = parseInt(document.getElementById('plazoLP')?.value)||8;
+    const graceMeses = 12;
     html+=`<div class="dvl lp-l" style="margin-top:24px;"><span>🟢 Largo Plazo — ${pLP}% · ${cop(finLP)}</span></div>
     <div class="mgrid">
-      <div class="mc"><span class="lbl">Monto Financiado LP</span><div class="val">${cop(finLP)}</div></div>
-      <div class="mc vrd"><span class="lbl">Cuota Mensual LP</span><div class="val">${cop(LP.cuota)}</div></div>
-      <div class="mc"><span class="lbl">Intereses LP</span><div class="val">${cop(LP.totInt)}</div></div>
-      <div class="mc" style="grid-column:1/-1;background:var(--verde-s);"><span class="lbl" style="color:var(--verde-c)">Total Crédito LP</span><div class="val" style="color:var(--verde)">${cop(totLP)}</div></div>
+      <div class="mc"><span class="lbl">Capital Financiado LP</span><div class="val">${cop(finLP)}</div></div>
+      <div class="mc"><span class="lbl">Duración Programa</span><div class="val">${semLP} sem. (${semLP*6} meses)</div></div>
+      <div class="mc"><span class="lbl">Período de Gracia</span><div class="val">${graceMeses} meses</div></div>
+      <div class="mc"><span class="lbl">Plazo Estimado de Pago</span><div class="val">${LP.nPago} meses</div></div>
     </div>
-    <div class="ssub">Tabla Amortización — Largo Plazo (${nLP} cuotas)</div>
-    ${renderTabla(LP.rows,LP.cuota,LP.totInt,LP.totCap)}`;
+    <div style="background:#E8F5E9;border-left:4px solid var(--verde-c);border-radius:0 var(--rs) var(--rs) 0;
+      padding:14px 18px;margin:12px 0;font-size:13px;color:var(--gris);line-height:1.7;">
+      <strong style="color:var(--verde-c);display:block;margin-bottom:6px;">ℹ️ Información sobre el Crédito Largo Plazo</strong>
+      La cuota definitiva del crédito de largo plazo no puede determinarse actualmente, ya que la
+      tasa de interés será la vigente al momento de iniciar la amortización. Durante el período
+      de gracia de un (1) año se causarán intereses conforme a las condiciones vigentes en esa fecha.
+      <br><br>
+      <strong>Cronograma estimado:</strong><br>
+      📚 Período académico: ${semLP*6} meses · 
+      ⏳ Período de gracia: ${graceMeses} meses · 
+      💳 Amortización: ${LP.nPago} meses después de graduarse
+    </div>`;
   }
 
   if(CP&&LP){
@@ -1315,10 +1360,17 @@ function calcular2(){
   html+=`<div class="total-banner">
     <div><div class="tl">Pago Inicial</div><div class="tv">${cop(pagoInicial)}</div><div class="ts">Contado + Garantisa</div></div>
     <div style="font-size:24px;opacity:.5;">+</div>
-    <div><div class="tl">Total Créditos (CP+LP)</div><div class="tv">${cop(totCredito)}</div><div class="ts">${CP?nCP+' cuotas CP':''} ${CP&&LP?'·':''} ${LP?nLP+' cuotas LP':''}</div></div>
-    <div style="font-size:24px;opacity:.5;">=</div>
-    <div style="text-align:right;"><div class="tl">Costo Total Matrícula</div><div class="tv">${cop(totGeneral)}</div><div class="ts">Todo incluido</div></div>
+    <div>
+      <div class="tl">Crédito CP (con intereses)</div><div class="tv">${cop(totCP)}</div>
+      <div class="ts">${CP?nCP+' cuotas':''}</div>
+    </div>
+    ${LP?`<div style="font-size:24px;opacity:.5;">+</div>
+    <div><div class="tl">Capital LP (sin intereses)</div><div class="tv">${cop(totLP)}</div>
+    <div class="ts">${LP.nPago} meses al graduarse</div></div>`:''}
   </div>
+  ${LP?`<div style="background:#F1F8E9;border-radius:var(--rs);padding:10px 14px;font-size:12px;color:var(--verde);margin-top:8px;font-style:italic;">
+    * El costo total definitivo del crédito LP se determinará al momento de iniciar la amortización, según la tasa vigente.
+  </div>`:''}
   <div class="btn-row">
     <button class="btn-exp" onclick="expPDF2()">📄 Descargar PDF</button>
     <button class="btn-exp vrd" onclick="expXLS2()">📊 Descargar Excel</button>
@@ -1332,10 +1384,10 @@ function calcular2(){
       const ctx=document.getElementById('chMixto');
       if(!ctx)return;
       new Chart(ctx,{type:'bar',data:{
-        labels:['Corto Plazo','Largo Plazo'],
+        labels:['Corto Plazo','Largo Plazo (capital)'],
         datasets:[
-          {label:'Capital',data:[Math.round(CP.totCap),Math.round(LP.totCap)],backgroundColor:'#1565C0',borderRadius:6},
-          {label:'Intereses',data:[Math.round(CP.totInt),Math.round(LP.totInt)],backgroundColor:'#2E7D32',borderRadius:6}
+          {label:'Capital',data:[Math.round(CP.totCap),Math.round(LP.capital)],backgroundColor:'#1565C0',borderRadius:6},
+          {label:'Intereses CP',data:[Math.round(CP.totInt),0],backgroundColor:'#2E7D32',borderRadius:6}
         ]},
         options:{responsive:true,maintainAspectRatio:false,
           plugins:{legend:{display:true,position:'top',labels:{font:{family:'Sora',size:12},boxWidth:12,padding:16}},
@@ -1347,25 +1399,81 @@ function calcular2(){
   }
 }
 
+
+// ── PDF text sanitizer ────────────────────────────────────────────────────────
+// jsPDF's built-in Helvetica doesn't support accented/unicode chars.
+// Replace them so the PDF renders cleanly.
+function safePDF(text) {
+  if(text === null || text === undefined) return '';
+  return String(text)
+    .replace(/á/g,'a').replace(/é/g,'e').replace(/í/g,'i')
+    .replace(/ó/g,'o').replace(/ú/g,'u').replace(/ñ/g,'n')
+    .replace(/Á/g,'A').replace(/É/g,'E').replace(/Í/g,'I')
+    .replace(/Ó/g,'O').replace(/Ú/g,'U').replace(/Ñ/g,'N')
+    .replace(/ü/g,'u').replace(/Ü/g,'U')
+    .replace(/[—–]/g,'-')          // em/en dash → hyphen
+    .replace(/[""'']/g,'"')        // smart quotes → straight
+    .replace(/[①②③]/g,(m)=>({'①':'(1)','②':'(2)','③':'(3)'}[m]||''))
+    .replace(/[📚⏳💳📋🔵🟢🔴ℹ✅⚠🎓🏛✂️💵🎁💾⚖️📅📈📊📄🏦♻️🌐]/gu,'')
+    .replace(/\uFE0F/g,'')          // variation selector
+    .replace(/[^\x00-\x7E]/g,''); // strip remaining non-ASCII
+}
+// Wrap doc.text to always sanitize
+function pdfText(doc, text, x, y, opts) {
+  doc.text(safePDF(String(text)), x, y, opts||{});
+}
+
+
+// ── LP amortization table: capital only (interest TBD at graduation) ─────────
+function renderTablaLP(capital, n) {
+  const cuotaCap = capital / n;  // equal capital payments
+  const hw = ['#','Capital','Saldo','Interes'], cw = [16,50,50,60];
+  let doc_rows = [];
+  let saldo = capital;
+  for(let i=1; i<=n; i++) {
+    saldo = Math.max(0, capital - cuotaCap*i);
+    doc_rows.push([i, cuotaCap, saldo]);
+  }
+  return doc_rows;
+}
+
+function renderTablaLPHtml(capital, n, semestres) {
+  // Single-row summary — no multi-row table
+  const sem = semestres || Math.round(n/6/1.5);
+  return `<div class="twrap"><table>
+    <thead><tr>
+      <th style="text-align:left;">Concepto</th>
+      <th>Valor</th>
+    </tr></thead><tbody>
+    <tr><td style="font-family:'Sora',sans-serif;">Capital a amortizar</td><td style="font-family:'DM Mono',monospace;font-weight:700;color:var(--verde);">${cop(capital)}</td></tr>
+    <tr><td style="font-family:'Sora',sans-serif;">Semestres de la carrera</td><td style="font-family:'DM Mono',monospace;">${sem} semestres</td></tr>
+    <tr><td style="font-family:'Sora',sans-serif;">Plazo estimado de amortización</td><td style="font-family:'DM Mono',monospace;">${n} meses</td></tr>
+    <tr><td style="font-family:'Sora',sans-serif;color:var(--dorado);">Interés</td><td style="color:#90A4AE;font-style:italic;">Tasa vigente al graduarse</td></tr>
+    </tbody></table></div>
+  <p style="font-size:11px;color:var(--verde);margin-top:6px;">
+    Será amortizado en el número de semestres que dure la carrera (× 1.5), después del período de gracia de 1 año.
+  </p>`;
+}
+
 // ---- EXPORTS ----
 
 function pdfBenefSection(doc, y, mat, beneficios, benefTotal, matNeta, cuotaInicial) {
   // Breakdown: mat → beneficios → contado → financiado
   if(beneficios && beneficios.length > 0) {
     y = pdfSectionBar(doc, 'BENEFICIOS / DESCUENTOS APLICADOS', y, [46,125,50]);
-    doc.setFont('helvetica','bold'); doc.text('Valor Matrícula Bruta:', 16, y);
-    doc.setFont('helvetica','normal'); doc.text(cop(mat), 150, y, {align:'right'}); y+=7;
+    doc.setFont('helvetica','bold'); doc.text(safePDF('Valor Matrícula Bruta:'), 16, y);
+    doc.setFont('helvetica','normal'); doc.text(safePDF(cop(mat)), 150, y, {align:'right'}); y+=7;
     beneficios.forEach(b => {
       if((b.val||0) > 0) {
         const label = (b.nombre||'Descuento').substring(0,35);
-        doc.setFont('helvetica','normal'); doc.text('  - '+label+':', 16, y);
+        doc.setFont('helvetica','normal'); doc.text(safePDF('  - '+label+':'), 16, y);
         doc.setFont('helvetica','bold'); doc.setTextColor(46,125,50);
-        doc.text('-'+cop(b.val)+(mat>0?' ('+b.pct.toFixed(1)+'%)':''), 150, y, {align:'right'});
+        doc.text(safePDF('-'+cop(b.val)+(mat>0?' ('+b.pct.toFixed(1)+'%)':'')), 150, y, {align:'right'});
         doc.setTextColor(0,0,0); y+=6;
       }
     });
-    doc.setFont('helvetica','bold'); doc.text('= Matrícula Neta:', 16, y);
-    doc.text(cop(matNeta), 150, y, {align:'right'}); y+=7;
+    doc.setFont('helvetica','bold'); doc.text(safePDF('= Matrícula Neta:'), 16, y);
+    doc.text(safePDF(cop(matNeta)), 150, y, {align:'right'}); y+=7;
   }
   return y;
 }
@@ -1382,17 +1490,17 @@ function expPDF1(){
     ['Pago de Contado',cop(d.cuotaInicial)],
     ['Garantisa 4.17% s/financiado',cop(d.garantisa)],
     ['Total Pago Inicial',cop(d.pagoInicial)]];
-  pi.forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,150,y,{align:'right'}); y+=7; });
+  pi.forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(safePDF(k+':'),16,y); doc.setFont('helvetica','normal'); doc.text(safePDF(v),150,y,{align:'right'}); y+=7; });
   y+=2; y=pdfSectionBar(doc,'CRÉDITO A AMORTIZAR',y);
-  const cr=[['Monto Financiado',cop(d.financiado)+'  ('+d.pct+'% de matrícula)'],['Cuota Mensual',cop(d.cuota)],['Total Intereses',cop(d.totInt)],['Total Crédito',cop(d.totCap+d.totInt)],['COSTO TOTAL MATRÍCULA',cop(d.totalGeneral)]];
-  cr.forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,150,y,{align:'right'}); y+=7; });
+  const cr=[['Monto Financiado',cop(d.financiado)+'  ('+d.pct+'% de matricula)'],['Numero de Cuotas',d.n+' cuotas mensuales'],['Cuota Mensual',cop(d.cuota)],['Total Intereses',cop(d.totInt)],['Total Credito',cop(d.totCap+d.totInt)],['COSTO TOTAL MATRICULA',cop(d.totalGeneral)]];
+  cr.forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(safePDF(k+':'),16,y); doc.setFont('helvetica','normal'); doc.text(safePDF(v),150,y,{align:'right'}); y+=7; });
   y=pdfCostoFootnote(doc,y);
   y+=2; y=pdfSectionBar(doc,'TABLA DE AMORTIZACIÓN',y);
   const hw=['#','Cuota','Capital','Interés','Saldo'], cw=[14,42,38,38,44];
   doc.setFillColor(13,71,161); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
-  let x=14; hw.forEach((h,i)=>{doc.text(h,x+1,y);x+=cw[i];}); doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
+  let x=14; hw.forEach((h,i)=>{doc.text(safePDF(h),x+1,y);x+=cw[i];}); doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
   d.rows.forEach(r=>{ y+=7; if(y>270){doc.addPage();y=20;} x=14;
-    [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(String(v),x+1,y);x+=cw[i];});
+    [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(safePDF(String(v)),x+1,y);x+=cw[i];});
   });
   const fn1 = (d.progNombre+' - '+d.pct+'%').replace(/[^a-zA-Z0-9\-_ áéíóúÁÉÍÓÚñÑ]/g,'').trim();
   doc.save(fn1+'.pdf');
@@ -1441,15 +1549,42 @@ function expPDF2(){
     d.garLP>0?['Garantisa LP (2.86%)',cop(d.garLP)]:null,
     ['Total Pago Inicial',cop(d.pagoInicial)]
   ].filter(Boolean);
-  pi.forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,150,y,{align:'right'}); y+=7; });
+  pi.forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(safePDF(k+':'),16,y); doc.setFont('helvetica','normal'); doc.text(safePDF(v),150,y,{align:'right'}); y+=7; });
   y+=2;
   if(d.CP){ y=pdfSectionBar(doc,'CORTO PLAZO — '+d.pCP+'%',y);
-    [['Monto Financiado CP',cop(d.finCP)],['Cuota Mensual CP',cop(d.CP.cuota)],['Total Crédito CP',cop(d.CP.totCap+d.CP.totInt)]].forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,150,y,{align:'right'}); y+=7; }); y+=4; }
-  if(d.LP){ y=pdfSectionBar(doc,'LARGO PLAZO — '+d.pLP+'%',y,[46,125,50]);
-    [['Monto Financiado LP',cop(d.finLP)],['Cuota Mensual LP',cop(d.LP.cuota)],['Total Crédito LP',cop(d.LP.totCap+d.LP.totInt)]].forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,150,y,{align:'right'}); y+=7; }); y+=4; }
-  const totCred=(d.CP?(d.CP.totCap+d.CP.totInt):0)+(d.LP?(d.LP.totCap+d.LP.totInt):0);
+    [['Monto Financiado CP',cop(d.finCP)],['Numero de Cuotas CP',d.nCP+' cuotas'],['Cuota Mensual CP',cop(d.CP.cuota)],['Total Credito CP',cop(d.CP.totCap+d.CP.totInt)]].forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(safePDF(k+':'),16,y); doc.setFont('helvetica','normal'); doc.text(safePDF(v),150,y,{align:'right'}); y+=7; }); y+=4; }
+  if(d.LP){
+    y=pdfSectionBar(doc,'LARGO PLAZO — '+d.pLP+'%',y,[46,125,50]);
+    const sem2=d.nLP||8;
+    const nPago2=d.LP.nPago||Math.round(sem2*6*1.5);
+    [['Capital Financiado LP',cop(d.finLP)],
+     ['Duracion del Programa',sem2+' semestres ('+sem2*6+' meses)'],
+     ['Periodo de Gracia','12 meses (1 año post-grado)'],
+     ['Plazo Estimado Amortizacion',nPago2+' cuotas mensuales']
+    ].forEach(([k,v])=>{ doc.setFont('helvetica','bold'); pdfText(doc,k+':',16,y); doc.setFont('helvetica','normal'); pdfText(doc,v,150,y,{align:'right'}); y+=7; });
+    y+=2;
+    doc.setFillColor(232,245,233); doc.rect(14,y-3,180,24,'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(46,125,50);
+    pdfText(doc,'Informacion sobre el Credito Largo Plazo',16,y); y+=6;
+    doc.setFont('helvetica','normal'); doc.setTextColor(55,71,79); doc.setFontSize(8);
+    pdfText(doc,'La cuota definitiva no puede determinarse; la tasa sera la vigente al iniciar amortizacion.',16,y); y+=5;
+    pdfText(doc,'Periodo de gracia: 1 año post-grado con intereses segun condiciones vigentes.',16,y); y+=8;
+    doc.setTextColor(0,0,0); doc.setFontSize(11); y+=2;
+    if(y>230){doc.addPage();y=20;}
+    y=pdfSectionBar(doc,'CREDITO LARGO PLAZO - DESEMBOLSO UNICO',y,[46,125,50]);
+    doc.setTextColor(0,0,0); doc.setFontSize(9);
+    doc.setFillColor(240,249,240); doc.rect(14,y-4,180,38,'F');
+    doc.setDrawColor(46,125,50); doc.rect(14,y-4,180,38,'S'); doc.setDrawColor(0,0,0);
+    [['Capital a amortizar:',cop(d.finLP)],
+     ['Semestres de la carrera:',sem2+' semestres'],
+     ['Plazo estimado de pago:',nPago2+' meses ('+Math.round(nPago2/12*10)/10+' anos)'],
+     ['Interes:','Tasa vigente al iniciar amortizacion']
+    ].forEach(([k,v])=>{doc.setFont('helvetica','bold');pdfText(doc,k,16,y);doc.setFont('helvetica','normal');pdfText(doc,v,192,y,{align:'right'});y+=8;});
+    y+=4; doc.setFontSize(11);
+  }
+  const totCred=(d.CP?(d.CP.totCap+d.CP.totInt):0)+(d.LP?(d.LP.noAmortize?d.LP.capital:(d.LP.totCap+d.LP.totInt)):0);
   y=pdfSectionBar(doc,'COSTO TOTAL MATRÍCULA',y);
-  doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.text(cop(d.pagoInicial+totCred),150,y,{align:'right'}); doc.setFontSize(11); y+=8;
+  doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.text(safePDF(cop(d.pagoInicial+totCred)),150,y,{align:'right'}); doc.setFontSize(11); y+=8;
   y=pdfCostoFootnote(doc,y);
   const fn2 = (d.progNombre+' - CP'+d.pCP+'% LP'+d.pLP+'%').replace(/[^a-zA-Z0-9\-_ áéíóúÁÉÍÓÚñÑ]/g,'').trim();
   doc.save(fn2+'.pdf');
@@ -1576,21 +1711,21 @@ function expPDF3(){
   y=pdfBenefSection(doc,y,d.mat,d.beneficios||[],d.benefTotal||0,d.matNeta||d.mat,d.cuotaInicial);
   y+=2; y=pdfSectionBar(doc,'PAGO INICIAL — al momento del desembolso',y);
   [['Cuota Inicial Contado',cop(d.cuotaInicial)],['Otros Cargos',cop(d.cargos)],['Total Pago Inicial',cop(d.pagoInicial)]].forEach(([k,v])=>{
-    doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,150,y,{align:'right'}); y+=7;
+    doc.setFont('helvetica','bold'); doc.text(safePDF(k+':'),16,y); doc.setFont('helvetica','normal'); doc.text(safePDF(v),150,y,{align:'right'}); y+=7;
   });
   y+=2; y=pdfSectionBar(doc,'CRÉDITO A AMORTIZAR',y);
   [['Monto Financiado',cop(d.financiado)],['Cuota Mensual',cop(d.cuota)],
    ['Total Intereses',cop(d.totInt)],['Total Crédito',cop(d.totCap+d.totInt)],
    ['COSTO TOTAL MATRÍCULA',cop(d.totalGeneral)]].forEach(([k,v])=>{
-    doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,150,y,{align:'right'}); y+=7;
+    doc.setFont('helvetica','bold'); doc.text(safePDF(k+':'),16,y); doc.setFont('helvetica','normal'); doc.text(safePDF(v),150,y,{align:'right'}); y+=7;
   });
   y=pdfCostoFootnote(doc,y);
   y+=2; y=pdfSectionBar(doc,'TABLA DE AMORTIZACIÓN',y);
   const hw=['#','Cuota','Capital','Interés','Saldo'],cw=[14,42,38,38,44];
   doc.setFillColor(13,71,161); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
-  let x=14; hw.forEach((h,i)=>{doc.text(h,x+1,y);x+=cw[i];}); doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
+  let x=14; hw.forEach((h,i)=>{doc.text(safePDF(h),x+1,y);x+=cw[i];}); doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
   d.rows.forEach(r=>{ y+=7; if(y>270){doc.addPage();y=20;} x=14;
-    [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(String(v),x+1,y);x+=cw[i];});
+    [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(safePDF(String(v)),x+1,y);x+=cw[i];});
   });
   const fn3 = (d.progNombre+' - '+d.pct+'%').replace(/[^a-zA-Z0-9\-_ áéíóúÁÉÍÓÚñÑ]/g,'').trim();
   doc.save(fn3+'.pdf');
@@ -1791,7 +1926,8 @@ function abrirIdiomas(tabId) {
     _idiomasCtx.pctCP  = parseFloat(document.getElementById('pctCP').value)||40;
     _idiomasCtx.pctLP  = parseFloat(document.getElementById('pctLP').value)||60;
     _idiomasCtx.mesesCP = parseInt(document.getElementById('plazoCP').value)||6;
-    _idiomasCtx.mesesLP = parseInt(document.getElementById('plazoLP').value)||9;
+    _idiomasCtx.semLP   = parseInt(document.getElementById('plazoLP').value)||8;  // semestres
+    _idiomasCtx.mesesLP = Math.round(_idiomasCtx.semLP * 6 * 1.5);  // auto-calculated payoff months
 
   } else if(tabId === 3) {
     const tasa3 = parseFloat(document.getElementById('tasa3').value)||1.5;
@@ -1821,7 +1957,7 @@ function abrirIdiomas(tabId) {
     document.getElementById('id-pctCP').value  = _idiomasCtx.pctCP  || 40;
     document.getElementById('id-pctLP').value  = _idiomasCtx.pctLP  || 60;
     document.getElementById('id-meses').value  = _idiomasCtx.mesesCP || 6;
-    document.getElementById('id-mesesLP').value= _idiomasCtx.mesesLP || 9;
+    document.getElementById('id-mesesLP').value= _idiomasCtx.semLP || 8;  // semestres
     const label = document.getElementById('id-meses-label');
     const hint  = document.getElementById('id-meses-hint');
     if(label) label.childNodes[0].nodeValue = 'Meses Corto Plazo ';
@@ -1891,17 +2027,20 @@ function calcularIdiomas() {
     const garantisaMixto = garCP + garLP;
     // pagoInicial already calculated above — recalculate with separate garantisa
     const pagoInicialMixto = cuotaInicial + garantisaMixto;
+    // CP: normal amortization
     idCP = amortizacion(finCP, tm, n);
-    idLP = amortizacion(finLP, tm, mesesLP);
-    cuota = idCP.cuota + idLP.cuota;
-    totInt = idCP.totInt + idLP.totInt;
-    totCap = idCP.totCap + idLP.totCap;
-    rows = idCP.rows; // primary table (CP)
-    totalCredito = totCap + totInt;
-    // Store corrected values for result display
-    Object.assign(_idiomasCtx, {pctCP, pctLP, mesesCP: n, mesesLP});
-    // Update pagoInicial for display
-    // (we'll pass pagoInicialMixto to results instead of pagoInicial)
+    // LP: NO amortization — rate unknown at simulation time
+    const semLPId = parseInt(document.getElementById('id-mesesLP')?.value)||8;
+    const nLPpago = Math.round(semLPId * 6 * 1.5);  // 1.5 × semestres × 6
+    idLP = { capital: finLP, nPago: nLPpago, semLP: semLPId, noAmortize: true,
+             cuota: null, totInt: 0, totCap: finLP, rows: [] };
+    cuota  = idCP.cuota;     // LP cuota is unknown
+    totInt = idCP.totInt;    // LP interest: 0 at sim time
+    totCap = idCP.totCap + finLP;
+    rows   = idCP.rows;
+    // LP capital included in total, but NO interest (future rate)
+    totalCredito = (idCP.totCap + idCP.totInt) + finLP;
+    Object.assign(_idiomasCtx, {pctCP, pctLP, mesesCP: n, mesesLP: nLPpago, semLP: semLPId});
     const _pagoInicialId = pagoInicialMixto;
     const _totalGeneralId = _pagoInicialId + totalCredito;
 
@@ -1913,7 +2052,7 @@ function calcularIdiomas() {
       cuotaInicial,garantisa:garantisaMixto,garCP,garLP,finCP,finLP,
       pagoInicial:_pagoInicialId,totalCredito,totalGeneral:_totalGeneralId,
       progNombre:_idiomasCtx.progNombre,beneficios:benef,isMixto,
-      idCP,idLP,pctCP,pctLP,mesesLP};
+      idCP,idLP,pctCP,pctLP,mesesLP:nLPpago,semLP:semLPId};
 
     document.getElementById('res-idiomas').innerHTML = `
     <div style="border-top:1.5px solid #ECEFF1;padding-top:20px;">
@@ -1937,21 +2076,31 @@ function calcularIdiomas() {
       <div class="ssub">Tabla CP Idiomas (${n} meses)</div>
       ${renderTabla(idCP.rows, idCP.cuota, idCP.totInt, idCP.totCap)}
 
-      <div class="dvl lp-l" style="margin-top:16px;"><span>🟢 LP Idiomas — ${pctLP.toFixed(1)}% · ${cop(finLP)} · ${mesesLP} meses (al graduarse)</span></div>
+      <div class="dvl lp-l" style="margin-top:16px;"><span>🟢 LP Idiomas — ${pctLP.toFixed(1)}% · ${cop(finLP)}</span></div>
       <div class="mgrid">
-        <div class="mc vrd"><span class="lbl">Cuota Mensual LP</span><div class="val">${cop(idLP.cuota)}</div></div>
-        <div class="mc"><span class="lbl">Intereses LP</span><div class="val">${cop(idLP.totInt)}</div></div>
-        <div class="mc" style="grid-column:1/-1;background:var(--verde-s);"><span class="lbl" style="color:var(--verde-c);">Total Crédito LP Idiomas</span><div class="val" style="color:var(--verde);">${cop(idLP.totCap+idLP.totInt)}</div></div>
+        <div class="mc"><span class="lbl">Capital LP Idiomas</span><div class="val">${cop(finLP)}</div></div>
+        <div class="mc"><span class="lbl">Duración Programa</span><div class="val">${semLPId} sem. (${semLPId*6} meses)</div></div>
+        <div class="mc"><span class="lbl">Período de Gracia</span><div class="val">12 meses</div></div>
+        <div class="mc"><span class="lbl">Plazo Estimado de Pago</span><div class="val">${nLPpago} meses</div></div>
       </div>
-      <div class="ssub">Tabla LP Idiomas (${mesesLP} meses)</div>
-      ${renderTabla(idLP.rows, idLP.cuota, idLP.totInt, idLP.totCap)}
+      <div style="background:#E8F5E9;border-left:4px solid var(--verde-c);border-radius:0 var(--rs) var(--rs) 0;
+        padding:14px 18px;margin:10px 0;font-size:13px;color:var(--gris);line-height:1.7;">
+        <strong style="color:var(--verde-c);display:block;margin-bottom:6px;">ℹ️ Crédito LP Idiomas — Tasa Futura</strong>
+        La cuota definitiva del crédito de largo plazo de idiomas no puede determinarse actualmente,
+        ya que la tasa de interés será la vigente al momento de iniciar la amortización.
+        Durante el período de gracia de un (1) año se causarán intereses conforme a las condiciones vigentes en esa fecha.<br><br>
+        <strong>Cronograma:</strong> 📚 ${semLPId*6} m. académico · ⏳ 12 m. gracia · 💳 ${nLPpago} m. amortización
+      </div>
 
       <div class="total-banner" style="margin-top:16px;">
-        <div><div class="tl">Pago Inicial</div><div class="tv">${cop(_pagoInicialId)}</div></div>
-        <div style="font-size:20px;opacity:.5;">+</div>
-        <div><div class="tl">Total Crédito</div><div class="tv">${cop(totalCredito)}</div></div>
-        <div style="font-size:20px;opacity:.5;">=</div>
-        <div style="text-align:right;"><div class="tl">Costo Total Idiomas</div><div class="tv">${cop(_totalGeneralId)}</div></div>
+        <div><div class="tl">Pago Inicial</div><div class="tv">${cop(_pagoInicialId)}</div><div class="ts">Contado + Garantisa</div></div>
+        <div style="font-size:18px;opacity:.5;">+</div>
+        <div><div class="tl">Crédito CP (con intereses)</div><div class="tv">${cop(idCP.totCap+idCP.totInt)}</div></div>
+        <div style="font-size:18px;opacity:.5;">+</div>
+        <div style="text-align:right;"><div class="tl">Capital LP (sin intereses)</div><div class="tv">${cop(finLP)}</div><div class="ts">*tasa futura</div></div>
+      </div>
+      <div style="background:#F1F8E9;border-radius:var(--rs);padding:8px 12px;font-size:11px;color:var(--verde);margin-top:6px;font-style:italic;">
+        * El costo total definitivo del LP idiomas se determinará al iniciar amortización, según tasa vigente.
       </div>
 
       <div class="btn-row" style="margin-top:16px;">
@@ -1978,8 +2127,8 @@ function calcularIdiomas() {
     mainLabel = 'Crédito Corto Plazo';
   } else if(tabId===2 && window._d2) {
     mainPagoInicial = window._d2.pagoInicial||0;
-    mainTotalCredito = (window._d2.CP?(window._d2.CP.totCap+window._d2.CP.totInt):0)+(window._d2.LP?(window._d2.LP.totCap+window._d2.LP.totInt):0);
-    mainCuotaMensual = (window._d2.CP?window._d2.CP.cuota:0)+(window._d2.LP?window._d2.LP.cuota:0);
+    mainTotalCredito = (window._d2.CP?(window._d2.CP.totCap+window._d2.CP.totInt):0)+(window._d2.LP?(window._d2.LP.noAmortize?window._d2.LP.capital:(window._d2.LP.totCap+window._d2.LP.totInt)):0);
+    mainCuotaMensual = (window._d2.CP?window._d2.CP.cuota:0);  // LP cuota unknown
     mainLabel = 'Crédito Mixto (CP+LP)';
   } else if(tabId===3 && window._d3) {
     mainPagoInicial = window._d3.pagoInicial||0;
@@ -2067,27 +2216,27 @@ function expPDFIdiomas(){
   let y=pdfHeader(doc,'Crédito Idiomas', (d.progNombre||'')+' — '+Math.round((d.financiado/d.mat)*100)+'% financiado');
   y=addFechaToDoc(doc,y); y+=2;
   y=pdfSectionBar(doc,'INFORMACIÓN GENERAL',y);
-  doc.setFont('helvetica','bold'); doc.text('Programa:',16,y); doc.setFont('helvetica','normal'); doc.text(d.progNombre,70,y); y+=7;
-  doc.setFont('helvetica','bold'); doc.text('Valor Idiomas:',16,y); doc.setFont('helvetica','normal'); doc.text(cop(d.mat),150,y,{align:'right'}); y+=7;
+  doc.setFont('helvetica','bold'); doc.text(safePDF('Programa:'),16,y); doc.setFont('helvetica','normal'); doc.text(safePDF(d.progNombre),70,y); y+=7;
+  doc.setFont('helvetica','bold'); doc.text(safePDF('Valor Idiomas:'),16,y); doc.setFont('helvetica','normal'); doc.text(safePDF(cop(d.mat)),150,y,{align:'right'}); y+=7;
   y+=2; y=pdfSectionBar(doc,'PAGO INICIAL — al momento del desembolso',y);
   [['Cuota Inicial Contado',cop(d.cuotaInicial)],
    ['Garantisa 4.17% s/financiado',cop(d.garantisa)],
    ['Total Pago Inicial',cop(d.pagoInicial)]
-  ].forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,150,y,{align:'right'}); y+=7; });
+  ].forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(safePDF(k+':'),16,y); doc.setFont('helvetica','normal'); doc.text(safePDF(v),150,y,{align:'right'}); y+=7; });
   y+=2; y=pdfSectionBar(doc,'CRÉDITO A AMORTIZAR',y);
   [['Monto Financiado',cop(d.financiado)],
    ['Cuota Mensual',cop(d.cuota)],
    ['Total Intereses',cop(d.totInt)],
    ['Total Crédito',cop(d.totalCredito)],
    ['COSTO TOTAL IDIOMAS',cop(d.totalGeneral)]
-  ].forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(k+':',16,y); doc.setFont('helvetica','normal'); doc.text(v,150,y,{align:'right'}); y+=7; });
+  ].forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(safePDF(k+':'),16,y); doc.setFont('helvetica','normal'); doc.text(safePDF(v),150,y,{align:'right'}); y+=7; });
   y=pdfCostoFootnote(doc,y,'* Valor idiomas + Aporte Garantisa + Intereses del crédito');
   y+=2; y=pdfSectionBar(doc,'TABLA DE AMORTIZACIÓN ('+d.n+' meses)',y);
   const hw=['#','Cuota','Capital','Interés','Saldo'],cw=[14,42,38,38,44];
   doc.setFillColor(13,71,161); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
-  let x=14; hw.forEach((h,i)=>{doc.text(h,x+1,y);x+=cw[i];}); doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
+  let x=14; hw.forEach((h,i)=>{doc.text(safePDF(h),x+1,y);x+=cw[i];}); doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
   d.rows.forEach(r=>{ y+=7; if(y>270){doc.addPage();y=20;} x=14;
-    [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(String(v),x+1,y);x+=cw[i];});
+    [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(safePDF(String(v)),x+1,y);x+=cw[i];});
   });
   doc.save(filename+'.pdf');
 }
@@ -2238,10 +2387,10 @@ function pdfHeader(doc, subtitulo, subtitulo2='') {
   doc.setFillColor(13,71,161); doc.rect(0,0,210,40,'F');
   doc.setTextColor(255,255,255);
   doc.setFont('helvetica','bold'); doc.setFontSize(18);
-  doc.text('Simulador de Crédito Educativo',14,18);
+  doc.text(safePDF('Simulador de Crédito Educativo'),14,18);
   doc.setFont('helvetica','normal'); doc.setFontSize(11);
-  doc.text(subtitulo, 14, 28);
-  if(subtitulo2) { doc.setFontSize(9); doc.text(subtitulo2, 14, 35); }
+  doc.text(safePDF(subtitulo), 14, 28);
+  if(subtitulo2) { doc.setFontSize(9); doc.text(safePDF(subtitulo2), 14, 35); }
   doc.setTextColor(0,0,0);
   return 48; // starting y after header
 }
@@ -2251,7 +2400,7 @@ function pdfCostoFootnote(doc, y, texto) {
   const nota = texto || '* Valor matrícula + Aporte Garantisa + Intereses del crédito';
   doc.setFont('helvetica','italic'); doc.setFontSize(8);
   doc.setTextColor(100,100,100);
-  doc.text(nota, 16, y);
+  doc.text(safePDF(nota), 16, y);
   doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(11);
   return y + 6;
 }
@@ -2263,7 +2412,7 @@ function pdfSectionBar(doc, label, y, color) {
   doc.rect(14, y-5, 180, 8, 'F');
   doc.setTextColor(255,255,255);
   doc.setFont('helvetica','bold'); doc.setFontSize(10);
-  doc.text(label, 16, y);
+  doc.text(safePDF(label), 16, y);
   doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(11);
   return y + 10;
 }
@@ -2271,7 +2420,7 @@ function pdfSectionBar(doc, label, y, color) {
 function addFechaToDoc(doc, y) {
   doc.setFont('helvetica','italic'); doc.setFontSize(9);
   doc.setTextColor(144,164,174);
-  doc.text('Generado el ' + fechaSimulacion(), 14, y);
+  doc.text(safePDF('Generado el ' + fechaSimulacion()), 14, y);
   doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(11);
   return y + 6;
 }
@@ -2341,7 +2490,7 @@ function guardarEscenario(tabId) {
       data: JSON.parse(JSON.stringify(_d1))
     };
   } else if(tabId===2 && window._d2) {
-    const totCred = (_d2.CP?(_d2.CP.totCap+_d2.CP.totInt):0)+(_d2.LP?(_d2.LP.totCap+_d2.LP.totInt):0);
+    const totCred = (_d2.CP?(_d2.CP.totCap+_d2.CP.totInt):0)+(_d2.LP?(_d2.LP.noAmortize?_d2.LP.capital:(_d2.LP.totCap+_d2.LP.totInt)):0);
     const lpGracePeriod = _d2.nLP ? Math.round(_d2.nLP * 1.5) : null;
     snapshot = {
       label: (_d2.progNombre||'Programa') + ' — CP' + _d2.pCP + '% LP' + _d2.pLP + '%',
@@ -2356,7 +2505,7 @@ function guardarEscenario(tabId) {
       cuotaCP: _d2.CP?_d2.CP.cuota:0,   cuotaLP: _d2.LP?_d2.LP.cuota:0,
       intCP:   _d2.CP?_d2.CP.totInt:0,  intLP:   _d2.LP?_d2.LP.totInt:0,
       totCP:   _d2.CP?(_d2.CP.totCap+_d2.CP.totInt):0,
-      totLP:   _d2.LP?(_d2.LP.totCap+_d2.LP.totInt):0,
+      totLP:   _d2.LP?(_d2.LP.noAmortize?_d2.LP.capital:(_d2.LP.totCap+_d2.LP.totInt)):0,
       lpGrace: lpGracePeriod,
       data: JSON.parse(JSON.stringify(_d2))
     };
@@ -2543,10 +2692,10 @@ function expPDFCombinado() {
 
   function drawTable(doc, rows, y) {
     doc.setFillColor(13,71,161); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
-    let x=14; hw.forEach((h,i)=>{doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text(h,x+1,y);x+=cw[i];});
+    let x=14; hw.forEach((h,i)=>{doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text(safePDF(h),x+1,y);x+=cw[i];});
     doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(9);
     rows.forEach(r=>{ y+=6; if(y>270){doc.addPage();y=20;} x=14;
-      [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(String(v),x+1,y);x+=cw[i];});
+      [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(safePDF(String(v)),x+1,y);x+=cw[i];});
     });
     doc.setFontSize(11);
     return y + 8;
@@ -2555,8 +2704,8 @@ function expPDFCombinado() {
   function drawKV(doc, rows, y, valX) {
     const vx = valX || 150;
     rows.filter(Boolean).forEach(([k,v])=>{
-      doc.setFont('helvetica','bold'); doc.text(k+':', 16, y);
-      doc.setFont('helvetica','normal'); doc.text(v, vx, y, {align:'right'}); y+=7;
+      doc.setFont('helvetica','bold'); doc.text(safePDF(k+':'), 16, y);
+      doc.setFont('helvetica','normal'); doc.text(safePDF(v), vx, y, {align:'right'}); y+=7;
     });
     return y;
   }
@@ -2575,45 +2724,45 @@ function expPDFCombinado() {
 
   // Group 1: Pago inicial
   doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(120,90,0);
-  doc.text('① PAGO AL MOMENTO DEL DESEMBOLSO', 16, y); doc.setTextColor(0,0,0); doc.setFontSize(11); y+=7;
+  doc.text(safePDF('① PAGO AL MOMENTO DEL DESEMBOLSO'), 16, y); doc.setTextColor(0,0,0); doc.setFontSize(11); y+=7;
   y = drawKV(doc, [
     ['  Pago Inicial Pregrado', cop(pagoIniPre)],
     ['  Pago Inicial Idiomas', cop(dp.pagoInicial)],
   ], y);
   doc.setFillColor(255,248,220); doc.rect(14,y-5,180,8,'F');
-  doc.setFont('helvetica','bold'); doc.text('Total Pago Inicial:', 16, y);
-  doc.text(cop(pagoIniPre+dp.pagoInicial), 150, y, {align:'right'}); y+=10;
+  doc.setFont('helvetica','bold'); doc.text(safePDF('Total Pago Inicial:'), 16, y);
+  doc.text(safePDF(cop(pagoIniPre+dp.pagoInicial)), 150, y, {align:'right'}); y+=10;
 
   // Group 2: Crédito
   doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(13,71,161);
-  doc.text('② CRÉDITO A AMORTIZAR', 16, y); doc.setTextColor(0,0,0); doc.setFontSize(11); y+=7;
+  doc.text(safePDF('② CRÉDITO A AMORTIZAR'), 16, y); doc.setTextColor(0,0,0); doc.setFontSize(11); y+=7;
   y = drawKV(doc, [
     ['  Total Crédito Pregrado', cop(totCredPre)],
     ['  Total Crédito Idiomas', cop(dp.totalCredito)],
   ], y);
   doc.setFillColor(220,235,255); doc.rect(14,y-5,180,8,'F');
-  doc.setFont('helvetica','bold'); doc.text('Total Crédito:', 16, y);
-  doc.text(cop(totCredPre+dp.totalCredito), 150, y, {align:'right'}); y+=10;
+  doc.setFont('helvetica','bold'); doc.text(safePDF('Total Crédito:'), 16, y);
+  doc.text(safePDF(cop(totCredPre+dp.totalCredito)), 150, y, {align:'right'}); y+=10;
 
   // Group 3: Cuota mensual
   doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(46,125,50);
-  doc.text('③ CUOTA MENSUAL COMBINADA', 16, y); doc.setTextColor(0,0,0); doc.setFontSize(11); y+=7;
+  doc.text(safePDF('③ CUOTA MENSUAL COMBINADA'), 16, y); doc.setTextColor(0,0,0); doc.setFontSize(11); y+=7;
   y = drawKV(doc, [
     ['  Cuota Mensual Pregrado', cop(cuotaPre)],
     ['  Cuota Mensual Idiomas', cop(dp.cuota)],
   ], y);
   doc.setFillColor(220,245,220); doc.rect(14,y-5,180,8,'F');
-  doc.setFont('helvetica','bold'); doc.text('Cuota Mensual Total:', 16, y);
-  doc.text(cop(cuotaPre+dp.cuota), 150, y, {align:'right'}); y+=12;
+  doc.setFont('helvetica','bold'); doc.text(safePDF('Cuota Mensual Total:'), 16, y);
+  doc.text(safePDF(cop(cuotaPre+dp.cuota)), 150, y, {align:'right'}); y+=12;
 
   // Costo total
   const barH = 22;
   doc.setFillColor(13,71,161); doc.rect(14, y-7, 180, barH, 'F');
   doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(11);
-  doc.text('COSTO TOTAL SEMESTRE', 18, y);
-  doc.text(cop(costoTotal), 190, y, {align:'right'});
+  doc.text(safePDF('COSTO TOTAL SEMESTRE'), 18, y);
+  doc.text(safePDF(cop(costoTotal)), 190, y, {align:'right'});
   doc.setFont('helvetica','normal'); doc.setFontSize(8);
-  doc.text('(Total Pago Inicial  +  Total Credito)', 104, y+9, {align:'center'});
+  doc.text(safePDF('(Total Pago Inicial  +  Total Credito)'), 104, y+9, {align:'center'});
   doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(11);
   y += barH + 4;
   y = pdfCostoFootnote(doc, y, '* Valor matrícula + Garantisa pregrado + Garantisa idiomas + Intereses de ambos créditos');
@@ -2662,11 +2811,26 @@ function expPDFCombinado() {
       y = drawTable(doc, dm.CP.rows, y);
     }
     if(dm.LP) {
-      if(y > 200) { doc.addPage(); y=20; }
-      y = pdfSectionBar(doc,'LARGO PLAZO — '+dm.pLP+'%',y,[46,125,50]);
-      y = drawKV(doc,[['Monto LP',cop(dm.finLP)],['Cuota LP',cop(dm.LP.cuota)],['Total LP',cop(dm.LP.totCap+dm.LP.totInt)]],y);
-      y += 2; y = pdfSectionBar(doc,'TABLA AMORTIZACIÓN — LARGO PLAZO',y,[46,125,50]);
-      y = drawTable(doc, dm.LP.rows, y);
+      if(y > 180) { doc.addPage(); y=20; }
+      const nPagoComb = dm.LP.nPago || Math.round((dm.nLP||8)*6*1.5);
+      y = pdfSectionBar(doc,'LARGO PLAZO — '+dm.pLP+'% ('+nPagoComb+' cuotas - solo capital)',y,[46,125,50]);
+      y = drawKV(doc,[
+        ['Capital LP',cop(dm.finLP)],
+        ['Plazo Estimado',nPagoComb+' cuotas mensuales'],
+        ['Periodo de Gracia','12 meses post-grado']
+      ],y);
+      y += 2; y = pdfSectionBar(doc,'PLAN DE PAGOS LP — SOLO CAPITAL (interes: tasa futura)',y,[46,125,50]);
+      const hwLPc=['#','Capital','Saldo Capital','Interes'], cwLPc=[14,50,50,62];
+      doc.setTextColor(0,0,0); doc.setFontSize(9);
+      const semLPcomb=dm.nLP||8;
+      doc.setFillColor(240,249,240); doc.rect(14,y-4,180,38,'F');
+      doc.setDrawColor(46,125,50); doc.rect(14,y-4,180,38,'S'); doc.setDrawColor(0,0,0);
+      [['Capital a amortizar:',cop(dm.finLP)],
+       ['Semestres de la carrera:',semLPcomb+' semestres'],
+       ['Plazo estimado de pago:',nPagoComb+' meses ('+Math.round(nPagoComb/12*10)/10+' anos)'],
+       ['Interes:','Tasa vigente al iniciar amortizacion']
+      ].forEach(([k,v])=>{doc.setFont('helvetica','bold');pdfText(doc,k,16,y);doc.setFont('helvetica','normal');pdfText(doc,v,192,y,{align:'right'});y+=8;});
+      y+=4; doc.setFontSize(11);
     }
     const totCred2 = (dm.CP?(dm.CP.totCap+dm.CP.totInt):0)+(dm.LP?(dm.LP.totCap+dm.LP.totInt):0);
     y = pdfCostoFootnote(doc, y);
@@ -2698,13 +2862,31 @@ function expPDFCombinado() {
   y = pdfCostoFootnote(doc, y, '* Valor idiomas + Garantisa + Intereses del crédito');
 
   if(dp.isMixto && dp.idCP && dp.idLP) {
-    y += 2; y = pdfSectionBar(doc,'TABLA CP IDIOMAS ('+Math.round((_idiomasCtx.pctCP||40))+'%)',y);
+    y += 2; y = pdfSectionBar(doc,'TABLA CP IDIOMAS - '+Math.round((_idiomasCtx.pctCP||40))+'% ('+dp.n+' cuotas)',y);
     y = drawTable(doc, dp.idCP.rows, y);
-    if(y > 200) { doc.addPage(); y=20; }
-    y = pdfSectionBar(doc,'TABLA LP IDIOMAS ('+Math.round((_idiomasCtx.pctLP||60))+'%)',y,[46,125,50]);
-    y = drawTable(doc, dp.idLP.rows, y);
+    if(y > 180) { doc.addPage(); y=20; }
+    const nLPidPDF = dp.mesesLP || dp.idLP.nPago || 72;
+    y = pdfSectionBar(doc,'PLAN LP IDIOMAS - '+Math.round((_idiomasCtx.pctLP||60))+'% ('+nLPidPDF+' cuotas - solo capital)',y,[46,125,50]);
+    // Capital-only LP table for idiomas
+    doc.setTextColor(0,0,0); doc.setFontSize(9);
+    const semLPidComb = dp.semLP||8;
+    doc.setFillColor(240,249,240); doc.rect(14,y-4,180,38,'F');
+    doc.setDrawColor(46,125,50); doc.rect(14,y-4,180,38,'S'); doc.setDrawColor(0,0,0);
+    [['Capital a amortizar:',cop(dp.finLP)],
+     ['Semestres de la carrera:',semLPidComb+' semestres'],
+     ['Plazo estimado de pago:',nLPidPDF+' meses ('+Math.round(nLPidPDF/12*10)/10+' anos)'],
+     ['Interes:','Tasa vigente al iniciar amortizacion']
+    ].forEach(([k,v])=>{doc.setFont('helvetica','bold');pdfText(doc,k,16,y);doc.setFont('helvetica','normal');pdfText(doc,v,192,y,{align:'right'});y+=8;});
+    y+=4; doc.setFontSize(11); y+=4;
+    // Disclaimer
+    doc.setFillColor(232,245,233); doc.rect(14,y-3,180,20,'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(46,125,50);
+    pdfText(doc,'Sera amortizado en el numero de semestres que dure la carrera (x 1.5).',16,y); y+=5;
+    doc.setFont('helvetica','normal'); doc.setTextColor(55,71,79);
+    pdfText(doc,'Cuota definitiva: tasa vigente al iniciar amortizacion. Gracia: 1 año post-grado.',16,y); y+=8;
+    doc.setTextColor(0,0,0); doc.setFontSize(11);
   } else {
-    y += 2; y = pdfSectionBar(doc,'TABLA DE AMORTIZACIÓN IDIOMAS ('+dp.n+' meses)',y);
+    y += 2; y = pdfSectionBar(doc,'TABLA AMORTIZACION IDIOMAS ('+dp.n+' cuotas)',y);
     y = drawTable(doc, dp.rows, y);
   }
 
@@ -3072,10 +3254,35 @@ function getMatNeta(tab) {
 }
 function totalBeneficios(tab) { return getTotalBeneficios(tab); }
 
+
+// ── LP: auto-calculate amortization period = semestres × 6 × 1.5 ─────────────
+function calcLPAutoId() {
+  const sem = parseInt(document.getElementById('id-mesesLP')?.value)||8;
+  const mesesPago = Math.round(sem * 6 * 1.5);
+  const el = document.getElementById('id-lp-auto-meses');
+  if(el) el.textContent = mesesPago + ' meses';
+  return mesesPago;
+}
+
+function calcPlazoLPAuto() {
+  const sem = parseInt(document.getElementById('plazoLP')?.value)||0;
+  const mesesPrograma = sem * 6;                    // semestres → meses
+  const mesesPago     = Math.round(mesesPrograma * 1.5);
+  const el = document.getElementById('plazo-lp-auto');
+  if(el) el.textContent = mesesPago > 0 ? mesesPago + ' meses' : '—';
+  return mesesPago;
+}
+function getLPPlazoMeses() {
+  // Returns the LP amortization period in months (1.5 × duration in months)
+  const sem = parseInt(document.getElementById('plazoLP')?.value)||8;
+  return Math.round(sem * 6 * 1.5);
+}
 // Init
 updEq1(); updEqCP(); updEqLP();
 convertirTasas();
 recalcAll(1); recalcAll(2); recalcAll(3);
+calcPlazoLPAuto();
+calcLPAutoId();
 document.getElementById('plazo1').addEventListener('input',updEq1);
 document.getElementById('plazoCP').addEventListener('input',updEqCP);
 document.getElementById('plazoLP').addEventListener('input',updEqLP);
@@ -3177,11 +3384,25 @@ document.getElementById('plazoLP').addEventListener('input',updEqLP);
         <label id="id-meses-label">Número de Meses <span id="id-meses-hint" style="font-weight:400;color:var(--gris-m);font-size:11px;"></span></label>
         <div class="ipfx"><input type="number" id="id-meses" placeholder="6" min="1" value="6"><span>meses</span></div>
       </div>
-      <!-- LP meses (only for Mixto) -->
+      <!-- LP duracion programa (only for Mixto) -->
       <div id="id-mesesLP-block" style="display:none;margin-bottom:14px;">
-        <label style="color:var(--verde-c);">🟢 Meses Largo Plazo <span style="font-weight:400;color:var(--gris-m);font-size:11px;">(al graduarse)</span></label>
-        <div class="ipfx" style="border-color:var(--verde-c);">
-          <input type="number" id="id-mesesLP" placeholder="9" min="1" value="9" oninput="recalcId()"><span>meses</span>
+        <label style="color:var(--verde-c);">🟢 Duración del Programa (semestres)
+          <span style="font-weight:400;color:var(--gris-m);font-size:11px;display:block;margin-top:2px;">
+            Plazo pago LP = 1.5 × semestres × 6 meses
+          </span>
+        </label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="ipfx" style="border-color:var(--verde-c);">
+            <input type="number" id="id-mesesLP" placeholder="8" min="1" max="20" value="8"
+              oninput="calcLPAutoId()" style="border:none;box-shadow:none;"><span>sem.</span>
+          </div>
+          <div class="tasa-badge" style="background:var(--verde-s);color:var(--verde-c);">
+            <div><small>Plazo pago LP</small><span id="id-lp-auto-meses">72 meses</span></div><span>📅</span>
+          </div>
+        </div>
+        <div style="background:var(--verde-s);border-left:3px solid var(--verde-c);border-radius:0 var(--rs) var(--rs) 0;
+          padding:8px 12px;font-size:11px;color:var(--verde);margin-top:6px;">
+          <strong>Período de gracia:</strong> 1 año post-grado · La tasa LP será la vigente al iniciar amortización.
         </div>
       </div>
       <div style="margin-bottom:16px;">
