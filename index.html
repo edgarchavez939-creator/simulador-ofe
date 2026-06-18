@@ -23,17 +23,17 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Sora',sans-serif;background:linear-gradient(135deg,#EEF2FF 0%,#E3F2FD 50%,#E8F5E9 100%);min-height:100vh;color:var(--gris);}
 header{background:linear-gradient(90deg,var(--azul) 0%,var(--azul-c) 60%,#0277BD 100%);color:white;position:relative;overflow:hidden;}
-.hdr{max-width:1100px;margin:0 auto;padding:28px 32px 24px;display:flex;align-items:center;gap:20px;position:relative;z-index:1;}
+.hdr{max-width:1240px;margin:0 auto;padding:28px 32px 24px;display:flex;align-items:center;gap:20px;position:relative;z-index:1;}
 .hdr-logo{width:56px;height:56px;background:rgba(255,255,255,.15);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;border:1.5px solid rgba(255,255,255,.25);}
 .hdr h1{font-size:22px;font-weight:700;letter-spacing:-.5px;}
 .hdr p{font-size:13px;opacity:.80;margin-top:2px;font-weight:300;}
 .hdr-bg{position:absolute;top:-30px;right:-40px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.06);z-index:0;}
 .tabs-bar{background:var(--blanco);border-bottom:2px solid var(--gris-c);box-shadow:0 2px 8px rgba(13,71,161,.06);}
-.tabs-in{max-width:1100px;margin:0 auto;display:flex;padding:0 20px;}
-.tab-btn{padding:16px 28px;font-family:'Sora',sans-serif;font-size:14px;font-weight:500;border:none;background:transparent;cursor:pointer;color:var(--gris-m);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;display:flex;align-items:center;gap:8px;}
+.tabs-in{max-width:1240px;margin:0 auto;display:flex;padding:0 20px;flex-wrap:wrap;}
+.tab-btn{padding:16px 22px;font-family:'Sora',sans-serif;font-size:14px;font-weight:500;border:none;background:transparent;cursor:pointer;color:var(--gris-m);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;display:flex;align-items:center;gap:8px;}
 .tab-btn:hover{color:var(--azul);}
 .tab-btn.active{color:var(--azul);border-bottom-color:var(--azul);}
-main{max-width:1100px;margin:0 auto;padding:28px 20px 60px;}
+main{max-width:1240px;margin:0 auto;padding:28px 20px 60px;}
 .tab-panel{display:none;}.tab-panel.active{display:block;}
 .two-col{display:grid;grid-template-columns:400px 1fr;gap:24px;align-items:start;}
 @media(max-width:900px){.two-col{grid-template-columns:1fr;}}
@@ -139,6 +139,12 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
 .esc-empty{text-align:center;padding:24px;color:var(--gris-m);font-size:13px;}
 .btn-esc-save{padding:9px 16px;border:1.5px solid var(--azul);border-radius:var(--rs);background:transparent;color:var(--azul);font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;}
 .btn-esc-save:hover{background:var(--azul-s);}
+.verdict-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0 20px;}
+@media(max-width:640px){.verdict-grid{grid-template-columns:1fr;}}
+.verdict-card{border-radius:var(--rs);padding:14px 16px;border-left:5px solid;}
+.verdict-card .vc-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.verdict-card .vc-best{font-size:14px;font-weight:700;margin-bottom:4px;}
+.verdict-card .vc-detail{font-size:12px;color:var(--gris);line-height:1.6;}
 .btn-esc-compare{padding:9px 16px;border:none;border-radius:var(--rs);background:var(--azul);color:white;font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .2s;}
 .btn-esc-compare:hover{opacity:.88;}
 /* ── Comparison table ── */
@@ -202,6 +208,24 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
 /* ── Pct bar total indicator ── */
 .pct-total-ok{color:var(--verde-c);font-weight:700;font-size:12px;text-align:center;margin-top:4px;}
 .pct-total-over{color:var(--naranja);font-weight:700;font-size:12px;text-align:center;margin-top:4px;}
+
+/* ── Refinanciación ── */
+.refi-color{color:#00838F;}
+#refi-pin-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:2000;align-items:center;justify-content:center;padding:20px;}
+#refi-pin-modal.show{display:flex;}
+.refi-pin-box{background:white;border-radius:18px;padding:40px 36px;width:100%;max-width:360px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+.refi-pin-box .pin-icon{font-size:40px;margin-bottom:12px;}
+.refi-pin-box h2{font-size:18px;font-weight:700;color:#006064;margin-bottom:6px;}
+.refi-pin-box p{font-size:13px;color:var(--gris-m);margin-bottom:24px;}
+.refi-pin-inputs{display:flex;gap:8px;justify-content:center;margin-bottom:20px;}
+.refi-pin-inputs input{width:44px;height:54px;text-align:center;font-size:22px;font-weight:700;border:2px solid var(--gris-c);border-radius:var(--rs);font-family:'Sora',sans-serif;color:#006064;outline:none;transition:border .2s;}
+.refi-pin-inputs input:focus{border-color:#00838F;box-shadow:0 0 0 3px rgba(0,131,143,.15);}
+.refi-pin-inputs input.pin-error{border-color:var(--naranja);animation:shake .3s;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+.btn-refi-pin{width:100%;padding:12px;background:linear-gradient(90deg,#006064,#00838F);color:white;border:none;border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
+.btn-refi-pin:hover{opacity:.9;}
+.refi-pin-error{color:var(--naranja);font-size:13px;margin-top:10px;display:none;}
+.btn-refi-cancel{background:none;border:none;color:var(--gris-m);font-size:13px;cursor:pointer;margin-top:12px;font-family:'Sora',sans-serif;text-decoration:underline;}
 </style>
 </head>
 <body>
@@ -223,6 +247,7 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
     <button class="tab-btn" onclick="switchTab(2)">🔀 Corto y Largo Plazo</button>
     <button class="tab-btn" onclick="switchTab(3)">🏦 Crédito Banco Aliado</button>
     <button class="tab-btn" onclick="switchTab(4)">🔁 Conversor de Tasas</button>
+    <button class="tab-btn" onclick="switchTab(5)">♻️ Refinanciación</button>
   </div>
 </div>
 
@@ -769,41 +794,106 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
 
 
 
+<!-- TAB 5: REFINANCIACIÓN -->
+<div class="tab-panel" id="tab5">
+  <div class="two-col">
+    <div>
+      <div class="card">
+        <div class="card-title" style="color:#00838F;">♻️ Simulador de Refinanciación</div>
+        <p style="font-size:13px;color:var(--gris-m);margin-bottom:18px;">Ingresa el saldo que se debe a la fecha y crea distintos escenarios de refinanciación para compararlos.</p>
+
+        <div style="background:#E0F7FA;border-radius:var(--rs);padding:14px 16px;margin-bottom:16px;">
+          <div style="font-size:11px;font-weight:700;color:#006064;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">📋 Saldo a la Fecha</div>
+          <p style="font-size:11px;color:var(--gris-m);margin-bottom:12px;">Valores ya causados — no se les aplica ningún cálculo.</p>
+          <div class="fg" style="margin-bottom:8px;">
+            <label>Capital pendiente</label>
+            <div class="ipfx" style="border-color:#00838F;"><span>$</span><input type="number" id="refi-capital" placeholder="0" min="0" step="1000" oninput="sumarSaldoRefi()"></div>
+          </div>
+          <div class="fg" style="margin-bottom:8px;">
+            <label>Intereses corrientes <span style="font-size:10px;color:var(--gris-m);font-weight:400;">(causados no pagados)</span></label>
+            <div class="ipfx" style="border-color:#00838F;"><span>$</span><input type="number" id="refi-intcorr" placeholder="0" min="0" step="1000" value="0" oninput="sumarSaldoRefi()"></div>
+          </div>
+          <div class="fg" style="margin-bottom:10px;">
+            <label>Mora / Intereses moratorios <span style="font-size:10px;color:var(--gris-m);font-weight:400;">(si está vencido)</span></label>
+            <div class="ipfx" style="border-color:#00838F;"><span>$</span><input type="number" id="refi-mora" placeholder="0" min="0" step="1000" value="0" oninput="sumarSaldoRefi()"></div>
+          </div>
+          <div class="mat-neta-badge" style="background:#B2EBF2;color:#006064;margin-bottom:0;">
+            <div><small style="color:#00838F;">Saldo total a refinanciar</small><span id="refi-saldo-total">$ 0</span></div>
+            <span style="font-size:18px;">♻️</span>
+          </div>
+        </div>
+
+        <div style="background:#E8F5E9;border-radius:var(--rs);padding:14px 16px;margin-bottom:16px;">
+          <div style="font-size:11px;font-weight:700;color:#2E7D32;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">✨ Escenario de Refinanciación</div>
+          <div class="fg" style="margin-bottom:10px;">
+            <label>Plazo</label>
+            <div class="ipfx" style="border-color:var(--verde-c);"><input type="number" id="refi-cuotas-nva" placeholder="24" min="1" value="24"><span>meses</span></div>
+          </div>
+          <div class="fg" style="margin-bottom:10px;">
+            <label>Tasa (mes vencido)</label>
+            <div class="tasa-row">
+              <div class="ipfx" style="border-color:var(--verde-c);"><input type="number" id="refi-tasa-nva" placeholder="1.5" min="0" step="0.01" value="1.5" oninput="calcTaRefi('nva')"><span>%</span></div>
+              <div class="tasa-badge" style="background:var(--verde-s);color:var(--verde-c);"><div><small>Equiv. Anual</small><span id="refi-ta-nva">19.56%</span></div><span>📈</span></div>
+            </div>
+          </div>
+          <div class="fg" style="margin-bottom:0;">
+            <label>Costos de refinanciación (opcional)</label>
+            <div class="ipfx" style="border-color:var(--verde-c);"><span>$</span><input type="number" id="refi-costos" placeholder="0" min="0" step="1000" value="0"></div>
+            <div class="sub-l">Estudio, comisiones, seguros, etc.</div>
+          </div>
+        </div>
+
+        <button class="btn-calc" style="background:linear-gradient(90deg,#006064,#00838F);box-shadow:0 4px 14px rgba(0,131,143,.3);" onclick="calcularRefi()">Calcular Escenario →</button>
+        <button class="btn-clear" onclick="limpiarRefi()">🗑️ Limpiar todo</button>
+      </div>
+    </div>
+    <div>
+      <div id="res-refi">
+        <div class="card" style="text-align:center;padding:60px 24px;color:var(--gris-m);">
+          <div style="font-size:48px;margin-bottom:16px;opacity:.3;">♻️</div>
+          <p style="font-size:14px;">Ingresa el saldo a la fecha y los datos de un escenario de refinanciación, luego presiona <strong>Calcular Escenario</strong></p>
+        </div>
+      </div>
+      <div id="esc-panel-refi" class="esc-panel" style="display:none;"></div>
+    </div>
+  </div>
+</div>
+
 </main>
 
 <script>
 /*%%PROGRAMAS_START%%*/const PROGRAMAS = [
   // [nombre, pregrado, idiomas, semestres]
-  ["Administración de Empresas",16105200,0,10],
-  ["Arquitectura",16618800,1635500,9],
+  ["Administración de Empresas",16105200,0,9],
+  ["Arquitectura",16618800,1635500,10],
   ["Ciencia de Datos",13574400,1635500,8],
   ["Ciencia Política y Gobierno",13170800,1635500,9],
   ["Comunicación Social y Period.",11976300,1635500,9],
-  ["Contaduría Pública",7945700,0,8],
+  ["Contaduría Pública",7945700,0,9],
   ["Derecho",13422900,1635500,10],
-  ["Diseño Gráfico",13342300,1635500,8],
-  ["Diseño Industrial",16461100,1635500,8],
-  ["Economía",12553400,1635500,8],
-  ["Enfermería",7601500,0,8],
+  ["Diseño Gráfico",13342300,1635500,9],
+  ["Diseño Industrial",16461100,1635500,10],
+  ["Economía",12553400,1635500,9],
+  ["Enfermería",7601500,0,9],
   ["Filosofía y Humanidades",6917800,0,8],
-  ["Geología",13331000,1635500,9],
-  ["Ingeniería Biomédica",15471900,1635500,8],
+  ["Geología",13331000,1635500,10],
+  ["Ingeniería Biomédica",15471900,1635500,10],
   ["Ingeniería Civil",13574400,1635500,10],
   ["Ingeniería Eléctrica",13574400,1635500,10],
   ["Ingeniería Electrónica",15471900,1635500,10],
   ["Ingeniería Industrial",16641300,1635500,10],
   ["Ingeniería Mecánica",13574400,1635500,10],
-  ["Ingeniería Sistemas Y Computación",13574400,1635500,10],
-  ["Lenguas Modernas y Cultura",12673500,1635500,8],
+  ["Ingeniería Sistemas Y Computación",13574400,1635500,9],
+  ["Lenguas Modernas y Cultura",12673500,1635500,9],
   ["Licenciatura en Matemática",8009000,1635500,8],
   ["Licenciatura en Pedagogía Infantil",8703000,1635500,8],
-  ["Matemáticas",8153900,1635500,8],
+  ["Matemáticas",8153900,1635500,9],
   ["Medicina",28431000,1995700,12],
-  ["Música",13466700,1635500,8],
-  ["Negocios Internacionales",17922800,1635500,10],
+  ["Música",13466700,1635500,9],
+  ["Negocios Internacionales",17922800,1635500,9],
   ["Odontología",17877500,1995700,10],
-  ["Psicología",11976300,1635500,10],
-  ["Relaciones Internacionales",12673500,1635500,10]
+  ["Psicología",11976300,1635500,9],
+  ["Relaciones Internacionales",12673500,1635500,9]
 ];/*%%PROGRAMAS_END%%*/
 /*%%POSGRADOS_START%%*/const POSGRADOS = [
   ["Doctorado En Administración","Doctorado",30388900],
@@ -1040,9 +1130,437 @@ function updEq1() { /* tab1 is meses-only, no equiv label needed */ }
 function updEqCP() { /* CP is meses-only */ }
 function updEqLP() { /* LP is meses-only */ }
 
+let _refiUnlocked = false;
+let _refiPinHash = null;
+async function _hashRefiPin(pin){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pin));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+_hashRefiPin('241085').then(h => { _refiPinHash = h; });
+
 function switchTab(n) {
+  if(n === 5 && !_refiUnlocked) {
+    document.getElementById('refi-pin-modal').classList.add('show');
+    setTimeout(()=>document.getElementById('rp0').focus(), 100);
+    return;
+  }
   document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===n-1));
   document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===n-1));
+}
+
+function refiPinInput(idx) {
+  const val = document.getElementById('rp'+idx).value;
+  if(val && idx < 5) document.getElementById('rp'+(idx+1)).focus();
+  if(idx === 5 && val) verificarRefiPin();
+}
+async function verificarRefiPin() {
+  const pin = [0,1,2,3,4,5].map(i=>document.getElementById('rp'+i).value).join('');
+  if(pin.length < 6) return;
+  const h = await _hashRefiPin(pin);
+  if(h === _refiPinHash) {
+    _refiUnlocked = true;
+    document.getElementById('refi-pin-modal').classList.remove('show');
+    [0,1,2,3,4,5].forEach(i=>document.getElementById('rp'+i).value='');
+    document.getElementById('refi-pin-error').style.display='none';
+    switchTab(5);
+  } else {
+    document.getElementById('refi-pin-error').style.display = 'block';
+    setTimeout(()=>document.getElementById('refi-pin-error').style.display='none', 3000);
+    [0,1,2,3,4,5].forEach(i=>{
+      const el = document.getElementById('rp'+i);
+      el.value=''; el.classList.add('pin-error');
+      setTimeout(()=>el.classList.remove('pin-error'), 400);
+    });
+    document.getElementById('rp0').focus();
+  }
+}
+function cancelarRefiPin() {
+  document.getElementById('refi-pin-modal').classList.remove('show');
+  [0,1,2,3,4,5].forEach(i=>document.getElementById('rp'+i).value='');
+}
+document.addEventListener('keydown', e => {
+  const m = document.getElementById('refi-pin-modal');
+  if(m && m.classList.contains('show')) {
+    if(e.key==='Enter') verificarRefiPin();
+    if(e.key==='Escape') cancelarRefiPin();
+  }
+});
+
+// ── REFINANCIACIÓN — cálculo ─────────────────────────────────────────────────
+function sumarSaldoRefi() {
+  const cap  = parseFloat(document.getElementById('refi-capital').value)||0;
+  const intC = parseFloat(document.getElementById('refi-intcorr').value)||0;
+  const mora = parseFloat(document.getElementById('refi-mora').value)||0;
+  const total = cap + intC + mora;
+  document.getElementById('refi-saldo-total').textContent = cop(total);
+  return total;
+}
+
+function calcTaRefi(which) {
+  const tm = parseFloat(document.getElementById('refi-tasa-nva').value)/100;
+  if(!isNaN(tm)) document.getElementById('refi-ta-nva').textContent =
+    ((Math.pow(1+tm,12)-1)*100).toFixed(2)+'%';
+}
+
+// ── Estado de escenarios de refinanciación ──────────────────────
+const _escRefi = [];  // [{n, tm, costos, principal, cuota, totInt, totCap, totalGeneral, rows, label, sub}]
+
+function calcularRefi() {
+  const capital = parseFloat(document.getElementById('refi-capital').value)||0;
+  const intCorr = parseFloat(document.getElementById('refi-intcorr').value)||0;
+  const mora    = parseFloat(document.getElementById('refi-mora').value)||0;
+  const saldo   = capital + intCorr + mora;
+  const nNva    = parseInt(document.getElementById('refi-cuotas-nva').value)||0;
+  const tmNva   = parseFloat(document.getElementById('refi-tasa-nva').value)/100;
+  const costos  = parseFloat(document.getElementById('refi-costos').value)||0;
+
+  if(!capital||capital<=0) return alert('Ingresa al menos el capital pendiente.');
+  if(!nNva||nNva<=0)   return alert('Ingresa el plazo de la refinanciación.');
+  if(isNaN(tmNva))     return alert('Ingresa la tasa de refinanciación.');
+
+  const principal = saldo + costos;
+  const B = amortizacion(principal, tmNva, nNva);
+  const totalB = B.totCap + B.totInt;
+
+  // Store current scenario data on window for "guardar"
+  window._refiActual = {
+    saldo, capital, intCorr, mora, costos, principal,
+    n: nNva, tm: tmNva, cuota: B.cuota, totInt: B.totInt, totCap: B.totCap,
+    totalGeneral: totalB, rows: B.rows,
+    label: nNva+' meses @ '+(tmNva*100).toFixed(2)+'%',
+    sub: 'Saldo '+cop(saldo)+(costos>0?' + costos '+cop(costos):'')
+  };
+
+  document.getElementById('res-refi').innerHTML = `
+  <div class="card">
+    ${fechaBadgeHtml()}
+    <div class="card-title" style="color:#00838F;">Escenario de Refinanciación</div>
+
+    <div class="ssub" style="margin-top:0;color:#006064;">Saldo a la fecha</div>
+    <div class="mgrid">
+      <div class="mc"><span class="lbl">Capital pendiente</span><div class="val">${cop(capital)}</div></div>
+      ${intCorr>0?`<div class="mc"><span class="lbl">Intereses corrientes</span><div class="val">${cop(intCorr)}</div></div>`:''}
+      ${mora>0?`<div class="mc nar"><span class="lbl">Mora / Moratorios</span><div class="val">${cop(mora)}</div></div>`:''}
+      <div class="mc dest" style="grid-column:1/-1;background:#00838F;"><span class="lbl">Saldo total a refinanciar</span><div class="val">${cop(saldo)}</div></div>
+    </div>
+
+    <div class="ssub" style="color:var(--verde-c);">Nueva financiación — ${nNva} meses @ ${(tmNva*100).toFixed(2)}%</div>
+    <div class="mgrid">
+      ${costos>0?`<div class="mc"><span class="lbl">Saldo + Costos</span><div class="val">${cop(principal)}</div></div>`:''}
+      <div class="mc vrd"><span class="lbl">Cuota Mensual</span><div class="val">${cop(B.cuota)}</div></div>
+      <div class="mc"><span class="lbl">Total Intereses</span><div class="val">${cop(B.totInt)}</div></div>
+      <div class="mc dest" style="grid-column:1/-1;"><span class="lbl">Total a Pagar</span><div class="val">${cop(totalB)}</div></div>
+    </div>
+
+    <div class="ssub">Plan de Pagos (${nNva} cuotas)</div>
+    ${renderTabla(B.rows, B.cuota, B.totInt, B.totCap)}
+
+    <div class="btn-row" style="margin-top:14px;">
+      <button class="btn-esc-save" style="flex:1;" onclick="guardarEscRefi()">💾 Guardar para comparar</button>
+      <button class="btn-exp" onclick="expPDFRefi()">📄 PDF Escenario</button>
+    </div>
+  </div>`;
+
+  renderEscRefi();
+}
+
+// ── PDF: single refinancing scenario ─────────────────────────────────────────
+function expPDFRefi() {
+  const d = window._refiActual;
+  if(!d) return alert('Primero calcula un escenario.');
+  const {jsPDF} = window.jspdf;
+  const doc = new jsPDF();
+  let y = pdfHeader(doc, 'Refinanciacion', d.label);
+  y = addFechaToDoc(doc, y); y+=2;
+
+  y = pdfSectionBar(doc,'SALDO A LA FECHA',y,[0,131,143]);
+  const sr = [['Capital pendiente',cop(d.capital)]];
+  if(d.intCorr>0) sr.push(['Intereses corrientes',cop(d.intCorr)]);
+  if(d.mora>0)    sr.push(['Mora / Moratorios',cop(d.mora)]);
+  sr.push(['Saldo total a refinanciar',cop(d.saldo)]);
+  sr.forEach(([k,v])=>{ doc.setFont('helvetica','bold'); pdfText(doc,k+':',16,y); doc.setFont('helvetica','normal'); pdfText(doc,v,192,y,{align:'right'}); y+=7; });
+
+  y+=2; y = pdfSectionBar(doc,'NUEVA FINANCIACION',y,[46,125,50]);
+  const fr = [
+    ['Plazo', d.n+' meses'],
+    ['Tasa mensual', (d.tm*100).toFixed(2)+'%'],
+    ['Tasa efectiva anual', ((Math.pow(1+d.tm,12)-1)*100).toFixed(2)+'%'],
+  ];
+  if(d.costos>0){ fr.push(['Costos refinanciacion',cop(d.costos)]); fr.push(['Monto financiado (saldo+costos)',cop(d.principal)]); }
+  fr.push(['Cuota Mensual',cop(d.cuota)]);
+  fr.push(['Total Intereses',cop(d.totInt)]);
+  fr.push(['TOTAL A PAGAR',cop(d.totalGeneral)]);
+  fr.forEach(([k,v])=>{ doc.setFont('helvetica','bold'); pdfText(doc,k+':',16,y); doc.setFont('helvetica','normal'); pdfText(doc,v,192,y,{align:'right'}); y+=7; });
+
+  y+=2; y = pdfSectionBar(doc,'PLAN DE PAGOS ('+d.n+' cuotas)',y);
+  const hw=['#','Cuota','Capital','Interes','Saldo'], cw=[14,42,42,40,42];
+  doc.setFillColor(13,71,161); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
+  let x=14; hw.forEach((h,i)=>{doc.setFont('helvetica','bold');doc.setFontSize(9);pdfText(doc,h,x+1,y);x+=cw[i];});
+  doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(9);
+  d.rows.forEach(r=>{
+    y+=6; if(y>275){doc.addPage();y=20;}
+    x=14;
+    [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{pdfText(doc,String(v),x+1,y);x+=cw[i];});
+  });
+  doc.setFontSize(11);
+
+  doc.save(safePDF('Refinanciacion - '+d.label)+'.pdf');
+}
+
+// ── PDF: comparison of scenarios ─────────────────────────────────────────────
+function expPDFRefiComp() {
+  if(_escRefi.length < 2) return alert('Guarda al menos 2 escenarios para comparar.');
+  const {jsPDF} = window.jspdf;
+  const doc = new jsPDF({orientation:'landscape'});  // horizontal
+  const PW = 297;  // landscape width
+  const MARGIN = 14, CONTENT_W = PW - MARGIN*2;  // 269
+
+  // Header banner (landscape width)
+  doc.setFillColor(13,71,161); doc.rect(0,0,PW,38,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFont('helvetica','bold'); doc.setFontSize(18);
+  pdfText(doc,'Simulador de Credito Educativo',MARGIN,18);
+  doc.setFont('helvetica','normal'); doc.setFontSize(11);
+  pdfText(doc,'Comparativa de Refinanciacion - '+_escRefi.length+' escenarios',MARGIN,28);
+  doc.setTextColor(0,0,0);
+  let y = 48;
+  doc.setFont('helvetica','italic'); doc.setFontSize(9); doc.setTextColor(120,120,120);
+  pdfText(doc,'Generado el '+new Date().toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'}),MARGIN,y);
+  doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(11); y+=8;
+
+  // Saldo base bar
+  doc.setFillColor(0,131,143); doc.rect(MARGIN,y-5,CONTENT_W,8,'F');
+  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(10);
+  pdfText(doc,'SALDO BASE A REFINANCIAR',MARGIN+2,y);
+  pdfText(doc,cop(_escRefi[0].saldo),PW-MARGIN-2,y,{align:'right'});
+  doc.setTextColor(0,0,0); doc.setFontSize(11); y+=12;
+
+  // Comparison table — dynamic columns
+  doc.setFillColor(13,71,161); doc.rect(MARGIN,y-5,CONTENT_W,8,'F');
+  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(10);
+  pdfText(doc,'COMPARATIVA DE ESCENARIOS',MARGIN+2,y);
+  doc.setTextColor(0,0,0); doc.setFontSize(11); y+=10;
+
+  const n = _escRefi.length;
+  const conceptW = 70;
+  const colW = (CONTENT_W - conceptW) / n;  // distribute remaining width evenly
+  const colRight = i => MARGIN + conceptW + i*colW + colW - 4;  // right edge of each col
+
+  // Header row with scenario labels
+  doc.setFillColor(13,71,161); doc.setTextColor(255,255,255); doc.rect(MARGIN,y-5,CONTENT_W,9,'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(9);
+  pdfText(doc,'Concepto',MARGIN+2,y);
+  _escRefi.forEach((e,i)=>{
+    pdfText(doc,'Escenario '+(i+1),colRight(i),y-1,{align:'right'});
+    doc.setFontSize(7); doc.setFont('helvetica','normal');
+    pdfText(doc,e.label,colRight(i),y+3,{align:'right'});
+    doc.setFontSize(9); doc.setFont('helvetica','bold');
+  });
+  y+=11; doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
+
+  const rows = [
+    ['Plazo', _escRefi.map(e=>e.n+' meses')],
+    ['Tasa mensual', _escRefi.map(e=>(e.tm*100).toFixed(2)+'%')],
+    ['Tasa efectiva anual', _escRefi.map(e=>((Math.pow(1+e.tm,12)-1)*100).toFixed(2)+'%')],
+    ['Costos refinanciacion', _escRefi.map(e=>cop(e.costos))],
+    ['Monto financiado', _escRefi.map(e=>cop(e.principal))],
+    ['Cuota mensual', _escRefi.map(e=>cop(e.cuota))],
+    ['Total intereses', _escRefi.map(e=>cop(e.totInt))],
+    ['TOTAL A PAGAR', _escRefi.map(e=>cop(e.totalGeneral))],
+  ];
+  rows.forEach(([label,vals])=>{
+    const isTotal = label==='TOTAL A PAGAR';
+    if(isTotal){ doc.setFillColor(255,248,220); doc.rect(MARGIN,y-5,CONTENT_W,8,'F'); doc.setFont('helvetica','bold'); }
+    else doc.setFont('helvetica','normal');
+    doc.setFontSize(9);
+    pdfText(doc,label,MARGIN+2,y);
+    vals.forEach((v,i)=>{ pdfText(doc,String(v),colRight(i),y,{align:'right'}); });
+    y+=8;
+  });
+  doc.setFontSize(11); y+=6;
+
+  // Verdicts side by side
+  const bestEstIdx = _escRefi.reduce((b,e,i)=> e.totalGeneral < _escRefi[b].totalGeneral ? i : b, 0);
+  const bestOtoIdx = _escRefi.reduce((b,e,i)=>{
+    if(e.n < _escRefi[b].n) return i;
+    if(e.n === _escRefi[b].n && e.totInt > _escRefi[b].totInt) return i;
+    return b;
+  }, 0);
+  const halfW = (CONTENT_W - 8) / 2;
+
+  // Estudiante card
+  doc.setFillColor(232,245,233); doc.rect(MARGIN,y-3,halfW,28,'F');
+  doc.setDrawColor(46,125,50); doc.setLineWidth(0.8); doc.line(MARGIN,y-3,MARGIN,y+25); doc.setLineWidth(0.2);
+  doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(46,125,50);
+  pdfText(doc,'MEJOR PARA EL ESTUDIANTE',MARGIN+4,y+3);
+  doc.setFontSize(11);
+  pdfText(doc,'Escenario '+(bestEstIdx+1)+' - '+_escRefi[bestEstIdx].label,MARGIN+4,y+11);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(55,71,79);
+  pdfText(doc,'Menor costo total: '+cop(_escRefi[bestEstIdx].totalGeneral),MARGIN+4,y+18);
+  pdfText(doc,'Cuota: '+cop(_escRefi[bestEstIdx].cuota)+'/mes',MARGIN+4,y+23);
+
+  // Otorgante card
+  const x2 = MARGIN + halfW + 8;
+  doc.setFillColor(224,247,250); doc.rect(x2,y-3,halfW,28,'F');
+  doc.setDrawColor(0,131,143); doc.setLineWidth(0.8); doc.line(x2,y-3,x2,y+25); doc.setLineWidth(0.2);
+  doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(0,131,143);
+  pdfText(doc,'MEJOR PARA EL OTORGANTE',x2+4,y+3);
+  doc.setFontSize(11);
+  pdfText(doc,'Escenario '+(bestOtoIdx+1)+' - '+_escRefi[bestOtoIdx].label,x2+4,y+11);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(55,71,79);
+  pdfText(doc,'Recupera en '+_escRefi[bestOtoIdx].n+' meses (mas rapido)',x2+4,y+18);
+  pdfText(doc,'Ingreso intereses: '+cop(_escRefi[bestOtoIdx].totInt),x2+4,y+23);
+  doc.setTextColor(0,0,0);
+
+  doc.save('Comparativa Refinanciacion.pdf');
+}
+
+function guardarEscRefi() {
+  if(!window._refiActual) return;
+  if(_escRefi.length >= 3) _escRefi.shift();
+  _escRefi.push(JSON.parse(JSON.stringify(window._refiActual)));
+  renderEscRefi();
+}
+
+function eliminarEscRefi(idx) {
+  _escRefi.splice(idx, 1);
+  renderEscRefi();
+}
+
+function renderEscRefi() {
+  const panel = document.getElementById('esc-panel-refi');
+  if(!panel) return;
+  if(_escRefi.length === 0) { panel.style.display='none'; return; }
+  panel.style.display = 'block';
+  const colors = ['#00838F','#2E7D32','#6A1B9A'];
+  let html = `<div class="esc-header">
+    <h3>📋 Escenarios Guardados (${_escRefi.length}/3)</h3>
+    ${_escRefi.length >= 2 ? `<button class="btn-esc-compare" onclick="compararEscRefi()">⚖️ Comparar</button>` : ''}
+  </div><div class="esc-list">`;
+  _escRefi.forEach((e,i) => {
+    html += `<div class="esc-item">
+      <div class="esc-num" style="background:${colors[i]}">${i+1}</div>
+      <div class="esc-info"><strong>${e.label}</strong><span>${e.sub}</span></div>
+      <div style="text-align:right;margin-right:8px;">
+        <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:${colors[i]};">${cop(e.cuota)}/mes</div>
+        <div style="font-size:11px;color:var(--gris-m);">Total: ${cop(e.totalGeneral)}</div>
+      </div>
+      <button class="esc-del" onclick="eliminarEscRefi(${i})" title="Eliminar">✕</button>
+    </div>`;
+  });
+  html += '</div>';
+  panel.innerHTML = html;
+}
+
+function compararEscRefi() {
+  if(_escRefi.length < 2) return;
+  const colors = ['#00838F','#2E7D32','#6A1B9A'];
+  const fields = [
+    {key:'saldo',        label:'Saldo a refinanciar'},
+    {key:'costos',       label:'Costos refinanciación'},
+    {key:'principal',    label:'Monto financiado'},
+    {key:'n',            label:'Plazo (meses)', isNum:true},
+    {key:'tm',           label:'Tasa mensual', isPct:true},
+    {key:'cuota',        label:'Cuota mensual'},
+    {key:'totInt',       label:'Total intereses'},
+    {key:'totalGeneral', label:'TOTAL A PAGAR'},
+  ];
+  // Determine best scenario for each perspective
+  // Estudiante: prioriza menor costo total y menor cuota
+  const bestEstIdx = _escRefi.reduce((b,e,i)=> e.totalGeneral < _escRefi[b].totalGeneral ? i : b, 0);
+  const bestCuotaIdx = _escRefi.reduce((b,e,i)=> e.cuota < _escRefi[b].cuota ? i : b, 0);
+  // Otorgante: prioriza menor plazo (recupera más rápido) y mayor interés (ingreso)
+  const bestOtoIdx = _escRefi.reduce((b,e,i)=>{
+    if(e.n < _escRefi[b].n) return i;
+    if(e.n === _escRefi[b].n && e.totInt > _escRefi[b].totInt) return i;
+    return b;
+  }, 0);
+
+  const colE = 'var(--verde-c)', colO = '#00838F';
+
+  let html = `<div class="esc-header"><h3>⚖️ Comparativa de Escenarios</h3>
+    <button class="btn-esc-compare" style="background:#C62828;" onclick="expPDFRefiComp()">📄 PDF Comparativa</button>
+  </div>
+
+  <div class="verdict-grid">
+    <div class="verdict-card" style="background:#E8F5E9;border-color:${colE};">
+      <div class="vc-title" style="color:${colE};">🎓 Mejor para el Estudiante</div>
+      <div class="vc-best" style="color:${colE};">Escenario ${bestEstIdx+1} — ${_escRefi[bestEstIdx].label}</div>
+      <div class="vc-detail">
+        Menor costo total: <strong>${cop(_escRefi[bestEstIdx].totalGeneral)}</strong>.
+        ${bestCuotaIdx!==bestEstIdx ? `<br>La cuota más baja la tiene el Escenario ${bestCuotaIdx+1} (${cop(_escRefi[bestCuotaIdx].cuota)}/mes).` : `<br>También tiene la cuota más baja: ${cop(_escRefi[bestEstIdx].cuota)}/mes.`}
+      </div>
+    </div>
+    <div class="verdict-card" style="background:#E0F7FA;border-color:${colO};">
+      <div class="vc-title" style="color:${colO};">🏛️ Mejor para el Otorgante</div>
+      <div class="vc-best" style="color:${colO};">Escenario ${bestOtoIdx+1} — ${_escRefi[bestOtoIdx].label}</div>
+      <div class="vc-detail">
+        Recupera el saldo en <strong>${_escRefi[bestOtoIdx].n} meses</strong> (el más corto).
+        <br>Ingreso por intereses: <strong>${cop(_escRefi[bestOtoIdx].totInt)}</strong>.
+      </div>
+    </div>
+  </div>
+  <div style="overflow-x:auto;"><table class="cmp-table"><thead><tr>
+    <th style="text-align:left;">Concepto</th>
+    ${_escRefi.map((e,i)=>`<th style="background:${colors[i]};">Escenario ${i+1}<br><span style="font-size:10px;opacity:.8;font-weight:400;">${e.label}</span></th>`).join('')}
+  </tr></thead><tbody>`;
+
+  fields.forEach(f => {
+    const vals = _escRefi.map(e => e[f.key]||0);
+    const allSame = vals.every(v=>v===vals[0]);
+    const minVal = Math.min(...vals), maxVal = Math.max(...vals);
+    // lower is better for cost/cuota/intereses/plazo; not flagged for saldo/principal (same)
+    const flagBest = ['cuota','totInt','totalGeneral','n'].includes(f.key);
+    html += `<tr style="${f.key==='totalGeneral'?'font-weight:700;background:var(--dorado-s);':''}"><td>${f.label}</td>`;
+    vals.forEach(v => {
+      let disp;
+      if(f.isPct) disp = (v*100).toFixed(2)+'%';
+      else if(f.isNum) disp = v+' meses';
+      else disp = cop(v);
+      let cls='';
+      if(flagBest && !allSame) cls = v===minVal ? 'cmp-best' : (v===maxVal ? 'cmp-worst' : '');
+      html += `<td class="${cls}">${disp}</td>`;
+    });
+    html += '</tr>';
+  });
+
+  // Difference vs Esc.1
+  html += `<tr><td>Diferencia vs Esc.1</td><td>—</td>
+    ${_escRefi.slice(1).map((e,i)=>{
+      const d = e.totalGeneral - _escRefi[0].totalGeneral;
+      const color = d<0?'var(--verde)':'var(--naranja)';
+      return `<td style="color:${color};font-weight:700;">${d<0?'-':'+'}${cop(Math.abs(d))}</td>`;
+    }).join('')}
+  </tr>`;
+  html += '</tbody></table></div>';
+
+  const panel = document.getElementById('esc-panel-refi');
+  const oldCmp = panel.querySelector('.cmp-wrap');
+  if(oldCmp) oldCmp.remove();
+  const wrap = document.createElement('div');
+  wrap.className = 'cmp-wrap';
+  wrap.innerHTML = html;
+  panel.appendChild(wrap);
+  wrap.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function limpiarRefi() {
+  document.getElementById('refi-capital').value = '';
+  document.getElementById('refi-intcorr').value = 0;
+  document.getElementById('refi-mora').value = 0;
+  document.getElementById('refi-saldo-total').textContent = '$ 0';
+  document.getElementById('refi-cuotas-nva').value = 24;
+  document.getElementById('refi-tasa-nva').value = 1.5;
+  document.getElementById('refi-costos').value = 0;
+  calcTaRefi('nva');
+  _escRefi.splice(0, _escRefi.length);
+  window._refiActual = null;
+  renderEscRefi();
+  document.getElementById('res-refi').innerHTML = `
+    <div class="card" style="text-align:center;padding:60px 24px;color:var(--gris-m);">
+      <div style="font-size:48px;margin-bottom:16px;opacity:.3;">♻️</div>
+      <p style="font-size:14px;">Ingresa el saldo a la fecha y los datos de un escenario de refinanciación, luego presiona <strong>Calcular Escenario</strong></p>
+    </div>`;
 }
 
 function calcTA(id) {
@@ -3421,5 +3939,25 @@ document.getElementById('plazoLP').addEventListener('input',updEqLP);
   </div>
 </div>
 
+
+<!-- REFI PIN MODAL -->
+<div id="refi-pin-modal">
+  <div class="refi-pin-box">
+    <div class="pin-icon">🔐</div>
+    <h2>Acceso Restringido</h2>
+    <p>El módulo de refinanciación es de uso exclusivo del equipo de crédito. Ingresa la clave de acceso.</p>
+    <div class="refi-pin-inputs" id="refi-pin-inputs">
+      <input type="password" maxlength="1" inputmode="numeric" id="rp0" oninput="refiPinInput(0)">
+      <input type="password" maxlength="1" inputmode="numeric" id="rp1" oninput="refiPinInput(1)">
+      <input type="password" maxlength="1" inputmode="numeric" id="rp2" oninput="refiPinInput(2)">
+      <input type="password" maxlength="1" inputmode="numeric" id="rp3" oninput="refiPinInput(3)">
+      <input type="password" maxlength="1" inputmode="numeric" id="rp4" oninput="refiPinInput(4)">
+      <input type="password" maxlength="1" inputmode="numeric" id="rp5" oninput="refiPinInput(5)">
+    </div>
+    <button class="btn-refi-pin" onclick="verificarRefiPin()">Ingresar →</button>
+    <div class="refi-pin-error" id="refi-pin-error">Clave incorrecta. Inténtalo de nuevo.</div>
+    <button class="btn-refi-cancel" onclick="cancelarRefiPin()">Cancelar</button>
+  </div>
+</div>
 </body>
 </html>
