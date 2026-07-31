@@ -616,25 +616,36 @@ input:focus,select:focus{outline:none;border-color:var(--azul)!important;box-sha
         <div class="seg-box seg-lp" style="margin-top:12px;">
           <div class="seg-title">🟢 Segmento Largo Plazo <span class="tip" data-tip="Porción que se empieza a pagar después de graduarse. No genera cuota durante los estudios y su tasa será la vigente al iniciar la amortización.">?</span></div>
           <div class="fg" style="margin-bottom:8px;">
-            <label>Duración del Programa (semestres o años)
-              <span style="font-size:10px;color:var(--gris-m);font-weight:400;display:block;margin-top:2px;">
-                El plazo de pago LP = 1.5 × duración del programa
-              </span>
-            </label>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-              <div class="ipfx" style="border-color:var(--verde-c);">
-                <input type="number" id="plazoLP" placeholder="8" min="1" max="20" value="8"
-                  oninput="calcPlazoLPAuto()" style="border:none;box-shadow:none;"><span>sem.</span>
-              </div>
-              <div class="tasa-badge" style="background:var(--verde-s);color:var(--verde-c);">
-                <div>
-                  <small>Plazo pago LP</small>
-                  <span id="plazo-lp-auto">72 meses</span>
-                </div>
-                <span>📅</span>
-              </div>
+            <label>Duración del Programa <span class="tip" data-tip="Total de semestres del plan de estudios. Se usa para saber cuántos semestres restan por financiar desde el semestre de inicio.">?</span></label>
+            <div class="ipfx" style="border-color:var(--verde-c);">
+              <input type="number" id="plazoLP" placeholder="8" min="1" max="20" value="8"
+                oninput="calcPlazoLPAuto()" style="border:none;box-shadow:none;"><span>sem. totales</span>
             </div>
           </div>
+          <div class="fg" style="margin-bottom:8px;">
+            <label>Semestre de Inicio del Crédito <span class="tip" data-tip="Semestre a partir del cual el estudiante empieza a usar el crédito. Si ya cursó semestres sin financiar, solo se financian los restantes.">?</span></label>
+            <div class="ipfx" style="border-color:var(--verde-c);">
+              <input type="number" id="inicioLP" placeholder="1" min="1" max="20" value="1"
+                oninput="calcPlazoLPAuto()" style="border:none;box-shadow:none;"><span>° semestre</span>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+            <div class="tasa-badge" style="background:var(--verde-s);color:var(--verde-c);">
+              <div>
+                <small>Semestres a financiar</small>
+                <span id="sem-financiados">8 sem.</span>
+              </div>
+              <span>🎓</span>
+            </div>
+            <div class="tasa-badge" style="background:var(--verde-s);color:var(--verde-c);">
+              <div>
+                <small>Plazo pago LP</small>
+                <span id="plazo-lp-auto">72 meses</span>
+              </div>
+              <span>📅</span>
+            </div>
+          </div>
+          <div class="sub-l" id="lp-formula-nota" style="margin-bottom:8px;"></div>
           <div style="background:var(--verde-s);border-left:4px solid var(--verde-c);border-radius:0 var(--rs) var(--rs) 0;padding:10px 14px;font-size:12px;color:var(--verde);margin-bottom:10px;">
             <strong>Período de gracia:</strong> 1 año después de graduarse — durante este período se causan intereses a la tasa vigente en esa fecha.
           </div>
@@ -2095,44 +2106,55 @@ function calcular1(){
 // ── Proyección multi-semestre de la porción LP (Crédito Mixto) ───────────────
 // Modela cuánto capital LP acumula el estudiante si toma el mismo esquema
 // cada semestre de su programa, ajustando la matrícula por IPC anual.
-function proyectarLP(matriculaActual, pctLP, semestres, ipcAnual) {
+function proyectarLP(matriculaActual, pctLP, semInicio, semTotal, ipcAnual) {
   const filas = [];
   let acumCapital = 0, acumGarantisa = 0, acumMatricula = 0;
-  for(let s = 1; s <= semestres; s++) {
-    // La matrícula se ajusta una vez al año (2 semestres por año)
-    const anio = Math.ceil(s / 2);
-    const factor = Math.pow(1 + ipcAnual, anio - 1);
-    const matSem = matriculaActual * factor;
-    const capLP  = matSem * pctLP / 100;
-    const garLP  = capLP * GARANTISA_LP;
+  let pos = 0;
+  for(let s = semInicio; s <= semTotal; s++) {
+    pos++;
+    // El IPC corre desde el inicio del financiamiento (la matrícula ingresada es la de hoy).
+    // La matrícula se ajusta una vez al año = cada 2 semestres.
+    const anioRel = Math.ceil(pos / 2);
+    const factor  = Math.pow(1 + ipcAnual, anioRel - 1);
+    const matSem  = matriculaActual * factor;
+    const capLP   = matSem * pctLP / 100;
+    const garLP   = capLP * GARANTISA_LP;
     acumMatricula += matSem;
     acumCapital   += capLP;
     acumGarantisa += garLP;
-    filas.push({s, anio, matSem, capLP, garLP, acumCapital});
+    filas.push({s, pos, matSem, capLP, garLP, acumCapital});
   }
-  const mesesPrograma = semestres * 6;
-  const plazoPago = Math.round(mesesPrograma * 1.5);
-  return {filas, acumCapital, acumGarantisa, acumMatricula, mesesPrograma, plazoPago};
+  const semFinanciados  = filas.length;
+  const mesesFinanciados = semFinanciados * 6;
+  const plazoPago = Math.round(mesesFinanciados * 1.5);
+  return {filas, acumCapital, acumGarantisa, acumMatricula,
+          semFinanciados, semInicio, semTotal, mesesFinanciados, plazoPago};
 }
 
-function renderProyeccionLP(p, pctLP, ipcPct) {
+function renderProyeccionLP(p, pctLP, ipcPct, etiqueta) {
+  const lbl = etiqueta || 'Largo Plazo';
+  const parcial = p.semFinanciados !== p.semTotal;
   const filasHtml = p.filas.map(f => `<tr>
-      <td style="text-align:center;">${f.s}</td>
+      <td style="text-align:center;">${f.s}°</td>
       <td>${cop(f.matSem)}</td>
       <td>${cop(f.capLP)}</td>
       <td>${cop(f.garLP)}</td>
       <td style="font-weight:600;color:var(--verde-c);">${cop(f.acumCapital)}</td>
     </tr>`).join('');
   return `
-  <div class="ssub" style="color:var(--verde-c);margin-top:20px;">📈 Proyección de toda la carrera — Largo Plazo</div>
+  <div class="ssub" style="color:var(--verde-c);margin-top:20px;">📈 Proyección de la financiación — ${lbl}</div>
   <div style="background:var(--verde-s);border-radius:var(--rs);padding:12px 16px;font-size:12px;color:var(--texto);margin-bottom:12px;line-height:1.6;">
-    Escenario estimado si el estudiante financia el <strong>${pctLP}%</strong> a largo plazo en
-    <strong>los ${p.filas.length} semestres</strong> de su programa, con un ajuste de matrícula del
-    <strong>${ipcPct}% anual</strong>. Los valores son proyectados y pueden variar.
+    Escenario estimado financiando el <strong>${pctLP}%</strong> a largo plazo
+    ${parcial
+      ? `desde el <strong>${p.semInicio}° hasta el ${p.semTotal}° semestre</strong> (<strong>${p.semFinanciados} de ${p.semTotal}</strong> semestres)`
+      : `en <strong>los ${p.semFinanciados} semestres</strong> del programa`},
+    con un ajuste de matrícula del <strong>${ipcPct}% anual</strong>. Los valores son proyectados y pueden variar.
   </div>
   <div class="mgrid">
-    <div class="mc"><span class="lbl">Matrícula total proyectada</span><div class="val">${cop(p.acumMatricula)}</div></div>
+    <div class="mc"><span class="lbl">Semestres financiados</span><div class="val">${p.semFinanciados} de ${p.semTotal}</div></div>
     <div class="mc"><span class="lbl">Garantisa LP acumulada</span><div class="val">${cop(p.acumGarantisa)}</div></div>
+    <div class="mc"><span class="lbl">Base total proyectada</span><div class="val">${cop(p.acumMatricula)}</div></div>
+    <div class="mc"><span class="lbl">Plazo de amortización</span><div class="val">${p.plazoPago} meses</div></div>
     <div class="mc" style="grid-column:1/-1;background:var(--verde-s);border-color:var(--verde-c);">
       <span class="lbl" style="color:var(--verde-c);">Capital LP total al graduarse</span>
       <div class="val" style="color:var(--verde);">${cop(p.acumCapital)}</div>
@@ -2142,7 +2164,7 @@ function renderProyeccionLP(p, pctLP, ipcPct) {
     <table>
       <thead><tr>
         <th style="text-align:center;">Sem.</th>
-        <th>Matrícula proyectada</th>
+        <th>Base proyectada</th>
         <th>Capital LP</th>
         <th>Garantisa LP</th>
         <th>LP acumulado</th>
@@ -2160,8 +2182,8 @@ function renderProyeccionLP(p, pctLP, ipcPct) {
   <div style="background:var(--dorado-s);border-left:4px solid var(--dorado);border-radius:0 var(--rs) var(--rs) 0;
     padding:12px 16px;margin-top:10px;font-size:12px;color:var(--texto);line-height:1.7;">
     <strong>Al graduarse</strong>, el estudiante habría acumulado <strong>${cop(p.acumCapital)}</strong> de capital
-    a largo plazo, que se amortizaría en aproximadamente <strong>${p.plazoPago} meses</strong>
-    (1.5 × ${p.mesesPrograma} meses de programa), tras el período de gracia de 1 año.
+    a largo plazo por ${lbl.toLowerCase()}, que se amortizaría en aproximadamente <strong>${p.plazoPago} meses</strong>
+    (1.5 × ${p.semFinanciados} semestres financiados × 6 meses), tras el período de gracia de 1 año.
     La cuota dependerá de la tasa vigente en ese momento.
   </div>`;
 }
@@ -2243,7 +2265,7 @@ function calcular2(){
     html+=`<div class="dvl lp-l" style="margin-top:24px;"><span>🟢 Largo Plazo — ${pLP}% · ${cop(finLP)}</span></div>
     <div class="mgrid">
       <div class="mc"><span class="lbl">Capital Financiado LP</span><div class="val">${cop(finLP)}</div></div>
-      <div class="mc"><span class="lbl">Duración Programa</span><div class="val">${semLP} sem. (${semLP*6} meses)</div></div>
+      <div class="mc"><span class="lbl">Semestres Financiados</span><div class="val">${getSemFinanciados().financiados} de ${semLP}</div></div>
       <div class="mc"><span class="lbl">Período de Gracia</span><div class="val">${graceMeses} meses</div></div>
       <div class="mc"><span class="lbl">Plazo Estimado de Pago</span><div class="val">${LP.nPago} meses</div></div>
     </div>
@@ -2255,7 +2277,7 @@ function calcular2(){
       de gracia de un (1) año se causarán intereses conforme a las condiciones vigentes en esa fecha.
       <br><br>
       <strong>Cronograma estimado:</strong><br>
-      📚 Período académico: ${semLP*6} meses · 
+      📚 Semestres financiados: ${getSemFinanciados().financiados} (${getSemFinanciados().financiados*6} meses) · 
       ⏳ Período de gracia: ${graceMeses} meses · 
       💳 Amortización: ${LP.nPago} meses después de graduarse
     </div>`;
@@ -2265,9 +2287,10 @@ function calcular2(){
     if(verProy && semLP > 0 && pLP > 0) {
       const ipcPct = parseFloat(document.getElementById('ipcLP')?.value);
       const ipc = (isNaN(ipcPct) ? 5 : ipcPct) / 100;
-      const proy = proyectarLP(mat, pLP, semLP, ipc);
-      window._proyLP = {...proy, pctLP:pLP, ipcPct:(isNaN(ipcPct)?5:ipcPct)};
-      html += renderProyeccionLP(proy, pLP, (isNaN(ipcPct)?5:ipcPct));
+      const sf = getSemFinanciados();
+      const proy = proyectarLP(mat, pLP, sf.inicio, sf.total, ipc);
+      window._proyLP = {...proy, pctLP:pLP, ipcPct:(isNaN(ipcPct)?5:ipcPct), etiqueta:'Matrícula'};
+      html += renderProyeccionLP(proy, pLP, (isNaN(ipcPct)?5:ipcPct), 'Matrícula');
     } else {
       window._proyLP = null;
     }
@@ -2502,33 +2525,7 @@ function expPDF2(){
      ['Interes:','Tasa vigente al iniciar amortizacion']
     ].forEach(([k,v])=>{doc.setFont('helvetica','bold');pdfText(doc,k,16,y);doc.setFont('helvetica','normal');pdfText(doc,v,192,y,{align:'right'});y+=8;});
     y+=4; doc.setFontSize(11);
-    // Proyeccion multi-semestre
-    const pr = window._proyLP;
-    if(pr && pr.filas && pr.filas.length) {
-      if(y>170){doc.addPage();y=20;}
-      y = pdfSectionBar(doc,'PROYECCION DE TODA LA CARRERA - LARGO PLAZO',y,[61,107,74]);
-      doc.setFont('helvetica','italic'); doc.setFontSize(8); doc.setTextColor(125,116,106);
-      pdfText(doc,'Escenario estimado financiando el '+pr.pctLP+'% a largo plazo cada semestre, con ajuste de matricula del '+pr.ipcPct+'% anual.',16,y); y+=7;
-      doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(9);
-      // Tabla de proyeccion
-      const hwP=['Sem.','Matricula proyectada','Capital LP','Garantisa LP','LP acumulado'], cwP=[16,46,40,38,40];
-      doc.setFillColor(61,107,74); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
-      let xP=14; hwP.forEach((h,i)=>{doc.setFont('helvetica','bold');doc.setFontSize(8.5);pdfText(doc,h,xP+1,y);xP+=cwP[i];});
-      doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
-      pr.filas.forEach(f=>{
-        y+=6; if(y>272){doc.addPage();y=20;}
-        xP=14;
-        [f.s,cop(f.matSem),cop(f.capLP),cop(f.garLP),cop(f.acumCapital)].forEach((v,i)=>{pdfText(doc,String(v),xP+1,y);xP+=cwP[i];});
-      });
-      y+=8; if(y>250){doc.addPage();y=20;}
-      doc.setFillColor(251,244,233); doc.rect(14,y-4,180,22,'F');
-      doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(160,110,45);
-      pdfText(doc,'Al graduarse: '+cop(pr.acumCapital)+' de capital a largo plazo',16,y+2); y+=7;
-      doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(58,53,50);
-      pdfText(doc,'Amortizable en aprox. '+pr.plazoPago+' meses (1.5 x '+pr.mesesPrograma+' meses de programa), tras 1 año de gracia.',16,y+2); y+=5;
-      pdfText(doc,'Matricula total proyectada: '+cop(pr.acumMatricula)+'  |  Garantisa LP acumulada: '+cop(pr.acumGarantisa),16,y+2); y+=10;
-      doc.setTextColor(0,0,0); doc.setFontSize(11);
-    }
+    y = pdfProyeccionLP(doc, y, window._proyLP, 'Matricula');
   }
   const totCred=(d.CP?(d.CP.totCap+d.CP.totInt):0)+(d.LP?(d.LP.noAmortize?d.LP.capital:(d.LP.totCap+d.LP.totInt)):0);
   y=pdfSectionBar(doc,'COSTO TOTAL MATRÍCULA',y);
@@ -2907,6 +2904,7 @@ function abrirIdiomas(tabId) {
     document.getElementById('id-pctLP').value  = _idiomasCtx.pctLP  || 60;
     document.getElementById('id-meses').value  = _idiomasCtx.mesesCP || 6;
     document.getElementById('id-mesesLP').value= _idiomasCtx.semLP || 8;  // semestres
+    calcLPAutoId();  // refresca plazo + nota de semestres financiados heredados
     const label = document.getElementById('id-meses-label');
     const hint  = document.getElementById('id-meses-hint');
     if(label) label.childNodes[0].nodeValue = 'Meses Corto Plazo ';
@@ -2980,7 +2978,9 @@ function calcularIdiomas() {
     idCP = amortizacion(finCP, tm, n);
     // LP: NO amortization — rate unknown at simulation time
     const semLPId = parseInt(document.getElementById('id-mesesLP')?.value)||8;
-    const nLPpago = Math.round(semLPId * 6 * 1.5);  // 1.5 × semestres × 6
+    const sfId    = getSemFinanciados();               // hereda inicio del Mixto
+    const semFinId = Math.max(1, Math.min(sfId.financiados, semLPId));
+    const nLPpago = Math.round(semFinId * 6 * 1.5);    // 1.5 × sem. financiados × 6
     idLP = { capital: finLP, nPago: nLPpago, semLP: semLPId, noAmortize: true,
              cuota: null, totInt: 0, totCap: finLP, rows: [] };
     cuota  = idCP.cuota;     // LP cuota is unknown
@@ -3001,7 +3001,21 @@ function calcularIdiomas() {
       cuotaInicial,garantisa:garantisaMixto,garCP,garLP,finCP,finLP,
       pagoInicial:_pagoInicialId,totalCredito,totalGeneral:_totalGeneralId,
       progNombre:_idiomasCtx.progNombre,beneficios:benef,isMixto,
-      idCP,idLP,pctCP,pctLP,mesesLP:nLPpago,semLP:semLPId};
+      idCP,idLP,pctCP,pctLP,mesesLP:nLPpago,semLP:semLPId,semFin:semFinId};
+
+    // ── Proyección multi-semestre de la porción LP de IDIOMAS ──
+    let _proyIdiomasHtml = '';
+    const verProyId = document.getElementById('id-proyLP')?.checked;
+    if(verProyId && pctLP > 0 && semFinId > 0) {
+      const ipcPctId = parseFloat(document.getElementById('id-ipcLP')?.value);
+      const ipcId = (isNaN(ipcPctId) ? 5 : ipcPctId) / 100;
+      const inicioId = Math.max(1, semLPId - semFinId + 1);
+      const proyId = proyectarLP(mat, pctLP, inicioId, semLPId, ipcId);
+      window._proyLPIdiomas = {...proyId, pctLP, ipcPct:(isNaN(ipcPctId)?5:ipcPctId), etiqueta:'Idiomas'};
+      _proyIdiomasHtml = renderProyeccionLP(proyId, pctLP, (isNaN(ipcPctId)?5:ipcPctId), 'Idiomas');
+    } else {
+      window._proyLPIdiomas = null;
+    }
 
     document.getElementById('res-idiomas').innerHTML = `
     <div style="border-top:1.5px solid #ECEFF1;padding-top:20px;">
@@ -3028,7 +3042,7 @@ function calcularIdiomas() {
       <div class="dvl lp-l" style="margin-top:16px;"><span>🟢 LP Idiomas — ${pctLP.toFixed(1)}% · ${cop(finLP)}</span></div>
       <div class="mgrid">
         <div class="mc"><span class="lbl">Capital LP Idiomas</span><div class="val">${cop(finLP)}</div></div>
-        <div class="mc"><span class="lbl">Duración Programa</span><div class="val">${semLPId} sem. (${semLPId*6} meses)</div></div>
+        <div class="mc"><span class="lbl">Semestres Financiados</span><div class="val">${semFinId} de ${semLPId}</div></div>
         <div class="mc"><span class="lbl">Período de Gracia</span><div class="val">12 meses</div></div>
         <div class="mc"><span class="lbl">Plazo Estimado de Pago</span><div class="val">${nLPpago} meses</div></div>
       </div>
@@ -3038,8 +3052,10 @@ function calcularIdiomas() {
         La cuota definitiva del crédito de largo plazo de idiomas no puede determinarse actualmente,
         ya que la tasa de interés será la vigente al momento de iniciar la amortización.
         Durante el período de gracia de un (1) año se causarán intereses conforme a las condiciones vigentes en esa fecha.<br><br>
-        <strong>Cronograma:</strong> 📚 ${semLPId*6} m. académico · ⏳ 12 m. gracia · 💳 ${nLPpago} m. amortización
+        <strong>Cronograma:</strong> 📚 ${semFinId*6} m. financiados · ⏳ 12 m. gracia · 💳 ${nLPpago} m. amortización
       </div>
+
+      ${_proyIdiomasHtml}
 
       <div class="total-banner" style="margin-top:16px;">
         <div><div class="tl">Pago Inicial</div><div class="tv">${cop(_pagoInicialId)}</div><div class="ts">Contado + Garantisa</div></div>
@@ -3060,6 +3076,7 @@ function calcularIdiomas() {
     </div>`;
     return; // Mixto rendering done — exit early
   } else {
+    window._proyLPIdiomas = null;
     const res = amortizacion(financiado, tm, n);
     rows = res.rows; cuota = res.cuota; totInt = res.totInt; totCap = res.totCap;
     totalCredito = totCap + totInt;
@@ -3187,6 +3204,7 @@ function expPDFIdiomas(){
   d.rows.forEach(r=>{ y+=7; if(y>270){doc.addPage();y=20;} x=14;
     [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(safePDF(String(v)),x+1,y);x+=cw[i];});
   });
+  _addProys();
   doc.save(filename+'.pdf');
 }
 
@@ -3331,6 +3349,38 @@ function fechaSimulacion() {
 function fechaBadgeHtml() {
   return `<div class="fecha-badge">📅 Simulación generada el ${fechaSimulacion()}</div>`;
 }
+
+// ── Bloque de proyección LP reutilizable para PDFs ──────────────────────────
+function pdfProyeccionLP(doc, y, pr, etiqueta) {
+  if(!pr || !pr.filas || !pr.filas.length) return y;
+  if(y > 165) { doc.addPage(); y = 20; }
+  y = pdfSectionBar(doc,'PROYECCION DE LA FINANCIACION - '+(etiqueta||'LARGO PLAZO').toUpperCase(),y,[61,107,74]);
+  doc.setFont('helvetica','italic'); doc.setFontSize(8); doc.setTextColor(125,116,106);
+  const rango = pr.semFinanciados === pr.semTotal
+    ? 'los '+pr.semFinanciados+' semestres del programa'
+    : 'del '+pr.semInicio+' al '+pr.semTotal+' semestre ('+pr.semFinanciados+' de '+pr.semTotal+')';
+  pdfText(doc,'Financiando el '+pr.pctLP+'% a largo plazo en '+rango+', con ajuste anual del '+pr.ipcPct+'%.',16,y); y+=7;
+  doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(9);
+  const hwP=['Sem.','Base proyectada','Capital LP','Garantisa LP','LP acumulado'], cwP=[16,46,40,38,40];
+  doc.setFillColor(61,107,74); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
+  let xP=14; hwP.forEach((h,i)=>{doc.setFont('helvetica','bold');doc.setFontSize(8.5);pdfText(doc,h,xP+1,y);xP+=cwP[i];});
+  doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
+  pr.filas.forEach(f=>{
+    y+=6; if(y>272){doc.addPage();y=20;}
+    xP=14;
+    [f.s+'\u00B0',cop(f.matSem),cop(f.capLP),cop(f.garLP),cop(f.acumCapital)].forEach((v,i)=>{pdfText(doc,String(v),xP+1,y);xP+=cwP[i];});
+  });
+  y+=8; if(y>248){doc.addPage();y=20;}
+  doc.setFillColor(251,244,233); doc.rect(14,y-4,180,22,'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(160,110,45);
+  pdfText(doc,'Al graduarse: '+cop(pr.acumCapital)+' de capital a largo plazo'+(etiqueta?' ('+etiqueta+')':''),16,y+2); y+=7;
+  doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(58,53,50);
+  pdfText(doc,'Amortizable en aprox. '+pr.plazoPago+' meses (1.5 x '+pr.semFinanciados+' semestres financiados x 6), tras 1 año de gracia.',16,y+2); y+=5;
+  pdfText(doc,'Base total proyectada: '+cop(pr.acumMatricula)+'  |  Garantisa LP acumulada: '+cop(pr.acumGarantisa),16,y+2); y+=10;
+  doc.setTextColor(0,0,0); doc.setFontSize(11);
+  return y;
+}
+
 function pdfHeader(doc, subtitulo, subtitulo2='') {
   // Banner corporativo — paleta cálida institucional
   doc.setFillColor(26,58,92); doc.rect(0,0,210,40,'F');
@@ -3952,6 +4002,11 @@ function expPDFCombinado() {
   ], y);
   y = pdfCostoFootnote(doc, y, '* Valor idiomas + Garantisa + Intereses del crédito');
 
+  // Proyecciones (matricula + idiomas) al final del combinado
+  const _addProys = () => {
+    y = pdfProyeccionLP(doc, y, window._proyLP, 'Matricula');
+    y = pdfProyeccionLP(doc, y, window._proyLPIdiomas, 'Idiomas');
+  };
   if(dp.isMixto && dp.idCP && dp.idLP) {
     y += 2; y = pdfSectionBar(doc,'TABLA CP IDIOMAS - '+Math.round((_idiomasCtx.pctCP||40))+'% ('+dp.n+' cuotas)',y);
     y = drawTable(doc, dp.idCP.rows, y);
@@ -3976,6 +4031,7 @@ function expPDFCombinado() {
     doc.setFont('helvetica','normal'); doc.setTextColor(58,53,50);
     pdfText(doc,'Cuota definitiva: tasa vigente al iniciar amortizacion. Gracia: 1 año post-grado.',16,y); y+=8;
     doc.setTextColor(0,0,0); doc.setFontSize(11);
+    y = pdfProyeccionLP(doc, y, window._proyLPIdiomas, 'Idiomas');
   } else {
     y += 2; y = pdfSectionBar(doc,'TABLA AMORTIZACION IDIOMAS ('+dp.n+' cuotas)',y);
     y = drawTable(doc, dp.rows, y);
@@ -4347,26 +4403,57 @@ function totalBeneficios(tab) { return getTotalBeneficios(tab); }
 
 
 // ── LP: auto-calculate amortization period = semestres × 6 × 1.5 ─────────────
-function calcLPAutoId() {
-  const sem = parseInt(document.getElementById('id-mesesLP')?.value)||8;
-  const mesesPago = Math.round(sem * 6 * 1.5);
-  const el = document.getElementById('id-lp-auto-meses');
-  if(el) el.textContent = mesesPago + ' meses';
-  return mesesPago;
+// ── Semestres efectivamente financiados ─────────────────────────────────────
+// El plazo de amortización LP depende de cuántos semestres usa el crédito,
+// no de la duración total del programa.
+function getSemFinanciados() {
+  const total  = parseInt(document.getElementById('plazoLP')?.value)||8;
+  const inicio = Math.max(1, parseInt(document.getElementById('inicioLP')?.value)||1);
+  return {
+    total,
+    inicio: Math.min(inicio, total),
+    financiados: Math.max(1, total - Math.min(inicio, total) + 1)
+  };
 }
 
 function calcPlazoLPAuto() {
-  const sem = parseInt(document.getElementById('plazoLP')?.value)||0;
-  const mesesPrograma = sem * 6;                    // semestres → meses
-  const mesesPago     = Math.round(mesesPrograma * 1.5);
+  const {total, inicio, financiados} = getSemFinanciados();
+  const mesesPago = Math.round(financiados * 6 * 1.5);
+  const elSem = document.getElementById('sem-financiados');
+  if(elSem) elSem.textContent = financiados + ' sem.';
   const el = document.getElementById('plazo-lp-auto');
   if(el) el.textContent = mesesPago > 0 ? mesesPago + ' meses' : '—';
+  const nota = document.getElementById('lp-formula-nota');
+  if(nota) nota.innerHTML = financiados === total
+    ? `Financia los ${total} semestres · Plazo LP = 1.5 × ${financiados} sem. × 6 meses`
+    : `Financia del ${inicio}° al ${total}° semestre (${financiados} de ${total}) · Plazo LP = 1.5 × ${financiados} sem. × 6 meses`;
+  // Espejo en el modal de idiomas
+  const elId = document.getElementById('id-lp-auto-meses');
+  if(elId) elId.textContent = mesesPago + ' meses';
   return mesesPago;
 }
+
+function calcLPAutoId() {
+  // Idiomas hereda el mismo esquema de semestres financiados del Mixto
+  const {financiados} = getSemFinanciados();
+  const mesesPago = Math.round(financiados * 6 * 1.5);
+  const el = document.getElementById('id-lp-auto-meses');
+  if(el) el.textContent = mesesPago + ' meses';
+  const elSem = document.getElementById('id-sem-financiados');
+  if(elSem) elSem.textContent = financiados + ' sem.';
+  const nota = document.getElementById('id-sem-fin-nota');
+  if(nota) {
+    const sf = getSemFinanciados();
+    nota.textContent = sf.financiados === sf.total
+      ? `Financia los ${sf.total} semestres.`
+      : `Financia del ${sf.inicio}° al ${sf.total}° semestre (${sf.financiados} de ${sf.total}).`;
+  }
+  return mesesPago;
+}
+
 function getLPPlazoMeses() {
-  // Returns the LP amortization period in months (1.5 × duration in months)
-  const sem = parseInt(document.getElementById('plazoLP')?.value)||8;
-  return Math.round(sem * 6 * 1.5);
+  // Plazo de amortización LP = 1.5 × semestres FINANCIADOS × 6 meses
+  return Math.round(getSemFinanciados().financiados * 6 * 1.5);
 }
 // Init
 updEq1(); updEqCP(); updEqLP();
@@ -4476,11 +4563,11 @@ document.getElementById('plazoLP').addEventListener('input',updEqLP);
         <label id="id-meses-label">Número de Meses <span id="id-meses-hint" style="font-weight:400;color:var(--gris-m);font-size:11px;"></span></label>
         <div class="ipfx"><input type="number" id="id-meses" placeholder="6" min="1" value="6"><span>meses</span></div>
       </div>
-      <!-- LP duracion programa (only for Mixto) -->
+      <!-- LP: semestres financiados heredados del Mixto (only for Mixto) -->
       <div id="id-mesesLP-block" style="display:none;margin-bottom:14px;">
         <label style="color:var(--verde-c);">🟢 Duración del Programa (semestres)
           <span style="font-weight:400;color:var(--gris-m);font-size:11px;display:block;margin-top:2px;">
-            Plazo pago LP = 1.5 × semestres × 6 meses
+            Heredado del crédito mixto · Plazo LP = 1.5 × semestres financiados × 6
           </span>
         </label>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
@@ -4492,9 +4579,20 @@ document.getElementById('plazoLP').addEventListener('input',updEqLP);
             <div><small>Plazo pago LP</small><span id="id-lp-auto-meses">72 meses</span></div><span>📅</span>
           </div>
         </div>
+        <div style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin-top:8px;">
+          <div class="ipfx" style="border-color:var(--verde-c);">
+            <input type="number" id="id-ipcLP" placeholder="5.0" min="0" max="30" step="0.1" value="5.0"
+              style="border:none;box-shadow:none;"><span>% IPC anual</span>
+          </div>
+          <label style="display:flex;align-items:center;gap:6px;margin:0;text-transform:none;font-size:12px;cursor:pointer;white-space:nowrap;">
+            <input type="checkbox" id="id-proyLP" checked style="width:auto;margin:0;cursor:pointer;">
+            Ver proyección
+          </label>
+        </div>
         <div style="background:var(--verde-s);border-left:3px solid var(--verde-c);border-radius:0 var(--rs) var(--rs) 0;
           padding:8px 12px;font-size:11px;color:var(--verde);margin-top:6px;">
           <strong>Período de gracia:</strong> 1 año post-grado · La tasa LP será la vigente al iniciar amortización.
+          <span id="id-sem-fin-nota" style="display:block;margin-top:4px;"></span>
         </div>
       </div>
       <div style="margin-bottom:16px;">
