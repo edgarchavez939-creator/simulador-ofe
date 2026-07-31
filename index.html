@@ -302,6 +302,23 @@ input:focus,select:focus{outline:none;border-color:var(--azul)!important;box-sha
 ::-webkit-scrollbar-track{background:var(--surface-2);}
 ::-webkit-scrollbar-thumb{background:var(--gris-m);border-radius:5px;border:2px solid var(--surface-2);}
 ::-webkit-scrollbar-thumb:hover{background:var(--texto-m);}
+
+/* ── Tooltips de ayuda ── */
+.tip{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;
+  background:var(--gris-c);color:var(--texto-m);font-size:10px;font-weight:700;cursor:help;margin-left:5px;
+  position:relative;vertical-align:middle;transition:all .2s ease;font-family:'Sora',sans-serif;text-transform:none;letter-spacing:0;}
+.tip:hover{background:var(--azul);color:#fff;transform:scale(1.15);}
+.tip::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 9px);left:50%;transform:translateX(-50%) translateY(4px);
+  background:var(--texto);color:var(--surface);padding:9px 12px;border-radius:8px;font-size:11.5px;font-weight:400;
+  line-height:1.55;width:250px;text-align:left;opacity:0;pointer-events:none;transition:all .22s ease;
+  box-shadow:0 6px 22px rgba(0,0,0,.22);z-index:200;text-transform:none;letter-spacing:0;}
+.tip::before{content:'';position:absolute;bottom:calc(100% + 3px);left:50%;transform:translateX(-50%) translateY(4px);
+  border:6px solid transparent;border-top-color:var(--texto);opacity:0;pointer-events:none;transition:all .22s ease;z-index:201;}
+.tip:hover::after,.tip:hover::before{opacity:1;transform:translateX(-50%) translateY(0);}
+@media(max-width:700px){.tip::after{width:190px;left:auto;right:-8px;transform:translateY(4px);}
+  .tip:hover::after{transform:translateY(0);}
+  .tip::before{left:auto;right:4px;transform:translateY(4px);}
+  .tip:hover::before{transform:translateY(0);}}
 </style>
 </head>
 <body>
@@ -369,13 +386,13 @@ input:focus,select:focus{outline:none;border-color:var(--azul)!important;box-sha
         </div>
 
         <div class="benef-box">
-          <div class="benef-title">🎁 Beneficios / Descuentos</div>
+          <div class="benef-title">🎁 Beneficios / Descuentos <span class="tip" data-tip="Becas, descuentos por convenio, caja de compensación u otros apoyos que reducen el valor a pagar. Se descuentan antes de calcular el financiamiento.">?</span></div>
           <div class="benef-items" id="benef-items-1"></div>
           <button class="btn-add-benef" onclick="addBenef(1)">+ Agregar beneficio o descuento</button>
           <div class="benef-subtotal" id="benef-subtotal-1"></div>
         </div>
         <div class="contado-box">
-          <div class="contado-title">💵 Pago de Contado / Cuota Inicial</div>
+          <div class="contado-title">💵 Pago de Contado / Cuota Inicial <span class="tip" data-tip="Parte de la matrícula que el estudiante paga de inmediato, sin financiar. Reduce el monto del crédito y por tanto los intereses.">?</span></div>
           <div class="dual-row">
             <div class="ipfx" style="border-color:var(--dorado);">
               <input type="number" id="cont1-pct" placeholder="0" min="0" max="100" step="0.1" value="50"
@@ -402,7 +419,7 @@ input:focus,select:focus{outline:none;border-color:var(--azul)!important;box-sha
             <span class="bd-val neg" id="bd-cont-1">—</span>
           </div>
           <div class="breakdown-row separator total" style="align-items:flex-start;flex-direction:column;gap:6px;">
-            <span class="breakdown-lbl">= Monto Financiado</span>
+            <span class="breakdown-lbl">= Monto Financiado <span class="tip" data-tip="Monto que efectivamente se presta y sobre el cual se calculan los intereses. Equivale a: matrícula − beneficios − pago de contado.">?</span></span>
             <div style="width:100%;">
               <div class="dual-row" style="margin-bottom:4px;">
                 <div class="ipfx" style="border-color:var(--azul);">
@@ -435,14 +452,14 @@ input:focus,select:focus{outline:none;border-color:var(--azul)!important;box-sha
           <div class="ipfx"><input type="number" id="plazo1" placeholder="6" min="1" value="6"><span>meses</span></div>
         </div>
         <div class="fg">
-          <label>Tasa de Interés (Mes Vencido)</label>
+          <label>Tasa de Interés (Mes Vencido) <span class="tip" data-tip="La tasa se aplica sobre el saldo al final de cada mes. Es el estándar del sistema financiero colombiano. Una tasa de 1.5% mes vencido equivale a 19.56% efectivo anual.">?</span></label>
           <div class="tasa-row">
             <div class="ipfx"><input type="number" id="tasa1" placeholder="1.5" min="0" max="10" step="0.01" value="1.5" oninput="calcTA(1)"><span>%</span></div>
-            <div class="tasa-badge"><div><small>Equiv. Anual</small><span id="ta1">19.56%</span></div><span>📈</span></div>
+            <div class="tasa-badge"><div><small>Equiv. Anual <span class="tip" data-tip="Tasa Efectiva Anual: lo que realmente cuesta el crédito en un año, incluyendo el efecto de capitalización mensual. Permite comparar créditos con distintas periodicidades.">?</span></small><span id="ta1">19.56%</span></div><span>📈</span></div>
           </div>
         </div>
         <div class="info-box" id="garantisa1-info">
-          <strong>Aporte Garantisa (calculado automáticamente)</strong>
+          <strong>Aporte Garantisa <span class="tip" data-tip="Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%.">?</span></strong>
           <span id="garantisa1-val">—</span>
         </div>
         <div id="btn-idiomas-1" class="idiomas-btn" style="display:none;" onclick="abrirIdiomas(1)">
@@ -500,13 +517,13 @@ input:focus,select:focus{outline:none;border-color:var(--azul)!important;box-sha
         </div>
 
         <div class="benef-box">
-          <div class="benef-title">🎁 Beneficios / Descuentos</div>
+          <div class="benef-title">🎁 Beneficios / Descuentos <span class="tip" data-tip="Becas, descuentos por convenio, caja de compensación u otros apoyos que reducen el valor a pagar. Se descuentan antes de calcular el financiamiento.">?</span></div>
           <div class="benef-items" id="benef-items-2"></div>
           <button class="btn-add-benef" onclick="addBenef(2)">+ Agregar beneficio o descuento</button>
           <div class="benef-subtotal" id="benef-subtotal-2"></div>
         </div>
         <div class="contado-box">
-          <div class="contado-title">💵 Pago de Contado / Cuota Inicial</div>
+          <div class="contado-title">💵 Pago de Contado / Cuota Inicial <span class="tip" data-tip="Parte de la matrícula que el estudiante paga de inmediato, sin financiar. Reduce el monto del crédito y por tanto los intereses.">?</span></div>
           <div class="dual-row">
             <div class="ipfx" style="border-color:var(--dorado);">
               <input type="number" id="cont2-pct" placeholder="0" min="0" max="100" step="0.1" value="50"
@@ -533,7 +550,7 @@ input:focus,select:focus{outline:none;border-color:var(--azul)!important;box-sha
             <span class="bd-val neg" id="bd-cont-2">—</span>
           </div>
           <div class="breakdown-row separator total">
-            <span class="breakdown-lbl">= Monto Financiado</span>
+            <span class="breakdown-lbl">= Monto Financiado <span class="tip" data-tip="Monto que efectivamente se presta y sobre el cual se calculan los intereses. Equivale a: matrícula − beneficios − pago de contado.">?</span></span>
             <span class="bd-val blue" id="bd-fin-2">—</span>
           </div>
           <div class="stack-bar" id="sbar-2">
@@ -581,23 +598,23 @@ input:focus,select:focus{outline:none;border-color:var(--azul)!important;box-sha
         </div>
 
         <div class="fg">
-          <label>Tasa de Interés (Mes Vencido)</label>
+          <label>Tasa de Interés (Mes Vencido) <span class="tip" data-tip="La tasa se aplica sobre el saldo al final de cada mes. Es el estándar del sistema financiero colombiano. Una tasa de 1.5% mes vencido equivale a 19.56% efectivo anual.">?</span></label>
           <div class="tasa-row">
             <div class="ipfx"><input type="number" id="tasa2" placeholder="1.5" min="0" max="10" step="0.01" value="1.5" oninput="calcTA(2)"><span>%</span></div>
-            <div class="tasa-badge"><div><small>Equiv. Anual</small><span id="ta2">19.56%</span></div><span>📈</span></div>
+            <div class="tasa-badge"><div><small>Equiv. Anual <span class="tip" data-tip="Tasa Efectiva Anual: lo que realmente cuesta el crédito en un año, incluyendo el efecto de capitalización mensual. Permite comparar créditos con distintas periodicidades.">?</span></small><span id="ta2">19.56%</span></div><span>📈</span></div>
           </div>
         </div>
 
         <div class="seg-box seg-cp">
-          <div class="seg-title">🔵 Segmento Corto Plazo</div>
+          <div class="seg-title">🔵 Segmento Corto Plazo <span class="tip" data-tip="Porción que el estudiante amortiza mientras cursa el semestre, con cuotas mensuales durante el período académico.">?</span></div>
           <div class="fg" style="margin-bottom:8px;">
             <label>Número de Meses</label>
             <div class="ipfx" style="border-color:var(--azul);"><input type="number" id="plazoCP" placeholder="6" min="1" value="6" oninput="updEqCP()" style="border:none;box-shadow:none;"><span>meses</span></div>
           </div>
-          <div class="info-box" style="margin-bottom:0;"><strong>Garantisa CP (4.17%)</strong><span id="gCP-val">—</span></div>
+          <div class="info-box" style="margin-bottom:0;"><strong>Garantisa CP (4.17%)</strong><span class="tip" data-tip="Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%.">?</span><span id="gCP-val">—</span></div>
         </div>
         <div class="seg-box seg-lp" style="margin-top:12px;">
-          <div class="seg-title">🟢 Segmento Largo Plazo</div>
+          <div class="seg-title">🟢 Segmento Largo Plazo <span class="tip" data-tip="Porción que se empieza a pagar después de graduarse. No genera cuota durante los estudios y su tasa será la vigente al iniciar la amortización.">?</span></div>
           <div class="fg" style="margin-bottom:8px;">
             <label>Duración del Programa (semestres o años)
               <span style="font-size:10px;color:var(--gris-m);font-weight:400;display:block;margin-top:2px;">
@@ -618,11 +635,26 @@ input:focus,select:focus{outline:none;border-color:var(--azul)!important;box-sha
               </div>
             </div>
           </div>
-          <div style="background:var(--verde-s);border-left:4px solid var(--verde-c);border-radius:0 var(--rs) var(--rs) 0;padding:10px 14px;font-size:12px;color:var(--verde);margin-bottom:8px;">
+          <div style="background:var(--verde-s);border-left:4px solid var(--verde-c);border-radius:0 var(--rs) var(--rs) 0;padding:10px 14px;font-size:12px;color:var(--verde);margin-bottom:10px;">
             <strong>Período de gracia:</strong> 1 año después de graduarse — durante este período se causan intereses a la tasa vigente en esa fecha.
           </div>
+          <div class="fg" style="margin-bottom:0;">
+            <label>Proyección de toda la carrera
+              <span class="tip" data-tip="Proyecta cuánto capital de largo plazo acumularía el estudiante si toma este mismo esquema todos los semestres de su programa, ajustando la matrícula por inflación.">?</span>
+            </label>
+            <div style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;">
+              <div class="ipfx" style="border-color:var(--verde-c);">
+                <input type="number" id="ipcLP" placeholder="5.0" min="0" max="30" step="0.1" value="5.0"
+                  style="border:none;box-shadow:none;"><span>% IPC anual</span>
+              </div>
+              <label style="display:flex;align-items:center;gap:6px;margin:0;text-transform:none;font-size:12px;cursor:pointer;white-space:nowrap;">
+                <input type="checkbox" id="proyLP" checked style="width:auto;margin:0;cursor:pointer;">
+                Ver proyección
+              </label>
+            </div>
+          </div>
           <div class="info-box" style="background:var(--verde-s);color:var(--verde-c);margin-bottom:0;">
-            <strong style="color:var(--verde-c);">Garantisa LP (2.86%)</strong><span id="gLP-val">—</span>
+            <strong style="color:var(--verde-c);">Garantisa LP (2.86%)</strong><span class="tip" data-tip="Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%.">?</span><span id="gLP-val">—</span>
           </div>
         </div>
 
@@ -681,13 +713,13 @@ input:focus,select:focus{outline:none;border-color:var(--azul)!important;box-sha
         </div>
 
         <div class="benef-box">
-          <div class="benef-title">🎁 Beneficios / Descuentos</div>
+          <div class="benef-title">🎁 Beneficios / Descuentos <span class="tip" data-tip="Becas, descuentos por convenio, caja de compensación u otros apoyos que reducen el valor a pagar. Se descuentan antes de calcular el financiamiento.">?</span></div>
           <div class="benef-items" id="benef-items-3"></div>
           <button class="btn-add-benef" onclick="addBenef(3)">+ Agregar beneficio o descuento</button>
           <div class="benef-subtotal" id="benef-subtotal-3"></div>
         </div>
         <div class="contado-box">
-          <div class="contado-title">💵 Pago de Contado / Cuota Inicial</div>
+          <div class="contado-title">💵 Pago de Contado / Cuota Inicial <span class="tip" data-tip="Parte de la matrícula que el estudiante paga de inmediato, sin financiar. Reduce el monto del crédito y por tanto los intereses.">?</span></div>
           <div class="dual-row">
             <div class="ipfx" style="border-color:var(--dorado);">
               <input type="number" id="cont3-pct" placeholder="0" min="0" max="100" step="0.1" value="50"
@@ -714,7 +746,7 @@ input:focus,select:focus{outline:none;border-color:var(--azul)!important;box-sha
             <span class="bd-val neg" id="bd-cont-3">—</span>
           </div>
           <div class="breakdown-row separator total" style="align-items:flex-start;flex-direction:column;gap:6px;">
-            <span class="breakdown-lbl">= Monto Financiado</span>
+            <span class="breakdown-lbl">= Monto Financiado <span class="tip" data-tip="Monto que efectivamente se presta y sobre el cual se calculan los intereses. Equivale a: matrícula − beneficios − pago de contado.">?</span></span>
             <div style="width:100%;">
               <div class="dual-row" style="margin-bottom:4px;">
                 <div class="ipfx" style="border-color:#7B1FA2;">
@@ -747,10 +779,10 @@ input:focus,select:focus{outline:none;border-color:var(--azul)!important;box-sha
           <div class="ipfx" style="border-color:#7B1FA2;"><input type="number" id="plazo3" placeholder="12" min="1" value="12"><span>meses</span></div>
         </div>
         <div class="fg">
-          <label>Tasa de Interés (Mes Vencido)</label>
+          <label>Tasa de Interés (Mes Vencido) <span class="tip" data-tip="La tasa se aplica sobre el saldo al final de cada mes. Es el estándar del sistema financiero colombiano. Una tasa de 1.5% mes vencido equivale a 19.56% efectivo anual.">?</span></label>
           <div class="tasa-row">
             <div class="ipfx"><input type="number" id="tasa3" placeholder="1.5" min="0" max="10" step="0.01" value="1.5" oninput="calcTA(3)"><span>%</span></div>
-            <div class="tasa-badge" style="background:#F3E5F5;color:#7B1FA2;"><div><small>Equiv. Anual</small><span id="ta3">19.56%</span></div><span>📈</span></div>
+            <div class="tasa-badge" style="background:#F3E5F5;color:#7B1FA2;"><div><small>Equiv. Anual <span class="tip" data-tip="Tasa Efectiva Anual: lo que realmente cuesta el crédito en un año, incluyendo el efecto de capitalización mensual. Permite comparar créditos con distintas periodicidades.">?</span></small><span id="ta3">19.56%</span></div><span>📈</span></div>
           </div>
         </div>
         <div class="fg">
@@ -912,7 +944,7 @@ input:focus,select:focus{outline:none;border-color:var(--azul)!important;box-sha
             <label>Tasa (mes vencido)</label>
             <div class="tasa-row">
               <div class="ipfx" style="border-color:var(--verde-c);"><input type="number" id="refi-tasa-nva" placeholder="1.5" min="0" step="0.01" value="1.5" oninput="calcTaRefi('nva')"><span>%</span></div>
-              <div class="tasa-badge" style="background:var(--verde-s);color:var(--verde-c);"><div><small>Equiv. Anual</small><span id="refi-ta-nva">19.56%</span></div><span>📈</span></div>
+              <div class="tasa-badge" style="background:var(--verde-s);color:var(--verde-c);"><div><small>Equiv. Anual <span class="tip" data-tip="Tasa Efectiva Anual: lo que realmente cuesta el crédito en un año, incluyendo el efecto de capitalización mensual. Permite comparar créditos con distintas periodicidades.">?</span></small><span id="refi-ta-nva">19.56%</span></div><span>📈</span></div>
             </div>
           </div>
           <div class="fg" style="margin-bottom:10px;">
@@ -1444,7 +1476,7 @@ function expPDFRefi() {
 
   y+=2; y = pdfSectionBar(doc,'PLAN DE PAGOS ('+d.n+' cuotas)',y);
   const hw=['#','Cuota','Capital','Interes','Saldo'], cw=[14,42,42,40,42];
-  doc.setFillColor(13,71,161); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
+  doc.setFillColor(26,58,92); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
   let x=14; hw.forEach((h,i)=>{doc.setFont('helvetica','bold');doc.setFontSize(9);pdfText(doc,h,x+1,y);x+=cw[i];});
   doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(9);
   d.rows.forEach(r=>{
@@ -1466,7 +1498,7 @@ function expPDFRefiComp() {
   const MARGIN = 14, CONTENT_W = PW - MARGIN*2;  // 269
 
   // Header banner (landscape width)
-  doc.setFillColor(13,71,161); doc.rect(0,0,PW,38,'F');
+  doc.setFillColor(26,58,92); doc.rect(0,0,PW,38,'F');
   doc.setTextColor(255,255,255);
   doc.setFont('helvetica','bold'); doc.setFontSize(18);
   pdfText(doc,'Simulador de Credito Educativo',MARGIN,18);
@@ -1474,19 +1506,19 @@ function expPDFRefiComp() {
   pdfText(doc,'Comparativa de Refinanciacion - '+_escRefi.length+' escenarios',MARGIN,28);
   doc.setTextColor(0,0,0);
   let y = 48;
-  doc.setFont('helvetica','italic'); doc.setFontSize(9); doc.setTextColor(120,120,120);
+  doc.setFont('helvetica','italic'); doc.setFontSize(9); doc.setTextColor(125,116,106);
   pdfText(doc,'Generado el '+new Date().toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'}),MARGIN,y);
   doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(11); y+=8;
 
   // Saldo base bar
-  doc.setFillColor(0,131,143); doc.rect(MARGIN,y-5,CONTENT_W,8,'F');
+  doc.setFillColor(45,95,110); doc.rect(MARGIN,y-5,CONTENT_W,8,'F');
   doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(10);
   pdfText(doc,'SALDO BASE A REFINANCIAR',MARGIN+2,y);
   pdfText(doc,cop(_escRefi[0].saldo),PW-MARGIN-2,y,{align:'right'});
   doc.setTextColor(0,0,0); doc.setFontSize(11); y+=12;
 
   // Comparison table — dynamic columns
-  doc.setFillColor(13,71,161); doc.rect(MARGIN,y-5,CONTENT_W,8,'F');
+  doc.setFillColor(26,58,92); doc.rect(MARGIN,y-5,CONTENT_W,8,'F');
   doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(10);
   pdfText(doc,'COMPARATIVA DE ESCENARIOS',MARGIN+2,y);
   doc.setTextColor(0,0,0); doc.setFontSize(11); y+=10;
@@ -1497,7 +1529,7 @@ function expPDFRefiComp() {
   const colRight = i => MARGIN + conceptW + i*colW + colW - 4;  // right edge of each col
 
   // Header row with scenario labels
-  doc.setFillColor(13,71,161); doc.setTextColor(255,255,255); doc.rect(MARGIN,y-5,CONTENT_W,9,'F');
+  doc.setFillColor(26,58,92); doc.setTextColor(255,255,255); doc.rect(MARGIN,y-5,CONTENT_W,9,'F');
   doc.setFont('helvetica','bold'); doc.setFontSize(9);
   pdfText(doc,'Concepto',MARGIN+2,y);
   _escRefi.forEach((e,i)=>{
@@ -1520,7 +1552,7 @@ function expPDFRefiComp() {
   ];
   rows.forEach(([label,vals])=>{
     const isTotal = label==='TOTAL A PAGAR';
-    if(isTotal){ doc.setFillColor(255,248,220); doc.rect(MARGIN,y-5,CONTENT_W,8,'F'); doc.setFont('helvetica','bold'); }
+    if(isTotal){ doc.setFillColor(251,244,233); doc.rect(MARGIN,y-5,CONTENT_W,8,'F'); doc.setFont('helvetica','bold'); }
     else doc.setFont('helvetica','normal');
     doc.setFontSize(9);
     pdfText(doc,label,MARGIN+2,y);
@@ -1533,7 +1565,7 @@ function expPDFRefiComp() {
   const a = analizarEscenariosRefi();
   doc.addPage();
   // Re-draw header banner on page 2
-  doc.setFillColor(13,71,161); doc.rect(0,0,PW,30,'F');
+  doc.setFillColor(26,58,92); doc.rect(0,0,PW,30,'F');
   doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(15);
   pdfText(doc,'Analisis Financiero Detallado',MARGIN,18);
   doc.setTextColor(0,0,0); let y2 = 40;
@@ -1554,7 +1586,7 @@ function expPDFRefiComp() {
     const recLines = doc.splitTextToSize(recomend, halfW2-6);
     recLines.forEach(l=>{ pdfText(doc, l, x+3, yy); yy+=5; });
     yy += 2;
-    doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(55,71,79);
+    doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(58,53,50);
     lines.forEach(line => {
       const wrapped = doc.splitTextToSize(line, halfW2-6);
       wrapped.forEach(l=>{ if(yy>200){doc.addPage();yy=20;} pdfText(doc, l, x+3, yy); yy+=4.6; });
@@ -1578,14 +1610,14 @@ function expPDFRefiComp() {
   // Indicators summary table at bottom
   let yInd = Math.max(yEnd1, yEnd2) + 6;
   if(yInd > 175) { doc.addPage(); yInd = 24; }
-  doc.setFillColor(13,71,161); doc.rect(MARGIN,yInd-5,CONTENT_W,8,'F');
+  doc.setFillColor(26,58,92); doc.rect(MARGIN,yInd-5,CONTENT_W,8,'F');
   doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(10);
   pdfText(doc,'INDICADORES FINANCIEROS POR ESCENARIO',MARGIN+2,yInd);
   doc.setTextColor(0,0,0); yInd += 10;
 
   const nn = _escRefi.length, cW = (CONTENT_W-70)/nn;
   const cRight = i => MARGIN+70+i*cW+cW-4;
-  doc.setFillColor(13,71,161); doc.setTextColor(255,255,255); doc.rect(MARGIN,yInd-5,CONTENT_W,7,'F');
+  doc.setFillColor(26,58,92); doc.setTextColor(255,255,255); doc.rect(MARGIN,yInd-5,CONTENT_W,7,'F');
   doc.setFont('helvetica','bold'); doc.setFontSize(8.5);
   pdfText(doc,'Indicador',MARGIN+2,yInd);
   _escRefi.forEach((e,i)=>pdfText(doc,'Esc.'+(i+1),cRight(i),yInd,{align:'right'}));
@@ -2059,6 +2091,81 @@ function calcular1(){
   setTimeout(()=>{ const p=document.getElementById('esc-panel-1'); if(p){ const sb=document.createElement('div'); sb.style='margin-top:14px;'; sb.innerHTML=`<button class="btn-esc-save" onclick="guardarEscenario(1)">💾 Guardar como escenario para comparar</button>`; document.getElementById('res1').querySelector('.card').appendChild(sb); } renderEscenarios(1); },50);
 }
 
+
+// ── Proyección multi-semestre de la porción LP (Crédito Mixto) ───────────────
+// Modela cuánto capital LP acumula el estudiante si toma el mismo esquema
+// cada semestre de su programa, ajustando la matrícula por IPC anual.
+function proyectarLP(matriculaActual, pctLP, semestres, ipcAnual) {
+  const filas = [];
+  let acumCapital = 0, acumGarantisa = 0, acumMatricula = 0;
+  for(let s = 1; s <= semestres; s++) {
+    // La matrícula se ajusta una vez al año (2 semestres por año)
+    const anio = Math.ceil(s / 2);
+    const factor = Math.pow(1 + ipcAnual, anio - 1);
+    const matSem = matriculaActual * factor;
+    const capLP  = matSem * pctLP / 100;
+    const garLP  = capLP * GARANTISA_LP;
+    acumMatricula += matSem;
+    acumCapital   += capLP;
+    acumGarantisa += garLP;
+    filas.push({s, anio, matSem, capLP, garLP, acumCapital});
+  }
+  const mesesPrograma = semestres * 6;
+  const plazoPago = Math.round(mesesPrograma * 1.5);
+  return {filas, acumCapital, acumGarantisa, acumMatricula, mesesPrograma, plazoPago};
+}
+
+function renderProyeccionLP(p, pctLP, ipcPct) {
+  const filasHtml = p.filas.map(f => `<tr>
+      <td style="text-align:center;">${f.s}</td>
+      <td>${cop(f.matSem)}</td>
+      <td>${cop(f.capLP)}</td>
+      <td>${cop(f.garLP)}</td>
+      <td style="font-weight:600;color:var(--verde-c);">${cop(f.acumCapital)}</td>
+    </tr>`).join('');
+  return `
+  <div class="ssub" style="color:var(--verde-c);margin-top:20px;">📈 Proyección de toda la carrera — Largo Plazo</div>
+  <div style="background:var(--verde-s);border-radius:var(--rs);padding:12px 16px;font-size:12px;color:var(--texto);margin-bottom:12px;line-height:1.6;">
+    Escenario estimado si el estudiante financia el <strong>${pctLP}%</strong> a largo plazo en
+    <strong>los ${p.filas.length} semestres</strong> de su programa, con un ajuste de matrícula del
+    <strong>${ipcPct}% anual</strong>. Los valores son proyectados y pueden variar.
+  </div>
+  <div class="mgrid">
+    <div class="mc"><span class="lbl">Matrícula total proyectada</span><div class="val">${cop(p.acumMatricula)}</div></div>
+    <div class="mc"><span class="lbl">Garantisa LP acumulada</span><div class="val">${cop(p.acumGarantisa)}</div></div>
+    <div class="mc" style="grid-column:1/-1;background:var(--verde-s);border-color:var(--verde-c);">
+      <span class="lbl" style="color:var(--verde-c);">Capital LP total al graduarse</span>
+      <div class="val" style="color:var(--verde);">${cop(p.acumCapital)}</div>
+    </div>
+  </div>
+  <div class="twrap" style="margin-top:10px;">
+    <table>
+      <thead><tr>
+        <th style="text-align:center;">Sem.</th>
+        <th>Matrícula proyectada</th>
+        <th>Capital LP</th>
+        <th>Garantisa LP</th>
+        <th>LP acumulado</th>
+      </tr></thead>
+      <tbody>${filasHtml}</tbody>
+      <tfoot><tr>
+        <td style="text-align:center;">TOTAL</td>
+        <td>${cop(p.acumMatricula)}</td>
+        <td>${cop(p.acumCapital)}</td>
+        <td>${cop(p.acumGarantisa)}</td>
+        <td>${cop(p.acumCapital)}</td>
+      </tr></tfoot>
+    </table>
+  </div>
+  <div style="background:var(--dorado-s);border-left:4px solid var(--dorado);border-radius:0 var(--rs) var(--rs) 0;
+    padding:12px 16px;margin-top:10px;font-size:12px;color:var(--texto);line-height:1.7;">
+    <strong>Al graduarse</strong>, el estudiante habría acumulado <strong>${cop(p.acumCapital)}</strong> de capital
+    a largo plazo, que se amortizaría en aproximadamente <strong>${p.plazoPago} meses</strong>
+    (1.5 × ${p.mesesPrograma} meses de programa), tras el período de gracia de 1 año.
+    La cuota dependerá de la tasa vigente en ese momento.
+  </div>`;
+}
+
 function calcular2(){
   const mat=getMat(2);
   const pCP=parseFloat(document.getElementById('pctCP').value)||0;
@@ -2152,6 +2259,18 @@ function calcular2(){
       ⏳ Período de gracia: ${graceMeses} meses · 
       💳 Amortización: ${LP.nPago} meses después de graduarse
     </div>`;
+
+    // Proyección multi-semestre (si está activada)
+    const verProy = document.getElementById('proyLP')?.checked;
+    if(verProy && semLP > 0 && pLP > 0) {
+      const ipcPct = parseFloat(document.getElementById('ipcLP')?.value);
+      const ipc = (isNaN(ipcPct) ? 5 : ipcPct) / 100;
+      const proy = proyectarLP(mat, pLP, semLP, ipc);
+      window._proyLP = {...proy, pctLP:pLP, ipcPct:(isNaN(ipcPct)?5:ipcPct)};
+      html += renderProyeccionLP(proy, pLP, (isNaN(ipcPct)?5:ipcPct));
+    } else {
+      window._proyLP = null;
+    }
   }
 
   if(CP&&LP){
@@ -2269,7 +2388,7 @@ function pdfBenefSection(doc, y, mat, beneficios, benefTotal, matNeta, cuotaInic
       if((b.val||0) > 0) {
         const label = (b.nombre||'Descuento').substring(0,35);
         doc.setFont('helvetica','normal'); doc.text(safePDF('  - '+label+':'), 16, y);
-        doc.setFont('helvetica','bold'); doc.setTextColor(46,125,50);
+        doc.setFont('helvetica','bold'); doc.setTextColor(61,107,74);
         doc.text(safePDF('-'+cop(b.val)+(mat>0?' ('+b.pct.toFixed(1)+'%)':'')), 150, y, {align:'right'});
         doc.setTextColor(0,0,0); y+=6;
       }
@@ -2299,7 +2418,7 @@ function expPDF1(){
   y=pdfCostoFootnote(doc,y);
   y+=2; y=pdfSectionBar(doc,'TABLA DE AMORTIZACIÓN',y);
   const hw=['#','Cuota','Capital','Interés','Saldo'], cw=[14,42,38,38,44];
-  doc.setFillColor(13,71,161); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
+  doc.setFillColor(26,58,92); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
   let x=14; hw.forEach((h,i)=>{doc.text(safePDF(h),x+1,y);x+=cw[i];}); doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
   d.rows.forEach(r=>{ y+=7; if(y>270){doc.addPage();y=20;} x=14;
     [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(safePDF(String(v)),x+1,y);x+=cw[i];});
@@ -2365,24 +2484,51 @@ function expPDF2(){
      ['Plazo Estimado Amortizacion',nPago2+' cuotas mensuales']
     ].forEach(([k,v])=>{ doc.setFont('helvetica','bold'); pdfText(doc,k+':',16,y); doc.setFont('helvetica','normal'); pdfText(doc,v,150,y,{align:'right'}); y+=7; });
     y+=2;
-    doc.setFillColor(232,245,233); doc.rect(14,y-3,180,24,'F');
-    doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(46,125,50);
+    doc.setFillColor(235,243,238); doc.rect(14,y-3,180,24,'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(61,107,74);
     pdfText(doc,'Informacion sobre el Credito Largo Plazo',16,y); y+=6;
-    doc.setFont('helvetica','normal'); doc.setTextColor(55,71,79); doc.setFontSize(8);
+    doc.setFont('helvetica','normal'); doc.setTextColor(58,53,50); doc.setFontSize(8);
     pdfText(doc,'La cuota definitiva no puede determinarse; la tasa sera la vigente al iniciar amortizacion.',16,y); y+=5;
     pdfText(doc,'Periodo de gracia: 1 año post-grado con intereses segun condiciones vigentes.',16,y); y+=8;
     doc.setTextColor(0,0,0); doc.setFontSize(11); y+=2;
     if(y>230){doc.addPage();y=20;}
     y=pdfSectionBar(doc,'CREDITO LARGO PLAZO - DESEMBOLSO UNICO',y,[46,125,50]);
     doc.setTextColor(0,0,0); doc.setFontSize(9);
-    doc.setFillColor(240,249,240); doc.rect(14,y-4,180,38,'F');
-    doc.setDrawColor(46,125,50); doc.rect(14,y-4,180,38,'S'); doc.setDrawColor(0,0,0);
+    doc.setFillColor(235,243,238); doc.rect(14,y-4,180,38,'F');
+    doc.setDrawColor(61,107,74); doc.rect(14,y-4,180,38,'S'); doc.setDrawColor(0,0,0);
     [['Capital a amortizar:',cop(d.finLP)],
      ['Semestres de la carrera:',sem2+' semestres'],
      ['Plazo estimado de pago:',nPago2+' meses ('+Math.round(nPago2/12*10)/10+' anos)'],
      ['Interes:','Tasa vigente al iniciar amortizacion']
     ].forEach(([k,v])=>{doc.setFont('helvetica','bold');pdfText(doc,k,16,y);doc.setFont('helvetica','normal');pdfText(doc,v,192,y,{align:'right'});y+=8;});
     y+=4; doc.setFontSize(11);
+    // Proyeccion multi-semestre
+    const pr = window._proyLP;
+    if(pr && pr.filas && pr.filas.length) {
+      if(y>170){doc.addPage();y=20;}
+      y = pdfSectionBar(doc,'PROYECCION DE TODA LA CARRERA - LARGO PLAZO',y,[61,107,74]);
+      doc.setFont('helvetica','italic'); doc.setFontSize(8); doc.setTextColor(125,116,106);
+      pdfText(doc,'Escenario estimado financiando el '+pr.pctLP+'% a largo plazo cada semestre, con ajuste de matricula del '+pr.ipcPct+'% anual.',16,y); y+=7;
+      doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(9);
+      // Tabla de proyeccion
+      const hwP=['Sem.','Matricula proyectada','Capital LP','Garantisa LP','LP acumulado'], cwP=[16,46,40,38,40];
+      doc.setFillColor(61,107,74); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
+      let xP=14; hwP.forEach((h,i)=>{doc.setFont('helvetica','bold');doc.setFontSize(8.5);pdfText(doc,h,xP+1,y);xP+=cwP[i];});
+      doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
+      pr.filas.forEach(f=>{
+        y+=6; if(y>272){doc.addPage();y=20;}
+        xP=14;
+        [f.s,cop(f.matSem),cop(f.capLP),cop(f.garLP),cop(f.acumCapital)].forEach((v,i)=>{pdfText(doc,String(v),xP+1,y);xP+=cwP[i];});
+      });
+      y+=8; if(y>250){doc.addPage();y=20;}
+      doc.setFillColor(251,244,233); doc.rect(14,y-4,180,22,'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(160,110,45);
+      pdfText(doc,'Al graduarse: '+cop(pr.acumCapital)+' de capital a largo plazo',16,y+2); y+=7;
+      doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(58,53,50);
+      pdfText(doc,'Amortizable en aprox. '+pr.plazoPago+' meses (1.5 x '+pr.mesesPrograma+' meses de programa), tras 1 año de gracia.',16,y+2); y+=5;
+      pdfText(doc,'Matricula total proyectada: '+cop(pr.acumMatricula)+'  |  Garantisa LP acumulada: '+cop(pr.acumGarantisa),16,y+2); y+=10;
+      doc.setTextColor(0,0,0); doc.setFontSize(11);
+    }
   }
   const totCred=(d.CP?(d.CP.totCap+d.CP.totInt):0)+(d.LP?(d.LP.noAmortize?d.LP.capital:(d.LP.totCap+d.LP.totInt)):0);
   y=pdfSectionBar(doc,'COSTO TOTAL MATRÍCULA',y);
@@ -2525,7 +2671,7 @@ function expPDF3(){
   y=pdfCostoFootnote(doc,y);
   y+=2; y=pdfSectionBar(doc,'TABLA DE AMORTIZACIÓN',y);
   const hw=['#','Cuota','Capital','Interés','Saldo'],cw=[14,42,38,38,44];
-  doc.setFillColor(13,71,161); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
+  doc.setFillColor(26,58,92); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
   let x=14; hw.forEach((h,i)=>{doc.text(safePDF(h),x+1,y);x+=cw[i];}); doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
   d.rows.forEach(r=>{ y+=7; if(y>270){doc.addPage();y=20;} x=14;
     [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(safePDF(String(v)),x+1,y);x+=cw[i];});
@@ -3036,7 +3182,7 @@ function expPDFIdiomas(){
   y=pdfCostoFootnote(doc,y,'* Valor idiomas + Aporte Garantisa + Intereses del crédito');
   y+=2; y=pdfSectionBar(doc,'TABLA DE AMORTIZACIÓN ('+d.n+' meses)',y);
   const hw=['#','Cuota','Capital','Interés','Saldo'],cw=[14,42,38,38,44];
-  doc.setFillColor(13,71,161); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
+  doc.setFillColor(26,58,92); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
   let x=14; hw.forEach((h,i)=>{doc.text(safePDF(h),x+1,y);x+=cw[i];}); doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
   d.rows.forEach(r=>{ y+=7; if(y>270){doc.addPage();y=20;} x=14;
     [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(safePDF(String(v)),x+1,y);x+=cw[i];});
@@ -3186,8 +3332,8 @@ function fechaBadgeHtml() {
   return `<div class="fecha-badge">📅 Simulación generada el ${fechaSimulacion()}</div>`;
 }
 function pdfHeader(doc, subtitulo, subtitulo2='') {
-  // Blue banner header — same as combined PDF
-  doc.setFillColor(13,71,161); doc.rect(0,0,210,40,'F');
+  // Banner corporativo — paleta cálida institucional
+  doc.setFillColor(26,58,92); doc.rect(0,0,210,40,'F');
   doc.setTextColor(255,255,255);
   doc.setFont('helvetica','bold'); doc.setFontSize(18);
   doc.text(safePDF('Simulador de Crédito Educativo'),14,18);
@@ -3202,7 +3348,7 @@ function pdfCostoFootnote(doc, y, texto) {
   // Small footnote below COSTO TOTAL explaining what's included
   const nota = texto || '* Valor matrícula + Aporte Garantisa + Intereses del crédito';
   doc.setFont('helvetica','italic'); doc.setFontSize(8);
-  doc.setTextColor(100,100,100);
+  doc.setTextColor(125,116,106);
   doc.text(safePDF(nota), 16, y);
   doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(11);
   return y + 6;
@@ -3222,7 +3368,7 @@ function pdfSectionBar(doc, label, y, color) {
 
 function addFechaToDoc(doc, y) {
   doc.setFont('helvetica','italic'); doc.setFontSize(9);
-  doc.setTextColor(144,164,174);
+  doc.setTextColor(156,147,137);
   doc.text(safePDF('Generado el ' + fechaSimulacion()), 14, y);
   doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(11);
   return y + 6;
@@ -3636,7 +3782,7 @@ function expPDFCombinado() {
   const hw = ['#','Cuota','Capital','Interés','Saldo'], cw = [14,42,38,38,44];
 
   function drawTable(doc, rows, y) {
-    doc.setFillColor(13,71,161); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
+    doc.setFillColor(26,58,92); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
     let x=14; hw.forEach((h,i)=>{doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text(safePDF(h),x+1,y);x+=cw[i];});
     doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(9);
     rows.forEach(r=>{ y+=6; if(y>270){doc.addPage();y=20;} x=14;
@@ -3668,41 +3814,41 @@ function expPDFCombinado() {
   y = pdfSectionBar(doc, 'RESUMEN COMBINADO', y); y+=2;
 
   // Group 1: Pago inicial
-  doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(120,90,0);
+  doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(160,110,45);
   doc.text(safePDF('① PAGO AL MOMENTO DEL DESEMBOLSO'), 16, y); doc.setTextColor(0,0,0); doc.setFontSize(11); y+=7;
   y = drawKV(doc, [
     ['  Pago Inicial Pregrado', cop(pagoIniPre)],
     ['  Pago Inicial Idiomas', cop(dp.pagoInicial)],
   ], y);
-  doc.setFillColor(255,248,220); doc.rect(14,y-5,180,8,'F');
+  doc.setFillColor(251,244,233); doc.rect(14,y-5,180,8,'F');
   doc.setFont('helvetica','bold'); doc.text(safePDF('Total Pago Inicial:'), 16, y);
   doc.text(safePDF(cop(pagoIniPre+dp.pagoInicial)), 150, y, {align:'right'}); y+=10;
 
   // Group 2: Crédito
-  doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(13,71,161);
+  doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(26,58,92);
   doc.text(safePDF('② CRÉDITO A AMORTIZAR'), 16, y); doc.setTextColor(0,0,0); doc.setFontSize(11); y+=7;
   y = drawKV(doc, [
     ['  Total Crédito Pregrado', cop(totCredPre)],
     ['  Total Crédito Idiomas', cop(dp.totalCredito)],
   ], y);
-  doc.setFillColor(220,235,255); doc.rect(14,y-5,180,8,'F');
+  doc.setFillColor(234,241,248); doc.rect(14,y-5,180,8,'F');
   doc.setFont('helvetica','bold'); doc.text(safePDF('Total Crédito:'), 16, y);
   doc.text(safePDF(cop(totCredPre+dp.totalCredito)), 150, y, {align:'right'}); y+=10;
 
   // Group 3: Cuota mensual
-  doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(46,125,50);
+  doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(61,107,74);
   doc.text(safePDF('③ CUOTA MENSUAL COMBINADA'), 16, y); doc.setTextColor(0,0,0); doc.setFontSize(11); y+=7;
   y = drawKV(doc, [
     ['  Cuota Mensual Pregrado', cop(cuotaPre)],
     ['  Cuota Mensual Idiomas', cop(dp.cuota)],
   ], y);
-  doc.setFillColor(220,245,220); doc.rect(14,y-5,180,8,'F');
+  doc.setFillColor(235,243,238); doc.rect(14,y-5,180,8,'F');
   doc.setFont('helvetica','bold'); doc.text(safePDF('Cuota Mensual Total:'), 16, y);
   doc.text(safePDF(cop(cuotaPre+dp.cuota)), 150, y, {align:'right'}); y+=12;
 
   // Costo total
   const barH = 22;
-  doc.setFillColor(13,71,161); doc.rect(14, y-7, 180, barH, 'F');
+  doc.setFillColor(26,58,92); doc.rect(14, y-7, 180, barH, 'F');
   doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(11);
   doc.text(safePDF('COSTO TOTAL SEMESTRE'), 18, y);
   doc.text(safePDF(cop(costoTotal)), 190, y, {align:'right'});
@@ -3768,8 +3914,8 @@ function expPDFCombinado() {
       const hwLPc=['#','Capital','Saldo Capital','Interes'], cwLPc=[14,50,50,62];
       doc.setTextColor(0,0,0); doc.setFontSize(9);
       const semLPcomb=dm.nLP||8;
-      doc.setFillColor(240,249,240); doc.rect(14,y-4,180,38,'F');
-      doc.setDrawColor(46,125,50); doc.rect(14,y-4,180,38,'S'); doc.setDrawColor(0,0,0);
+      doc.setFillColor(235,243,238); doc.rect(14,y-4,180,38,'F');
+      doc.setDrawColor(61,107,74); doc.rect(14,y-4,180,38,'S'); doc.setDrawColor(0,0,0);
       [['Capital a amortizar:',cop(dm.finLP)],
        ['Semestres de la carrera:',semLPcomb+' semestres'],
        ['Plazo estimado de pago:',nPagoComb+' meses ('+Math.round(nPagoComb/12*10)/10+' anos)'],
@@ -3815,8 +3961,8 @@ function expPDFCombinado() {
     // Capital-only LP table for idiomas
     doc.setTextColor(0,0,0); doc.setFontSize(9);
     const semLPidComb = dp.semLP||8;
-    doc.setFillColor(240,249,240); doc.rect(14,y-4,180,38,'F');
-    doc.setDrawColor(46,125,50); doc.rect(14,y-4,180,38,'S'); doc.setDrawColor(0,0,0);
+    doc.setFillColor(235,243,238); doc.rect(14,y-4,180,38,'F');
+    doc.setDrawColor(61,107,74); doc.rect(14,y-4,180,38,'S'); doc.setDrawColor(0,0,0);
     [['Capital a amortizar:',cop(dp.finLP)],
      ['Semestres de la carrera:',semLPidComb+' semestres'],
      ['Plazo estimado de pago:',nLPidPDF+' meses ('+Math.round(nLPidPDF/12*10)/10+' anos)'],
@@ -3824,10 +3970,10 @@ function expPDFCombinado() {
     ].forEach(([k,v])=>{doc.setFont('helvetica','bold');pdfText(doc,k,16,y);doc.setFont('helvetica','normal');pdfText(doc,v,192,y,{align:'right'});y+=8;});
     y+=4; doc.setFontSize(11); y+=4;
     // Disclaimer
-    doc.setFillColor(232,245,233); doc.rect(14,y-3,180,20,'F');
-    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(46,125,50);
+    doc.setFillColor(235,243,238); doc.rect(14,y-3,180,20,'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(61,107,74);
     pdfText(doc,'Sera amortizado en el numero de semestres que dure la carrera (x 1.5).',16,y); y+=5;
-    doc.setFont('helvetica','normal'); doc.setTextColor(55,71,79);
+    doc.setFont('helvetica','normal'); doc.setTextColor(58,53,50);
     pdfText(doc,'Cuota definitiva: tasa vigente al iniciar amortizacion. Gracia: 1 año post-grado.',16,y); y+=8;
     doc.setTextColor(0,0,0); doc.setFontSize(11);
   } else {
@@ -4299,7 +4445,7 @@ document.getElementById('plazoLP').addEventListener('input',updEqLP);
           <span class="bd-val neg" id="bd-cont-id">—</span>
         </div>
         <div class="breakdown-row separator total">
-          <span class="breakdown-lbl">= Monto Financiado</span>
+          <span class="breakdown-lbl">= Monto Financiado <span class="tip" data-tip="Monto que efectivamente se presta y sobre el cual se calculan los intereses. Equivale a: matrícula − beneficios − pago de contado.">?</span></span>
           <span class="bd-val blue" id="bd-fin-id">—</span>
         </div>
       </div>
@@ -4352,10 +4498,10 @@ document.getElementById('plazoLP').addEventListener('input',updEqLP);
         </div>
       </div>
       <div style="margin-bottom:16px;">
-        <label>Tasa de Interés (Mes Vencido)</label>
+        <label>Tasa de Interés (Mes Vencido) <span class="tip" data-tip="La tasa se aplica sobre el saldo al final de cada mes. Es el estándar del sistema financiero colombiano. Una tasa de 1.5% mes vencido equivale a 19.56% efectivo anual.">?</span></label>
         <div class="tasa-row">
           <div class="ipfx"><input type="number" id="id-tasa" placeholder="1.5" min="0" max="10" step="0.01" value="1.5" oninput="calcTaIdiomas()"><span>%</span></div>
-          <div class="tasa-badge"><div><small>Equiv. Anual</small><span id="id-ta">19.56%</span></div><span>📈</span></div>
+          <div class="tasa-badge"><div><small>Equiv. Anual <span class="tip" data-tip="Tasa Efectiva Anual: lo que realmente cuesta el crédito en un año, incluyendo el efecto de capitalización mensual. Permite comparar créditos con distintas periodicidades.">?</span></small><span id="id-ta">19.56%</span></div><span>📈</span></div>
         </div>
       </div>
 
