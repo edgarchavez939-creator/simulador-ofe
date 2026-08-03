@@ -245,8 +245,9 @@ tfoot td:first-child{text-align:center;font-family:'Sora',sans-serif;}
 .refi-pin-box .pin-icon{font-size:40px;margin-bottom:12px;}
 .refi-pin-box h2{font-size:18px;font-weight:700;color:#006064;margin-bottom:6px;}
 .refi-pin-box p{font-size:13px;color:var(--gris-m);margin-bottom:24px;}
-.refi-pin-inputs{display:flex;gap:8px;justify-content:center;margin-bottom:20px;}
-.refi-pin-inputs input{width:44px;height:54px;text-align:center;font-size:22px;font-weight:700;border:2px solid var(--gris-c);border-radius:var(--rs);font-family:'Sora',sans-serif;color:#006064;outline:none;transition:border .2s;}
+.refi-pin-inputs{display:flex;gap:8px;justify-content:center;margin-bottom:20px;flex-wrap:nowrap;}
+@media(max-width:400px){.refi-pin-inputs input{width:32px;height:44px;font-size:18px;}}
+.refi-pin-inputs input{width:40px;height:52px;text-align:center;font-size:22px;font-weight:700;border:2px solid var(--gris-c);border-radius:var(--rs);font-family:'Sora',sans-serif;color:#006064;outline:none;transition:border .2s;}
 .refi-pin-inputs input:focus{border-color:#00838F;box-shadow:0 0 0 3px rgba(0,131,143,.15);}
 .refi-pin-inputs input.pin-error{border-color:var(--naranja);animation:shake .3s;}
 @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
@@ -319,6 +320,120 @@ input:focus,select:focus{outline:none;border-color:var(--azul)!important;box-sha
   .tip:hover::after{transform:translateY(0);}
   .tip::before{left:auto;right:4px;transform:translateY(4px);}
   .tip:hover::before{transform:translateY(0);}}
+
+/* ══ Actualizador de Programas (Tab 6) ══ */
+
+
+
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* ── ADMIN PANEL ── */
+#admin-panel{display:none;}
+.step{
+  background:white;border-radius:var(--r);
+  box-shadow:0 4px 20px rgba(0,0,0,.08);
+  padding:28px;margin-bottom:24px;
+}
+.step-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+.step-num{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--azul);color:white;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:700;flex-shrink:0;
+}
+.step-header h2{font-size:16px;font-weight:600;color:var(--azul);}
+.step-header p{font-size:13px;color:var(--gris-m);margin-top:2px;}
+
+/* drop zone */
+.dropzone{
+  border:2px dashed var(--gris-c);border-radius:var(--rs);
+  padding:40px 24px;text-align:center;cursor:pointer;
+  transition:all .2s;background:var(--gris-c);
+}
+.dropzone:hover,.dropzone.over{border-color:var(--azul);background:var(--azul-s);}
+.dropzone input{display:none;}
+.dropzone-icon{font-size:36px;margin-bottom:10px;}
+.dropzone p{font-size:14px;color:var(--gris-m);}
+.dropzone strong{color:var(--azul);}
+
+/* sheet selector */
+.sheet-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.sheet-tab{
+  padding:7px 16px;border-radius:20px;border:1.5px solid var(--gris-c);
+  font-size:13px;font-weight:500;cursor:pointer;background:white;
+  transition:all .2s;
+}
+.sheet-tab.active{background:var(--azul);color:white;border-color:var(--azul);}
+.sheet-tab:hover:not(.active){border-color:var(--azul);color:var(--azul);}
+
+/* preview table */
+.preview-wrap{overflow-x:auto;border-radius:var(--rs);border:1px solid var(--gris-c);max-height:320px;overflow-y:auto;}
+.preview-wrap table{width:100%;border-collapse:collapse;font-size:13px;}
+.preview-wrap thead th{background:var(--azul);color:white;padding:9px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;position:sticky;top:0;}
+.preview-wrap tbody tr:nth-child(even){background:var(--gris-c);}
+.preview-wrap tbody td{padding:8px 12px;}
+.count-badge{display:inline-block;background:var(--verde-s);color:var(--verde);border-radius:20px;padding:3px 10px;font-size:12px;font-weight:600;margin-left:8px;}
+
+/* column mapper */
+.mapper-grid{display:grid;grid-template-columns:1fr 40px 1fr;gap:12px;align-items:center;margin-bottom:12px;}
+.mapper-grid label{font-size:12px;font-weight:600;color:var(--gris-m);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px;}
+.mapper-grid select{width:100%;padding:9px 12px;border:1.5px solid var(--gris-c);border-radius:var(--rs);font-size:13px;outline:none;}
+.mapper-grid select:focus{border-color:var(--azul);}
+.mapper-arrow{text-align:center;font-size:18px;color:var(--gris-m);}
+.tipo-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.tipo-btn{padding:10px;border:1.5px solid var(--gris-c);border-radius:var(--rs);background:white;font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all .2s;}
+.tipo-btn.active{border-color:var(--azul);background:var(--azul-s);color:var(--azul);}
+
+/* status messages */
+.msg{padding:12px 16px;border-radius:var(--rs);font-size:13px;margin-top:12px;display:none;}
+.msg.ok{background:var(--verde-s);color:var(--verde);border-left:4px solid var(--verde);}
+.msg.err{background:var(--rojo-s);color:var(--rojo);border-left:4px solid var(--rojo);}
+.msg.info{background:var(--dorado-s);color:#E65100;border-left:4px solid var(--dorado);}
+
+/* generate button */
+.btn-gen{
+  width:100%;padding:15px;
+  background:linear-gradient(90deg,var(--verde),#388E3C);
+  color:white;border:none;border-radius:var(--rs);
+  font-size:16px;font-weight:700;cursor:pointer;
+  box-shadow:0 4px 14px rgba(46,125,50,.3);
+  transition:opacity .2s,transform .1s;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.btn-gen:hover{opacity:.92;}.btn-gen:active{transform:scale(.98);}
+.btn-gen:disabled{opacity:.5;cursor:not-allowed;}
+
+/* instructions */
+.instr{background:var(--azul-s);border-radius:var(--rs);padding:16px 20px;}
+.instr h3{font-size:13px;font-weight:700;color:var(--azul);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;}
+.instr ol,.instr ul{padding-left:18px;}
+.instr li{font-size:13px;color:var(--gris);margin-bottom:6px;line-height:1.5;}
+.instr code{background:white;padding:2px 6px;border-radius:4px;font-size:12px;color:var(--azul);font-weight:600;}
+
+.template-btns{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+.btn-tpl{
+  padding:9px 16px;border:1.5px solid var(--azul);border-radius:var(--rs);
+  background:white;color:var(--azul);font-size:13px;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;gap:6px;transition:all .2s;
+}
+.btn-tpl:hover{background:var(--azul-s);}
+
+@media(max-width:600px){
+  header{padding:16px 20px;flex-direction:column;gap:12px;text-align:center;}
+  main{padding:16px 12px 40px;}
+  .step{padding:20px 16px;}
+  .mapper-grid{grid-template-columns:1fr;}.mapper-arrow{display:none;}
+}
+
+/* Ajustes de integración */
+#tab6 .step{background:var(--surface);border:1px solid var(--borde);border-radius:var(--r);box-shadow:var(--sombra);padding:26px;margin-bottom:18px;}
+#tab6 .step-header{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+#tab6 .step-num{width:38px;height:38px;border-radius:50%;background:var(--azul);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0;}
+#tab6 .step h2{font-size:16px;font-weight:700;color:var(--texto);letter-spacing:-.2px;}
+#tab6 .step p{font-size:12.5px;color:var(--texto-m);margin-top:2px;}
+#tab6 .dropzone{background:var(--surface-2);border-color:var(--borde);}
+#tab6 .instr{background:var(--azul-s);}
+#tab6 .instr h3{color:var(--azul);}
+#tab6 .preview-wrap{border-color:var(--borde);}
 </style>
 </head>
 <body>
@@ -344,6 +459,7 @@ input:focus,select:focus{outline:none;border-color:var(--azul)!important;box-sha
     <button class="tab-btn" onclick="switchTab(3)">🏦 Crédito Banco Aliado</button>
     <button class="tab-btn" onclick="switchTab(4)">🔁 Conversor de Tasas</button>
     <button class="tab-btn" onclick="switchTab(5)">♻️ Refinanciación</button>
+    <button class="tab-btn" onclick="switchTab(6)">⚙️ Actualizar Programas</button>
   </div>
 </div>
 
@@ -986,6 +1102,240 @@ input:focus,select:focus{outline:none;border-color:var(--azul)!important;box-sha
   </div>
 </div>
 
+
+<!-- TAB 6: ACTUALIZADOR DE PROGRAMAS -->
+<div class="tab-panel" id="tab6">
+
+
+    <!-- STEP 0: Instructions -->
+    <div class="step">
+      <div class="step-header">
+        <div class="step-num">📋</div>
+        <div>
+          <h2>Formato del archivo Excel</h2>
+          <p>El Excel debe tener exactamente estas columnas según el tipo de programa</p>
+        </div>
+      </div>
+      <div class="instr">
+        <h3>Pregrado — 4 columnas</h3>
+        <ol>
+          <li><code>Programa</code> — nombre del programa</li>
+          <li><code>Valor Pregrado</code> — valor numérico de la matrícula (sin puntos ni $)</li>
+          <li><code>Valor Idiomas</code> — valor numérico, usar <code>0</code> si no aplica</li>
+          <li><code>Semestres</code> — duración del programa en semestres (ej: 8, 9, 10, 12)</li>
+        </ol>
+        <p style="margin-top:8px;font-size:12px;color:var(--gris-m);">💡 Los semestres determinan el plazo automático del crédito LP. Los beneficios/descuentos los configura el asesor en la simulación.</p>
+      </div>
+      <div class="instr" style="margin-top:12px;background:var(--verde-s);">
+        <h3 style="color:var(--verde);">Posgrado — 3 columnas</h3>
+        <ol>
+          <li><code>Programa</code> — nombre del programa</li>
+          <li><code>Subnivel</code> — debe ser exactamente: <code>Doctorado</code>, <code>Maestría</code> o <code>Especialización</code></li>
+          <li><code>Valor</code> — valor numérico de la matrícula (sin puntos ni $)</li>
+        </ol>
+      </div>
+      <div class="template-btns">
+        <button class="btn-tpl" onclick="descargarPlantilla()">📥 Descargar Plantilla con Programas Actuales</button>
+        <div id="sync-badge" style="display:none;background:#E0F2F1;border-left:4px solid #00838F;border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;font-size:12px;color:#00565B;line-height:1.6;"></div>
+      </div>
+    </div>
+
+    <!-- STEP 1: Load index.html -->
+    <div class="step">
+      <div class="step-header">
+        <div class="step-num">1</div>
+        <div>
+          <h2>Origen del simulador</h2>
+          <p>Se lee automáticamente desde esta misma página. Solo necesitas subir un archivo si abriste el simulador localmente.</p>
+        </div>
+      </div>
+      <div class="msg" id="self-read-status" style="display:none;margin-bottom:12px;"></div>
+      <div class="dropzone" id="dz-html" onclick="document.getElementById('inp-html').click()"
+           ondragover="dzOver(event,'dz-html')" ondragleave="dzLeave('dz-html')" ondrop="dzDrop(event,'html')">
+        <input type="file" id="inp-html" accept=".html" onchange="cargarHTML(event)">
+        <div class="dropzone-icon">📄</div>
+        <p><strong>Haz clic</strong> o arrastra aquí el archivo <strong>index.html</strong></p>
+      </div>
+      <div class="msg" id="msg-html"></div>
+      <button class="btn-tpl" style="margin-top:10px;" onclick="autoLeerSimulador()">🔄 Releer simulador desde esta página</button>
+    </div>
+
+    <!-- STEP 2: Load Excel -->
+    <div class="step">
+      <div class="step-header">
+        <div class="step-num">2</div>
+        <div>
+          <h2>Cargar el Excel con los nuevos valores</h2>
+          <p>Descarga la plantilla ya poblada con los programas vigentes. Si primero cargas tu index.html en el paso siguiente, la plantilla se sincroniza automáticamente con lo que está publicado.</p>
+        </div>
+      </div>
+
+      <div class="dropzone" id="dz-xls" onclick="document.getElementById('inp-xls').click()"
+           ondragover="dzOver(event,'dz-xls')" ondragleave="dzLeave('dz-xls')" ondrop="dzDrop(event,'xls')">
+        <input type="file" id="inp-xls" accept=".xlsx,.xls" onchange="cargarExcel(event)">
+        <div class="dropzone-icon">📊</div>
+        <p><strong>Haz clic</strong> o arrastra aquí el archivo <strong>Excel (.xlsx)</strong></p>
+      </div>
+      <div class="msg" id="msg-xls"></div>
+
+      <!-- Sheet tabs -->
+      <div id="sheets-area" style="display:none;margin-top:20px;">
+        <div id="sheet-tabs" class="sheet-tabs"></div>
+
+        <!-- Column mapper -->
+        <div id="mapper-area" style="margin-bottom:16px;">
+          <p style="font-size:13px;font-weight:600;color:var(--gris-m);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Tipo de hoja</p>
+          <div class="tipo-row" id="tipo-row">
+            <button class="tipo-btn active" id="tipo-pre" onclick="setTipo('pregrado')">🎓 Pregrado</button>
+            <button class="tipo-btn" id="tipo-pos" onclick="setTipo('posgrado')">🏛️ Posgrado</button>
+          </div>
+          <div id="mapper-cols"></div>
+        </div>
+
+        <!-- Preview -->
+        <div id="preview-area"></div>
+        <div id="parsed-status" class="msg"></div>
+      </div>
+    </div>
+
+    <!-- STEP 3: Generate -->
+    <div class="step">
+      <div class="step-header">
+        <div class="step-num">3</div>
+        <div>
+          <h2>Generar nuevo index.html</h2>
+          <p>Se descargará automáticamente — luego súbelo a GitHub para reemplazar el actual</p>
+        </div>
+      </div>
+
+      <div id="resumen-cambios" style="display:none;margin-bottom:20px;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;">
+          <div style="background:var(--azul-s);border-radius:var(--rs);padding:14px 16px;">
+            <div style="font-size:11px;font-weight:600;color:var(--gris-m);text-transform:uppercase;margin-bottom:4px;">Programas Pregrado</div>
+            <div id="cnt-pre" style="font-size:22px;font-weight:700;color:var(--azul);">—</div>
+          </div>
+          <div style="background:var(--verde-s);border-radius:var(--rs);padding:14px 16px;">
+            <div style="font-size:11px;font-weight:600;color:var(--gris-m);text-transform:uppercase;margin-bottom:4px;">Programas Posgrado</div>
+            <div id="cnt-pos" style="font-size:22px;font-weight:700;color:var(--verde);">—</div>
+          </div>
+        </div>
+        <div class="msg ok" id="msg-gen-ok" style="display:none;margin-top:12px;"></div>
+      </div>
+
+      <!-- ── Publicación directa en GitHub ── -->
+      <div style="background:var(--surface-2);border:1px solid var(--borde);border-radius:var(--rs);padding:18px;margin-bottom:16px;">
+        <div style="font-size:12px;font-weight:700;color:var(--azul);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">
+          🚀 Publicar directamente en GitHub
+        </div>
+        <p style="font-size:12px;color:var(--texto-m);margin-bottom:14px;line-height:1.6;">
+          Actualiza el simulador en línea sin descargar ni subir archivos.
+          <a href="#gh-ayuda" onclick="document.getElementById('gh-ayuda').open=true;return false;" style="color:var(--azul);">¿Cómo obtengo el token?</a>
+        </p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+          <div>
+            <label>Usuario u organización</label>
+            <div class="ipfx"><input type="text" id="gh-owner" placeholder="mi-usuario" oninput="ghGuardarConfig()"></div>
+          </div>
+          <div>
+            <label>Repositorio</label>
+            <div class="ipfx"><input type="text" id="gh-repo" placeholder="simulador-credito" oninput="ghGuardarConfig()"></div>
+          </div>
+          <div>
+            <label>Rama</label>
+            <div class="ipfx"><input type="text" id="gh-branch" placeholder="main" value="main" oninput="ghGuardarConfig()"></div>
+          </div>
+          <div>
+            <label>Ruta del archivo</label>
+            <div class="ipfx"><input type="text" id="gh-path" placeholder="index.html" value="index.html" oninput="ghGuardarConfig()"></div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:10px;">
+          <label>Token de acceso <span class="tip" data-tip="Se usa solo durante la publicación. No se guarda en el archivo ni en el navegador, y se borra del campo al terminar.">?</span></label>
+          <div class="ipfx" style="border-color:var(--dorado);">
+            <input type="password" id="gh-token" placeholder="github_pat_..." autocomplete="off">
+          </div>
+          <div class="sub-l" id="gh-token-hint">Solo permanece en memoria mientras publicas. No se guarda.</div>
+        </div>
+
+        <div style="margin-bottom:14px;">
+          <label>Mensaje del commit (opcional)</label>
+          <div class="ipfx"><input type="text" id="gh-commit-msg" placeholder="Actualizar programas semestre 2026-2"></div>
+        </div>
+
+        <button class="btn-gen" id="btn-publicar" onclick="publicarEnGitHub()" style="margin:0;" disabled>
+          🚀 Publicar en GitHub
+        </button>
+        <div class="msg" id="gh-status" style="display:none;margin-top:12px;"></div>
+
+        <details id="gh-ayuda" style="margin-top:14px;">
+          <summary style="cursor:pointer;font-size:12px;font-weight:600;color:var(--azul);">
+            📖 Cómo crear el token (una sola vez)
+          </summary>
+          <div style="font-size:12px;color:var(--texto);line-height:1.8;margin-top:10px;padding-left:4px;">
+            <ol style="padding-left:18px;">
+              <li>Entra a <strong>github.com</strong> → foto de perfil → <em>Settings</em></li>
+              <li>Abajo del menú izquierdo: <em>Developer settings</em></li>
+              <li><em>Personal access tokens</em> → <strong>Fine-grained tokens</strong> → <em>Generate new token</em></li>
+              <li>Ponle un nombre (ej. <code>simulador-credito</code>) y una expiración</li>
+              <li>En <em>Repository access</em> elige <strong>Only select repositories</strong> y marca únicamente el repositorio del simulador</li>
+              <li>En <em>Permissions → Repository permissions</em>, busca <strong>Contents</strong> y ponlo en <strong>Read and write</strong></li>
+              <li>Genera el token y cópialo — GitHub solo lo muestra una vez</li>
+              <li>Guárdalo en tu gestor de contraseñas y pégalo aquí cuando vayas a publicar</li>
+            </ol>
+            <div style="background:var(--dorado-s);border-left:4px solid var(--dorado);border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;">
+              <strong>Por qué un token restringido:</strong> al limitarlo a un solo repositorio y solo a
+              <em>Contents</em>, aunque se filtrara no daría acceso a tus demás repositorios ni a tu cuenta.
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <!-- ── Descarga manual (respaldo) ── -->
+      <div style="border-top:1px solid var(--borde);padding-top:16px;">
+        <p style="font-size:12px;color:var(--texto-m);margin-bottom:10px;">
+          ¿Prefieres subirlo tú a GitHub? Descarga el archivo y súbelo manualmente.
+        </p>
+        <button class="btn-gen" id="btn-gen" onclick="generarHTML()" disabled style="background:var(--gris-m);">
+          ⬇️ Solo descargar index.html
+        </button>
+      </div>
+      <div class="msg" id="msg-gen"></div>
+    </div>
+
+    <!-- STEP 4: Instructions for publishing -->
+    <div class="step">
+      <div class="step-header">
+        <div class="step-num">4</div>
+        <div>
+          <h2>Publicar en GitHub Pages</h2>
+          <p>Pasos para reemplazar el simulador en línea</p>
+        </div>
+      </div>
+      <div class="instr">
+        <h3>Método recomendado — Upload directo (más fácil)</h3>
+        <ol>
+          <li>Ve a tu repositorio en <strong>github.com</strong></li>
+          <li>Haz clic en <strong>Add file → Upload files</strong></li>
+          <li>Arrastra el nuevo <code>index.html</code> descargado — GitHub reemplaza automáticamente el existente</li>
+          <li>Escribe un mensaje como <code>Actualizar programas semestre 2025-2</code></li>
+          <li>Haz clic en <strong>Commit changes</strong></li>
+          <li>Espera 1–2 minutos y recarga tu sitio ✅</li>
+        </ol>
+      </div>
+      <div class="instr" style="margin-top:12px;background:var(--dorado-s);">
+        <h3 style="color:#7C5800;">⚠️ Notas importantes</h3>
+        <ol>
+          <li>El archivo generado es una <strong>copia completa de este simulador</strong> con los programas actualizados — conserva todas las pestañas, el actualizador y las funcionalidades.</li>
+          <li>La auto-lectura funciona cuando el simulador corre en GitHub Pages. Si lo abres localmente (file://), sube el <code>index.html</code> manualmente.</li>
+          <li>Los beneficios, descuentos y el pago de contado los configura el asesor en cada simulación — no van en el Excel de programas.</li>
+        </ol>
+        </div>      </div>
+    </div>
+
+
+</div>
 </main>
 
 <div class="historial-panel" id="historial-panel" style="display:none;"></div>
@@ -1276,7 +1626,18 @@ function updEq1() { /* tab1 is meses-only, no equiv label needed */ }
 function updEqCP() { /* CP is meses-only */ }
 function updEqLP() { /* LP is meses-only */ }
 
+// ══════════════════════════════════════════════════════════════════
+// CONTROL DE ACCESO — dos claves independientes
+//   Tab 5 (Refinanciación)  → 6 dígitos, SHA-256
+//   Tab 6 (Actualizador)    → 8 dígitos, PBKDF2 (210.000 iteraciones)
+// Para cambiar la clave del actualizador, usa cambiarClaveActualizador()
+// desde la consola del navegador (ver instrucciones al final del archivo).
+// ══════════════════════════════════════════════════════════════════
 let _refiUnlocked = false;
+let _admUnlocked  = false;
+let _pinTarget    = 5;
+
+// ── Refinanciación: SHA-256, 6 dígitos ──
 let _refiPinHash = null;
 async function _hashRefiPin(pin){
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pin));
@@ -1284,46 +1645,137 @@ async function _hashRefiPin(pin){
 }
 _hashRefiPin('241085').then(h => { _refiPinHash = h; });
 
-function switchTab(n) {
-  if(n === 5 && !_refiUnlocked) {
-    document.getElementById('refi-pin-modal').classList.add('show');
-    setTimeout(()=>document.getElementById('rp0').focus(), 100);
-    return;
+// ── Actualizador: PBKDF2, 8 dígitos ──
+const ADM_SALT  = 'sim-credito-educativo-uninorte-v4-actualizador';
+const ADM_ITER  = 210000;
+const ADM_LEN   = 8;
+const ADM_HASH  = 'f57f2e13a4c1101efb34f36aae9bdb554831dd8edcc198735eb4d249e5894ccf';
+
+async function _hashAdmPin(pin){
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey('raw', enc.encode(pin), 'PBKDF2', false, ['deriveBits']);
+  const bits = await crypto.subtle.deriveBits(
+    {name:'PBKDF2', salt: enc.encode(ADM_SALT), iterations: ADM_ITER, hash:'SHA-256'},
+    key, 256
+  );
+  return Array.from(new Uint8Array(bits)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+// Utilidad: genera el hash de una clave nueva (ejecutar en la consola)
+async function cambiarClaveActualizador(nuevaClave){
+  if(!/^\d+$/.test(nuevaClave)) { console.warn('La clave debe ser numérica.'); return; }
+  const h = await _hashAdmPin(nuevaClave);
+  console.log('%c Reemplaza estas dos líneas en el código:', 'font-weight:bold');
+  console.log(`const ADM_LEN   = ${nuevaClave.length};`);
+  console.log(`const ADM_HASH  = '${h}';`);
+  return h;
+}
+
+// ── Config por pestaña ──
+function _pinCfg(target){
+  return target === 6
+    ? {len: ADM_LEN, verify: async p => (await _hashAdmPin(p)) === ADM_HASH,
+       titulo:'Actualizador de Programas',
+       texto:'Esta sección modifica los programas del simulador. Ingresa la clave de administración.'}
+    : {len: 6, verify: async p => (await _hashRefiPin(p)) === _refiPinHash,
+       titulo:'Acceso Restringido',
+       texto:'El módulo de refinanciación es de uso exclusivo del equipo de crédito. Ingresa la clave de acceso.'};
+}
+
+// Dibuja las casillas según la longitud de la clave requerida
+function _renderPinInputs(len){
+  const cont = document.getElementById('refi-pin-inputs');
+  if(!cont) return;
+  cont.innerHTML = '';
+  for(let i=0;i<len;i++){
+    const inp = document.createElement('input');
+    inp.type='password'; inp.maxLength=1; inp.inputMode='numeric'; inp.id='rp'+i;
+    inp.addEventListener('input', ()=>refiPinInput(i));
+    inp.addEventListener('keydown', e=>{
+      if(e.key==='Backspace' && !inp.value && i>0) document.getElementById('rp'+(i-1)).focus();
+    });
+    cont.appendChild(inp);
   }
+  if(len > 6) cont.style.gap = '5px';
+  else cont.style.gap = '8px';
+}
+
+function _abrirPinModal(target){
+  _pinTarget = target;
+  const cfg = _pinCfg(target);
+  const box = document.querySelector('.refi-pin-box');
+  if(box){
+    const h2 = box.querySelector('h2'); if(h2) h2.textContent = cfg.titulo;
+    const p  = box.querySelector('p');  if(p)  p.textContent  = cfg.texto;
+    const ic = box.querySelector('.pin-icon'); if(ic) ic.textContent = target===6 ? '⚙️' : '🔐';
+  }
+  _renderPinInputs(cfg.len);
+  document.getElementById('refi-pin-modal').classList.add('show');
+  setTimeout(()=>document.getElementById('rp0')?.focus(), 100);
+}
+
+function switchTab(n) {
+  if(n === 6 && !_admUnlocked)  { _abrirPinModal(6); return; }
+  if(n === 5 && !_refiUnlocked) { _abrirPinModal(5); return; }
   document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===n-1));
   document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===n-1));
 }
 
 function refiPinInput(idx) {
-  const val = document.getElementById('rp'+idx).value;
-  if(val && idx < 5) document.getElementById('rp'+(idx+1)).focus();
-  if(idx === 5 && val) verificarRefiPin();
+  const len = _pinCfg(_pinTarget).len;
+  const val = document.getElementById('rp'+idx).value.replace(/\D/g,'');
+  document.getElementById('rp'+idx).value = val;
+  if(val && idx < len-1) document.getElementById('rp'+(idx+1)).focus();
+  if(idx === len-1 && val) verificarRefiPin();
 }
+
+let _pinBusy = false;
 async function verificarRefiPin() {
-  const pin = [0,1,2,3,4,5].map(i=>document.getElementById('rp'+i).value).join('');
-  if(pin.length < 6) return;
-  const h = await _hashRefiPin(pin);
-  if(h === _refiPinHash) {
-    _refiUnlocked = true;
+  if(_pinBusy) return;
+  const cfg = _pinCfg(_pinTarget);
+  const len = cfg.len;
+  const pin = Array.from({length:len}, (_,i)=>document.getElementById('rp'+i)?.value||'').join('');
+  if(pin.length < len) return;
+
+  _pinBusy = true;
+  const btn = document.querySelector('.btn-refi-pin');
+  const btnTxt = btn ? btn.textContent : '';
+  if(btn){ btn.textContent = 'Verificando…'; btn.disabled = true; }
+
+  const ok = await cfg.verify(pin);
+
+  if(btn){ btn.textContent = btnTxt; btn.disabled = false; }
+  _pinBusy = false;
+
+  if(ok) {
+    if(_pinTarget === 6) _admUnlocked = true; else _refiUnlocked = true;
     document.getElementById('refi-pin-modal').classList.remove('show');
-    [0,1,2,3,4,5].forEach(i=>document.getElementById('rp'+i).value='');
+    for(let i=0;i<len;i++){ const el=document.getElementById('rp'+i); if(el) el.value=''; }
     document.getElementById('refi-pin-error').style.display='none';
-    switchTab(5);
+    const _t = _pinTarget;
+    switchTab(_t);
+    if(_t === 6) setTimeout(()=>{ autoLeerSimulador(); ghCargarConfig(); }, 150);
   } else {
-    document.getElementById('refi-pin-error').style.display = 'block';
-    setTimeout(()=>document.getElementById('refi-pin-error').style.display='none', 3000);
-    [0,1,2,3,4,5].forEach(i=>{
+    const err = document.getElementById('refi-pin-error');
+    err.textContent = 'Clave incorrecta. Inténtalo de nuevo.';
+    err.style.display = 'block';
+    setTimeout(()=>err.style.display='none', 3000);
+    for(let i=0;i<len;i++){
       const el = document.getElementById('rp'+i);
+      if(!el) continue;
       el.value=''; el.classList.add('pin-error');
       setTimeout(()=>el.classList.remove('pin-error'), 400);
-    });
-    document.getElementById('rp0').focus();
+    }
+    document.getElementById('rp0')?.focus();
   }
 }
+
 function cancelarRefiPin() {
   document.getElementById('refi-pin-modal').classList.remove('show');
-  [0,1,2,3,4,5].forEach(i=>document.getElementById('rp'+i).value='');
+  const len = _pinCfg(_pinTarget).len;
+  for(let i=0;i<len;i++){ const el=document.getElementById('rp'+i); if(el) el.value=''; }
 }
+
 document.addEventListener('keydown', e => {
   const m = document.getElementById('refi-pin-modal');
   if(m && m.classList.contains('show')) {
@@ -4465,6 +4917,772 @@ renderHistorial();
 document.getElementById('plazo1').addEventListener('input',updEq1);
 document.getElementById('plazoCP').addEventListener('input',updEqCP);
 document.getElementById('plazoLP').addEventListener('input',updEqLP);
+
+
+// ══════════════════════════════════════════════════════════════════
+// ACTUALIZADOR DE PROGRAMAS — integrado en el simulador
+// ------------------------------------------------------------------
+// Los marcadores se construyen en tiempo de ejecución. Si estuvieran
+// escritos literalmente aquí, este mismo archivo los contendría dos
+// veces (en los datos y en el código) y el reemplazo sería ambiguo.
+// ══════════════════════════════════════════════════════════════════
+const _mk = n => '/*%' + '%' + n + '%' + '%*/';
+const MK_PRE_S = _mk('PROGRAMAS_START'), MK_PRE_E = _mk('PROGRAMAS_END');
+const MK_POS_S = _mk('POSGRADOS_START'), MK_POS_E = _mk('POSGRADOS_END');
+const _reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const RE_PRE = new RegExp(_reEsc(MK_PRE_S) + '[\\s\\S]*?' + _reEsc(MK_PRE_E));
+const RE_POS = new RegExp(_reEsc(MK_POS_S) + '[\\s\\S]*?' + _reEsc(MK_POS_E));
+
+
+
+
+
+
+// ══════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════
+let htmlContent = null;
+let workbook = null;
+let activeSheet = null;
+let sheetTipo = {}; // sheetName → 'pregrado' | 'posgrado'
+let parsedData = {}; // sheetName → {tipo, rows}
+
+function resetState() {
+  htmlContent = null; workbook = null; activeSheet = null;
+  sheetTipo = {}; parsedData = {};
+  document.getElementById('sheets-area').style.display = 'none';
+  document.getElementById('resumen-cambios').style.display = 'none';
+  document.getElementById('btn-gen').disabled = true;
+  showMsg('msg-html','','');
+  showMsg('msg-xls','','');
+  showMsg('msg-gen','','');
+}
+
+// ══════════════════════════════════════════════════
+// DRAG & DROP helpers
+// ══════════════════════════════════════════════════
+function dzOver(e, id) { e.preventDefault(); document.getElementById(id).classList.add('over'); }
+function dzLeave(id)   { document.getElementById(id).classList.remove('over'); }
+function dzDrop(e, type) {
+  e.preventDefault();
+  dzLeave(type === 'html' ? 'dz-html' : 'dz-xls');
+  const file = e.dataTransfer.files[0];
+  if(!file) return;
+  if(type === 'html') processHTML(file);
+  else processExcel(file);
+}
+
+// ══════════════════════════════════════════════════
+// STEP 1 — Load HTML
+// ══════════════════════════════════════════════════
+function cargarHTML(e) { processHTML(e.target.files[0]); }
+
+function processHTML(file) {
+  if(!file.name.endsWith('.html')) return showMsg('msg-html','El archivo debe ser un .html','err');
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const content = ev.target.result;
+    if(!content.includes(MK_PRE_S) || !content.includes(MK_POS_S)) {
+      showMsg('msg-html','⚠️ Este HTML no contiene los marcadores de actualización (bloques de datos de programas). Debe ser el index.html descargado directamente de tu repositorio GitHub, no una copia editada manualmente.','err');
+      return;
+    }
+    htmlContent = content;
+    const dz = document.getElementById('dz-html');
+    dz.innerHTML = `<div class="dropzone-icon">✅</div><p><strong>${file.name}</strong> cargado correctamente</p>`;
+    dz.style.background = '#E8F5E9'; dz.style.borderColor = '#2E7D32';
+    const sizeKB = Math.round(content.length / 1024);
+    const sizeNote = sizeKB < 80 ? ' ⚠️ El archivo parece pequeño ('+sizeKB+'KB). Verifica que sea la versión más reciente.' : ' ('+sizeKB+'KB)';
+    // Sincronización automática: leer los programas vigentes del propio HTML
+    const sync = extraerProgramasDelHTML(content);
+    let syncNote = '';
+    if(sync) {
+      _PRE_VIGENTE = sync.pregrado;
+      _POS_VIGENTE = sync.posgrado;
+      syncNote = ` · 🔄 Sincronizado: ${sync.pregrado.length} pregrado, ${sync.posgrado.length} posgrado`;
+      actualizarBadgeSync();
+    }
+    showMsg('msg-html','✅ Simulador cargado. Marcadores detectados correctamente.'+sizeNote+syncNote,'ok');
+    checkReady();
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+// ══════════════════════════════════════════════════
+// STEP 2 — Load Excel
+// ══════════════════════════════════════════════════
+function cargarExcel(e) { processExcel(e.target.files[0]); }
+
+function processExcel(file) {
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      workbook = XLSX.read(ev.target.result, {type:'array'});
+      const dz = document.getElementById('dz-xls');
+      dz.innerHTML = `<div class="dropzone-icon">✅</div><p><strong>${file.name}</strong> — ${workbook.SheetNames.length} hoja(s) encontrada(s)</p>`;
+      dz.style.background = '#E8F5E9'; dz.style.borderColor = '#2E7D32';
+      showMsg('msg-xls','Excel cargado. Configura cada hoja abajo.','ok');
+      renderSheetTabs();
+      document.getElementById('sheets-area').style.display = 'block';
+    } catch(e) {
+      showMsg('msg-xls','Error leyendo el Excel: ' + e.message,'err');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function renderSheetTabs() {
+  const container = document.getElementById('sheet-tabs');
+  container.innerHTML = '';
+  workbook.SheetNames.forEach((name, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'sheet-tab' + (i===0?' active':'');
+    btn.textContent = name;
+    btn.onclick = () => selectSheet(name);
+    container.appendChild(btn);
+    if(!sheetTipo[name]) sheetTipo[name] = 'pregrado';
+  });
+  selectSheet(workbook.SheetNames[0]);
+}
+
+function selectSheet(name) {
+  activeSheet = name;
+  document.querySelectorAll('.sheet-tab').forEach(b => b.classList.toggle('active', b.textContent === name));
+  const tipo = sheetTipo[name] || 'pregrado';
+  document.getElementById('tipo-pre').classList.toggle('active', tipo==='pregrado');
+  document.getElementById('tipo-pos').classList.toggle('active', tipo==='posgrado');
+  renderMapper(name);
+}
+
+function setTipo(tipo) {
+  sheetTipo[activeSheet] = tipo;
+  document.getElementById('tipo-pre').classList.toggle('active', tipo==='pregrado');
+  document.getElementById('tipo-pos').classList.toggle('active', tipo==='posgrado');
+  renderMapper(activeSheet);
+}
+
+function renderMapper(sheetName) {
+  const ws = workbook.Sheets[sheetName];
+  const rawData = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+  if(rawData.length < 2) { showMsg('parsed-status','La hoja está vacía','err'); return; }
+
+  const headers = rawData[0].map(String);
+  const tipo = sheetTipo[sheetName] || 'pregrado';
+
+  const fields = tipo === 'pregrado'
+    ? [{key:'nombre',label:'Programa'},{key:'valor',label:'Valor Matrícula'},{key:'idiomas',label:'Valor Idiomas'},{key:'semestres',label:'Semestres (duración del programa)'}]
+    : [{key:'nombre',label:'Programa'},{key:'subnivel',label:'Subnivel (Doctorado/Maestría/Especialización)'},{key:'valor',label:'Valor Matrícula'}];
+
+  const mapperArea = document.getElementById('mapper-cols');
+  mapperArea.innerHTML = '';
+
+  // Auto-detect columns
+  const autoMap = {};
+  headers.forEach((h,i) => {
+    const hl = h.toLowerCase();
+    if(hl.includes('programa') || hl.includes('nombre')) autoMap.nombre = i;
+    if(hl.includes('idioma')) autoMap.idiomas = i;
+    if(hl.includes('subnivel') || hl.includes('nivel')) autoMap.subnivel = i;
+    if((hl.includes('valor') || hl.includes('precio') || hl.includes('matricula')) && !hl.includes('idioma')) autoMap.valor = i;
+    if(hl.includes('semestre') || hl.includes('duracion') || hl.includes('duración')) autoMap.semestres = i;
+  });
+
+  fields.forEach(f => {
+    const div = document.createElement('div');
+    div.innerHTML = `
+      <div class="mapper-grid">
+        <div><label>${f.label}</label></div>
+        <div class="mapper-arrow">→</div>
+        <div>
+          <select id="map-${f.key}" onchange="previewSheet('${sheetName}')">
+            <option value="">— Seleccionar columna —</option>
+            ${headers.map((h,i)=>`<option value="${i}" ${autoMap[f.key]===i?'selected':''}>${h || '(Columna '+(i+1)+')'}</option>`).join('')}
+          </select>
+        </div>
+      </div>`;
+    mapperArea.appendChild(div);
+  });
+
+  previewSheet(sheetName);
+}
+
+function previewSheet(sheetName) {
+  const ws = workbook.Sheets[sheetName];
+  const rawData = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+  const tipo = sheetTipo[sheetName] || 'pregrado';
+  const fields = tipo === 'pregrado' ? ['nombre','valor','idiomas','semestres'] : ['nombre','subnivel','valor'];
+
+  const mapping = {};
+  let allMapped = true;
+  fields.forEach(f => {
+    const sel = document.getElementById('map-'+f);
+    if(sel && sel.value !== '') mapping[f] = parseInt(sel.value);
+    else { if(f !== 'idiomas' && f !== 'semestres') allMapped = false; }
+  });
+
+  if(!allMapped) { document.getElementById('preview-area').innerHTML = ''; return; }
+
+  // Parse rows (skip header)
+  const rows = [];
+  const errors = [];
+  rawData.slice(1).forEach((row, ri) => {
+    if(!row[mapping.nombre]) return;
+    const nombre = String(row[mapping.nombre]).trim();
+    const valorRaw = row[mapping.valor];
+    const valor = typeof valorRaw === 'number' ? valorRaw : parseFloat(String(valorRaw).replace(/[^0-9.]/g,''));
+
+    if(!nombre) return;
+    if(isNaN(valor) || valor <= 0) { errors.push(`Fila ${ri+2}: valor inválido "${valorRaw}"`); return; }
+
+    if(tipo === 'pregrado') {
+      const idiomasRaw = mapping.idiomas !== undefined ? row[mapping.idiomas] : 0;
+      const idiomas = typeof idiomasRaw === 'number' ? idiomasRaw : parseFloat(String(idiomasRaw||'0').replace(/[^0-9.]/g,'')) || 0;
+      const semestresRaw = mapping.semestres !== undefined ? row[mapping.semestres] : 8;
+      const semestres = typeof semestresRaw === 'number' ? Math.round(semestresRaw) : parseInt(String(semestresRaw||'8').replace(/[^0-9]/g,'')) || 8;
+      rows.push([nombre, valor, idiomas, semestres]);
+    } else {
+      const subnivel = String(row[mapping.subnivel]||'').trim();
+      const validos = ['Doctorado','Maestría','Especialización'];
+      if(!validos.includes(subnivel)) { errors.push(`Fila ${ri+2}: subnivel "${subnivel}" inválido`); return; }
+      rows.push([nombre, subnivel, valor]);
+    }
+  });
+
+  parsedData[sheetName] = {tipo, rows};
+
+  // Render preview
+  const cop = v => new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0}).format(v);
+  const headers_preview = tipo === 'pregrado'
+    ? ['Programa','Valor Matrícula','Valor Idiomas','Semestres']
+    : ['Programa','Subnivel','Valor Matrícula'];
+
+  let html = `<div class="preview-wrap"><table><thead><tr>${headers_preview.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>`;
+  rows.slice(0,10).forEach(r => {
+    if(tipo === 'pregrado') html += `<tr><td>${r[0]}</td><td>${cop(r[1])}</td><td>${r[2]>0?cop(r[2]):'No aplica'}</td><td>${r[3]||8} sem.</td></tr>`;
+    else html += `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${cop(r[2])}</td></tr>`;
+  });
+  if(rows.length > 10) html += `<tr><td colspan="3" style="text-align:center;color:var(--gris-m);font-style:italic;">... y ${rows.length-10} más</td></tr>`;
+  html += `</tbody></table></div>`;
+  html += `<p style="margin-top:8px;font-size:13px;color:var(--gris-m);">Vista previa de primeras 10 filas <span class="count-badge">${rows.length} programas</span></p>`;
+
+  document.getElementById('preview-area').innerHTML = html;
+
+  if(errors.length > 0) {
+    showMsg('parsed-status', '⚠️ ' + errors.slice(0,3).join(' | ') + (errors.length>3?` (+${errors.length-3} más)`:''), 'err');
+  } else {
+    showMsg('parsed-status', `✅ ${rows.length} programas listos para importar`, 'ok');
+  }
+
+  checkReady();
+}
+
+// ══════════════════════════════════════════════════
+// Check if ready to generate
+// ══════════════════════════════════════════════════
+function checkReady() {
+  const bp = document.getElementById('btn-publicar');
+  const hasPre = Object.values(parsedData).some(d=>d.tipo==='pregrado' && d.rows.length > 0);
+  const hasPos = Object.values(parsedData).some(d=>d.tipo==='posgrado' && d.rows.length > 0);
+  const ready = htmlContent && (hasPre || hasPos);
+  document.getElementById('btn-gen').disabled = !ready;
+  if(bp) bp.disabled = !ready;
+
+  if(hasPre || hasPos) {
+    const preRows = Object.values(parsedData).find(d=>d.tipo==='pregrado');
+    const posRows = Object.values(parsedData).find(d=>d.tipo==='posgrado');
+    document.getElementById('cnt-pre').textContent = preRows ? preRows.rows.length : '—';
+    document.getElementById('cnt-pos').textContent = posRows ? posRows.rows.length : '—';
+    document.getElementById('resumen-cambios').style.display = 'block';
+  }
+}
+
+// ══════════════════════════════════════════════════
+// STEP 3 — Generate new index.html
+// ══════════════════════════════════════════════════
+// ── Construye el HTML actualizado (sin descargar ni publicar) ───────────────
+function construirHTMLActualizado() {
+  if(!htmlContent) return {error:'Primero carga el index.html'};
+
+  let newHtml = htmlContent;
+  let cambios = [];
+
+  const preData = Object.values(parsedData).find(d=>d.tipo==='pregrado');
+  const posData = Object.values(parsedData).find(d=>d.tipo==='posgrado');
+
+  if(preData && preData.rows.length > 0) {
+    const jsArr = 'const PROGRAMAS = [\n  // [nombre, pregrado, idiomas, semestres]\n  ' +
+      preData.rows.map(([n,v,i,s]) => `["${n.replace(/"/g,'\\"')}",${v},${i},${s||8}]`).join(',\n  ') +
+      '\n];';
+    if(!RE_PRE.test(newHtml)) return {error:'No se encontró el marcador de PROGRAMAS en el HTML'};
+    newHtml = newHtml.replace(RE_PRE, MK_PRE_S + jsArr + MK_PRE_E);
+    cambios.push(`${preData.rows.length} programas de pregrado`);
+  }
+
+  if(posData && posData.rows.length > 0) {
+    const jsArr = 'const POSGRADOS = [\n  ' +
+      posData.rows.map(([n,s,v]) => `["${n.replace(/"/g,'\\"')}","${s}",${v}]`).join(',\n  ') +
+      '\n];';
+    if(!RE_POS.test(newHtml)) return {error:'No se encontró el marcador de POSGRADOS en el HTML'};
+    newHtml = newHtml.replace(RE_POS, MK_POS_S + jsArr + MK_POS_E);
+    cambios.push(`${posData.rows.length} programas de posgrado`);
+  }
+
+  if(cambios.length === 0) return {error:'No hay datos para actualizar'};
+  return {html:newHtml, cambios};
+}
+
+// ── Descarga manual (respaldo) ──────────────────────────────────────────────
+function generarHTML() {
+  const r = construirHTMLActualizado();
+  if(r.error) return showMsg('msg-gen', r.error, 'err');
+
+  const blob = new Blob([r.html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'index.html'; a.click();
+  URL.revokeObjectURL(url);
+
+  const okMsg = document.getElementById('msg-gen-ok');
+  okMsg.textContent = '✅ Descargado con ' + r.cambios.join(' y ') + '. Súbelo a GitHub para actualizar el simulador.';
+  okMsg.style.display = 'block';
+  showMsg('msg-gen','','');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// PUBLICACIÓN DIRECTA EN GITHUB
+// El token se usa solo en memoria durante la publicación: no se
+// guarda en el archivo, ni en localStorage, ni se envía a otro lado.
+// Únicos destinos de red: api.github.com
+// ══════════════════════════════════════════════════════════════════
+const GH_CFG_KEY = 'simulador_gh_config_v1';   // guarda owner/repo/rama/ruta — NUNCA el token
+
+function ghCargarConfig() {
+  try {
+    const cfg = JSON.parse(localStorage.getItem(GH_CFG_KEY)) || {};
+    if(cfg.owner)  document.getElementById('gh-owner').value  = cfg.owner;
+    if(cfg.repo)   document.getElementById('gh-repo').value   = cfg.repo;
+    if(cfg.branch) document.getElementById('gh-branch').value = cfg.branch;
+    if(cfg.path)   document.getElementById('gh-path').value   = cfg.path;
+  } catch(e){}
+}
+function ghGuardarConfig() {
+  try {
+    localStorage.setItem(GH_CFG_KEY, JSON.stringify({
+      owner:  document.getElementById('gh-owner').value.trim(),
+      repo:   document.getElementById('gh-repo').value.trim(),
+      branch: document.getElementById('gh-branch').value.trim() || 'main',
+      path:   document.getElementById('gh-path').value.trim()   || 'index.html'
+    }));
+  } catch(e){}
+}
+
+// Base64 seguro para UTF-8 y archivos grandes
+function _b64utf8(str) {
+  const bytes = new TextEncoder().encode(str);
+  let bin = '';
+  const CH = 0x8000;
+  for(let i=0;i<bytes.length;i+=CH) bin += String.fromCharCode.apply(null, bytes.subarray(i,i+CH));
+  return btoa(bin);
+}
+
+function ghMsg(texto, tipo) {
+  const el = document.getElementById('gh-status');
+  if(!el) return;
+  el.style.display = texto ? 'block' : 'none';
+  el.className = 'msg' + (tipo ? ' '+tipo : '');
+  el.innerHTML = texto;
+}
+
+async function publicarEnGitHub() {
+  const owner  = document.getElementById('gh-owner').value.trim();
+  const repo   = document.getElementById('gh-repo').value.trim();
+  const branch = document.getElementById('gh-branch').value.trim() || 'main';
+  const path   = document.getElementById('gh-path').value.trim()   || 'index.html';
+  const tokenEl= document.getElementById('gh-token');
+  const token  = tokenEl.value.trim();
+  const msgIn  = document.getElementById('gh-commit-msg').value.trim();
+
+  if(!owner || !repo) return ghMsg('⚠️ Indica el usuario/organización y el repositorio.','err');
+  if(!token)          return ghMsg('⚠️ Pega tu token de acceso de GitHub.','err');
+
+  const r = construirHTMLActualizado();
+  if(r.error) return ghMsg('⚠️ ' + r.error, 'err');
+
+  const btn = document.getElementById('btn-publicar');
+  btn.disabled = true;
+  const btnTxt = btn.textContent;
+
+  const api = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path).replace(/%2F/g,'/')}`;
+  const headers = {
+    'Authorization': 'Bearer ' + token,
+    'Accept': 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28'
+  };
+
+  try {
+    // 1) SHA del archivo actual (necesario para reemplazarlo)
+    btn.textContent = 'Consultando repositorio…';
+    ghMsg('🔍 Consultando el archivo actual en el repositorio…','');
+    let sha = null;
+    const getResp = await fetch(`${api}?ref=${encodeURIComponent(branch)}`, {headers});
+    if(getResp.status === 200) {
+      sha = (await getResp.json()).sha;
+    } else if(getResp.status === 404) {
+      sha = null;   // el archivo no existe: se creará
+    } else if(getResp.status === 401) {
+      throw new Error('Token inválido o expirado (401).');
+    } else if(getResp.status === 403) {
+      throw new Error('El token no tiene permiso sobre este repositorio. Verifica que lo incluyas en "Only select repositories".');
+    } else {
+      const t = await getResp.text();
+      throw new Error(`No se pudo leer el repositorio (${getResp.status}). ${t.slice(0,120)}`);
+    }
+
+    // 2) Publicar
+    btn.textContent = 'Publicando…';
+    ghMsg('📤 Subiendo el simulador actualizado…','');
+    const body = {
+      message: msgIn || ('Actualizar programas — ' + r.cambios.join(' y ')),
+      content: _b64utf8(r.html),
+      branch
+    };
+    if(sha) body.sha = sha;
+
+    const putResp = await fetch(api, {method:'PUT', headers, body: JSON.stringify(body)});
+    if(!putResp.ok) {
+      const t = await putResp.text();
+      if(putResp.status === 409) throw new Error('Conflicto: el archivo cambió en GitHub desde que lo leíste. Presiona "Releer simulador" y reintenta.');
+      if(putResp.status === 403) throw new Error('El token no tiene permiso de escritura. Verifica que Contents esté en "Read and write".');
+      if(putResp.status === 404) throw new Error('No se encontró el repositorio o la rama. Revisa usuario, repositorio y rama — y que el token incluya este repositorio.');
+      if(putResp.status === 422) throw new Error('GitHub rechazó la solicitud. Verifica que la rama exista y la ruta sea correcta.');
+      throw new Error(`Error al publicar (${putResp.status}). ${t.slice(0,160)}`);
+    }
+
+    const data = await putResp.json();
+    const commitUrl = data.commit && data.commit.html_url;
+    const sitio = `https://${owner}.github.io/${repo}/`;
+
+    ghMsg(`✅ <strong>Publicado correctamente</strong> con ${r.cambios.join(' y ')}.<br>
+      ${commitUrl ? `<a href="${commitUrl}" target="_blank" rel="noopener">Ver el commit en GitHub ↗</a> · ` : ''}
+      <a href="${sitio}" target="_blank" rel="noopener">Abrir el sitio ↗</a><br>
+      <span style="font-size:11px;">GitHub Pages tarda 1–2 minutos en reflejar el cambio.</span>`, 'ok');
+
+    ghGuardarConfig();
+    tokenEl.value = '';        // el token no permanece en pantalla
+    document.getElementById('gh-token-hint').textContent = 'Token borrado por seguridad.';
+
+  } catch(err) {
+    ghMsg('❌ ' + err.message, 'err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = btnTxt;
+  }
+}
+
+// ══════════════════════════════════════════════════
+// Download templates
+// ══════════════════════════════════════════════════
+
+// ══════════════════════════════════════════════════
+// SINCRONIZACIÓN AUTOMÁTICA DE PROGRAMAS
+// Lee los programas vigentes directamente del index.html cargado,
+// para que la plantilla descargable siempre refleje lo publicado.
+// ══════════════════════════════════════════════════
+let _PRE_VIGENTE = null;   // se llena al cargar el HTML
+let _POS_VIGENTE = null;
+
+function extraerProgramasDelHTML(html) {
+  try {
+    // Pregrado: ["Nombre", valor, idiomas, semestres]
+    const iP1 = html.indexOf(MK_PRE_S);
+    const iP2 = html.indexOf(MK_PRE_E);
+    if(iP1 < 0 || iP2 < 0) return null;
+    const blkPre = html.slice(iP1, iP2);
+    const pregrado = [];
+    const rePre = /\["((?:[^"\\]|\\.)*)"\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*(\d+)\s*)?\]/g;
+    let m;
+    while((m = rePre.exec(blkPre)) !== null) {
+      pregrado.push([m[1].replace(/\\"/g,'"'), +m[2], +m[3], m[4] ? +m[4] : 8]);
+    }
+
+    // Posgrado: ["Nombre", "Subnivel", valor]
+    const iG1 = html.indexOf(MK_POS_S);
+    const iG2 = html.indexOf(MK_POS_E);
+    const posgrado = [];
+    if(iG1 >= 0 && iG2 >= 0) {
+      const blkPos = html.slice(iG1, iG2);
+      const rePos = /\["((?:[^"\\]|\\.)*)"\s*,\s*"((?:[^"\\]|\\.)*)"\s*,\s*(\d+)\s*\]/g;
+      let n;
+      while((n = rePos.exec(blkPos)) !== null) {
+        posgrado.push([n[1].replace(/\\"/g,'"'), n[2].replace(/\\"/g,'"'), +n[3]]);
+      }
+    }
+    if(pregrado.length === 0 && posgrado.length === 0) return null;
+    return {pregrado, posgrado};
+  } catch(e) { return null; }
+}
+
+function actualizarBadgeSync() {
+  const el = document.getElementById('sync-badge');
+  if(!el) return;
+  if(_PRE_VIGENTE || _POS_VIGENTE) {
+    el.style.display = 'block';
+    el.innerHTML = `🔄 <strong>Plantilla sincronizada</strong> con el simulador cargado —
+      ${(_PRE_VIGENTE||[]).length} programas de pregrado y ${(_POS_VIGENTE||[]).length} de posgrado.`;
+  } else {
+    el.style.display = 'none';
+  }
+}
+
+// Programas actuales pre-cargados (extraidos del simulador vigente)
+const _PRE_ACTUAL = [
+    ["Administración de Empresas",16105200,0,10],
+    ["Arquitectura",16618800,1635500,9],
+    ["Ciencia de Datos",13574400,1635500,8],
+    ["Ciencia Política y Gobierno",13170800,1635500,8],
+    ["Comunicación Social y Period.",11976300,1635500,9],
+    ["Contaduría Pública",7945700,0,8],
+    ["Derecho",13422900,1635500,10],
+    ["Diseño Gráfico",13342300,1635500,8],
+    ["Diseño Industrial",16461100,1635500,8],
+    ["Economía",12553400,1635500,8],
+    ["Enfermería",7601500,0,8],
+    ["Filosofía y Humanidades",6917800,0,8],
+    ["Geología",13331000,1635500,9],
+    ["Ingeniería Biomédica",15471900,1635500,8],
+    ["Ingeniería Civil",13574400,1635500,10],
+    ["Ingeniería Eléctrica",13574400,1635500,10],
+    ["Ingeniería Electrónica",15471900,1635500,10],
+    ["Ingeniería Industrial",16641300,1635500,10],
+    ["Ingeniería Mecánica",13574400,1635500,10],
+    ["Ingeniería Sistemas Y Computación",13574400,1635500,10],
+    ["Lenguas Modernas y Cultura",12673500,1635500,8],
+    ["Licenciatura en Pedagogía Infantil",8703000,1635500,8],
+    ["Matemáticas",8153900,1635500,8],
+    ["Medicina",28431000,1995700,12],
+    ["Música",13466700,1635500,8],
+    ["Negocios Internacionales",17922800,1635500,10],
+    ["Odontología",17877500,1995700,10],
+    ["Psicología",11976300,1635500,10],
+    ["Relaciones Internacionales",12673500,1635500,10]
+];
+const _POS_ACTUAL = [
+    ["Doctorado En Administración","Doctorado",30388900],
+    ["Doctorado En Ciencias Biomédicas","Doctorado",20841700],
+    ["Doctorado En Ciencias Del Mar","Doctorado",17509050],
+    ["Doctorado En Ciencias Naturales","Doctorado",18483900],
+    ["Doctorado En Ciencias Sociales","Doctorado",22390300],
+    ["Doctorado En Comunicación","Doctorado",21319300],
+    ["Doctorado En Derecho","Doctorado",22347800],
+    ["Doctorado En Economía","Doctorado",22390300],
+    ["Doctorado En Educación","Doctorado",18623500],
+    ["Doctorado En Ingeniería Civil","Doctorado",21914400],
+    ["Doctorado En Ingeniería De Sistemas Y Computación","Doctorado",21914400],
+    ["Doctorado En Ingeniería Eléctrica Y Electrónica","Doctorado",21914400],
+    ["Doctorado En Ingeniería Industrial","Doctorado",21914400],
+    ["Doctorado En Ingeniería Mecánica","Doctorado",21914400],
+    ["Doctorado En Psicología","Doctorado",21319300],
+    ["CAR - Especialización En Gerencia De La Calidad Y Auditoría En Salud","Especialización",16543700],
+    ["CAR - Especialización En Seguridad Y Salud En El Trabajo","Especialización",16543700],
+    ["Especialización En Análisis Y Diseño De Estructuras","Especialización",20495600],
+    ["Especialización En Arqueología","Especialización",15032100],
+    ["Especialización En Comunicación Digital","Especialización",15032100],
+    ["Especialización En Derecho Administrativo","Especialización",14739100],
+    ["Especialización En Derecho Ambiental, Territorial Y Urbanístico","Especialización",14739100],
+    ["Especialización En Derecho Civil Y De Familia","Especialización",14739100],
+    ["Especialización En Derecho Comercial","Especialización",16440000],
+    ["Especialización En Derecho Constitucional","Especialización",14739100],
+    ["Especialización En Derecho Contractual","Especialización",14739100],
+    ["Especialización En Derecho De Sociedades","Especialización",14739100],
+    ["Especialización En Derecho Laboral","Especialización",14739100],
+    ["Especialización En Derecho Penal","Especialización",16567700],
+    ["Especialización En Derecho Público","Especialización",14739100],
+    ["Especialización En Derechos Humanos","Especialización",14739100],
+    ["Especialización En Dermatología","Especialización",52550300],
+    ["Especialización En Desarrollo Familiar","Especialización",13454400],
+    ["Especialización En Desarrollo Organizacional Y Procesos Humanos","Especialización",15971200],
+    ["Especialización En Desarrollo Social","Especialización",16902400],
+    ["Especialización En Dirección De Operaciones","Especialización",17421300],
+    ["Especialización En Diseño Y Evaluación De Proyectos","Especialización",20495600],
+    ["Especialización En Enfermería Del Cuidado Crítico Adulto","Especialización",9640900],
+    ["Especialización En Enfermería Del Cuidado Neonatal","Especialización",9640900],
+    ["Especialización En Finanzas","Especialización",25324000],
+    ["Especialización En Gerencia De Empresas Comerciales","Especialización",25324000],
+    ["Especialización En Gerencia De La Calidad Y Auditoría En Salud","Especialización",18227700],
+    ["Especialización En Gerencia De La Calidad Y Auditoría En Salud Virtual","Especialización",14582100],
+    ["Especialización En Gerencia De La Comunicación Organizacional","Especialización",13800400],
+    ["Especialización En Gerencia De Proyectos","Especialización",20495600],
+    ["Especialización En Gerencia De Proyectos De Construcción","Especialización",20495600],
+    ["Especialización En Gerencia De Servicios De Salud","Especialización",18944500],
+    ["Especialización En Gerencia De Tecnologías De La Información","Especialización",20495600],
+    ["Especialización En Gerencia Del Talento Humano","Especialización",21915000],
+    ["Especialización En Gerencia Financiera De Servicios De Salud","Especialización",18909700],
+    ["Especialización En Gerencia Pública","Especialización",21915000],
+    ["Especialización En Gestión De Sistemas Eléctricos De Potencia","Especialización",20495600],
+    ["Especialización En Gobierno Y Políticas Públicas","Especialización",14739100],
+    ["Especialización En Ingeniería De Procesos Industriales","Especialización",20495600],
+    ["Especialización En Ingeniería De Sistemas Hídricos Urbanos","Especialización",18638700],
+    ["Especialización En Ingeniería Del Software","Especialización",20495600],
+    ["Especialización En La Enseñanza Del Inglés","Especialización",12854100],
+    ["Especialización En Logística De Transporte Internacional De Mercancia","Especialización",23557300],
+    ["Especialización En Logística Empresarial","Especialización",18638700],
+    ["Especialización En Medicina Familiar","Especialización",39362300],
+    ["Especialización En Medicina Interna","Especialización",52550300],
+    ["Especialización En Mercadeo","Especialización",25324000],
+    ["Especialización En Negociación Y Manejo De Conflictos","Especialización",14945800],
+    ["Especialización En Neonatología","Especialización",60377100],
+    ["Especialización En Oftalmología","Especialización",54503900],
+    ["Especialización En Pavimentos Y Geotecnia Vial","Especialización",20495600],
+    ["Especialización En Pediatría","Especialización",52550300],
+    ["Especialización En Psicología Forense","Especialización",14906800],
+    ["Especialización En Psiquiatría","Especialización",52550300],
+    ["Especialización En Radiología E Imágenes Diagnósticas","Especialización",54503900],
+    ["Especialización En Responsabilidad Civil Y Seguros","Especialización",14739100],
+    ["Especialización En Seguridad De La Información","Especialización",20495600],
+    ["Especialización En Seguridad De La Información","Especialización",14346600],
+    ["Especialización En Seguridad Y Salud En El Trabajo","Especialización",16543700],
+    ["Especialización En Seguridad Y Salud En El Trabajo Virtual","Especialización",14582100],
+    ["Especialización En Transformación Digital","Especialización",20495600],
+    ["Especialización En Tributación","Especialización",14739100],
+    ["Especialización En Valoración De Bienes","Especialización",14070600],
+    ["RIO - Especialización En Gerencia De La Calidad Y Auditoría En Salud","Especialización",16543700],
+    ["RIO - Especialización En Seguridad Y Salud En El Trabajo","Especialización",16543700],
+    ["SM - Especialización En Derecho Público","Especialización",12528100],
+    ["SM - Especialización En Dirección Estratégica Empresarial","Especialización",13191200],
+    ["SM - Especialización En Finanzas","Especialización",18993000],
+    ["SM - Especialización En Gerencia De La Calidad Y Auditoría En Salud","Especialización",13539100],
+    ["SM - Especialización En Gerencia De Proyectos","Especialización",15371800],
+    ["SM - Especialización En Seguridad Y Salud En El Trabajo","Especialización",12407700],
+    ["SM - Especialización En Tributación","Especialización",12528100],
+    ["Maestría En Administración De Empresas","Maestría",25324000],
+    ["Maestría En Análisis Y Gestión De Sistemas Eléctricos","Maestría",21034700],
+    ["Maestría En Analítica De Datos","Maestría",21034700],
+    ["Maestría En Ciencia Política Y Gobierno","Maestría",17770000],
+    ["Maestría En Ciencias Básicas Biomédicas","Maestría",19241600],
+    ["Maestría En Ciencias De La Tierra","Maestría",14068300],
+    ["Maestría En Ciencias Naturales","Maestría",12658900],
+    ["Maestría En Comunicación","Maestría",16307400],
+    ["Maestría En Cooperación Internacional Y Gestión De Proyectos","Maestría",15694100],
+    ["Maestría En Derecho","Maestría",17770000],
+    ["Maestría En Derecho Ambiental Y Urbano-Territorial","Maestría",17770000],
+    ["Maestría En Derecho Civil Y De Familia","Maestría",14739100],
+    ["Maestría En Derecho Del Comercio","Maestría",17770000],
+    ["Maestría En Derecho Del Trabajo Y De La Seguridad Social","Maestría",17770000],
+    ["Maestría En Derecho Público","Maestría",17770000],
+    ["Maestría En Desarrollo Organizacional Y Procesos Humanos","Maestría",15694100],
+    ["Maestría En Desarrollo Social","Maestría",16902400],
+    ["Maestría En Diseño E Innovación Md+I","Maestría",16089700],
+    ["Maestría En Economia","Maestría",15743100],
+    ["Maestría En Educación","Maestría",12658900],
+    ["Maestría En Educación Mediada Por Tic","Maestría",11393000],
+    ["Maestría En Enfermería","Maestría",11490200],
+    ["Maestría En Epidemiología","Maestría",19241600],
+    ["Maestría En Epidemiología Clínica","Maestría",20131400],
+    ["Maestría En Estadística Aplicada","Maestría",12658900],
+    ["Maestría En Filosofía","Maestría",11173700],
+    ["Maestría En Finanzas","Maestría",25324000],
+    ["Maestría En Fisica Aplicada","Maestría",12658900],
+    ["Maestría En Gestión De Riesgos Naturales, Prevención Y Atención De Desastres","Maestría",21034700],
+    ["Maestría En Gobierno De Tecnología Informática","Maestría",21034700],
+    ["Maestría En Historia","Maestría",12883800],
+    ["Maestría En Ingeniería Administrativa","Maestría",21034700],
+    ["Maestría En Ingeniería Ambiental","Maestría",21034700],
+    ["Maestría En Ingeniería Biomédica","Maestría",21034700],
+    ["Maestría En Ingeniería Civil","Maestría",21034700],
+    ["Maestría En Ingeniería De Sistemas Y Computación","Maestría",21034700],
+    ["Maestría En Ingeniería Eléctrica","Maestría",21034700],
+    ["Maestría En Ingeniería Electrónica","Maestría",21034700],
+    ["Maestría En Ingeniería Industrial","Maestría",21034700],
+    ["Maestría En Ingeniería Mecánica","Maestría",21034700],
+    ["Maestría En La Enseñanza Del Inglés","Maestría",12854100],
+    ["Maestría En Lenguaje Y Sociedad","Maestría",12854100],
+    ["Maestría En Literatura Y Escrituras Creativas","Maestría",12044800],
+    ["Maestría En Matemáticas","Maestría",12658900],
+    ["Maestría En Mercadeo","Maestría",25324000],
+    ["Maestría En Negociación Y Manejo De Conflictos","Maestría",17770000],
+    ["Maestría En Negocios Internacionales","Maestría",25324000],
+    ["Maestría En Pedagogía Social E Intervención Educativa En Contextos Sociales","Maestría",11393000],
+    ["Maestría En Periodismo","Maestría",15694100],
+    ["Maestría En Psicología Énfasis Investigativo","Maestría",16640700],
+    ["Maestría En Relaciones Internacionales","Maestría",15694100],
+    ["Maestría En Relaciones Públicas","Maestría",15694100],
+    ["Maestría En Salud Pública","Maestría",19241600],
+    ["Maestría En Sistemas Integrados De Gestión","Maestría",21034700],
+    ["Maestría En Trastornos Cognoscitivos Y Del Aprendizaje","Maestría",15694100],
+    ["Maestría En Tributación Y Aduanas","Maestría",17770000],
+    ["Maestría En Urbanismo Y Desarrollo Territorial","Maestría",16089700]
+];
+
+function descargarPlantilla() {
+  const wb = XLSX.utils.book_new();
+
+  // Usa los programas del simulador cargado si están disponibles (auto-sync),
+  // de lo contrario cae al respaldo interno.
+  const fuentePre = (_PRE_VIGENTE && _PRE_VIGENTE.length) ? _PRE_VIGENTE : _PRE_ACTUAL;
+  const fuentePos = (_POS_VIGENTE && _POS_VIGENTE.length) ? _POS_VIGENTE : _POS_ACTUAL;
+
+  // Hoja 1 — Pregrado (4 columnas)
+  const wsPre = XLSX.utils.aoa_to_sheet([
+    ['Programa','Valor Pregrado','Valor Idiomas','Semestres'],
+    ...fuentePre
+  ]);
+  wsPre['!cols'] = [{wch:42},{wch:16},{wch:16},{wch:12}];
+  XLSX.utils.book_append_sheet(wb, wsPre, 'Pregrado');
+
+  // Hoja 2 — Posgrado (3 columnas) con todos los programas actuales
+  const wsPos = XLSX.utils.aoa_to_sheet([
+    ['Programa','Subnivel','Valor'],
+    ...fuentePos
+  ]);
+  wsPos['!cols'] = [{wch:60},{wch:18},{wch:16}];
+  XLSX.utils.book_append_sheet(wb, wsPos, 'Posgrado');
+
+  XLSX.writeFile(wb, 'plantilla-programas.xlsx');
+}
+
+// ══════════════════════════════════════════════════
+// Helpers
+// ══════════════════════════════════════════════════
+function showMsg(id, msg, tipo) {
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.textContent = msg;
+  el.className = 'msg' + (tipo ? ' '+tipo : '');
+  el.style.display = msg ? 'block' : 'none';
+}
+
+// ── Auto-lectura: el simulador lee su propio código fuente ──────────────────
+// En GitHub Pages (https) funciona y evita tener que subir el index.html.
+// Con file:// el navegador lo bloquea por CORS y se usa la carga manual.
+async function autoLeerSimulador() {
+  const dz    = document.getElementById('dz-html');
+  const stat  = document.getElementById('self-read-status');
+  try {
+    const resp = await fetch(window.location.href, {cache:'no-store'});
+    if(!resp.ok) throw new Error('HTTP ' + resp.status);
+    const txt = await resp.text();
+    if(!txt.includes(MK_PRE_S) || !txt.includes(MK_POS_S)) throw new Error('sin marcadores');
+    htmlContent = txt;
+    const sync = extraerProgramasDelHTML(txt);
+    if(sync) { _PRE_VIGENTE = sync.pregrado; _POS_VIGENTE = sync.posgrado; actualizarBadgeSync(); }
+    if(dz) dz.style.display = 'none';
+    if(stat) {
+      stat.style.display = 'block';
+      stat.className = 'msg ok';
+      stat.innerHTML = `✅ <strong>Simulador leído automáticamente</strong> — ${(sync?sync.pregrado.length:0)} programas de pregrado y ${(sync?sync.posgrado.length:0)} de posgrado detectados. No necesitas subir el index.html.`;
+    }
+    checkReady();
+    return true;
+  } catch(e) {
+    if(dz) dz.style.display = '';
+    if(stat) {
+      stat.style.display = 'block';
+      stat.className = 'msg';
+      stat.innerHTML = `ℹ️ Auto-lectura no disponible (abriste el archivo localmente). Sube el <strong>index.html</strong> manualmente abajo.`;
+    }
+    return false;
+  }
+}
+
 </script>
 
 <!-- MODAL IDIOMAS -->
@@ -4617,14 +5835,7 @@ document.getElementById('plazoLP').addEventListener('input',updEqLP);
     <div class="pin-icon">🔐</div>
     <h2>Acceso Restringido</h2>
     <p>El módulo de refinanciación es de uso exclusivo del equipo de crédito. Ingresa la clave de acceso.</p>
-    <div class="refi-pin-inputs" id="refi-pin-inputs">
-      <input type="password" maxlength="1" inputmode="numeric" id="rp0" oninput="refiPinInput(0)">
-      <input type="password" maxlength="1" inputmode="numeric" id="rp1" oninput="refiPinInput(1)">
-      <input type="password" maxlength="1" inputmode="numeric" id="rp2" oninput="refiPinInput(2)">
-      <input type="password" maxlength="1" inputmode="numeric" id="rp3" oninput="refiPinInput(3)">
-      <input type="password" maxlength="1" inputmode="numeric" id="rp4" oninput="refiPinInput(4)">
-      <input type="password" maxlength="1" inputmode="numeric" id="rp5" oninput="refiPinInput(5)">
-    </div>
+    <div class="refi-pin-inputs" id="refi-pin-inputs"><!-- casillas generadas según la clave requerida --></div>
     <button class="btn-refi-pin" onclick="verificarRefiPin()">Ingresar →</button>
     <div class="refi-pin-error" id="refi-pin-error">Clave incorrecta. Inténtalo de nuevo.</div>
     <button class="btn-refi-cancel" onclick="cancelarRefiPin()">Cancelar</button>
