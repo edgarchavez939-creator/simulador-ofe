@@ -406,7 +406,7 @@ table.tbl tfoot td {
   border-top: 1px solid var(--border-strong); font-variant-numeric: tabular-nums;
 }
 table.tbl tfoot td:first-child { text-align: left; }
-.tbl__money { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.tbl__money { font-variant-numeric: tabular-nums; }
 .tbl--compact tbody td { height: 32px; font-size: var(--fs-sm); }
 
 /* ── Superposiciones ── */
@@ -751,18 +751,33 @@ table.tbl tfoot td:first-child { text-align: left; }
 .breakdown-row.total { font-weight: 620; color: var(--text); }
 .breakdown-lbl { display: flex; align-items: center; gap: var(--sp-1); }
 .breakdown-lbl.indent { padding-left: var(--sp-3); color: var(--text-3); font-size: var(--fs-sm); }
-.bd-val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 550; }
+.bd-val { font-variant-numeric: tabular-nums; font-weight: 620; }
 .bd-val.neg { color: var(--success); }
 .bd-val.blue { color: var(--accent); }
 
+/* Bloque de composición de la matrícula */
+.dist { margin-top: var(--sp-3); }
+.dist__head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2); margin-bottom: var(--sp-2); flex-wrap: wrap; }
+.dist__title { font-size: var(--fs-xs); font-weight: 570; text-transform: uppercase; letter-spacing: .04em; color: var(--text-3); }
+.dist .stack-bar { margin-top: 0; }
+.dist .stack-legend { margin-top: var(--sp-2); }
+.dist[hidden] { display: none; }
+
+/* División CP/LP */
+.split-box { padding: var(--sp-4); background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md); margin-bottom: var(--sp-4); }
+.split-title { display: flex; align-items: center; gap: var(--sp-2); font-size: var(--fs-xs); font-weight: 570; text-transform: uppercase; letter-spacing: .04em; color: var(--text-3); margin-bottom: var(--sp-3); }
+.split-title .icon { color: var(--text-3); }
+.split-box > .field:last-of-type { margin-bottom: 0; }
+
 /* Barra apilada de composición */
-.stack-bar { display: flex; height: 6px; border-radius: var(--r-pill); overflow: hidden; background: var(--surface-3); margin-top: var(--sp-3); }
-.stack-seg { height: 100%; transition: width var(--t-slow) var(--ease); }
+.stack-bar { display: flex; height: 8px; gap: 2px; border-radius: var(--r-pill); overflow: hidden; background: var(--surface-3); margin-top: var(--sp-3); }
+.stack-seg { height: 100%; border-radius: var(--r-pill); transition: width var(--t-slow) var(--ease); min-width: 2px; }
 .stack-seg--benef { background: var(--success); }
 .stack-seg--cont  { background: var(--warning); }
 .stack-seg--fin   { background: var(--accent);  }
 .stack-seg--lp    { background: var(--info);    }
-.stack-legend { display: flex; flex-wrap: wrap; gap: var(--sp-3); margin-top: var(--sp-2); font-size: var(--fs-xs); color: var(--text-3); }
+.stack-legend { display: flex; flex-wrap: wrap; gap: var(--sp-3); margin-top: var(--sp-2); font-size: var(--fs-xs); color: var(--text-2); }
+.stack-legend strong { color: var(--text); font-variant-numeric: tabular-nums; }
 .stack-legend span { display: inline-flex; align-items: center; gap: var(--sp-1); }
 .stack-dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
 .stack-dot--benef { background: var(--success); }
@@ -1032,26 +1047,17 @@ table.tbl tfoot td:first-child { text-align: left; }
               <div class="dual" style="margin-bottom:4px;">
                 <div class="input-affix" style="border-color:var(--accent);">
                   <input class="input" type="number" id="finpct1" placeholder="0" min="0" max="100" step="0.1"
-                    oninput="syncFinPctToVal(1)" style="font-family:'DM Mono',monospace;"><span class="input-affix__tag input-affix__tag--end">%</span>
+                    oninput="syncFinPctToVal(1)" style=""><span class="input-affix__tag input-affix__tag--end">%</span>
                 </div>
                 <div class="dual__sep" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m18 8 4 4-4 4M2 12h20M6 8l-4 4 4 4"/></svg></div>
                 <div class="input-affix" style="border-color:var(--accent);"><span class="input-affix__tag">$</span><input class="input" type="number" id="finval1" placeholder="0" min="0" step="1000"
-                    oninput="syncFinanciadoFromVal(1)" style="font-family:'DM Mono',monospace;">
+                    oninput="syncFinanciadoFromVal(1)" style="">
                 </div>
               </div>
               <div class="field__hint" id="bd-fin-1" style="text-align:right;color:var(--accent);font-weight:600;"></div>
             </div>
           </div>
-          <div class="stack-bar" id="sbar-1">
-            <div class="stack-seg s-benef" id="sb-benef-1" style="width:0%"></div>
-            <div class="stack-seg s-cont"  id="sb-cont-1"  style="width:25%"></div>
-            <div class="stack-seg s-fin"   id="sb-fin-1"   style="width:75%"></div>
-          </div>
-          <div class="stack-bar-labels">
-            <span><span class="stack-dot" style="background:var(--success)"></span><span id="sbl-benef-1">Beneficios</span></span>
-            <span><span class="stack-dot" style="background:var(--warning)"></span><span id="sbl-cont-1">Contado</span></span>
-            <span><span class="stack-dot" style="background:var(--accent)"></span><span id="sbl-fin-1">Financiado</span></span>
-          </div>
+          <div class="dist" id="dist-1" hidden></div>
         </div>
 
         <div class="field">
@@ -1073,7 +1079,7 @@ table.tbl tfoot td:first-child { text-align: left; }
           <div class="idiomas-icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20"/></svg></div>
           <div class="idiomas-text">
             <span class="idiomas-title">Este programa paga idiomas</span>
-            <span class="idiomas-val" style="font-family:'DM Mono',monospace;font-weight:600;">—</span>
+            <span class="idiomas-val" style="font-weight:600;">—</span>
           </div>
           <div class="idiomas-cta">Simular también →</div>
         </div>
@@ -1159,20 +1165,13 @@ table.tbl tfoot td:first-child { text-align: left; }
             <span class="breakdown-lbl">= Monto Financiado <span class="tip" data-tip="Monto que efectivamente se presta y sobre el cual se calculan los intereses. Equivale a: matrícula − beneficios − pago de contado.">?</span></span>
             <span class="bd-val blue" id="bd-fin-2">—</span>
           </div>
-          <div class="stack-bar" id="sbar-2">
-            <div class="stack-seg s-benef" id="sb-benef-2" style="width:0%"></div>
-            <div class="stack-seg s-cont"  id="sb-cont-2"  style="width:25%"></div>
-            <div class="stack-seg s-fin"   id="sb-fin-2"   style="width:75%"></div>
-          </div>
-          <div class="stack-bar-labels">
-            <span><span class="stack-dot" style="background:var(--success)"></span><span id="sbl-benef-2">Beneficios</span></span>
-            <span><span class="stack-dot" style="background:var(--warning)"></span><span id="sbl-cont-2">Contado</span></span>
-            <span><span class="stack-dot" style="background:var(--accent)"></span><span id="sbl-fin-2">Financiado</span></span>
-          </div>
+          <div class="dist" id="dist-2" hidden></div>
         </div>
 
         <div class="split-box">
-          <div class="split-title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12M20 4 8.12 15.88"/><circle cx="6" cy="18" r="3"/><path d="M14.8 14.8 20 20"/></svg> División CP / LP (sobre monto financiado)</div>
+          <div class="split-title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg> División del Financiamiento
+        <span class="tip" data-tip="Reparte el monto financiado entre corto plazo (se paga durante los estudios) y largo plazo (se paga al graduarse). Los porcentajes son sobre el valor total de la matrícula.">?</span>
+      </div>
 
           <div class="field" style="margin-bottom:10px;">
             <label class="field__label" style="color:var(--accent);"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg> % / $ Corto Plazo</label>
@@ -1198,7 +1197,7 @@ table.tbl tfoot td:first-child { text-align: left; }
             </div>
           </div>
 
-          <div id="split-total-2" class="pct-total-ok" style="display:none;"></div>
+          <div id="split-total-2" class="dist" hidden></div>
         </div>
 
         <div class="field">
@@ -1277,7 +1276,7 @@ table.tbl tfoot td:first-child { text-align: left; }
           <div class="idiomas-icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20"/></svg></div>
           <div class="idiomas-text">
             <span class="idiomas-title">Este programa paga idiomas</span>
-            <span class="idiomas-val" style="font-family:'DM Mono',monospace;font-weight:600;">—</span>
+            <span class="idiomas-val" style="font-weight:600;">—</span>
           </div>
           <div class="idiomas-cta">Simular también →</div>
         </div>
@@ -1365,26 +1364,17 @@ table.tbl tfoot td:first-child { text-align: left; }
               <div class="dual" style="margin-bottom:4px;">
                 <div class="input-affix" style="border-color:var(--info);">
                   <input class="input" type="number" id="finpct3" placeholder="0" min="0" max="100" step="0.1"
-                    oninput="syncFinPctToVal(3)" style="font-family:'DM Mono',monospace;"><span class="input-affix__tag input-affix__tag--end">%</span>
+                    oninput="syncFinPctToVal(3)" style=""><span class="input-affix__tag input-affix__tag--end">%</span>
                 </div>
                 <div class="dual__sep" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m18 8 4 4-4 4M2 12h20M6 8l-4 4 4 4"/></svg></div>
                 <div class="input-affix" style="border-color:var(--info);"><span class="input-affix__tag">$</span><input class="input" type="number" id="finval3" placeholder="0" min="0" step="1000"
-                    oninput="syncFinanciadoFromVal(3)" style="font-family:'DM Mono',monospace;">
+                    oninput="syncFinanciadoFromVal(3)" style="">
                 </div>
               </div>
               <div class="field__hint" id="bd-fin-3" style="text-align:right;color:var(--info);font-weight:600;"></div>
             </div>
           </div>
-          <div class="stack-bar" id="sbar-3">
-            <div class="stack-seg s-benef" id="sb-benef-3" style="width:0%"></div>
-            <div class="stack-seg s-cont"  id="sb-cont-3"  style="width:25%"></div>
-            <div class="stack-seg s-fin"   id="sb-fin-3"   style="width:75%"></div>
-          </div>
-          <div class="stack-bar-labels">
-            <span><span class="stack-dot" style="background:var(--success)"></span><span id="sbl-benef-3">Beneficios</span></span>
-            <span><span class="stack-dot" style="background:var(--warning)"></span><span id="sbl-cont-3">Contado</span></span>
-            <span><span class="stack-dot" style="background:var(--accent)"></span><span id="sbl-fin-3">Financiado</span></span>
-          </div>
+          <div class="dist" id="dist-3" hidden></div>
         </div>
 
         <div class="field">
@@ -1407,7 +1397,7 @@ table.tbl tfoot td:first-child { text-align: left; }
           <div class="idiomas-icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20"/></svg></div>
           <div class="idiomas-text">
             <span class="idiomas-title">Este programa paga idiomas</span>
-            <span class="idiomas-val" style="font-family:'DM Mono',monospace;font-weight:600;">—</span>
+            <span class="idiomas-val" style="font-weight:600;">—</span>
           </div>
           <div class="idiomas-cta">Simular también →</div>
         </div>
@@ -1486,22 +1476,22 @@ table.tbl tfoot td:first-child { text-align: left; }
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;font-size:13px;">
         <div>
           <p style="font-weight:600;color:var(--info);margin-bottom:8px;">Tasa Efectiva → Efectiva</p>
-          <p style="font-family:'DM Mono',monospace;background:white;padding:8px;border-radius:6px;font-size:12px;">(1 + i_origen)^(n_destino/n_origen) - 1</p>
+          <p  style="background:var(--surface-2);padding:var(--sp-2);border-radius:var(--r-sm);font-size:var(--fs-sm);">(1 + i_origen)^(n_destino/n_origen) - 1</p>
           <p style="color:var(--text-3);margin-top:6px;font-size:12px;">Donde n es la fracción de año del período</p>
         </div>
         <div>
           <p style="font-weight:600;color:var(--info);margin-bottom:8px;">Tasa Nominal → Efectiva</p>
-          <p style="font-family:'DM Mono',monospace;background:white;padding:8px;border-radius:6px;font-size:12px;">(1 + j/m)^(m·n) - 1</p>
+          <p  style="background:var(--surface-2);padding:var(--sp-2);border-radius:var(--r-sm);font-size:var(--fs-sm);">(1 + j/m)^(m·n) - 1</p>
           <p style="color:var(--text-3);margin-top:6px;font-size:12px;">j = nominal, m = períodos de capitalización/año</p>
         </div>
         <div>
           <p style="font-weight:600;color:var(--info);margin-bottom:8px;">Tasa Efectiva → Nominal</p>
-          <p style="font-family:'DM Mono',monospace;background:white;padding:8px;border-radius:6px;font-size:12px;">j = m · [(1 + i_ea)^(1/m) - 1]</p>
+          <p  style="background:var(--surface-2);padding:var(--sp-2);border-radius:var(--r-sm);font-size:var(--fs-sm);">j = m · [(1 + i_ea)^(1/m) - 1]</p>
           <p style="color:var(--text-3);margin-top:6px;font-size:12px;">i_ea = tasa efectiva anual</p>
         </div>
         <div>
           <p style="font-weight:600;color:var(--info);margin-bottom:8px;">Períodos por año</p>
-          <div style="font-family:'DM Mono',monospace;background:white;padding:8px;border-radius:6px;font-size:11px;line-height:1.8;">
+          <div style="background:white;padding:8px;border-radius:6px;font-size:11px;line-height:1.8;">
             Diaria: 365 &nbsp;|&nbsp; Semanal: 52<br>
             Quincenal: 24 &nbsp;|&nbsp; Mensual: 12<br>
             Bimestral: 6 &nbsp;|&nbsp; Trimestral: 4<br>
@@ -2460,7 +2450,7 @@ function calcularRefi() {
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
           <div>
             <div style="font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;">Cuota vs Ingreso</div>
-            <div style="font-size:22px;font-weight:700;font-family:'DM Mono',monospace;color:${color};">${pct.toFixed(1)}%</div>
+            <div style="font-size:22px;font-weight:700;color:${color};">${pct.toFixed(1)}%</div>
           </div>
           <div style="text-align:right;">
             <div style="font-size:11px;color:var(--text-3);">Diagnóstico</div>
@@ -2723,7 +2713,7 @@ function renderEscRefi() {
       <div class="step-num step-num--fill" style="background:${colors[i]}">${i+1}</div>
       <div class="list-item__main"><strong>${e.label}</strong><span>${e.sub}</span></div>
       <div style="text-align:right;margin-right:8px;">
-        <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:${colors[i]};">${cop(e.cuota)}/mes</div>
+        <div style="font-size:13px;font-weight:700;color:${colors[i]};">${cop(e.cuota)}/mes</div>
         <div style="font-size:11px;color:var(--text-3);">Total: ${cop(e.totalGeneral)}</div>
       </div>
       <button class="btn btn--ghost btn--icon btn--sm" onclick="eliminarEscRefi(${i})" title="Eliminar">${icon('x')}</button>
@@ -3379,10 +3369,10 @@ function calcular2(){
           {label:'Intereses CP',data:[Math.round(CP.totInt),0],backgroundColor:'var(--success)',borderRadius:6}
         ]},
         options:{responsive:true,maintainAspectRatio:false,
-          plugins:{legend:{display:true,position:'top',labels:{font:{family:'Sora',size:12},boxWidth:12,padding:16}},
+          plugins:{legend:{display:true,position:'top',labels:{font:{family:'Inter',size:12},boxWidth:12,padding:16}},
           tooltip:{callbacks:{label:c=>' '+cop(c.raw)}}},
-          scales:{x:{grid:{display:false},ticks:{font:{family:'Sora',size:12}}},
-            y:{ticks:{font:{family:'DM Mono',size:11},callback:v=>cop(v)}}}}
+          scales:{x:{grid:{display:false},ticks:{font:{family:'Inter',size:12}}},
+            y:{ticks:{font:{family:'Inter',size:11},callback:v=>cop(v)}}}}
       });
     },100);
   }
@@ -3434,10 +3424,10 @@ function renderTablaLPHtml(capital, n, semestres) {
       <th style="text-align:left;">Concepto</th>
       <th>Valor</th>
     </tr></thead><tbody>
-    <tr><td style="font-family:'Sora',sans-serif;">Capital a amortizar</td><td style="font-family:'DM Mono',monospace;font-weight:700;color:var(--success);">${cop(capital)}</td></tr>
-    <tr><td style="font-family:'Sora',sans-serif;">Semestres de la carrera</td><td style="font-family:'DM Mono',monospace;">${sem} semestres</td></tr>
-    <tr><td style="font-family:'Sora',sans-serif;">Plazo estimado de amortización</td><td style="font-family:'DM Mono',monospace;">${n} meses</td></tr>
-    <tr><td style="font-family:'Sora',sans-serif;color:var(--warning);">Interés</td><td style="color:var(--text-3);font-style:italic;">Tasa vigente al graduarse</td></tr>
+    <tr><td style="font-family:'Inter',sans-serif;">Capital a amortizar</td><td style="font-weight:700;color:var(--success);">${cop(capital)}</td></tr>
+    <tr><td style="font-family:'Inter',sans-serif;">Semestres de la carrera</td><td style="">${sem} semestres</td></tr>
+    <tr><td style="font-family:'Inter',sans-serif;">Plazo estimado de amortización</td><td style="">${n} meses</td></tr>
+    <tr><td style="font-family:'Inter',sans-serif;color:var(--warning);">Interés</td><td style="color:var(--text-3);font-style:italic;">Tasa vigente al graduarse</td></tr>
     </tbody></table></div>
   <p style="font-size:11px;color:var(--success);margin-top:6px;">
     Será amortizado en el número de semestres que dure la carrera (× 1.5), después del período de gracia de 1 año.
@@ -3860,8 +3850,8 @@ function recalcId() {
     const total2 = pCP2+pLP2+benefPctId+contPctId;
     const chkEl = document.getElementById('id-split-check');
     if(chkEl) {
-      chkEl.textContent = 'Benef.'+benefPctId.toFixed(0)+'%+Contado'+contPctId.toFixed(0)+'%+CP'+pCP2.toFixed(0)+'%+LP'+pLP2.toFixed(0)+'% = '+total2.toFixed(1)+'%'+(Math.abs(total2-100)<0.5?' ':' ');
-      chkEl.style.color = Math.abs(total2-100)<0.5 ? 'var(--success)' : 'var(--danger)';
+      chkEl.innerHTML = distribucionHTML(benefPctId, contPctId, pCP2, pLP2);
+      chkEl.hidden = false;
     }
     const finCPId = matId*pCP2/100, finLPId = matId*pLP2/100;
     const lbl1 = document.getElementById('id-finCP-lbl');
@@ -4366,10 +4356,10 @@ function convertirTasas() {
     const highlight = r.isOrigen ? 'background:var(--info-soft);font-weight:700;' : '';
     const badge = r.isOrigen ? ' <span style="background:var(--info);color:white;font-size:10px;padding:2px 6px;border-radius:10px;margin-left:4px;">ORIGEN</span>' : '';
     html += `<tr style="${highlight}">
-      <td style="text-align:left;font-family:'Sora',sans-serif;font-weight:${r.isOrigen?'700':'500'};color:${r.isOrigen?'var(--info)':'var(--text)'};">${r.label}${badge}</td>
-      <td style="text-align:center;font-family:'DM Mono',monospace;">${r.n}</td>
-      <td style="font-family:'DM Mono',monospace;color:${r.isOrigen?'var(--info)':'inherit'};">${fmt(r.i_ef)}</td>
-      <td style="font-family:'DM Mono',monospace;color:var(--text-3);">${fmtN(r.nom_anual)}</td>
+      <td style="text-align:left;font-family:'Inter',sans-serif;font-weight:${r.isOrigen?'700':'500'};color:${r.isOrigen?'var(--info)':'var(--text)'};">${r.label}${badge}</td>
+      <td style="text-align:center;">${r.n}</td>
+      <td style="color:${r.isOrigen?'var(--info)':'inherit'};">${fmt(r.i_ef)}</td>
+      <td style="color:var(--text-3);">${fmtN(r.nom_anual)}</td>
     </tr>`;
   });
 
@@ -4379,11 +4369,11 @@ function convertirTasas() {
   html += `<div style="margin-top:14px;background:linear-gradient(90deg,var(--info),var(--info));border-radius:var(--r-md);padding:14px 18px;color:white;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
     <div>
       <div style="font-size:11px;opacity:.8;text-transform:uppercase;letter-spacing:.5px;">Tasa Efectiva Anual equivalente</div>
-      <div style="font-size:26px;font-weight:700;font-family:'DM Mono',monospace;">${(ear*100).toFixed(4)}%</div>
+      <div style="font-size:26px;font-weight:700;">${(ear*100).toFixed(4)}%</div>
     </div>
     <div style="text-align:right;">
       <div style="font-size:11px;opacity:.8;">Tasa de entrada</div>
-      <div style="font-size:18px;font-weight:600;font-family:'DM Mono',monospace;">${valorInput.toFixed(4)}% ${TC_PERIODOS[periodoOrigen].label}</div>
+      <div style="font-size:18px;font-weight:600;">${valorInput.toFixed(4)}% ${TC_PERIODOS[periodoOrigen].label}</div>
     </div>
   </div>`;
 
@@ -4606,7 +4596,7 @@ function renderHistorial() {
         <span class="u-muted">${e.fecha}</span>
       </div>
       <div class="u-num u-center">
-        <div style="font-family:'DM Mono',monospace;font-weight:700;font-size:13px;">${cop(e.cuota)}/mes</div>
+        <div style="font-weight:700;font-size:13px;">${cop(e.cuota)}/mes</div>
         <div style="font-size:11px;color:var(--text-3);">${cop(e.total)}</div>
       </div>
       <button class="btn btn--ghost btn--icon btn--sm" onclick="eliminarHistorial(${e.id})" title="Eliminar">${icon('x')}</button>
@@ -4691,7 +4681,7 @@ function renderEscenarios(tabId) {
         <span>${e.sub}</span>
       </div>
       <div style="text-align:right;margin-right:8px;">
-        <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:${colors[i]};">${cop(e.cuota)}/mes</div>
+        <div style="font-size:13px;font-weight:700;color:${colors[i]};">${cop(e.cuota)}/mes</div>
         <div style="font-size:11px;color:var(--text-3);">Total: ${cop(e.totalGeneral)}</div>
       </div>
       <button class="btn btn--ghost btn--icon btn--sm" onclick="eliminarEscenario(${tabId},${i})" title="Eliminar">${icon('x')}</button>
@@ -5277,16 +5267,17 @@ function recalcAll(tabId) {
     const fpEl2 = document.getElementById('finpct'+tabId);
     if(fpEl2 && document.activeElement !== fpEl2) fpEl2.value = (mat>0&&fin>0) ? Math.round((fin/mat)*1000)/10 : '';  // % of mat
 
-    // Stacked bar
-    const bPct = mat > 0 ? Math.min(100, (benef/mat)*100) : 0;
-    const cPct = mat > 0 ? Math.min(100-bPct, (cont/mat)*100) : 0;
-    const fPct = Math.max(0, 100 - bPct - cPct);
-    document.getElementById('sb-benef-'+tabId).style.width = bPct.toFixed(1)+'%';
-    document.getElementById('sb-cont-'+tabId).style.width  = cPct.toFixed(1)+'%';
-    document.getElementById('sb-fin-'+tabId).style.width   = fPct.toFixed(1)+'%';
-    document.getElementById('sbl-benef-'+tabId).textContent= 'Benef. '+bPct.toFixed(0)+'%';
-    document.getElementById('sbl-cont-'+tabId).textContent = 'Contado '+cPct.toFixed(0)+'%';
-    document.getElementById('sbl-fin-'+tabId).textContent  = 'Financiado '+fPct.toFixed(0)+'%';
+    // Composición de la matrícula (la pestaña 2 la pinta updateSplit2 con CP/LP)
+    if(tabId !== 2) {
+      const bPct = mat > 0 ? (benef/mat)*100 : 0;
+      const cPct = mat > 0 ? (cont/mat)*100  : 0;
+      const fPct = mat > 0 ? (fin/mat)*100   : 0;
+      const dEl = document.getElementById('dist-'+tabId);
+      if(dEl) {
+        if(mat > 0) { dEl.hidden = false; dEl.innerHTML = distribucionHTML(bPct, cPct, fPct, 0); }
+        else dEl.hidden = true;
+      }
+    }
   }
 
   // Garantisa display (tabs 1 & 2)
@@ -5307,6 +5298,7 @@ function syncContadoFromPct(tabId) {
   const val  = mat > 0 ? Math.round(mat * pct / 100) : 0;
   const vEl  = document.getElementById('cont'+tabId+'-val');
   if(vEl) vEl.value = val || '';
+  if(tabId === 2) redistribuirCPLP();
   recalcAll(tabId);
 }
 function syncContadoFromVal(tabId) {
@@ -5315,10 +5307,36 @@ function syncContadoFromVal(tabId) {
   const pct = mat > 0 ? Math.round((val/mat)*1000)/10 : 0;
   const pEl = document.getElementById('cont'+tabId+'-pct');
   if(pEl && document.activeElement !== pEl) pEl.value = pct || '';
+  if(tabId === 2) redistribuirCPLP();
   recalcAll(tabId);
 }
 
 // ── Tab2 CP/LP split ──────────────────────────────────────────────
+// ── Barra de composición: qué parte de la matrícula cubre cada concepto ──
+function distribucionHTML(benefPct, contPct, cpPct, lpPct) {
+  const total = (benefPct||0) + (contPct||0) + (cpPct||0) + (lpPct||0);
+  const dif   = Math.round((100 - total) * 10) / 10;
+  const ok    = Math.abs(dif) < 0.15;
+  const segs = [
+    {p: benefPct, cls: 'benef', lbl: 'Beneficios'},
+    {p: contPct,  cls: 'cont',  lbl: 'Contado'},
+    {p: cpPct,    cls: 'fin',   lbl: 'Corto plazo'},
+    {p: lpPct,    cls: 'lp',    lbl: 'Largo plazo'},
+  ].filter(s => s.p > 0);
+  const barra = segs.map(s =>
+    `<div class="stack-seg stack-seg--${s.cls}" style="width:${Math.min(100, s.p)}%" title="${s.lbl}: ${s.p.toFixed(1)}%"></div>`).join('');
+  const leyenda = segs.map(s =>
+    `<span><span class="stack-dot stack-dot--${s.cls}"></span>${s.lbl} <strong class="u-num">${s.p.toFixed(1)}%</strong></span>`).join('');
+  const estado = ok
+    ? `<span class="chip chip--success">${icon('check-circle')} Distribución completa</span>`
+    : (dif > 0
+        ? `<span class="chip chip--warning">${icon('alert-triangle')} Falta ${dif.toFixed(1)}% por asignar</span>`
+        : `<span class="chip chip--danger">${icon('alert-triangle')} Excede ${Math.abs(dif).toFixed(1)}%</span>`);
+  return `<div class="dist__head"><span class="dist__title">Composición de la matrícula</span>${estado}</div>
+    <div class="stack-bar">${barra}</div>
+    <div class="stack-legend">${leyenda}</div>`;
+}
+
 function updateSplit2(fin) {
   // CP% and LP% are % of total matrícula, not of financed amount
   const mat   = getMat(2);
@@ -5336,10 +5354,9 @@ function updateSplit2(fin) {
   if(fcpEl && document.activeElement !== fcpEl) fcpEl.value = valCP || '';
   if(flpEl && document.activeElement !== flpEl) flpEl.value = valLP || '';
   const tEl = document.getElementById('split-total-2');
-  if(tEl && mat > 0) {
-    tEl.style.display = 'block';
-    tEl.textContent = 'Benef.'+benefPct.toFixed(0)+'% + Contado'+contPct.toFixed(0)+'% + CP'+pCP.toFixed(0)+'% + LP'+pLP.toFixed(0)+'% = '+totalPct.toFixed(1)+'%'+(Math.abs(totalPct-100)<0.2?' ':totalPct>100?' ':' (falta '+(100-totalPct).toFixed(1)+'%)');
-    tEl.className = Math.abs(totalPct-100)<0.2 ? 'pct-total-ok' : 'pct-total-over';
+  if(tEl) {
+    if(mat > 0) { tEl.hidden = false; tEl.innerHTML = distribucionHTML(benefPct, contPct, pCP, pLP); }
+    else tEl.hidden = true;
   }
   // Garantisa display
   document.getElementById('gCP-val').textContent = valCP > 0 ? cop(valCP*GARANTISA_CP)+' sobre '+cop(valCP) : '—';
@@ -5356,6 +5373,35 @@ function syncSplitFromPct(which) {
   // Auto-update contado as complement
   autoContado2();
 }
+let _redistribuyendo = false;
+
+// Reparte el remanente (matrícula − beneficios − contado) entre CP y LP,
+// conservando la proporción que el asesor definió entre ambos tramos.
+function redistribuirCPLP() {
+  if(_redistribuyendo) return;
+  const mat = getMat(2);
+  if(mat <= 0) return;
+  const benef = getTotalBeneficios(2);
+  const cont  = getContadoVal(2);
+  const pctRestante = Math.max(0, ((mat - benef - cont) / mat) * 100);
+
+  const cpEl = document.getElementById('pctCP');
+  const lpEl = document.getElementById('pctLP');
+  if(!cpEl || !lpEl) return;
+  const pCP = parseFloat(cpEl.value)||0;
+  const pLP = parseFloat(lpEl.value)||0;
+  const suma = pCP + pLP;
+
+  let nCP, nLP;
+  if(suma <= 0) { nCP = pctRestante; nLP = 0; }
+  else          { nCP = pctRestante * (pCP/suma); nLP = pctRestante * (pLP/suma); }
+
+  _redistribuyendo = true;
+  if(document.activeElement !== cpEl) cpEl.value = Math.round(nCP*10)/10 || '';
+  if(document.activeElement !== lpEl) lpEl.value = Math.round(nLP*10)/10 || '';
+  _redistribuyendo = false;
+}
+
 function autoContado2() {
   const mat   = getMat(2);
   const benef = getTotalBeneficios(2);
@@ -6366,7 +6412,7 @@ async function autoLeerSimulador() {
             <div class="field__hint" id="id-finLP-lbl"></div>
           </div>
         </div>
-        <div id="id-split-check" style="font-size:12px;font-weight:600;text-align:center;margin-top:6px;"></div>
+        <div id="id-split-check" class="dist" hidden></div>
       </div>
 
       <div style="margin-bottom:14px;">
