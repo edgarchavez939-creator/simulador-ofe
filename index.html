@@ -5219,7 +5219,7 @@ function syncFinanciadoCP() {
   const pct  = mat > 0 ? Math.round((valCP/mat)*1000)/10 : 0;
   const pEl  = document.getElementById('pctCP');
   if(pEl) pEl.value = pct || '';
-  autoContado2();
+  ajustarContraparte('CP');
 }
 function syncFinanciadoLP() {
   const mat = getMat(2);
@@ -5227,7 +5227,7 @@ function syncFinanciadoLP() {
   const pct  = mat > 0 ? Math.round((valLP/mat)*1000)/10 : 0;
   const pEl  = document.getElementById('pctLP');
   if(pEl) pEl.value = pct || '';
-  autoContado2();
+  ajustarContraparte('LP');
 }
 
 // ── Main recalc ───────────────────────────────────────────────────
@@ -5369,9 +5369,7 @@ function syncSplitFromPct(which) {
   const pct = Math.max(0, parseFloat(document.getElementById(id)?.value)||0);
   const vel = document.getElementById(vid);
   if(vel) vel.value = Math.round(mat * pct / 100) || '';
-  updateSplit2(getFinanciado(2));
-  // Auto-update contado as complement
-  autoContado2();
+  ajustarContraparte(which);
 }
 let _redistribuyendo = false;
 
@@ -5400,6 +5398,36 @@ function redistribuirCPLP() {
   if(document.activeElement !== cpEl) cpEl.value = Math.round(nCP*10)/10 || '';
   if(document.activeElement !== lpEl) lpEl.value = Math.round(nLP*10)/10 || '';
   _redistribuyendo = false;
+}
+
+// Al editar un tramo, el contrario absorbe la diferencia (el contado no se toca)
+function ajustarContraparte(which) {
+  const mat = getMat(2);
+  if(mat <= 0) return;
+  const benef = getTotalBeneficios(2);
+  const cont  = getContadoVal(2);
+  const disponible = Math.max(0, ((mat - benef - cont) / mat) * 100);
+
+  const idEd   = which === 'CP' ? 'pctCP' : 'pctLP';
+  const idOtro = which === 'CP' ? 'pctLP' : 'pctCP';
+  const elEd   = document.getElementById(idEd);
+  const elOtro = document.getElementById(idOtro);
+  if(!elEd || !elOtro) return;
+
+  const pEd = Math.max(0, parseFloat(elEd.value)||0);
+  // Si lo tecleado supera lo disponible, el otro tramo queda en 0 y el
+  // indicador de composición señala el exceso.
+  const pOtro = Math.max(0, disponible - pEd);
+
+  _redistribuyendo = true;
+  if(document.activeElement !== elOtro) elOtro.value = Math.round(pOtro*10)/10 || '';
+  _redistribuyendo = false;
+
+  const vidOtro = which === 'CP' ? 'finvalLP' : 'finvalCP';
+  const velOtro = document.getElementById(vidOtro);
+  if(velOtro && document.activeElement !== velOtro) velOtro.value = Math.round(mat * pOtro / 100) || '';
+
+  recalcAll(2);
 }
 
 function autoContado2() {
