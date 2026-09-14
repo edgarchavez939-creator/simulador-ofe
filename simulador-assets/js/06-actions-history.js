@@ -18,14 +18,14 @@ function handleUIAction(event) {
     case 'del-benef': return delBenef(tab, id);
     case 'abrir-idiomas': return abrirIdiomas(tab);
     case 'calcular':
-      if(tab===1) return calcular1();
-      if(tab===2) return calcular2();
-      if(tab===3) return calcular3();
-      if(tab===7) return calcular7();
+      if(tab===1) return runCalculation(el, 1, () => calcular1(), 'Calculando crédito a corto plazo…');
+      if(tab===2) return runCalculation(el, 2, () => calcular2(), 'Calculando escenario corto y largo plazo…');
+      if(tab===3) return runCalculation(el, 3, () => calcular3(), 'Calculando crédito con banco aliado…');
+      if(tab===7) return runCalculation(el, 7, () => calcular7(), 'Calculando cuota inicial requerida…');
       return;
     case 'limpiar-tab': return tab===7 ? limpiar7() : limpiarTab(tab);
     case 'tipo-eq': return setTipoEq(el.dataset.tipo);
-    case 'calcular-refi': return calcularRefi();
+    case 'calcular-refi': return runCalculation(el, 5, () => calcularRefi(), 'Calculando nuevas condiciones…');
     case 'limpiar-refi': return limpiarRefi();
     case 'descargar-plantilla': return runButtonTask(el, () => descargarPlantilla());
     case 'file-proxy': return document.getElementById(el.dataset.target)?.click();
@@ -59,6 +59,12 @@ function handleUIAction(event) {
     case 'comparar-escenarios': return compararEscenarios(tab);
     case 'eliminar-escenario': return eliminarEscenario(tab, index);
     case 'xls-comparativa': return runButtonTask(el, () => expXLSComparativa(tab));
+    case 'open-compare': return openCompareForTab(tab);
+    case 'hist-ver': return verHistorial(id);
+    case 'hist-duplicar': return duplicarHistorial(id);
+    case 'hist-comparar': return compararHistorial(id);
+    case 'detail-close': return cerrarDetalleHistorial();
+    case 'scrim-detail': if(event.target===el) return cerrarDetalleHistorial(); return;
     case 'scrim-idiomas': if(event.target===el) return cerrarIdiomas(); return;
     case 'cerrar-idiomas': return cerrarIdiomas();
     case 'add-benef-idiomas': return addBenefId();
@@ -66,11 +72,15 @@ function handleUIAction(event) {
     case 'scrim-pin': if(event.target===el) return cancelarRefiPin(); return;
     case 'verificar-pin': return verificarRefiPin();
     case 'cancelar-pin': return cancelarRefiPin();
+    case 'scrim-confirm': if(event.target===el) return cancelConfirm(); return;
+    case 'confirm-cancel': return cancelConfirm();
+    case 'confirm-accept': return acceptConfirm();
   }
 }
 
 
 function handleUIInput(event) {
+  clearControlValidationFromEvent(event.target);
   const el = event.target.closest('[data-input-action]');
   if(!el) return;
   const action = el.dataset.inputAction;
@@ -162,7 +172,21 @@ function calcular7() {
   document.getElementById('res7').innerHTML = `
   <div class="card">
     ${fechaBadgeHtml()}
-    <div class="card__title">${icon('wallet')} Cálculo de Cuota Inicial</div>
+    <div class="card__title">Resultado del cálculo</div>
+    ${resultHero({
+      eyebrow:'Cálculo de Cuota Inicial',
+      label:'Cuota inicial requerida', value:cop(cuotaInicial),
+      meta:`Capacidad mensual ${cop(d.cap)} · ${d.n} cuotas · ${(d.tm*100).toFixed(2)}% M.V.`, tone:cubreTodo?'success':'info',
+      metrics:[
+        {label:'Monto financiable',value:cop(d.fin)},
+        {label:'Cuota mensual',value:cop(A.cuota)},
+        {label:'Total intereses',value:cop(A.totInt)},
+        {label:'Total al desembolso',value:cop(desembolso)}
+      ],
+      note:cubreTodo?'La capacidad de pago permite financiar todo el saldo neto de matrícula.':'La cuota inicial cubre la diferencia entre la matrícula neta y el monto financiable con la capacidad declarada.'
+    })}
+    ${resultActions(7,{canCompare:false,primaryLabel:'Ver en Mis simulaciones',primaryAction:'switch-tab',primaryTab:9})}
+    <div class="financial-details">
 
     ${cubreTodo ? `
       <div class="note note--success u-mb-4">
@@ -219,12 +243,10 @@ function calcular7() {
     <div class="section__title">${icon('table')} Plan de pagos (${d.n} cuotas)</div>
     ${renderTabla(A.rows, A.cuota, A.totInt, A.totCap)}
 
-    <div class="btn-row">
-      <button class="btn btn--sm" data-action="pdf" data-tab="7">${icon('file-text')} Descargar PDF</button>
-      <button class="btn btn--sm" data-action="xls" data-tab="7">${icon('bar-chart')} Descargar Excel</button>
     </div>
   </div>`;
 
+  markViewHasResult(7,true);
   toast('Cuota inicial calculada', 'success');
   setTimeout(()=>registrarHistorial(7), 100);
 }
@@ -238,6 +260,7 @@ function limpiar7() {
   SimuladorOFE.state.financing.benefits[7] = [];
   renderBeneficios(7);
   SimuladorOFE.state.results.initialPayment = null;
+  markViewHasResult(7,false);
   document.getElementById('res7').innerHTML = '<div class="card"><div class="empty">'
     + '<div class="empty__icon">' + icon('wallet','icon-xl') + '</div>'
     + '<div class="empty__title">Sin resultados todavía</div>'
@@ -331,8 +354,14 @@ function expXLS7() {
   toast('Excel descargado', 'success');
 }
 
-function limpiarTab(tabId) {
-  if(!confirm('¿Limpiar todos los campos y resultados de esta pestaña?')) return;
+function limpiarTab(tabId, confirmed = false) {
+  if(!confirmed) return confirmAction({
+    title:'Iniciar una nueva simulación',
+    message:'Se limpiarán los campos, resultados y escenarios guardados de esta modalidad.',
+    confirmLabel:'Limpiar simulación',
+    tone:'danger',
+    onConfirm:()=>limpiarTab(tabId, true)
+  });
   // Reset nivel
   setNivel(tabId, 'pregrado');
   // Reset selects
@@ -369,6 +398,7 @@ function limpiarTab(tabId) {
   if(tabId===1) SimuladorOFE.state.results.shortTerm=null;
   if(tabId===2) SimuladorOFE.state.results.mixed=null;
   if(tabId===3) SimuladorOFE.state.results.bank=null;
+  markViewHasResult(tabId,false);
   // Clear beneficios
   SimuladorOFE.state.financing.benefits[tabId] = [];
   renderBeneficios(tabId);
@@ -402,7 +432,7 @@ function saveHistorial(list) {
 function registrarHistorial(tabId) {
   let entry = null;
   const fecha = new Date().toLocaleString('es-CO',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
-  const tabNames = {1:'Corto Plazo', 2:'Mixto CP/LP', 3:'Banco Aliado', 7:'Cuota Inicial'};
+  const tabNames = {1:'Corto Plazo', 2:'Mixto CP/LP', 3:'Banco Aliado', 5:'Reestructuración', 7:'Cuota Inicial'};
 
   if(tabId===1 && SimuladorOFE.state.results.shortTerm) {
     entry = {tabId, fecha, prog:SimuladorOFE.state.results.shortTerm.progNombre||'Programa', tipo:tabNames[1],
@@ -420,6 +450,16 @@ function registrarHistorial(tabId) {
       resumen:SimuladorOFE.state.results.bank.pct+'% · '+SimuladorOFE.state.results.bank.n+' meses · '+(SimuladorOFE.state.results.bank.tm*100).toFixed(2)+'%',
       cuota:SimuladorOFE.state.results.bank.cuota, total:SimuladorOFE.state.results.bank.totalGeneral,
       snap:JSON.parse(JSON.stringify(SimuladorOFE.state.results.bank))};
+  } else if(tabId===5 && SimuladorOFE.state.restructuring.current) {
+    const d = SimuladorOFE.state.restructuring.current;
+    entry = {tabId, fecha, prog:'Crédito reestructurado', tipo:tabNames[5],
+      resumen:d.n+' meses · '+(d.tm*100).toFixed(2)+'% · saldo '+cop(d.saldo),
+      cuota:d.cuota, total:d.totalGeneral, snap:JSON.parse(JSON.stringify(d))};
+  } else if(tabId===7 && SimuladorOFE.state.results.initialPayment) {
+    const d = SimuladorOFE.state.results.initialPayment;
+    entry = {tabId, fecha, prog:d.progNombre||'Programa', tipo:tabNames[7],
+      resumen:'capacidad '+cop(d.cap)+'/mes · '+d.n+' cuotas · '+(d.tm*100).toFixed(2)+'%',
+      cuota:d.cuota, total:d.costoTotal, snap:JSON.parse(JSON.stringify(d))};
   }
   if(!entry) return;
   entry.id = Date.now();
@@ -434,45 +474,127 @@ function eliminarHistorial(id) {
   renderHistorial();
 }
 
-function limpiarHistorial() {
-  if(!confirm('¿Borrar todo el historial de simulaciones guardadas en este navegador?')) return;
+function limpiarHistorial(confirmed = false) {
+  if(!confirmed) return confirmAction({
+    title:'Borrar historial',
+    message:'Se eliminarán todas las simulaciones guardadas en este navegador. Esta acción no se puede deshacer.',
+    confirmLabel:'Borrar historial',
+    tone:'danger',
+    onConfirm:()=>limpiarHistorial(true)
+  });
   localStorage.removeItem(_HIST_KEY);
   renderHistorial();
+  toast('Historial eliminado', 'success');
+}
+
+function historyRecordMeta(entry) {
+  const d = entry?.snap || {};
+  const financiado = entry.tabId===2 ? (d.finCP||0)+(d.finLP||0)
+    : entry.tabId===5 ? (d.principal||d.saldo||0)
+    : (d.financiado ?? d.fin ?? 0);
+  const plazo = entry.tabId===2 ? `${d.nCP||0}m CP · ${d.nLP||0}m LP` : `${d.n||0} meses`;
+  return {financiado, plazo};
 }
 
 function renderHistorial() {
   const panel = document.getElementById('historial-panel');
   if(!panel) return;
   const list = getHistorial();
-  if(list.length === 0) { panel.innerHTML=''; panel.hidden = true; return; }
+  if(list.length === 0) {
+    panel.hidden = false;
+    panel.innerHTML = `<div class="history-empty"><div class="history-empty__icon">${icon('history')}</div><h3>Aún no hay simulaciones guardadas</h3><p>Cuando completes una simulación, aparecerá aquí automáticamente para que puedas verla, duplicarla o llevarla a una comparación.</p><button class="btn btn--secondary btn--sm u-mt-4" data-action="switch-tab" data-tab="1">Crear una simulación</button></div>`;
+    return;
+  }
   panel.hidden = false;
-  const tabColors = {1:'var(--accent)', 2:'var(--success)', 3:'var(--info)'};
-  let html = `<div class="card__head u-mt-5">
-    <h3>${icon('history')} Historial de Simulaciones (${list.length})</h3>
-    <button class="btn btn--sm btn--ghost" data-action="limpiar-historial">Borrar todo</button>
-  </div>
-  <div class="list">`;
+  let html = `<div class="history-toolbar"><div><strong>Mis simulaciones</strong><div class="history-count">${list.length} registro${list.length===1?'':'s'} guardado${list.length===1?'':'s'} en este navegador</div></div><button class="btn btn--sm btn--ghost" data-action="limpiar-historial">Borrar todo</button></div><div class="history-grid">`;
   list.forEach(e => {
-    html += `<div class="list-item">
-      <div class="stack-dot" style="background:${tabColors[e.tabId]||'var(--text-3)'}"></div>
-      <div class="list-item__main">
-        <strong>${escHTML(e.prog)}</strong>
-        <span class="u-accent">${escHTML(e.tipo)}</span>
-        <span>${escHTML(e.resumen)}</span>
-        <span class="u-muted">${escHTML(e.fecha)}</span>
+    const m = historyRecordMeta(e);
+    const canCompare = [1,2,3,5].includes(e.tabId);
+    html += `<article class="history-card">
+      <div class="history-card__top"><div><div class="history-card__type">${escHTML(e.tipo)}</div><div class="history-card__program">${escHTML(e.prog)}</div></div><span class="history-card__status">Calculada</span></div>
+      <div class="history-card__date">${escHTML(e.fecha)}</div>
+      <div class="history-card__metrics">
+        <div class="history-card__metric"><span>Monto</span><strong>${cop(m.financiado)}</strong></div>
+        <div class="history-card__metric"><span>Cuota</span><strong>${cop(e.cuota)}</strong></div>
+        <div class="history-card__metric"><span>Plazo</span><strong>${escHTML(m.plazo)}</strong></div>
       </div>
-      <div class="u-num u-center">
-        <div class="u-strong-sm">${cop(e.cuota)}/mes</div>
-        <div class="u-fs-11-muted">${cop(e.total)}</div>
+      <div class="history-card__actions">
+        <button class="btn btn--tertiary btn--sm" data-action="hist-ver" data-id="${e.id}">${icon('eye')} Ver</button>
+        <button class="btn btn--tertiary btn--sm" data-action="hist-duplicar" data-id="${e.id}">${icon('copy')} Duplicar</button>
+        <button class="btn btn--tertiary btn--sm" data-action="hist-comparar" data-id="${e.id}" ${canCompare?'':'disabled title="Comparación no disponible para esta herramienta"'}>${icon('scale')} Comparar</button>
+        <button class="btn btn--ghost btn--sm" data-action="eliminar-historial" data-id="${e.id}">${icon('trash-2')} Eliminar</button>
       </div>
-      <button class="btn btn--ghost btn--icon btn--sm" data-action="eliminar-historial" data-id="${e.id}" aria-label="Eliminar" title="Eliminar">${icon('x')}</button>
-    </div>`;
+    </article>`;
   });
   html += '</div>';
   panel.innerHTML = html;
 }
 
-function guardarEscenario(tabId) {
+function getHistoryEntry(id) { return getHistorial().find(e => Number(e.id)===Number(id)) || null; }
+
+function verHistorial(id) {
+  const e = getHistoryEntry(id); if(!e) return;
+  const d = e.snap || {}; const meta = historyRecordMeta(e);
+  const modal = document.getElementById('detail-modal');
+  if(!modal) return;
+  document.getElementById('detail-title').textContent = e.tipo + ' · ' + e.prog;
+  document.getElementById('detail-desc').textContent = 'Simulación realizada ' + e.fecha;
+  const rows = [
+    ['Monto financiado / base', cop(meta.financiado)],
+    ['Cuota', cop(e.cuota)],
+    ['Plazo', meta.plazo],
+    ['Tasa mensual', Number.isFinite(d.tm)?(d.tm*100).toFixed(2)+'%':'—'],
+    ['Intereses', cop(d.totInt ?? (d.CP?.totInt||0)+(d.LP?.totInt||0))],
+    ['Total', cop(e.total)]
+  ];
+  document.getElementById('detail-body').innerHTML = `<div class="detail-list">${rows.map(([k,v])=>`<div class="detail-row"><span>${escHTML(k)}</span><strong>${escHTML(v)}</strong></div>`).join('')}</div>`;
+  abrirModalAccesible(modal,'[data-action="detail-close"]');
+}
+function cerrarDetalleHistorial(){ cerrarModalAccesible(document.getElementById('detail-modal')); }
+
+function selectProgramByName(tabId, name) {
+  const sel = document.getElementById('prog'+tabId); if(!sel || !name) return;
+  const option = Array.from(sel.options).find(o => (o.textContent||'').replace(/ \(.*\)$/,'').trim() === String(name).trim());
+  if(option) sel.value = option.value;
+}
+
+function duplicarHistorial(id) {
+  const e=getHistoryEntry(id); if(!e) return;
+  const d=e.snap||{}; const tab=e.tabId;
+  switchTab(tab);
+  if([1,2,3,7].includes(tab)) {
+    setNivel(tab,'pregrado');
+    selectProgramByName(tab,d.progNombre);
+    const mat=document.getElementById('mat'+tab); if(mat) mat.value=Math.round(d.mat||0);
+    if(SimuladorOFE.state.financing.benefits[tab] && Array.isArray(d.beneficios)) {
+      SimuladorOFE.state.financing.benefits[tab]=d.beneficios.map((b,i)=>({id:Date.now()+i,nombre:b.nombre||'Descuento',val:b.val||0,pct:b.pct||0,modo:'valor'})); renderBeneficios(tab);
+    }
+  }
+  if(tab===1){ document.getElementById('cont1-val').value=Math.round(d.cuotaInicial||0); document.getElementById('plazo1').value=d.n||6; document.getElementById('tasa1').value=((d.tm||.015)*100).toFixed(2); recalcAll(1); }
+  if(tab===2){ document.getElementById('cont2-val').value=Math.round(d.cuotaInicial||0); document.getElementById('pctCP').value=d.pCP||0; document.getElementById('pctLP').value=d.pLP||0; document.getElementById('plazoCP').value=d.nCP||6; document.getElementById('plazoLP').value=d.nLP||8; document.getElementById('tasa2').value=((d.tm||.015)*100).toFixed(2); recalcAll(2); }
+  if(tab===3){ document.getElementById('cont3-val').value=Math.round(d.cuotaInicial||0); document.getElementById('plazo3').value=d.n||12; document.getElementById('tasa3').value=((d.tm||.015)*100).toFixed(2); document.getElementById('cargos3').value=Math.round(d.cargos||0); recalcAll(3); }
+  if(tab===5){ document.getElementById('refi-capital').value=Math.round(d.capital||0); document.getElementById('refi-intcorr').value=Math.round(d.intCorr||0); document.getElementById('refi-mora').value=Math.round(d.mora||0); document.getElementById('refi-costos').value=Math.round(d.costos||0); document.getElementById('refi-ingreso').value=Math.round(d.ingreso||0); document.getElementById('refi-cuotas-nva').value=d.n||24; document.getElementById('refi-tasa-nva').value=((d.tm||.015)*100).toFixed(2); sumarSaldoRefi(); calcTaRefi(); }
+  if(tab===7){ document.getElementById('cap7').value=Math.round(d.cap||0); document.getElementById('plazo7').value=d.n||6; document.getElementById('tasa7').value=((d.tm||.015)*100).toFixed(2); recalc7(); }
+  toast('Simulación duplicada. Puedes ajustar los datos y volver a calcular.','success');
+}
+
+function historyScenario(entry) {
+  const d=entry?.snap||{};
+  if(entry.tabId===1) return {label:(d.progNombre||'Programa')+' — '+(d.pct||0)+'%',sub:(d.n||0)+' meses · tasa '+((d.tm||0)*100).toFixed(2)+'%',cuota:d.cuota||0,totalCredito:(d.totCap||0)+(d.totInt||0),pagoInicial:d.pagoInicial||0,totalGeneral:d.totalGeneral||0,financiado:d.financiado||0,intereses:d.totInt||0,data:JSON.parse(JSON.stringify(d))};
+  if(entry.tabId===3) return {label:(d.progNombre||'Programa')+' — '+(d.pct||0)+'%',sub:(d.n||0)+' meses · tasa '+((d.tm||0)*100).toFixed(2)+'%',cuota:d.cuota||0,totalCredito:(d.totCap||0)+(d.totInt||0),pagoInicial:d.pagoInicial||0,totalGeneral:d.totalGeneral||0,financiado:d.financiado||0,intereses:d.totInt||0,data:JSON.parse(JSON.stringify(d))};
+  if(entry.tabId===2){ const totalCredito=(d.CP?d.CP.totCap+d.CP.totInt:0)+(d.LP?(d.LP.noAmortize?d.LP.capital:d.LP.totCap+d.LP.totInt):0); return {label:(d.progNombre||'Programa')+' — CP'+(d.pCP||0)+'% LP'+(d.pLP||0)+'%',sub:(d.nCP||0)+' m CP · '+(d.nLP||0)+' m LP · tasa '+((d.tm||0)*100).toFixed(2)+'%',cuota:(d.CP?.cuota||0)+(d.LP?.cuota||0),totalCredito,pagoInicial:d.pagoInicial||0,totalGeneral:(d.pagoInicial||0)+totalCredito,financiado:(d.finCP||0)+(d.finLP||0),intereses:(d.CP?.totInt||0)+(d.LP?.totInt||0),isMixto:true,finCP:d.finCP||0,finLP:d.finLP||0,nCP:d.nCP||0,nLP:d.nLP||0,cuotaCP:d.CP?.cuota||0,cuotaLP:d.LP?.cuota||0,intCP:d.CP?.totInt||0,intLP:d.LP?.totInt||0,totCP:d.CP?d.CP.totCap+d.CP.totInt:0,totLP:d.LP?(d.LP.noAmortize?d.LP.capital:d.LP.totCap+d.LP.totInt):0,lpGrace:d.nLP?Math.round(d.nLP*1.5):null,data:JSON.parse(JSON.stringify(d))}; }
+  return null;
+}
+
+function compararHistorial(id) {
+  const e=getHistoryEntry(id); if(!e) return;
+  if(e.tabId===5){ const d=JSON.parse(JSON.stringify(e.snap||{})); const list=SimuladorOFE.state.restructuring.scenarios; if(list.length>=3) list.shift(); list.push(d); renderComparisonHub(); switchTab(8); toast('Escenario agregado a la comparación.','success'); return; }
+  const sc=historyScenario(e); if(!sc) return toast('Esta simulación no admite comparación.','info');
+  const list=SimuladorOFE.state.comparison.scenarios[e.tabId]; if(list.length>=3) list.shift(); list.push(sc); renderEscenarios(e.tabId); switchTab(8); toast('Escenario agregado a la comparación.','success');
+}
+
+
+function guardarEscenario(tabId, replaceOldest = false) {
   let snapshot = null;
   if(tabId===1 && SimuladorOFE.state.results.shortTerm) {
     snapshot = {
@@ -513,18 +635,28 @@ function guardarEscenario(tabId) {
       data: JSON.parse(JSON.stringify(SimuladorOFE.state.results.bank))
     };
   }
-  if(!snapshot) return alert('Primero calcula un crédito antes de guardar el escenario.');
-  if(SimuladorOFE.state.comparison.scenarios[tabId].length >= 3) {
-    if(!confirm('Ya tienes 3 escenarios guardados. ¿Reemplazar el más antiguo?')) return;
-    SimuladorOFE.state.comparison.scenarios[tabId].shift();
+  if(!snapshot) return toast('Primero calcula un crédito antes de guardar el escenario.', 'warning');
+  if(SimuladorOFE.state.comparison.scenarios[tabId].length >= 3 && !replaceOldest) {
+    return confirmAction({
+      title:'Reemplazar escenario',
+      message:'Ya tienes 3 escenarios guardados. Para guardar este escenario se reemplazará el más antiguo.',
+      confirmLabel:'Reemplazar',
+      tone:'primary',
+      onConfirm:()=>guardarEscenario(tabId, true)
+    });
   }
+  if(SimuladorOFE.state.comparison.scenarios[tabId].length >= 3) SimuladorOFE.state.comparison.scenarios[tabId].shift();
   SimuladorOFE.state.comparison.scenarios[tabId].push(snapshot);
   renderEscenarios(tabId);
+  if(typeof renderComparisonHub==='function') renderComparisonHub();
+  toast('Escenario guardado para comparar','success');
 }
 
 function eliminarEscenario(tabId, idx) {
   SimuladorOFE.state.comparison.scenarios[tabId].splice(idx, 1);
   renderEscenarios(tabId);
+  if(typeof renderComparisonHub==='function') renderComparisonHub();
+  toast('Escenario eliminado','success');
 }
 
 function renderEscenarios(tabId) {
@@ -536,7 +668,7 @@ function renderEscenarios(tabId) {
   const colors = ['var(--accent)','var(--success)','var(--info)'];
   let html = `<div class="card__head u-mt-5">
     <h3>${icon('clipboard')} Escenarios Guardados (${list.length}/3)</h3>
-    ${list.length >= 2 ? `<button class="btn btn--sm btn--primary" data-action="comparar-escenarios" data-tab="${tabId}"> Comparar</button>` : ''}
+    ${list.length >= 2 ? `<button class="btn btn--sm btn--primary" data-action="open-compare" data-tab="${tabId}">${icon('scale')} Comparar</button>` : ''}
   </div>
   <div class="list">`;
   list.forEach((e,i) => {
@@ -563,7 +695,7 @@ function renderEscenarios(tabId) {
 // ── Exportar comparativa de escenarios a Excel ───────────────────────────────
 function expXLSComparativa(tabId) {
   const list = SimuladorOFE.state.comparison.scenarios[tabId];
-  if(!list || list.length < 2) return alert('Guarda al menos 2 escenarios para comparar.');
+  if(!list || list.length < 2) return toast('Guarda al menos 2 escenarios para comparar.', 'warning');
   const isMixto = tabId === 2 && list.every(e => e.isMixto);
 
   const aoa = [];
@@ -725,6 +857,54 @@ function compararEscenarios(tabId) {
   wrap.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
+
+function openCompareForTab(tabId) {
+  switchTab(8);
+  requestAnimationFrame(()=>document.getElementById('compare-group-'+tabId)?.scrollIntoView({behavior:'smooth',block:'start'}));
+}
+
+function compareGroupHTML(tabId, list, title, subtitle, options={}) {
+  if(!list || list.length===0) return '';
+  const bestCost = list.reduce((b,e,i)=>Number(e.totalGeneral||Infinity)<Number(list[b].totalGeneral||Infinity)?i:b,0);
+  const bestPayment = list.reduce((b,e,i)=>Number(e.cuota||Infinity)<Number(list[b].cuota||Infinity)?i:b,0);
+  const cards = list.map((e,i)=>{
+    const d=e.data||e;
+    const tasa=Number.isFinite(d.tm)?(d.tm*100).toFixed(2)+'% M.V.':'—';
+    const plazo=e.isMixto?`${e.nCP||0}m CP · ${e.nLP||0}m LP`:`${d.n||e.n||0} meses`;
+    return `<article class="compare-card ${i===bestCost?'compare-card--best-cost':''} ${i===bestPayment?'compare-card--best-payment':''}">
+      <div class="compare-card__num">Escenario ${String.fromCharCode(65+i)}</div>
+      <div class="compare-card__title">${escHTML(e.label||title)}</div>
+      <div class="compare-card__payment">${cop(e.cuota||0)}<span>cuota estimada</span></div>
+      <div class="compare-card__rows">
+        <div class="compare-card__row"><span>Monto financiado</span><strong>${cop(e.financiado||e.principal||0)}</strong></div>
+        <div class="compare-card__row"><span>Plazo</span><strong>${escHTML(plazo)}</strong></div>
+        <div class="compare-card__row"><span>Tasa</span><strong>${escHTML(tasa)}</strong></div>
+        <div class="compare-card__row"><span>Intereses</span><strong>${cop(e.intereses??e.totInt??0)}</strong></div>
+        <div class="compare-card__row"><span>Total</span><strong>${cop(e.totalGeneral||0)}</strong></div>
+      </div>
+      <div class="compare-badges">${i===bestPayment?'<span class="compare-badge compare-badge--payment">Menor cuota</span>':''}${i===bestCost?'<span class="compare-badge compare-badge--cost">Menor costo total</span>':''}</div>
+    </article>`;
+  }).join('');
+  const ready=list.length>=2;
+  const insight=ready?`<div class="compare-insight">${icon('lightbulb')}<div><strong>${bestPayment===bestCost?'Una alternativa concentra ambas ventajas.':'Hay un intercambio entre cuota y costo.'}</strong> ${bestPayment===bestCost?`El Escenario ${String.fromCharCode(65+bestCost)} combina la menor cuota y el menor costo total.`:`El Escenario ${String.fromCharCode(65+bestPayment)} reduce la cuota; el Escenario ${String.fromCharCode(65+bestCost)} minimiza el costo total.`}</div></div>`:`<div class="compare-insight">${icon('info')}<div>Guarda al menos un escenario adicional para identificar automáticamente la menor cuota y el menor costo total.</div></div>`;
+  return `<section class="compare-group" id="compare-group-${tabId}"><div class="compare-group__head"><div><h3>${escHTML(title)}</h3><p>${escHTML(subtitle)}</p></div><div class="u-row u-gap-2">${ready && options.export!==false?`<button class="btn btn--tertiary btn--sm" data-action="xls-comparativa" data-tab="${tabId}">${icon('bar-chart')} Excel</button>`:''}<button class="btn btn--ghost btn--sm" data-action="switch-tab" data-tab="${tabId}">Editar escenarios</button></div></div><div class="compare-scenarios">${cards}</div>${insight}</section>`;
+}
+
+function renderComparisonHub() {
+  const root=document.getElementById('comparison-hub'); if(!root) return;
+  const groups=[];
+  const defs={1:['Crédito a Corto Plazo','Compara cuota, tasa, intereses y costo total.'],2:['Corto y Largo Plazo','Contrasta distribuciones entre CP y LP con los valores actualmente conocidos.'],3:['Crédito Banco Aliado','Evalúa el impacto de plazo, tasa y cargos en cada alternativa.']};
+  [1,2,3].forEach(tab=>{ const list=SimuladorOFE.state.comparison.scenarios[tab]||[]; if(list.length) groups.push(compareGroupHTML(tab,list,...defs[tab])); });
+  const refi=SimuladorOFE.state.restructuring.scenarios||[];
+  if(refi.length) {
+    const mapped=refi.map(e=>({label:e.label,cuota:e.cuota,totalGeneral:e.totalGeneral,financiado:e.principal,intereses:e.totInt,n:e.n,tm:e.tm,data:e}));
+    groups.push(compareGroupHTML(5,mapped,'Reestructuración de Crédito','Compara la nueva cuota, costo financiero y plazo de cada escenario.',{export:false}));
+  }
+  if(!groups.length) {
+    root.innerHTML=`<div class="compare-empty"><div class="compare-empty__icon">${icon('scale')}</div><h3>No hay escenarios para comparar</h3><p>Calcula una simulación y guarda al menos un escenario. Cuando tengas dos alternativas de una misma modalidad podrás identificar rápidamente menor cuota y menor costo total.</p><button class="btn btn--primary btn--sm u-mt-4" data-action="switch-tab" data-tab="1">Crear primer escenario</button></div>`;
+  } else root.innerHTML=groups.join('');
+}
+
 // ── COMBINED PDF (pregrado + idiomas) ────────────────────────────────────────
 function expPDFCombinado() {
   const dp   = SimuladorOFE.state.results.languages;
@@ -733,7 +913,7 @@ function expPDFCombinado() {
   if(tabId===1 && SimuladorOFE.state.results.shortTerm)  { dm=SimuladorOFE.state.results.shortTerm; tipoLabel='Crédito Corto Plazo'; }
   if(tabId===2 && SimuladorOFE.state.results.mixed)  { dm=SimuladorOFE.state.results.mixed; tipoLabel='Crédito Mixto'; }
   if(tabId===3 && SimuladorOFE.state.results.bank)  { dm=SimuladorOFE.state.results.bank; tipoLabel='Crédito Banco Aliado'; }
-  if(!dp||!dm) return alert('Primero calcula ambos créditos (pregrado e idiomas) para generar el PDF combinado.');
+  if(!dp||!dm) return toast('Primero calcula ambos créditos (pregrado e idiomas) para generar el PDF combinado.', 'warning');
 
   const {jsPDF} = window.jspdf;
   const doc = new jsPDF();
@@ -950,6 +1130,7 @@ function expPDFCombinado() {
 
 
 function handleUIChange(event) {
+  clearControlValidationFromEvent(event.target);
   const el = event.target.closest('[data-change-action]');
   if(!el) return;
   const action = el.dataset.changeAction;

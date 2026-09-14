@@ -22,6 +22,9 @@ const ICONS = {
   'save':           '<path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7M7 3v4a1 1 0 0 0 1 1h7"/>',
   'scale':          '<path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10M12 3v18M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>',
   'trash':          '<path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>',
+  'trash-2':        '<path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>',
+  'eye':            '<path d="M2.06 12.35a1 1 0 0 1 0-.7C3.73 7.6 7.7 5 12 5c4.3 0 8.27 2.6 9.94 6.65a1 1 0 0 1 0 .7C20.27 16.4 16.3 19 12 19c-4.3 0-8.27-2.6-9.94-6.65Z"/><circle cx="12" cy="12" r="3"/>',
+  'copy':           '<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
   'history':        '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/>',
   'lock':           '<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
   'search':         '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
@@ -136,6 +139,69 @@ function initDynamicAccessibility() {
   observer.observe(main, {childList:true, subtree:true});
 }
 
+
+function resultHero({eyebrow='Resultado de la simulación', label='Cuota estimada', value='—', meta='', metrics=[], tone='success', note=''} = {}) {
+  const safeMetrics = (metrics||[]).filter(Boolean).slice(0,4);
+  return `<section class="result-hero result-hero--${escHTML(tone)}" aria-label="${escAttr(eyebrow)}">
+    <div class="result-hero__eyebrow">${icon('check-circle')} ${escHTML(eyebrow)}</div>
+    <div class="result-hero__label">${escHTML(label)}</div>
+    <div class="result-hero__value">${escHTML(value)}</div>
+    ${meta ? `<div class="result-hero__meta">${escHTML(meta)}</div>` : ''}
+    ${safeMetrics.length ? `<div class="result-hero__metrics">${safeMetrics.map(m=>`<div class="result-hero__metric"><span class="result-hero__metric-label">${escHTML(m.label||'')}</span><strong class="result-hero__metric-value">${escHTML(m.value||'—')}</strong></div>`).join('')}</div>` : ''}
+    ${note ? `<div class="result-hero__note">${escHTML(note)}</div>` : ''}
+  </section>`;
+}
+
+function resultActions(tabId, {canCompare=false, primaryLabel='Guardar escenario', primaryAction='guardar-escenario', primaryTab=tabId} = {}) {
+  return `<div class="result-actions" aria-label="Acciones del resultado">
+    <span class="result-actions__label">¿Qué quieres hacer con este resultado?</span>
+    ${primaryLabel ? `<button class="btn btn--primary btn--sm" data-action="${escAttr(primaryAction)}" data-tab="${primaryTab}">${icon(primaryAction==='switch-tab'?'history':'save')} ${escHTML(primaryLabel)}</button>` : ''}
+    <button class="btn btn--secondary btn--sm" data-action="pdf" data-tab="${tabId}">${icon('file-text')} PDF</button>
+    <button class="btn btn--tertiary btn--sm" data-action="xls" data-tab="${tabId}">${icon('bar-chart')} Excel</button>
+    ${canCompare ? `<button class="btn btn--ghost btn--sm" data-action="open-compare" data-tab="${tabId}">${icon('scale')} Comparar</button>` : ''}
+  </div>`;
+}
+
+function resultStateHTML({type='empty', iconName='bar-chart', title='Sin resultados todavía', desc='', actionLabel='', actionTab=null} = {}) {
+  const action = actionLabel && actionTab ? `<div class="result-state__action"><button class="btn btn--secondary btn--sm" data-action="switch-tab" data-tab="${actionTab}">${escHTML(actionLabel)}</button></div>` : '';
+  const spinner = type === 'loading' ? '<span class="spinner" aria-hidden="true"></span>' : icon(iconName,'icon-xl');
+  return `<div class="result-state result-state--${escHTML(type)}" role="${type==='error'?'alert':'status'}"><div class="result-state__inner"><div class="result-state__icon">${spinner}</div><div class="result-state__title">${escHTML(title)}</div>${desc?`<div class="result-state__desc">${escHTML(desc)}</div>`:''}${action}</div></div>`;
+}
+
+function setResultLoading(tabId, title='Calculando escenario…') {
+  const map = {1:'res1',2:'res2',3:'res3',5:'res-refi',7:'res7'};
+  const target = document.getElementById(map[tabId]);
+  if(target) target.innerHTML = resultStateHTML({type:'loading', title, desc:'Estamos organizando los valores para mostrarte el resultado financiero.'});
+}
+
+function markViewHasResult(tabId, hasResult=true) {
+  const view = document.getElementById('tab'+tabId);
+  if(view) view.classList.toggle('has-result', !!hasResult);
+}
+
+function calculationResultForTab(tabId) {
+  if(tabId===1) return SimuladorOFE.state.results.shortTerm;
+  if(tabId===2) return SimuladorOFE.state.results.mixed;
+  if(tabId===3) return SimuladorOFE.state.results.bank;
+  if(tabId===5) return SimuladorOFE.state.restructuring.current;
+  if(tabId===7) return SimuladorOFE.state.results.initialPayment;
+  return null;
+}
+function runCalculation(button, tabId, task, loadingTitle) {
+  const targetId={1:'res1',2:'res2',3:'res3',5:'res-refi',7:'res7'}[tabId];
+  const target=document.getElementById(targetId);
+  const previousHTML=target?.innerHTML || '';
+  const before=calculationResultForTab(tabId);
+  setResultLoading(tabId, loadingTitle);
+  return runButtonTask(button, () => {
+    const result = task();
+    const after=calculationResultForTab(tabId);
+    if(after && after !== before) requestAnimationFrame(()=>markViewHasResult(tabId, true));
+    else if(target) { target.innerHTML=previousHTML; markViewHasResult(tabId, !!before); }
+    return result;
+  });
+}
+
 function toast(mensaje, tipo){
   const cont = document.getElementById('toasts');
   if(!cont) return;
@@ -150,8 +216,81 @@ function toast(mensaje, tipo){
   body.className = 'toast__body';
   body.textContent = String(mensaje ?? '');
   el.append(ico, body);
+  // Mantén el feedback no intrusivo: como máximo tres mensajes visibles.
+  while(cont.children.length >= 3) cont.firstElementChild?.remove();
   cont.appendChild(el);
-  setTimeout(()=>{ el.style.opacity='0'; el.style.transform='translateY(6px)'; setTimeout(()=>el.remove(),200); }, 4200);
+  setTimeout(()=>{ el.classList.add('toast--leaving'); setTimeout(()=>el.remove(),220); }, 3600);
+}
+
+
+// ── Validación inline de formularios ────────────────────────────────────────
+function clearFieldError(controlOrId) {
+  const control = typeof controlOrId === 'string' ? document.getElementById(controlOrId) : controlOrId;
+  if(!control) return;
+  const field = control.closest('.field');
+  if(!field) return;
+  field.classList.remove('is-error');
+  control.removeAttribute('aria-invalid');
+  const err = field.querySelector('.field__error');
+  if(err) {
+    const described = (control.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean).filter(id => id !== err.id);
+    if(described.length) control.setAttribute('aria-describedby', described.join(' ')); else control.removeAttribute('aria-describedby');
+    err.remove();
+  }
+}
+
+function showFieldError(controlId, message, fallbackAlertId) {
+  const control = document.getElementById(controlId);
+  if(!control) {
+    if(fallbackAlertId && typeof showAlert === 'function') showAlert(fallbackAlertId, message);
+    else toast(message, 'error');
+    return;
+  }
+  clearFieldError(control);
+  const field = control.closest('.field');
+  if(!field) { toast(message, 'error'); return; }
+  field.classList.add('is-error');
+  control.setAttribute('aria-invalid','true');
+  const err = document.createElement('div');
+  err.className = 'field__error';
+  err.id = controlId + '-error';
+  err.setAttribute('role','alert');
+  err.textContent = message;
+  const described = new Set((control.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean));
+  described.add(err.id);
+  control.setAttribute('aria-describedby', Array.from(described).join(' '));
+  field.appendChild(err);
+  control.focus({preventScroll:true});
+  control.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function clearControlValidationFromEvent(target) {
+  if(target?.matches?.('input, select, textarea')) clearFieldError(target);
+}
+
+// ── Confirmación propia del Design System ──────────────────────────────────
+function confirmAction({title='Confirmar acción', message='', confirmLabel='Confirmar', tone='danger', onConfirm} = {}) {
+  const modal = document.getElementById('confirm-modal');
+  if(!modal) { if(typeof onConfirm === 'function') onConfirm(); return; }
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-desc').textContent = message;
+  const accept = document.getElementById('confirm-accept');
+  accept.textContent = confirmLabel;
+  accept.className = 'btn ' + (tone === 'danger' ? 'btn--danger' : 'btn--primary');
+  SimuladorOFE.state.ui.confirmCallback = typeof onConfirm === 'function' ? onConfirm : null;
+  abrirModalAccesible(modal, '[data-action="confirm-cancel"]');
+}
+
+function cancelConfirm() {
+  SimuladorOFE.state.ui.confirmCallback = null;
+  cerrarModalAccesible(document.getElementById('confirm-modal'));
+}
+
+function acceptConfirm() {
+  const callback = SimuladorOFE.state.ui.confirmCallback;
+  SimuladorOFE.state.ui.confirmCallback = null;
+  cerrarModalAccesible(document.getElementById('confirm-modal'));
+  if(typeof callback === 'function') setTimeout(callback, 0);
 }
 
 // ── Menú lateral (pantallas angostas) ──
@@ -435,6 +574,18 @@ function _abrirPinModal(target){
   abrirModalAccesible(document.getElementById('refi-pin-modal'), '#rp0');
 }
 
+const VIEW_META = Object.freeze({
+  1:{section:'SIMULAR', title:'Crédito a Corto Plazo', desc:'Simula las condiciones de financiación para este escenario.', status:'Lineamientos vigentes'},
+  2:{section:'SIMULAR', title:'Corto y Largo Plazo', desc:'Distribuye la financiación entre corto y largo plazo y revisa su impacto.', status:'Lineamientos vigentes'},
+  3:{section:'SIMULAR', title:'Crédito Banco Aliado', desc:'Evalúa un escenario de financiación con las condiciones del banco aliado.', status:'Lineamientos vigentes'},
+  5:{section:'SIMULAR', title:'Reestructuración de Crédito', desc:'Construye escenarios de reestructuración sobre un saldo existente.', status:'Control operativo'},
+  7:{section:'ANALIZAR', title:'Cálculo de Cuota Inicial', desc:'Calcula la cuota inicial requerida a partir de la capacidad de pago mensual.', status:'Herramienta de análisis'},
+  4:{section:'ANALIZAR', title:'Conversor de Tasas', desc:'Convierte tasas entre periodicidades para comparar condiciones equivalentes.', status:'Herramienta de análisis'},
+  8:{section:'ANALIZAR', title:'Comparar escenarios', desc:'Accede a las comparaciones disponibles dentro de cada modalidad de simulación.', status:'Escenarios guardados'},
+  9:{section:'HISTORIAL', title:'Mis simulaciones', desc:'Consulta las simulaciones recientes guardadas localmente en este navegador.', status:'Datos locales'},
+  6:{section:'ADMINISTRACIÓN', title:'Actualizar Programas', desc:'Actualiza programas y valores publicados sin modificar el motor financiero.', status:'Acceso restringido'}
+});
+
 function switchTab(n) {
   if(n === 6 && !SimuladorOFE.state.access.updaterUnlocked)  { _abrirPinModal(6); return; }
   if(n === 5 && !SimuladorOFE.state.access.restructuringUnlocked) { _abrirPinModal(5); return; }
@@ -443,13 +594,25 @@ function switchTab(n) {
     if(on) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current');
   });
   document.querySelectorAll('.view[data-view]').forEach(p => { p.hidden = Number(p.dataset.view) !== n; });
-  const t = document.querySelector('.nav__item[data-tab="'+n+'"] .nav__item-text');
-  const ht = document.getElementById('header-title');
-  if(t && ht) ht.textContent = t.textContent;
+  const meta = VIEW_META[n];
+  if(meta) {
+    const ht = document.getElementById('header-title');
+    const hd = document.getElementById('header-desc');
+    const hs = document.getElementById('header-section');
+    const hst = document.getElementById('header-status');
+    if(ht) ht.textContent = meta.title;
+    if(hd) hd.textContent = meta.desc;
+    if(hs) hs.textContent = meta.section;
+    if(hst) hst.textContent = meta.status;
+    document.title = meta.title + ' · Simulador OFE';
+  }
   toggleSidebar(false);
+  if(n === 8 && typeof renderComparisonHub === 'function') renderComparisonHub();
+  if(n === 9 && typeof renderHistorial === 'function') renderHistorial();
   enhanceTableAccessibility(document.getElementById('tab'+n) || document);
   window.scrollTo({top:0, behavior:'smooth'});
 }
+
 
 function refiPinInput(idx) {
   const len = _pinCfg(SimuladorOFE.state.access.pinTarget).len;
@@ -513,9 +676,13 @@ function handleGlobalKeyboard(e) {
 
   const pin  = document.getElementById('refi-pin-modal');
   const idi  = document.getElementById('modal-idiomas');
+  const cfm  = document.getElementById('confirm-modal');
   const side = document.getElementById('sidebar');
+  const activeModal = SimuladorOFE.state.ui.activeModalId ? document.getElementById(SimuladorOFE.state.ui.activeModalId) : null;
   const pinAbierto  = pin  && pin.dataset.open  === 'true';
   const idiAbierto  = idi  && idi.dataset.open  === 'true';
+  const cfmAbierto  = cfm  && cfm.dataset.open  === 'true';
+  const genericAbierto = activeModal && activeModal.dataset.open === 'true' && ![pin, idi, cfm].includes(activeModal);
   const sideAbierto = side && side.dataset.open === 'true';
 
   // Enter verifica la clave únicamente desde sus casillas; no intercepta botones.
@@ -525,9 +692,11 @@ function handleGlobalKeyboard(e) {
   }
 
   // Orden de cierre: lo más superficial primero
-  if(pinAbierto)       { cancelarRefiPin(); e.preventDefault(); }
-  else if(idiAbierto)  { cerrarIdiomas();   e.preventDefault(); }
-  else if(sideAbierto) { toggleSidebar(false); e.preventDefault(); }
+  if(cfmAbierto)          { cancelConfirm();     e.preventDefault(); }
+  else if(pinAbierto)     { cancelarRefiPin(); e.preventDefault(); }
+  else if(idiAbierto)     { cerrarIdiomas();   e.preventDefault(); }
+  else if(genericAbierto) { cerrarModalAccesible(activeModal); e.preventDefault(); }
+  else if(sideAbierto)    { toggleSidebar(false); e.preventDefault(); }
 }
 
 
@@ -543,7 +712,10 @@ SimuladorOFE.register('core-ui', {
       abrirModal: abrirModalAccesible,
       cerrarModal: cerrarModalAccesible,
       runButtonTask,
-      enhanceTables: enhanceTableAccessibility
+      enhanceTables: enhanceTableAccessibility,
+      confirmAction,
+      showFieldError,
+      clearFieldError
     });
   }
 });

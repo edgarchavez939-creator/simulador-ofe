@@ -647,7 +647,13 @@ function convertirTasas() {
   const fmt = v => (v * 100).toFixed(6).replace(/\.?0+$/, '') + '%';
   const fmtN = v => v.toFixed(4).replace(/\.?0+$/, '') + '%';
 
-  let html = `<div class="table-wrap"><table class="tbl">
+  let html = `<div class="rate-result" role="status" aria-live="polite">
+    <div class="rate-result__block"><span>Tasa de entrada</span><strong>${valorInput.toFixed(4)}% ${TC_PERIODOS[periodoOrigen].label}</strong></div>
+    <div class="rate-result__arrow">${icon('arrow-right')}</div>
+    <div class="rate-result__block"><span>Tasa efectiva anual equivalente</span><strong>${(ear*100).toFixed(4)}%</strong></div>
+  </div>
+  <div class="rate-explainer">Esta equivalencia permite comparar tasas expresadas en períodos distintos sobre una misma base. La tabla muestra las demás periodicidades relacionadas.</div>
+  <div class="table-wrap u-mt-4"><table class="tbl">
     <thead><tr>
       <th class="u-text-left">Período</th>
       <th>Períodos/Año</th>
@@ -667,18 +673,6 @@ function convertirTasas() {
   });
 
   html += `</tbody></table></div>`;
-
-  // EAR banner
-  html += `<div class="result-banner result-banner--info u-mt-14">
-    <div>
-      <div class="banner-label">Tasa Efectiva Anual equivalente</div>
-      <div class="banner-value">${(ear*100).toFixed(4)}%</div>
-    </div>
-    <div class="u-text-right">
-      <div class="banner-sub">Tasa de entrada</div>
-      <div class="banner-secondary">${valorInput.toFixed(4)}% ${TC_PERIODOS[periodoOrigen].label}</div>
-    </div>
-  </div>`;
 
   document.getElementById('tc-tabla').innerHTML = html;
 }

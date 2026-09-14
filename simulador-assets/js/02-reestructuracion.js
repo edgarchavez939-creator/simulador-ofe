@@ -27,9 +27,9 @@ function calcularRefi() {
   const costos  = parseFloat(document.getElementById('refi-costos').value)||0;
   const ingreso = parseFloat(document.getElementById('refi-ingreso').value)||0;
 
-  if(!capital||capital<=0) return alert('Ingresa al menos el capital pendiente.');
-  if(!nNva||nNva<=0)   return alert('Ingresa el plazo de la reestructuración.');
-  if(isNaN(tmNva))     return alert('Ingresa la tasa de reestructuración.');
+  if(!capital||capital<=0) return showFieldError('refi-capital','Ingresa al menos el capital pendiente.');
+  if(!nNva||nNva<=0)   return showFieldError('refi-cuotas-nva','Ingresa el plazo de la reestructuración.');
+  if(isNaN(tmNva))     return showFieldError('refi-tasa-nva','Ingresa la tasa de reestructuración.');
 
   const principal = saldo + costos;
   const B = amortizacion(principal, tmNva, nNva);
@@ -48,8 +48,31 @@ function calcularRefi() {
   document.getElementById('res-refi').innerHTML = `
   <div class="card">
     ${fechaBadgeHtml()}
-    <div class="card-title u-text-info">Escenario de Reestructuración</div>
-
+    <div class="card-title">Resultado de la reestructuración</div>
+    ${resultHero({
+      eyebrow:'Reestructuración de Crédito', label:'Nueva cuota estimada', value:cop(B.cuota),
+      meta:`${nNva} cuotas · ${(tmNva*100).toFixed(2)}% M.V.`, tone:'info',
+      metrics:[
+        {label:'Saldo actual',value:cop(saldo)},
+        {label:'Monto reestructurado',value:cop(principal)},
+        {label:'Total intereses',value:cop(B.totInt)},
+        {label:'Total a pagar',value:cop(totalB)}
+      ],
+      note:'La comparación se construye sobre el saldo registrado y las nuevas condiciones. La aplicación actual no almacena cuota ni plazo vigentes del crédito original.'
+    })}
+    <div class="restruct-flow" aria-label="Flujo de reestructuración">
+      <div class="restruct-step"><span>1 · Saldo actual</span><strong>${cop(saldo)}</strong></div>
+      <div class="restruct-step"><span>2 · Nuevas condiciones</span><strong>${nNva} meses · ${(tmNva*100).toFixed(2)}% M.V.</strong></div>
+      <div class="restruct-step"><span>3 · Nueva cuota</span><strong>${cop(B.cuota)}</strong></div>
+      <div class="restruct-step"><span>4 · Impacto</span><strong>${cop(B.totInt)} en intereses</strong></div>
+    </div>
+    <div class="result-actions" aria-label="Acciones del escenario">
+      <span class="result-actions__label">Guarda este escenario para compararlo con otra alternativa.</span>
+      <button class="btn btn--primary btn--sm" data-action="guardar-esc-refi">${icon('save')} Guardar escenario</button>
+      <button class="btn btn--secondary btn--sm" data-action="pdf-refi">${icon('file-text')} PDF</button>
+      ${reestructState.scenarios.length>=2?`<button class="btn btn--ghost btn--sm" data-action="comparar-esc-refi">${icon('scale')} Comparar</button>`:''}
+    </div>
+    <div class="financial-details">
     <div class="section__title u-mt-5 u-mt-0 u-text-info">Saldo a la fecha</div>
     <div class="kpi-grid">
       <div class="kpi"><span class="kpi__label">Capital pendiente</span><div class="kpi__value kpi__value--md">${cop(capital)}</div></div>
@@ -98,19 +121,19 @@ function calcularRefi() {
     <div class="section__title u-mt-5">Plan de Pagos (${nNva} cuotas)</div>
     ${renderTabla(B.rows, B.cuota, B.totInt, B.totCap)}
 
-    <div class="btn-row u-mt-14">
-      <button class="btn btn--sm u-flex-1" data-action="guardar-esc-refi">${icon('save')} Guardar para comparar</button>
-      <button class="btn btn--sm" data-action="pdf-refi">${icon('file-text')} PDF Escenario</button>
     </div>
   </div>`;
 
+  markViewHasResult(5,true);
   renderEscRefi();
+  if(typeof registrarHistorial === 'function') setTimeout(()=>registrarHistorial(5),100);
+  toast('Escenario de reestructuración calculado','success');
 }
 
 // ── PDF: single refinancing scenario ─────────────────────────────────────────
 function expPDFRefi() {
   const d = SimuladorOFE.state.restructuring.current;
-  if(!d) return alert('Primero calcula un escenario.');
+  if(!d) return toast('Primero calcula un escenario.', 'warning');
   const {jsPDF} = window.jspdf;
   const doc = new jsPDF();
   let y = pdfHeader(doc, 'Reestructuracion de Credito', d.label);
@@ -178,7 +201,7 @@ function expPDFRefi() {
 
 // ── PDF: comparison of scenarios ─────────────────────────────────────────────
 function expPDFRefiComp() {
-  if(reestructState.scenarios.length < 2) return alert('Guarda al menos 2 escenarios para comparar.');
+  if(reestructState.scenarios.length < 2) return toast('Guarda al menos 2 escenarios para comparar.', 'warning');
   const {jsPDF} = window.jspdf;
   const doc = new jsPDF({orientation:'landscape'});  // horizontal
   const PW = 297;  // landscape width
@@ -333,11 +356,15 @@ function guardarEscRefi() {
   if(reestructState.scenarios.length >= 3) reestructState.scenarios.shift();
   reestructState.scenarios.push(JSON.parse(JSON.stringify(SimuladorOFE.state.restructuring.current)));
   renderEscRefi();
+  if(typeof renderComparisonHub==='function') renderComparisonHub();
+  toast('Escenario guardado para comparar','success');
 }
 
 function eliminarEscRefi(idx) {
   reestructState.scenarios.splice(idx, 1);
   renderEscRefi();
+  if(typeof renderComparisonHub==='function') renderComparisonHub();
+  toast('Escenario eliminado','success');
 }
 
 function renderEscRefi() {
@@ -348,7 +375,7 @@ function renderEscRefi() {
   const colors = ['var(--info)','var(--success)','var(--info)'];
   let html = `<div class="card__head u-mt-5">
     <h3>${icon('clipboard')} Escenarios Guardados (${reestructState.scenarios.length}/3)</h3>
-    ${reestructState.scenarios.length >= 2 ? `<button class="btn btn--sm btn--primary" data-action="comparar-esc-refi"> Comparar</button>` : ''}
+    ${reestructState.scenarios.length >= 2 ? `<button class="btn btn--sm btn--primary" data-action="open-compare" data-tab="5">${icon('scale')} Comparar</button>` : ''}
   </div><div class="list">`;
   reestructState.scenarios.forEach((e,i) => {
     html += `<div class="list-item">
@@ -557,6 +584,7 @@ function limpiarRefi() {
   calcTaRefi('nva');
   reestructState.scenarios.splice(0, reestructState.scenarios.length);
   SimuladorOFE.state.restructuring.current = null;
+  markViewHasResult(5,false);
   renderEscRefi();
   document.getElementById('res-refi').innerHTML = `
     <div class="card empty-state">

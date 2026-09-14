@@ -499,7 +499,20 @@ function calcular3(){
   document.getElementById('res3').innerHTML=`
   <div class="card">
     ${fechaBadgeHtml()}
-    <div class="card-title u-text-info">Resumen — Crédito Banco Aliado</div>
+    <div class="card-title">Resultado de la simulación</div>
+    ${resultHero({
+      eyebrow:'Crédito Banco Aliado', label:'Cuota estimada', value:cop(cuota),
+      meta:`${n} cuotas · ${(tm*100).toFixed(2)}% M.V.`, tone:'info',
+      metrics:[
+        {label:'Valor financiado',value:cop(financiado)},
+        {label:'Total intereses',value:cop(totInt)},
+        {label:'Total crédito',value:cop(totalCredito)},
+        {label:'Pago inicial',value:cop(pagoInicial)}
+      ],
+      note:cargos>0?`El pago inicial incluye ${cop(cargos)} en otros cargos del banco.`:'El resultado se calcula con las condiciones configuradas para el banco aliado.'
+    })}
+    ${resultActions(3,{canCompare:SimuladorOFE.state.comparison.scenarios[3].length>=2})}
+    <div class="financial-details">
     <div class="section__title u-mt-5 u-mt-0 u-mb-10 u-text-info">${icon('credit-card')} Pago Inicial</div>
     <div class="kpi-grid">
       <div class="kpi"><span class="kpi__label">Cuota Inicial Contado</span><div class="kpi__value kpi__value--md">${cop(cuotaInicial)}</div></div>
@@ -523,12 +536,11 @@ function calcular3(){
     </div>
     <div class="section__title u-mt-5">Tabla de Amortización (${n} meses)</div>
     ${renderTabla(rows,cuota,totInt,totCap)}
-    <div class="btn-row">
-      <button class="btn btn--sm" data-action="pdf" data-tab="3">${icon('file-text')} Descargar PDF</button>
-      <button class="btn btn--sm" data-action="xls" data-tab="3">${icon('bar-chart')} Descargar Excel</button>
     </div>
   </div>`;
-  setTimeout(()=>{ const p=document.getElementById('esc-panel-3'); if(p){ const sb=document.createElement('div'); sb.style='margin-top:14px;'; sb.innerHTML=`<button class="btn btn--sm" data-action="guardar-escenario" data-tab="3">${icon('save')} Guardar como escenario para comparar</button>`; document.getElementById('res3').querySelector('.card').appendChild(sb); } renderEscenarios(3); },50);
+  markViewHasResult(3,true);
+  setTimeout(()=>renderEscenarios(3),50);
+  toast('Simulación calculada correctamente','success');
 }
 
 function expPDF3(){

@@ -75,7 +75,27 @@ function fmtLbl(id) {
   el.textContent = (!isNaN(v)&&v>0) ? cop(v) : '';
 }
 
-function showAlert(id,msg){ const el=document.getElementById('alert'+id); if(!el) return; el.textContent=msg; el.hidden=false; setTimeout(()=>{ el.hidden=true; },5000); }
+function showAlert(id,msg){
+  const clean = String(msg ?? '').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();
+  const lower = clean.toLowerCase();
+  let fieldId = null;
+  if(lower.includes('valor de matrícula') || lower.includes('valor de la matrícula')) fieldId = 'mat'+id;
+  else if(id===7 && lower.includes('capacidad de pago')) fieldId = 'cap7';
+  else if(id===7 && lower.includes('número de cuotas')) fieldId = 'plazo7';
+  else if(id===7 && lower.includes('tasa de interés')) fieldId = 'tasa7';
+  else if((id===1 || id===3) && (lower.includes('plazo') || lower.includes('número de meses'))) fieldId = 'plazo'+id;
+  else if((id===1 || id===3) && lower.includes('tasa')) fieldId = 'tasa'+id;
+  else if((id===1 || id===3) && lower.includes('monto financiado')) fieldId = 'finval'+id;
+  else if(id===2 && lower.includes('corto plazo')) fieldId = 'plazoCP';
+  else if(id===2 && lower.includes('largo plazo')) fieldId = 'plazoLP';
+  else if(id===2 && lower.includes('monto financiado')) fieldId = 'finvalCP';
+  else if(lower.includes('pago de contado supera')) fieldId = 'cont'+id+'-val';
+  if(fieldId && document.getElementById(fieldId)) return showFieldError(fieldId, clean, id);
+  const el=document.getElementById('alert'+id);
+  if(!el) return toast(clean, 'error');
+  el.textContent=clean; el.hidden=false;
+  setTimeout(()=>{ el.hidden=true; },5000);
+}
 
 // Política financiera: los cálculos conservan precisión completa en memoria.
 // El redondeo a pesos COP se aplica únicamente al presentar/exportar valores.
@@ -146,7 +166,21 @@ function calcular1(){
   document.getElementById('res1').innerHTML=`
   <div class="card">
     ${fechaBadgeHtml()}
-    <div class="card-title">Resumen Financiero — Corto Plazo</div>
+    <div class="card-title">Resultado de la simulación</div>
+    ${resultHero({
+      eyebrow:'Crédito a Corto Plazo',
+      label:'Cuota estimada', value:cop(cuota),
+      meta:`${n} cuotas · ${(tm*100).toFixed(2)}% M.V.`, tone:'success',
+      metrics:[
+        {label:'Valor financiado',value:cop(financiado)},
+        {label:'Total intereses',value:cop(totInt)},
+        {label:'Total crédito',value:cop(totalPagar)},
+        {label:'Pago inicial',value:cop(pagoInicial)}
+      ],
+      note:'El costo total de la matrícula incluye pago inicial, aporte Garantisa, capital e intereses del crédito.'
+    })}
+    ${resultActions(1,{canCompare:SimuladorOFE.state.comparison.scenarios[1].length>=2})}
+    <div class="financial-details">
     <div class="section__title u-mt-0 u-mb-10 u-text-danger">${icon('credit-card')} Pago Inicial (al momento del desembolso)</div>
     <div class="kpi-grid">
       <div class="kpi"><span class="kpi__label">Cuota Inicial Contado</span><div class="kpi__value kpi__value--md">${cop(cuotaInicial)}</div></div>
@@ -170,13 +204,11 @@ function calcular1(){
     </div>
     <div class="section__title u-mt-5">Tabla de Amortización (${n} cuotas)</div>
     ${renderTabla(rows,cuota,totInt,totCap)}
-    <div class="btn-row">
-      <button class="btn btn--sm" data-action="pdf" data-tab="1">${icon('file-text')} Descargar PDF</button>
-      <button class="btn btn--sm" data-action="xls" data-tab="1">${icon('bar-chart')} Descargar Excel</button>
     </div>
   </div>`;
-  // render save btn + existing scenarios
-  setTimeout(()=>{ const p=document.getElementById('esc-panel-1'); if(p){ const sb=document.createElement('div'); sb.style='margin-top:14px;'; sb.innerHTML=`<button class="btn btn--sm" data-action="guardar-escenario" data-tab="1">${icon('save')} Guardar como escenario para comparar</button>`; document.getElementById('res1').querySelector('.card').appendChild(sb); } renderEscenarios(1); },50);
+  markViewHasResult(1,true);
+  setTimeout(()=>renderEscenarios(1),50);
+  toast('Simulación calculada correctamente','success');
 }
 
 
@@ -311,7 +343,22 @@ function calcular2(){
   const totCredito=totCP+totLP;
   const totGeneral=pagoInicial+totCredito;
 
-  let html=`<div class="card">${fechaBadgeHtml()}<div class="card-title">Resultados Crédito Mixto</div>`;
+  let html=`<div class="card">${fechaBadgeHtml()}<div class="card-title">Resultado de la simulación</div>
+  ${resultHero({
+    eyebrow:'Corto y Largo Plazo',
+    label:CP?'Cuota estimada durante estudios':'Capital financiado a largo plazo',
+    value:CP?cop(CP.cuota):cop(finLP),
+    meta:`CP ${pCP}% · LP ${pLP}% · ${(tm*100).toFixed(2)}% M.V.`, tone:'success',
+    metrics:[
+      {label:'Financiado total',value:cop(finCP+finLP)},
+      {label:'Pago inicial',value:cop(pagoInicial)},
+      {label:'Intereses CP',value:cop(CP?CP.totInt:0)},
+      {label:'Capital LP',value:cop(finLP)}
+    ],
+    note:LP?'La cuota y el costo definitivo del tramo LP dependerán de la tasa vigente al iniciar su amortización.':'El resultado corresponde al tramo de corto plazo configurado.'
+  })}
+  ${resultActions(2,{canCompare:SimuladorOFE.state.comparison.scenarios[2].length>=2})}
+  <div class="financial-details">`;
 
   // Bloque pago inicial
   html+=`<div class="section__title u-mt-0 u-mb-10 u-text-danger">${icon('credit-card')} Pago Inicial (al momento del desembolso)</div>
@@ -389,13 +436,12 @@ function calcular2(){
   ${LP?`<div class="micro-note micro-note--success u-mt-8">
     * El costo total definitivo del crédito LP se determinará al momento de iniciar la amortización, según la tasa vigente.
   </div>`:''}
-  <div class="btn-row">
-    <button class="btn btn--sm" data-action="pdf" data-tab="2">${icon('file-text')} Descargar PDF</button>
-    <button class="btn btn--sm" data-action="xls" data-tab="2">${icon('bar-chart')} Descargar Excel</button>
   </div></div>`;
 
   document.getElementById('res2').innerHTML=html;
-  setTimeout(()=>{ const p=document.getElementById('esc-panel-2'); if(p){ const sb=document.createElement('div'); sb.style='margin-top:14px;'; sb.innerHTML=`<button class="btn btn--sm" data-action="guardar-escenario" data-tab="2">${icon('save')} Guardar como escenario para comparar</button>`; document.getElementById('res2').querySelector('.card').appendChild(sb); } renderEscenarios(2); },50);
+  markViewHasResult(2,true);
+  setTimeout(()=>renderEscenarios(2),50);
+  toast('Simulación calculada correctamente','success');
 
   if(CP&&LP){
     setTimeout(()=>{
