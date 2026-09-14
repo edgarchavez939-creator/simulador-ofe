@@ -208,6 +208,152 @@ function pdfPie(doc) {
 
 function addFechaToDoc(doc, y) { return y; }   // la fecha ahora vive en el pie
 
+
+function pdfEnsureSpace(doc, y, needed, startY = 20) {
+  const h = doc.internal.pageSize.getHeight();
+  return (y + (needed || 0) > h - 18) ? (doc.addPage(), startY) : y;
+}
+function pdfTone(tone) {
+  const map = {
+    accent: {main: PDF.azul, soft: PDF.azulS},
+    success: {main: PDF.verde, soft: PDF.verdeS},
+    warning: {main: PDF.ambar, soft: PDF.ambarS},
+    info: {main: PDF.violeta, soft: [240, 236, 255]},
+    neutral: {main: PDF.texto2, soft: PDF.suave}
+  };
+  return map[tone] || map.accent;
+}
+function pdfSectionLabel(doc, y, title, subtitle = '', tone = 'accent') {
+  const c = pdfTone(tone);
+  const extra = subtitle ? 8 : 0;
+  y = pdfEnsureSpace(doc, y, 12 + extra);
+  doc.setDrawColor(...PDF.linea);
+  doc.line(PDF.M, y, PDF.W - PDF.M, y);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.setTextColor(...c.main);
+  pdfText(doc, title, PDF.M, y - 2);
+  if(subtitle) {
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8.5);
+    doc.setTextColor(...PDF.texto3);
+    pdfText(doc, subtitle, PDF.M, y + 4.5);
+  }
+  doc.setTextColor(0,0,0);
+  return y + 8 + extra;
+}
+function pdfCard(doc, x, y, w, h, tone = 'neutral') {
+  const c = pdfTone(tone);
+  doc.setFillColor(...c.soft);
+  doc.setDrawColor(...PDF.linea);
+  doc.roundedRect(x, y, w, h, 4, 4, 'FD');
+}
+function pdfHeroBand(doc, y, cfg = {}) {
+  const tone = cfg.tone || 'accent';
+  const c = pdfTone(tone);
+  const metaLines = cfg.meta ? doc.splitTextToSize(safePDF(cfg.meta), PDF.CW - 24) : [];
+  const noteLines = cfg.note ? doc.splitTextToSize(safePDF(cfg.note), PDF.CW - 24) : [];
+  const h = 28 + (metaLines.length * 4.5) + (noteLines.length ? (noteLines.length * 4.2 + 6) : 0);
+  y = pdfEnsureSpace(doc, y, h + 6);
+  doc.setFillColor(...c.soft);
+  doc.setDrawColor(...PDF.linea);
+  doc.roundedRect(PDF.M, y, PDF.CW, h, 6, 6, 'FD');
+  doc.setFillColor(...c.main);
+  doc.roundedRect(PDF.M, y, 5, h, 6, 6, 'F');
+  doc.setTextColor(...PDF.texto3);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8.5);
+  pdfText(doc, (cfg.eyebrow || '').toUpperCase(), PDF.M + 10, y + 8);
+  doc.setTextColor(...PDF.texto2);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  pdfText(doc, cfg.label || '', PDF.M + 10, y + 15);
+  doc.setTextColor(...PDF.texto);
+  doc.setFontSize(24);
+  pdfText(doc, cfg.value || '', PDF.M + 10, y + 26);
+  let lineY = y + 31;
+  if(metaLines.length) {
+    doc.setTextColor(...PDF.texto3);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8.5);
+    doc.text(metaLines, PDF.M + 10, lineY);
+    lineY += metaLines.length * 4.5;
+  }
+  if(noteLines.length) {
+    lineY += 2;
+    doc.setTextColor(...PDF.texto2);
+    doc.setFontSize(8.5);
+    doc.text(noteLines, PDF.M + 10, lineY);
+  }
+  doc.setTextColor(0,0,0);
+  doc.setFont('helvetica', 'normal');
+  return y + h + 6;
+}
+function pdfMetricCards(doc, y, items, opts = {}) {
+  items = (items || []).filter(Boolean);
+  if(!items.length) return y;
+  const cols = Math.max(1, Math.min(opts.columns || 2, items.length));
+  const gap = 6;
+  const w = (PDF.CW - gap * (cols - 1)) / cols;
+  const tone = opts.tone || 'neutral';
+  for(let i = 0; i < items.length; i += cols) {
+    const row = items.slice(i, i + cols);
+    const measures = row.map(item => {
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
+      const labelLines = doc.splitTextToSize(safePDF(item.label || ''), w - 10);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(item.valueSize || 13);
+      const valueLines = doc.splitTextToSize(safePDF(String(item.value || '')), w - 10);
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5);
+      const hintLines = item.hint ? doc.splitTextToSize(safePDF(item.hint), w - 10) : [];
+      const h = 8 + labelLines.length * 3.5 + valueLines.length * 5 + (hintLines.length ? hintLines.length * 3.2 + 3 : 0) + 5;
+      return {item, labelLines, valueLines, hintLines, h};
+    });
+    const rowH = Math.max(...[18, ...measures.map(m => m.h)]);
+    y = pdfEnsureSpace(doc, y, rowH + 4);
+    measures.forEach((m, idx) => {
+      const x = PDF.M + idx * (w + gap);
+      pdfCard(doc, x, y, w, rowH, tone);
+      let ty = y + 7;
+      doc.setTextColor(...PDF.texto3);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
+      doc.text(m.labelLines, x + 5, ty);
+      ty += m.labelLines.length * 3.5 + 2.5;
+      doc.setTextColor(...PDF.texto);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(m.item.valueSize || 13);
+      doc.text(m.valueLines, x + 5, ty);
+      ty += m.valueLines.length * 5;
+      if(m.hintLines.length) {
+        ty += 2;
+        doc.setTextColor(...PDF.texto2);
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5);
+        doc.text(m.hintLines, x + 5, ty);
+      }
+    });
+    y += rowH + 4;
+  }
+  doc.setTextColor(0,0,0);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  return y + 1;
+}
+function pdfCallout(doc, y, title, body, tone = 'info') {
+  const c = pdfTone(tone);
+  const lines = Array.isArray(body) ? body.flatMap(line => doc.splitTextToSize(safePDF(line), PDF.CW - 16)) : doc.splitTextToSize(safePDF(body || ''), PDF.CW - 16);
+  const h = 12 + lines.length * 4;
+  y = pdfEnsureSpace(doc, y, h + 4);
+  doc.setFillColor(...c.soft);
+  doc.setDrawColor(...PDF.linea);
+  doc.roundedRect(PDF.M, y, PDF.CW, h, 4, 4, 'FD');
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(...c.main);
+  pdfText(doc, title, PDF.M + 5, y + 7);
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(8.3); doc.setTextColor(...PDF.texto2);
+  doc.text(lines, PDF.M + 5, y + 12);
+  doc.setTextColor(0,0,0);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  return y + h + 5;
+}
+
 function pdfCostoFootnote(doc, y, texto) {
   const P = PDF;
   const nota = texto || '* Valor matricula + Aporte Garantisa + Intereses del credito';
@@ -243,48 +389,64 @@ function expPDF1(){
   const d = SimuladorOFE.state.results.shortTerm;
   const {jsPDF} = window.jspdf;
   const doc = new jsPDF();
+  const tea = ((Math.pow(1 + d.tm, 12) - 1) * 100).toFixed(2) + '% E.A.';
   let y = pdfHeader(doc, 'Simulacion de Credito', 'Credito a Corto Plazo - ' + (d.progNombre||''));
 
-  // 1) Condiciones vigentes
-  y = pdfCondiciones(doc, y, {
-    modalidad: 'Credito a corto plazo',
-    tasa: d.tm,
-    plazo: d.n + ' cuotas mensuales',
-    garantisa: 'Aporte del 4.17% sobre el monto financiado (3.5% + IVA)'
+  y = pdfHeroBand(doc, y, {
+    eyebrow: 'Credito a corto plazo',
+    label: 'Cuota mensual estimada',
+    value: cop(d.cuota),
+    meta: `${d.n} cuotas mensuales · ${(d.tm*100).toFixed(2)}% M.V. · ${tea}`,
+    note: 'Vista ejecutiva del escenario. El detalle completo del plan de pagos se presenta en la pagina siguiente.',
+    tone: 'success'
   });
+  y = pdfMetricCards(doc, y, [
+    {label:'Monto financiado', value: cop(d.financiado)},
+    {label:'Pago inicial', value: cop(d.pagoInicial)},
+    {label:'Intereses del credito', value: cop(d.totInt)},
+    {label:'Costo total del semestre', value: cop(d.totalGeneral)}
+  ], {columns:4, tone:'success'});
 
-  // 2) Beneficios
-  y = pdfBenefSection(doc, y, d.mat, d.beneficios||[], d.benefTotal||0, d.matNeta||d.mat, d.cuotaInicial);
+  y = pdfSectionLabel(doc, y, 'Lectura rapida del escenario', 'Datos clave para explicar el resultado al estudiante.', 'accent');
+  y = pdfMetricCards(doc, y, [
+    {label:'Programa', value: d.progNombre || 'Programa'},
+    {label:'Porcentaje financiado', value: (d.pct||0) + '%'},
+    {label:'Aporte Garantisa', value: cop(d.garantisa), hint:'4.17% sobre el monto financiado'},
+    {label:'Total credito', value: cop(d.totCap + d.totInt)}
+  ], {columns:2, tone:'accent'});
 
-  // 3) Lo que paga hoy
-  y = pdfSectionBar(doc, 'PAGO AL MOMENTO DEL DESEMBOLSO', y, PDF.ambar);
-  y = pdfKV(doc, y, [
-    d.benefTotal > 0 ? ['Matricula neta (despues de descuentos)', cop(d.matNeta||d.mat)] : ['Valor de la matricula', cop(d.mat)],
-    ['Pago de contado', cop(d.cuotaInicial)],
-    ['Aporte Garantisa', cop(d.garantisa)],
-    ['Total a pagar hoy', cop(d.pagoInicial), 'total'],
-  ], {tintaTotal: PDF.ambarS, colorTotal: PDF.ambar});
+  const activos = (d.beneficios||[]).filter(b => (b.val||0) > 0);
+  if(activos.length) {
+    y = pdfSectionLabel(doc, y, 'Beneficios y descuentos aplicados', 'Se descuenta primero la matricula y luego se calcula la financiacion.', 'info');
+    y = pdfMetricCards(doc, y, [
+      {label:'Matricula bruta', value: cop(d.mat)},
+      {label:'Total descuentos', value: '-' + cop(d.benefTotal || 0)},
+      {label:'Matricula neta', value: cop(d.matNeta || d.mat)},
+      {label:'Pago de contado', value: cop(d.cuotaInicial)}
+    ], {columns:2, tone:'info'});
+    y = pdfKV(doc, y, activos.map(b => [b.nombre || 'Descuento', '-' + cop(b.val)]));
+  } else {
+    y = pdfSectionLabel(doc, y, 'Base economica del caso', '', 'info');
+    y = pdfMetricCards(doc, y, [
+      {label:'Matricula base', value: cop(d.mat)},
+      {label:'Pago de contado', value: cop(d.cuotaInicial)},
+      {label:'Monto a financiar', value: cop(d.financiado)},
+      {label:'Aporte Garantisa', value: cop(d.garantisa)}
+    ], {columns:2, tone:'info'});
+  }
 
-  // 4) Lo que financia
-  y = pdfSectionBar(doc, 'CREDITO A AMORTIZAR', y);
-  y = pdfKV(doc, y, [
-    ['Monto financiado', cop(d.financiado) + '  (' + d.pct + '% de la matricula)'],
-    ['Numero de cuotas', d.n + ' meses'],
-    ['Valor de la cuota mensual', cop(d.cuota)],
-    ['Total intereses', cop(d.totInt)],
-    ['Total del credito', cop(d.totCap + d.totInt), 'total'],
-  ]);
+  y = pdfSectionLabel(doc, y, 'Condiciones vigentes', 'Condiciones usadas para esta simulacion.', 'neutral');
+  y = pdfMetricCards(doc, y, [
+    {label:'Modalidad', value:'Credito a corto plazo'},
+    {label:'Plazo', value:`${d.n} cuotas mensuales`},
+    {label:'Tasa de interes', value:(d.tm*100).toFixed(2) + '% M.V.'},
+    {label:'Tasa equivalente', value:tea}
+  ], {columns:2, tone:'neutral'});
 
-  // 5) Costo total
-  y = pdfSectionBar(doc, 'COSTO TOTAL DE LA MATRICULA', y, PDF.verde);
-  y = pdfKV(doc, y, [['Costo total *', cop(d.totalGeneral), 'total']],
-    {tintaTotal: PDF.verdeS, colorTotal: PDF.verde});
-  y = pdfCostoFootnote(doc, y);
-
-  // 6) Plan de pagos
-  if(y > 210) { doc.addPage(); y = 22; }
-  y = pdfTablaAmort(doc, y, d.rows, d.totCap, d.totInt, 'PLAN DE PAGOS (' + d.n + ' CUOTAS)');
-
+  doc.addPage();
+  y = 22;
+  y = pdfSectionLabel(doc, y, 'Plan de pagos', `Detalle de las ${d.n} cuotas proyectadas.`, 'accent');
+  y = pdfTablaAmort(doc, y, d.rows, d.totCap, d.totInt, 'CRONOGRAMA DE PAGOS');
   pdfPie(doc);
   doc.save(safePDF('Credito Corto Plazo - ' + (d.progNombre||'Simulacion')) + '.pdf');
   toast('PDF descargado', 'success');
@@ -326,91 +488,67 @@ function expPDF2(){
   const doc = new jsPDF();
   const semLP  = d.nLP || 8;
   const nPagoLP = (d.LP && d.LP.nPago) || Math.round(semLP * 6 * 1.5);
+  const tea = ((Math.pow(1 + d.tm, 12) - 1) * 100).toFixed(2) + '% E.A.';
+  const totCP = d.CP ? (d.CP.totCap + d.CP.totInt) : 0;
+  const totLP = d.LP ? (d.LP.capital || d.finLP || 0) : 0;
+  const costoConocido = d.pagoInicial + totCP + totLP;
   let y = pdfHeader(doc, 'Simulacion de Credito', 'Credito Mixto Corto y Largo Plazo - ' + (d.progNombre||''));
 
-  // Condiciones: la tasa LP no se conoce hoy
-  y = pdfCondiciones(doc, y, {
-    modalidad: 'Credito mixto (corto y largo plazo)',
-    tasa: d.tm,
-    plazo: 'Corto plazo: ' + (d.nCP||0) + ' cuotas mensuales',
-    garantisa: 'Corto plazo 4.17% - Largo plazo 2.86% sobre cada tramo',
-    gracia: '12 meses despues de graduarse (tramo de largo plazo)',
-    extra: [
-      ['Duracion del programa', semLP + ' semestres'],
-      ['Plazo estimado largo plazo', nPagoLP + ' cuotas (1.5 x semestres financiados)'],
-      ['Tasa del largo plazo', 'La vigente al iniciar la amortizacion']
-    ]
+  y = pdfHeroBand(doc, y, {
+    eyebrow: 'Credito mixto',
+    label: d.CP ? 'Cuota mensual estimada del tramo corto plazo' : 'Capital proyectado del tramo largo plazo',
+    value: d.CP ? cop(d.CP.cuota) : cop(totLP),
+    meta: `CP ${d.pCP || 0}% · LP ${d.pLP || 0}% · ${(d.tm*100).toFixed(2)}% M.V. · ${tea}`,
+    note: 'El tramo de largo plazo se resume como capital proyectado. Su cuota definitiva se conocerá cuando inicie la amortizacion.',
+    tone: 'success'
   });
+  y = pdfMetricCards(doc, y, [
+    {label:'Pago inicial', value: cop(d.pagoInicial)},
+    {label:'Monto CP', value: cop(d.finCP || 0)},
+    {label:'Capital LP', value: cop(d.finLP || 0)},
+    {label:'Costo conocido hoy', value: cop(costoConocido)}
+  ], {columns:4, tone:'success'});
 
-  y = pdfBenefSection(doc, y, d.mat, d.beneficios||[], d.benefTotal||0, d.matNeta||d.mat, d.cuotaInicial);
+  const activos = (d.beneficios||[]).filter(b => (b.val||0) > 0);
+  y = pdfSectionLabel(doc, y, 'Estructura de la operacion', 'Resume como se distribuye la matricula entre contado, CP y LP.', 'accent');
+  y = pdfMetricCards(doc, y, [
+    {label:'Programa', value: d.progNombre || 'Programa'},
+    {label:'Matricula neta', value: cop(d.matNeta || d.mat)},
+    {label:'Pago de contado', value: cop(d.cuotaInicial)},
+    {label:'Financiacion total', value: cop((d.finCP||0) + (d.finLP||0))}
+  ], {columns:2, tone:'accent'});
+  if(activos.length) y = pdfKV(doc, y, activos.map(b => [b.nombre || 'Descuento', '-' + cop(b.val)]));
 
-  y = pdfSectionBar(doc, 'PAGO AL MOMENTO DEL DESEMBOLSO', y, PDF.ambar);
-  y = pdfKV(doc, y, [
-    d.benefTotal > 0 ? ['Matricula neta (despues de descuentos)', cop(d.matNeta||d.mat)] : ['Valor de la matricula', cop(d.mat)],
-    ['Pago de contado', cop(d.cuotaInicial)],
-    d.garCP > 0 ? ['Aporte Garantisa corto plazo (4.17%)', cop(d.garCP)] : null,
-    d.garLP > 0 ? ['Aporte Garantisa largo plazo (2.86%)', cop(d.garLP)] : null,
-    ['Total a pagar hoy', cop(d.pagoInicial), 'total'],
-  ], {tintaTotal: PDF.ambarS, colorTotal: PDF.ambar});
+  y = pdfSectionLabel(doc, y, 'Pago al desembolso', 'Conceptos que el estudiante debe cubrir hoy.', 'warning');
+  y = pdfMetricCards(doc, y, [
+    {label:'Contado', value: cop(d.cuotaInicial)},
+    d.garCP > 0 ? {label:'Garantisa CP', value: cop(d.garCP), hint:'4.17% sobre el tramo CP'} : null,
+    d.garLP > 0 ? {label:'Garantisa LP', value: cop(d.garLP), hint:'2.86% sobre el tramo LP'} : null,
+    {label:'Total a pagar hoy', value: cop(d.pagoInicial)}
+  ], {columns:2, tone:'warning'});
 
-  // Tramo corto plazo
-  if(d.CP) {
-    y = pdfSectionBar(doc, 'TRAMO CORTO PLAZO (' + d.pCP + '%) - SE PAGA MIENTRAS ESTUDIA', y);
-    y = pdfKV(doc, y, [
-      ['Monto financiado', cop(d.finCP)],
-      ['Numero de cuotas', (d.nCP||0) + ' meses'],
-      ['Valor de la cuota mensual', cop(d.CP.cuota)],
-      ['Total intereses', cop(d.CP.totInt)],
-      ['Total tramo corto plazo', cop(d.CP.totCap + d.CP.totInt), 'total'],
-    ]);
-  }
+  y = pdfSectionLabel(doc, y, 'Desglose de la financiacion', 'El tramo CP tiene cuota estimable hoy; el tramo LP se expresa como capital futuro.', 'info');
+  y = pdfMetricCards(doc, y, [
+    d.CP ? {label:'Monto CP', value: cop(d.finCP), hint:`${d.nCP || 0} cuotas mensuales`} : null,
+    d.CP ? {label:'Total CP', value: cop(totCP), hint:`Incluye ${cop(d.CP.totInt)} en intereses`} : null,
+    d.LP ? {label:'Capital LP', value: cop(d.finLP), hint:`Amortizacion estimada en ${nPagoLP} cuotas`} : null,
+    d.LP ? {label:'Periodo de gracia', value:'12 meses', hint:'Despues de graduarse'} : null
+  ], {columns:2, tone:'info'});
 
-  // Tramo largo plazo: capital, sin intereses hoy
   if(d.LP) {
-    if(y > 215) { doc.addPage(); y = 22; }
-    y = pdfSectionBar(doc, 'TRAMO LARGO PLAZO (' + d.pLP + '%) - SE PAGA AL GRADUARSE', y, PDF.verde);
-    y = pdfKV(doc, y, [
-      ['Capital a amortizar', cop(d.finLP)],
-      ['Semestres del programa', semLP + ' semestres'],
-      ['Periodo de gracia', '12 meses despues de graduarse'],
-      ['Plazo estimado de pago', nPagoLP + ' cuotas mensuales'],
-      ['Valor de la cuota', 'Se define al iniciar la amortizacion'],
-    ]);
-    // Aviso reglamentario
-    doc.setFillColor(...PDF.verdeS);
-    doc.rect(PDF.M, y - 4, PDF.CW, 22, 'F');
-    doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(...PDF.verde);
-    doc.text(safePDF('Sobre la cuota del largo plazo'), PDF.M + 2.5, y + 1.5);
-    doc.setFont('helvetica','normal'); doc.setFontSize(7.8); doc.setTextColor(...PDF.texto2);
-    doc.text(safePDF('La cuota definitiva no puede determinarse hoy: la tasa sera la vigente al momento de iniciar la'), PDF.M + 2.5, y + 7);
-    doc.text(safePDF('amortizacion. Durante el periodo de gracia de un (1) ano se causaran intereses conforme a las'), PDF.M + 2.5, y + 11.5);
-    doc.text(safePDF('condiciones vigentes en esa fecha.'), PDF.M + 2.5, y + 16);
-    doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(10);
-    y += 27;
+    y = pdfCallout(doc, y, 'Importante sobre el largo plazo', [
+      'La tasa del tramo LP sera la vigente cuando inicie su amortizacion.',
+      `Se proyecta un plazo de pago de ${nPagoLP} cuotas, luego de un periodo de gracia de 12 meses.`
+    ], 'success');
   }
 
-  // Costo total
-  const totCP = d.CP ? (d.CP.totCap + d.CP.totInt) : 0;
-  const totLP = d.LP ? (d.LP.noAmortize ? d.LP.capital : (d.LP.totCap + d.LP.totInt)) : 0;
-  if(y > 225) { doc.addPage(); y = 22; }
-  y = pdfSectionBar(doc, 'COSTO TOTAL DE LA MATRICULA', y, PDF.verde);
-  y = pdfKV(doc, y, [
-    ['Pago al desembolso', cop(d.pagoInicial)],
-    ['Credito corto plazo (con intereses)', cop(totCP)],
-    ['Capital largo plazo (sin intereses aun)', cop(totLP)],
-    ['Costo total conocido a hoy *', cop(d.pagoInicial + totCP + totLP), 'total'],
-  ], {tintaTotal: PDF.verdeS, colorTotal: PDF.verde});
-  y = pdfCostoFootnote(doc, y, '* No incluye los intereses del tramo de largo plazo, que se definiran al iniciar su amortizacion.');
-
-  // Plan de pagos del corto plazo
   if(d.CP) {
-    if(y > 205) { doc.addPage(); y = 22; }
-    y = pdfTablaAmort(doc, y, d.CP.rows, d.CP.totCap, d.CP.totInt, 'PLAN DE PAGOS CORTO PLAZO (' + (d.nCP||0) + ' CUOTAS)');
+    doc.addPage();
+    y = 22;
+    y = pdfSectionLabel(doc, y, 'Plan de pagos del corto plazo', `Cronograma del tramo CP (${d.nCP || 0} cuotas).`, 'accent');
+    y = pdfTablaAmort(doc, y, d.CP.rows, d.CP.totCap, d.CP.totInt, 'CRONOGRAMA CORTO PLAZO');
   }
-
-  // Proyeccion multi-semestre si esta disponible
   y = pdfProyeccionLP(doc, y, SimuladorOFE.state.results.projectionLP, 'Matricula');
-
   pdfPie(doc);
   doc.save(safePDF('Credito Mixto - ' + (d.progNombre||'Simulacion')) + '.pdf');
   toast('PDF descargado', 'success');
@@ -548,42 +686,46 @@ function expPDF3(){
   const d = SimuladorOFE.state.results.bank;
   const {jsPDF} = window.jspdf;
   const doc = new jsPDF();
+  const tea = ((Math.pow(1 + d.tm, 12) - 1) * 100).toFixed(2) + '% E.A.';
   let y = pdfHeader(doc, 'Simulacion de Credito', 'Credito Banco Aliado - ' + (d.progNombre||''));
 
-  y = pdfCondiciones(doc, y, {
-    modalidad: 'Credito con banco aliado',
-    tasa: d.tm,
-    plazo: d.n + ' cuotas mensuales',
-    extra: d.cargos > 0 ? [['Otros cargos del banco', cop(d.cargos)]] : null
+  y = pdfHeroBand(doc, y, {
+    eyebrow: 'Credito banco aliado',
+    label: 'Cuota mensual estimada',
+    value: cop(d.cuota),
+    meta: `${d.n} cuotas mensuales · ${(d.tm*100).toFixed(2)}% M.V. · ${tea}`,
+    note: d.cargos > 0 ? 'El pago inicial incorpora cargos adicionales del banco aliado.' : 'Escenario proyectado con las condiciones configuradas para el banco aliado.',
+    tone: 'info'
   });
+  y = pdfMetricCards(doc, y, [
+    {label:'Monto financiado', value: cop(d.financiado)},
+    {label:'Pago inicial', value: cop(d.pagoInicial)},
+    {label:'Intereses del credito', value: cop(d.totInt)},
+    {label:'Costo total del semestre', value: cop(d.totalGeneral)}
+  ], {columns:4, tone:'info'});
 
-  y = pdfBenefSection(doc, y, d.mat, d.beneficios||[], d.benefTotal||0, d.matNeta||d.mat, d.cuotaInicial);
+  const activos = (d.beneficios||[]).filter(b => (b.val||0) > 0);
+  y = pdfSectionLabel(doc, y, 'Resumen del caso', 'Lectura rapida de la base economica y del desembolso inicial.', 'accent');
+  y = pdfMetricCards(doc, y, [
+    {label:'Programa', value: d.progNombre || 'Programa'},
+    {label:'Matricula neta', value: cop(d.matNeta || d.mat)},
+    {label:'Pago de contado', value: cop(d.cuotaInicial)},
+    {label:'Otros cargos', value: cop(d.cargos || 0)}
+  ], {columns:2, tone:'accent'});
+  if(activos.length) y = pdfKV(doc, y, activos.map(b => [b.nombre || 'Descuento', '-' + cop(b.val)]));
 
-  y = pdfSectionBar(doc, 'PAGO AL MOMENTO DEL DESEMBOLSO', y, PDF.ambar);
-  y = pdfKV(doc, y, [
-    d.benefTotal > 0 ? ['Matricula neta (despues de descuentos)', cop(d.matNeta||d.mat)] : ['Valor de la matricula', cop(d.mat)],
-    ['Pago de contado', cop(d.cuotaInicial)],
-    d.cargos > 0 ? ['Otros cargos', cop(d.cargos)] : null,
-    ['Total a pagar hoy', cop(d.pagoInicial), 'total'],
-  ], {tintaTotal: PDF.ambarS, colorTotal: PDF.ambar});
+  y = pdfSectionLabel(doc, y, 'Credito resultante', 'El banco financia el saldo definido con el plazo y la tasa vigentes.', 'neutral');
+  y = pdfMetricCards(doc, y, [
+    {label:'Porcentaje financiado', value: (d.pct || 0) + '%'},
+    {label:'Total credito', value: cop(d.totCap + d.totInt)},
+    {label:'Tasa de interes', value:(d.tm*100).toFixed(2) + '% M.V.'},
+    {label:'Tasa equivalente', value:tea}
+  ], {columns:2, tone:'neutral'});
 
-  y = pdfSectionBar(doc, 'CREDITO A AMORTIZAR', y);
-  y = pdfKV(doc, y, [
-    ['Monto financiado', cop(d.financiado) + '  (' + d.pct + '% de la matricula)'],
-    ['Numero de cuotas', d.n + ' meses'],
-    ['Valor de la cuota mensual', cop(d.cuota)],
-    ['Total intereses', cop(d.totInt)],
-    ['Total del credito', cop(d.totCap + d.totInt), 'total'],
-  ]);
-
-  y = pdfSectionBar(doc, 'COSTO TOTAL DE LA MATRICULA', y, PDF.verde);
-  y = pdfKV(doc, y, [['Costo total *', cop(d.totalGeneral), 'total']],
-    {tintaTotal: PDF.verdeS, colorTotal: PDF.verde});
-  y = pdfCostoFootnote(doc, y);
-
-  if(y > 210) { doc.addPage(); y = 22; }
-  y = pdfTablaAmort(doc, y, d.rows, d.totCap, d.totInt, 'PLAN DE PAGOS (' + d.n + ' CUOTAS)');
-
+  doc.addPage();
+  y = 22;
+  y = pdfSectionLabel(doc, y, 'Plan de pagos', `Detalle de las ${d.n} cuotas proyectadas.`, 'accent');
+  y = pdfTablaAmort(doc, y, d.rows, d.totCap, d.totInt, 'CRONOGRAMA DE PAGOS');
   pdfPie(doc);
   doc.save(safePDF('Credito Banco Aliado - ' + (d.progNombre||'Simulacion')) + '.pdf');
   toast('PDF descargado', 'success');

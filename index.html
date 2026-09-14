@@ -13,7 +13,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<link href="./simulador-assets/styles.css?v=ux-p2-1-visual" rel="stylesheet"/>
+<link href="./simulador-assets/styles.css?v=p2-2-ux-pdf" rel="stylesheet"/>
 </head>
 <body>
 <a class="skip-link" href="#main-content">Saltar al contenido principal</a>
@@ -54,7 +54,7 @@
 <div class="header__identity">
 <div class="header__eyebrow" id="header-section">SIMULAR</div>
 <h1 class="header__title" id="header-title">Crédito a Corto Plazo</h1>
-<p class="header__desc" id="header-desc">Define matrícula, aporte inicial, plazo y tasa para estimar la cuota del crédito a corto plazo.</p>
+<p class="header__desc" id="header-desc">Simula las condiciones de financiación para este escenario.</p>
 </div>
 <div class="header__tools">
 <span class="status-dot" aria-hidden="true"></span><span class="header__status" id="header-status">Lineamientos vigentes</span>
@@ -332,9 +332,11 @@
 <div class="input-affix u-border-success">
 <input aria-label="IPC anual proyectado" class="input u-input-clean" id="ipcLP" max="30" min="0" placeholder="5.0" step="0.1" type="number" value="5.0"/><span class="input-affix__tag input-affix__tag--end">% IPC anual</span>
 </div>
-<label class="field__label inline-control-label">
-<input aria-label="Mostrar proyección de largo plazo" checked="" class="check control-auto" id="proyLP" type="checkbox"/>
-                Ver proyección
+<label class="field__label inline-control-label inline-control-label--projection" role="button">
+<input aria-label="Mostrar proyección de largo plazo" checked="" class="check control-auto sr-toggle-check" id="proyLP" type="checkbox"/>
+<span aria-hidden="true" class="inline-control-label__icon"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="m9 12 2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg></span>
+<span class="inline-control-label__text">Ver proyección</span>
+<span aria-hidden="true" class="inline-control-label__state"></span>
               </label>
 </div>
 </div>
@@ -1775,16 +1777,16 @@
   ]
 ]/*%%POSGRADOS_END%%*/
 </script>
-<script src="./simulador-assets/js/00-runtime.js?v=ux-p2-1-visual"></script>
-<script src="./simulador-assets/js/01-core-ui.js?v=ux-p2-1-visual"></script>
-<script src="./simulador-assets/js/02-reestructuracion.js?v=ux-p2-1-visual"></script>
-<script src="./simulador-assets/js/03-finance-core.js?v=ux-p2-1-visual"></script>
-<script src="./simulador-assets/js/04-exports-pdf-excel.js?v=ux-p2-1-visual"></script>
-<script src="./simulador-assets/js/05-idiomas-herramientas.js?v=ux-p2-1-visual"></script>
-<script src="./simulador-assets/js/06-actions-history.js?v=ux-p2-1-visual"></script>
-<script src="./simulador-assets/js/07-financing-engine.js?v=ux-p2-1-visual"></script>
-<script src="./simulador-assets/js/08-updater.js?v=ux-p2-1-visual"></script>
-<script src="./simulador-assets/js/09-bootstrap.js?v=ux-p2-1-visual"></script>
+<script src="./simulador-assets/js/00-runtime.js?v=p2-2-ux-pdf"></script>
+<script src="./simulador-assets/js/01-core-ui.js?v=p2-2-ux-pdf"></script>
+<script src="./simulador-assets/js/02-reestructuracion.js?v=p2-2-ux-pdf"></script>
+<script src="./simulador-assets/js/03-finance-core.js?v=p2-2-ux-pdf"></script>
+<script src="./simulador-assets/js/04-exports-pdf-excel.js?v=p2-2-ux-pdf"></script>
+<script src="./simulador-assets/js/05-idiomas-herramientas.js?v=p2-2-ux-pdf"></script>
+<script src="./simulador-assets/js/06-actions-history.js?v=p2-2-ux-pdf"></script>
+<script src="./simulador-assets/js/07-financing-engine.js?v=p2-2-ux-pdf"></script>
+<script src="./simulador-assets/js/08-updater.js?v=p2-2-ux-pdf"></script>
+<script src="./simulador-assets/js/09-bootstrap.js?v=p2-2-ux-pdf"></script>
 <!-- MODAL IDIOMAS -->
 <div aria-hidden="true" class="scrim" data-action="scrim-idiomas" hidden="" id="modal-idiomas">
 <div aria-describedby="modal-idiomas-desc" aria-labelledby="modal-idiomas-title" aria-modal="true" class="modal modal--wide" role="dialog" tabindex="-1">
@@ -1881,9 +1883,11 @@
 <div class="input-affix u-border-success">
 <input aria-label="IPC anual proyectado para idiomas" class="input u-input-clean" id="id-ipcLP" max="30" min="0" placeholder="5.0" step="0.1" type="number" value="5.0"/><span class="input-affix__tag input-affix__tag--end">% IPC anual</span>
 </div>
-<label class="field__label inline-control-label">
-<input aria-label="Mostrar proyección de largo plazo para idiomas" checked="" class="check control-auto" id="id-proyLP" type="checkbox"/>
-            Ver proyección
+<label class="field__label inline-control-label inline-control-label--projection" role="button">
+<input aria-label="Mostrar proyección de largo plazo para idiomas" checked="" class="check control-auto sr-toggle-check" id="id-proyLP" type="checkbox"/>
+<span aria-hidden="true" class="inline-control-label__icon"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="m9 12 2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg></span>
+<span class="inline-control-label__text">Ver proyección</span>
+<span aria-hidden="true" class="inline-control-label__state"></span>
           </label>
 </div>
 <div class="callout callout--success callout--compact u-mt-6">

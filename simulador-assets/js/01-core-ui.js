@@ -575,12 +575,12 @@ function _abrirPinModal(target){
 }
 
 const VIEW_META = Object.freeze({
-  1:{section:'SIMULAR', title:'Crédito a Corto Plazo', desc:'Define matrícula, aporte inicial, plazo y tasa para estimar la cuota del crédito a corto plazo.', status:'Lineamientos vigentes'},
-  2:{section:'SIMULAR', title:'Corto y Largo Plazo', desc:'Distribuye el monto financiado entre corto y largo plazo y revisa el efecto de cada tramo.', status:'Lineamientos vigentes'},
-  3:{section:'SIMULAR', title:'Crédito Banco Aliado', desc:'Evalúa la financiación con el banco aliado usando el programa, plazo y tasa aplicables.', status:'Lineamientos vigentes'},
-  5:{section:'SIMULAR', title:'Reestructuración de Crédito', desc:'Recalcula un saldo vigente bajo nuevas condiciones y revisa su impacto financiero.', status:'Control operativo'},
-  7:{section:'ANALIZAR', title:'Cálculo de Cuota Inicial', desc:'Estima cuánto debes aportar al inicio según tu capacidad máxima de pago mensual.', status:'Herramienta de análisis'},
-  4:{section:'ANALIZAR', title:'Conversor de Tasas', desc:'Convierte una tasa a periodicidades equivalentes para comparar alternativas bajo la misma base.', status:'Herramienta de análisis'},
+  1:{section:'SIMULAR', title:'Crédito a Corto Plazo', desc:'Simula las condiciones de financiación para este escenario.', status:'Lineamientos vigentes'},
+  2:{section:'SIMULAR', title:'Corto y Largo Plazo', desc:'Distribuye la financiación entre corto y largo plazo y revisa su impacto.', status:'Lineamientos vigentes'},
+  3:{section:'SIMULAR', title:'Crédito Banco Aliado', desc:'Evalúa un escenario de financiación con las condiciones del banco aliado.', status:'Lineamientos vigentes'},
+  5:{section:'SIMULAR', title:'Reestructuración de Crédito', desc:'Construye escenarios de reestructuración sobre un saldo existente.', status:'Control operativo'},
+  7:{section:'ANALIZAR', title:'Cálculo de Cuota Inicial', desc:'Calcula la cuota inicial requerida a partir de la capacidad de pago mensual.', status:'Herramienta de análisis'},
+  4:{section:'ANALIZAR', title:'Conversor de Tasas', desc:'Convierte tasas entre periodicidades para comparar condiciones equivalentes.', status:'Herramienta de análisis'},
   8:{section:'ANALIZAR', title:'Comparar escenarios', desc:'Accede a las comparaciones disponibles dentro de cada modalidad de simulación.', status:'Escenarios guardados'},
   9:{section:'HISTORIAL', title:'Mis simulaciones', desc:'Consulta las simulaciones recientes guardadas localmente en este navegador.', status:'Datos locales'},
   6:{section:'ADMINISTRACIÓN', title:'Actualizar Programas', desc:'Actualiza programas y valores publicados sin modificar el motor financiero.', status:'Acceso restringido'}

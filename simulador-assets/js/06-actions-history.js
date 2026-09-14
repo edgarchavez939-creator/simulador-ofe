@@ -202,7 +202,7 @@ function calcular7() {
         <div class="kpi__foot">${pctInicial.toFixed(1)}% de la matrícula</div>
       </div>
       <div class="kpi kpi--warning">
-        <div class="kpi__label">Aporte Garantisa (4.17%)</div>
+        <div class="kpi__label">${icon('shield')} Aporte Garantisa (4.17%)</div>
         <div class="kpi__value kpi__value--md">${cop(d.gar)}</div>
         <div class="kpi__foot">Sobre el monto financiado</div>
       </div>
@@ -275,47 +275,39 @@ function expPDF7() {
   if(!d) return toast('Primero realiza el calculo', 'warning');
   const {jsPDF} = window.jspdf;
   const doc = new jsPDF();
-  let y = pdfHeader(doc, 'Cálculo de Cuota Inicial', (d.progNombre||'') + ' - capacidad de ' + cop(d.cap) + ' al mes');
+  const tea = ((Math.pow(1 + d.tm, 12) - 1) * 100).toFixed(2) + '% E.A.';
+  let y = pdfHeader(doc, 'Calculo de Cuota Inicial', (d.progNombre||'') + ' - capacidad de ' + cop(d.cap) + ' al mes');
 
-  y = pdfCondiciones(doc, y, {
-    modalidad: 'Credito a corto plazo',
-    tasa: d.tm,
-    plazo: d.n + ' cuotas mensuales',
-    garantisa: 'Aporte del 4.17% sobre el monto financiado (3.5% + IVA)'
+  y = pdfHeroBand(doc, y, {
+    eyebrow: 'Cuota inicial requerida',
+    label: 'Valor que debe cubrir hoy',
+    value: cop(d.cuotaInicial),
+    meta: `${d.n} cuotas mensuales · ${(d.tm*100).toFixed(2)}% M.V. · ${tea}`,
+    note: 'Esta vista resume el valor de entrada requerido para que la cuota mensual se ajuste a la capacidad de pago declarada.',
+    tone: 'warning'
   });
+  y = pdfMetricCards(doc, y, [
+    {label:'Capacidad mensual', value: cop(d.cap)},
+    {label:'Monto financiable', value: cop(d.fin)},
+    {label:'Aporte Garantisa', value: cop(d.gar)},
+    {label:'Total a pagar hoy', value: cop(d.desembolso)}
+  ], {columns:4, tone:'warning'});
 
-  y = pdfBenefSection(doc, y, d.mat, d.beneficios||[], d.benefTotal||0, d.matNeta||d.mat, d.cuotaInicial);
+  y = pdfSectionLabel(doc, y, 'Lectura del escenario', 'Relacion entre la capacidad declarada y el credito resultante.', 'accent');
+  y = pdfMetricCards(doc, y, [
+    {label:'Programa', value: d.progNombre || 'Programa'},
+    {label:'Matricula neta', value: cop(d.matNeta || d.mat)},
+    {label:'Cuota resultante', value: cop(d.cuota)},
+    {label:'Costo total del semestre', value: cop(d.costoTotal)}
+  ], {columns:2, tone:'accent'});
 
-  y = pdfSectionBar(doc, 'CAPACIDAD DE PAGO DECLARADA', y, PDF.violeta);
-  y = pdfKV(doc, y, [
-    ['Capacidad de pago mensual', cop(d.cap)],
-    ['Monto financiable con esa capacidad', cop(d.fin)],
-  ]);
+  const activos = (d.beneficios||[]).filter(b => (b.val||0) > 0);
+  if(activos.length) y = pdfKV(doc, y, activos.map(b => [b.nombre || 'Descuento', '-' + cop(b.val)]));
 
-  y = pdfSectionBar(doc, 'RESULTADO - LO QUE DEBE CUBRIR HOY', y, PDF.ambar);
-  y = pdfKV(doc, y, [
-    ['Cuota inicial requerida', cop(d.cuotaInicial)],
-    ['Aporte Garantisa', cop(d.gar)],
-    ['Total a pagar hoy', cop(d.desembolso), 'total'],
-  ], {tintaTotal: PDF.ambarS, colorTotal: PDF.ambar});
-
-  y = pdfSectionBar(doc, 'CREDITO RESULTANTE', y);
-  y = pdfKV(doc, y, [
-    ['Monto financiado', cop(d.fin)],
-    ['Numero de cuotas', d.n + ' meses'],
-    ['Valor de la cuota mensual', cop(d.cuota)],
-    ['Total intereses', cop(d.totInt)],
-    ['Total del credito', cop(d.totalCredito), 'total'],
-  ]);
-
-  y = pdfSectionBar(doc, 'COSTO TOTAL DE LA MATRICULA', y, PDF.verde);
-  y = pdfKV(doc, y, [['Costo total *', cop(d.costoTotal), 'total']],
-    {tintaTotal: PDF.verdeS, colorTotal: PDF.verde});
-  y = pdfCostoFootnote(doc, y);
-
-  if(y > 205) { doc.addPage(); y = 22; }
-  y = pdfTablaAmort(doc, y, d.rows, d.totCap, d.totInt, 'PLAN DE PAGOS (' + d.n + ' CUOTAS)');
-
+  doc.addPage();
+  y = 22;
+  y = pdfSectionLabel(doc, y, 'Plan de pagos del credito resultante', `Cronograma de las ${d.n} cuotas proyectadas.`, 'accent');
+  y = pdfTablaAmort(doc, y, d.rows, d.totCap, d.totInt, 'CRONOGRAMA DE PAGOS');
   pdfPie(doc);
   doc.save(safePDF('Calculo Cuota Inicial - ' + (d.progNombre||'Simulacion')) + '.pdf');
   toast('PDF descargado', 'success');
@@ -910,217 +902,90 @@ function expPDFCombinado() {
   const dp   = SimuladorOFE.state.results.languages;
   const tabId = SimuladorOFE.state.languages.context.tabId;
   let dm = null, tipoLabel = '';
-  if(tabId===1 && SimuladorOFE.state.results.shortTerm)  { dm=SimuladorOFE.state.results.shortTerm; tipoLabel='Crédito Corto Plazo'; }
-  if(tabId===2 && SimuladorOFE.state.results.mixed)  { dm=SimuladorOFE.state.results.mixed; tipoLabel='Crédito Mixto'; }
-  if(tabId===3 && SimuladorOFE.state.results.bank)  { dm=SimuladorOFE.state.results.bank; tipoLabel='Crédito Banco Aliado'; }
-  if(!dp||!dm) return toast('Primero calcula ambos créditos (pregrado e idiomas) para generar el PDF combinado.', 'warning');
+  if(tabId===1 && SimuladorOFE.state.results.shortTerm)  { dm=SimuladorOFE.state.results.shortTerm; tipoLabel='Credito Corto Plazo'; }
+  if(tabId===2 && SimuladorOFE.state.results.mixed)  { dm=SimuladorOFE.state.results.mixed; tipoLabel='Credito Mixto'; }
+  if(tabId===3 && SimuladorOFE.state.results.bank)  { dm=SimuladorOFE.state.results.bank; tipoLabel='Credito Banco Aliado'; }
+  if(!dp||!dm) return toast('Primero calcula ambos creditos (pregrado e idiomas) para generar el PDF combinado.', 'warning');
 
   const {jsPDF} = window.jspdf;
   const doc = new jsPDF();
   const filename = (dp.progNombre+' - Combinado').replace(/[^a-zA-Z0-9\-_ áéíóúÁÉÍÓÚñÑ]/g,'').trim();
-  const hw = ['#','Cuota','Capital','Interés','Saldo'], cw = [14,42,38,38,44];
+  const cuotaPre = tabId === 2 ? (dm.CP ? dm.CP.cuota : 0) : (dm.cuota || 0);
+  const totalPre = tabId === 2
+    ? ((dm.CP ? dm.CP.totCap + dm.CP.totInt : 0) + (dm.LP ? (dm.LP.capital || dm.finLP || 0) : 0))
+    : ((dm.totCap || 0) + (dm.totInt || 0));
+  const pagoPre = dm.pagoInicial || 0;
+  const pagoIdiomas = dp.pagoInicial || 0;
+  const totalIdiomas = dp.isMixto && dp.idCP
+    ? ((dp.idCP ? dp.idCP.totCap + dp.idCP.totInt : 0) + (dp.finLP || 0))
+    : (dp.totalCredito || 0);
+  const costoSemestre = pagoPre + pagoIdiomas + totalPre + totalIdiomas;
+  let y = pdfHeader(doc, 'Reporte Combinado - Pregrado + Idiomas', dp.progNombre+' · '+tipoLabel);
 
-  function drawTable(doc, rows, y, titulo) {
-    const tc = rows.reduce((s,r)=>s+r.capital,0), ti = rows.reduce((s,r)=>s+r.interes,0);
-    return pdfTablaAmort(doc, y, rows, tc, ti, titulo || 'PLAN DE PAGOS');
-  }
-
-  function drawKV(doc, rows, y) { return pdfKV(doc, y, rows); }
-
-  // ══ PAGE 1: RESUMEN COMBINADO ══════════════════════════════════
-  let y = pdfHeader(doc, 'Reporte Combinado — Pregrado + Idiomas', dp.progNombre+' · '+tipoLabel);
-  y = pdfCondiciones(doc, y, {
-    modalidad: tipoLabel + ' + Credito de idiomas',
-    tasa: dm.tm,
-    plazo: (tabId === 2 ? ('Corto plazo: ' + (dm.nCP||0) + ' cuotas') : ((dm.n||0) + ' cuotas mensuales'))
-           + '  |  Idiomas: ' + (dp.n||0) + ' cuotas',
-    garantisa: tabId === 2 ? 'Corto plazo 4.17% - Largo plazo 2.86%' : 'Aporte del 4.17% sobre el monto financiado',
-    gracia: tabId === 2 ? '12 meses despues de graduarse (tramo de largo plazo)' : null
+  y = pdfHeroBand(doc, y, {
+    eyebrow: 'Vision consolidada',
+    label: 'Cuota mensual combinada estimada',
+    value: cop((cuotaPre || 0) + (dp.cuota || (dp.idCP ? dp.idCP.cuota : 0) || 0)),
+    meta: `${tipoLabel} + Credito de idiomas`,
+    note: 'El reporte concentra en una sola lectura el pago inicial, el credito y el costo total del semestre.',
+    tone: 'accent'
   });
+  y = pdfMetricCards(doc, y, [
+    {label:'Pago inicial combinado', value: cop(pagoPre + pagoIdiomas)},
+    {label:'Credito total combinado', value: cop(totalPre + totalIdiomas)},
+    {label:'Costo total del semestre', value: cop(costoSemestre)},
+    {label:'Programa', value: dp.progNombre || 'Programa'}
+  ], {columns:4, tone:'accent'});
 
-  y = addFechaToDoc(doc, y); y+=4;
+  y = pdfSectionLabel(doc, y, 'Comparativo rapido', 'Cada bloque muestra el resumen ejecutivo de pregrado e idiomas.', 'info');
+  y = pdfMetricCards(doc, y, [
+    {label:'Pregrado · pago inicial', value: cop(pagoPre)},
+    {label:'Pregrado · credito', value: cop(totalPre)},
+    {label:'Idiomas · pago inicial', value: cop(pagoIdiomas)},
+    {label:'Idiomas · credito', value: cop(totalIdiomas)}
+  ], {columns:2, tone:'info'});
 
-  const cuotaPre = dm.cuota || ((dm.CP?dm.CP.cuota:0)+(dm.LP?dm.LP.cuota:0));
-  const totCredPre = dm.totCap ? (dm.totCap+dm.totInt) : ((dm.CP?(dm.CP.totCap+dm.CP.totInt):0)+(dm.LP?(dm.LP.totCap+dm.LP.totInt):0));
-  const pagoIniPre = dm.pagoInicial||0;
-  const totGenPre  = pagoIniPre + totCredPre;
-  const costoTotal = pagoIniPre + dp.pagoInicial + totCredPre + dp.totalCredito;
-
-  y = pdfSectionBar(doc, 'RESUMEN COMBINADO', y); y+=2;
-
-  // Group 1: Pago inicial
-  doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(160,110,45);
-  doc.text(safePDF('① PAGO AL MOMENTO DEL DESEMBOLSO'), 16, y); doc.setTextColor(0,0,0); doc.setFontSize(11); y+=7;
-  y = drawKV(doc, [
-    ['  Pago Inicial Pregrado', cop(pagoIniPre)],
-    ['  Pago Inicial Idiomas', cop(dp.pagoInicial)],
-  ], y);
-  doc.setFillColor(251,244,233); doc.rect(14,y-5,180,8,'F');
-  doc.setFont('helvetica','bold'); doc.text(safePDF('Total Pago Inicial:'), 16, y);
-  doc.text(safePDF(cop(pagoIniPre+dp.pagoInicial)), 150, y, {align:'right'}); y+=10;
-
-  // Group 2: Crédito
-  doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(26,58,92);
-  doc.text(safePDF('② CRÉDITO A AMORTIZAR'), 16, y); doc.setTextColor(0,0,0); doc.setFontSize(11); y+=7;
-  y = drawKV(doc, [
-    ['  Total Crédito Pregrado', cop(totCredPre)],
-    ['  Total Crédito Idiomas', cop(dp.totalCredito)],
-  ], y);
-  doc.setFillColor(234,241,248); doc.rect(14,y-5,180,8,'F');
-  doc.setFont('helvetica','bold'); doc.text(safePDF('Total Crédito:'), 16, y);
-  doc.text(safePDF(cop(totCredPre+dp.totalCredito)), 150, y, {align:'right'}); y+=10;
-
-  // Group 3: Cuota mensual
-  doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(61,107,74);
-  doc.text(safePDF('③ CUOTA MENSUAL COMBINADA'), 16, y); doc.setTextColor(0,0,0); doc.setFontSize(11); y+=7;
-  y = drawKV(doc, [
-    ['  Cuota Mensual Pregrado', cop(cuotaPre)],
-    ['  Cuota Mensual Idiomas', cop(dp.cuota)],
-  ], y);
-  doc.setFillColor(235,243,238); doc.rect(14,y-5,180,8,'F');
-  doc.setFont('helvetica','bold'); doc.text(safePDF('Cuota Mensual Total:'), 16, y);
-  doc.text(safePDF(cop(cuotaPre+dp.cuota)), 150, y, {align:'right'}); y+=12;
-
-  // Costo total
-  const barH = 22;
-  doc.setFillColor(26,58,92); doc.rect(14, y-7, 180, barH, 'F');
-  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(11);
-  doc.text(safePDF('COSTO TOTAL SEMESTRE'), 18, y);
-  doc.text(safePDF(cop(costoTotal)), 190, y, {align:'right'});
-  doc.setFont('helvetica','normal'); doc.setFontSize(8);
-  doc.text(safePDF('(Total Pago Inicial  +  Total Credito)'), 104, y+9, {align:'center'});
-  doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(11);
-  y += barH + 4;
-  y = pdfCostoFootnote(doc, y, '* Valor matrícula + Garantisa pregrado + Garantisa idiomas + Intereses de ambos créditos');
-
-  // ══ PAGE 2: PREGRADO DETAIL ════════════════════════════════════
   doc.addPage();
-  y = pdfHeader(doc, 'Detalle — '+tipoLabel, dp.progNombre);
-  y = addFechaToDoc(doc, y); y+=2;
-
-  if(tabId === 1 || tabId === 3) {
-    // Single amortization
-    y = pdfBenefSection(doc,y,dm.mat,dm.beneficios||[],dm.benefTotal||0,dm.matNeta||dm.mat,dm.cuotaInicial);
-    y += 2; y = pdfSectionBar(doc,'PAGO INICIAL — al momento del desembolso',y);
-    y = drawKV(doc,[
-      dm.benefTotal>0?['Matrícula Neta',cop(dm.matNeta||dm.mat)]:['Valor Matrícula',cop(dm.mat)],
-      ['Pago de Contado',cop(dm.cuotaInicial)],
-      ['Garantisa 4.17%',cop(dm.garantisa)],
-      ['Total Pago Inicial',cop(dm.pagoInicial)]
-    ], y);
-    y += 2; y = pdfSectionBar(doc,'CRÉDITO A AMORTIZAR',y);
-    y = drawKV(doc,[
-      ['Monto Financiado',cop(dm.financiado)+'  ('+dm.pct+'% de matrícula)'],
-      ['Cuota Mensual',cop(dm.cuota)],
-      ['Total Intereses',cop(dm.totInt)],
-      ['Total Crédito',cop(dm.totCap+dm.totInt)],
-      ['COSTO TOTAL PREGRADO',cop(dm.totalGeneral)]
-    ], y);
-    y = pdfCostoFootnote(doc, y);
-    y += 2; y = pdfSectionBar(doc,'TABLA DE AMORTIZACIÓN',y);
-    y = drawTable(doc, dm.rows, y);
-  } else if(tabId === 2) {
-    // Mixto: CP + LP
-    y = pdfBenefSection(doc,y,dm.mat,dm.beneficios||[],dm.benefTotal||0,dm.matNeta||dm.mat,dm.cuotaInicial);
-    y += 2; y = pdfSectionBar(doc,'PAGO INICIAL — al momento del desembolso',y);
-    y = drawKV(doc,[
-      dm.benefTotal>0?['Matrícula Neta',cop(dm.matNeta||dm.mat)]:['Valor Matrícula',cop(dm.mat)],
-      ['Pago de Contado',cop(dm.cuotaInicial)],
-      dm.garCP>0?['Garantisa CP (4.17%)',cop(dm.garCP)]:null,
-      dm.garLP>0?['Garantisa LP (2.86%)',cop(dm.garLP)]:null,
-      ['Total Pago Inicial',cop(dm.pagoInicial)]
-    ], y);
+  y = 22;
+  y = pdfSectionLabel(doc, y, 'Detalle pregrado', tipoLabel, 'accent');
+  if(tabId === 2) {
+    y = pdfMetricCards(doc, y, [
+      {label:'Pago de contado', value: cop(dm.cuotaInicial)},
+      {label:'Garantisa total', value: cop((dm.garCP||0) + (dm.garLP||0))},
+      {label:'Monto CP', value: cop(dm.finCP || 0)},
+      {label:'Capital LP', value: cop(dm.finLP || 0)}
+    ], {columns:2, tone:'accent'});
     if(dm.CP) {
-      y += 2; y = pdfSectionBar(doc,'CORTO PLAZO — '+dm.pCP+'%',y);
-      y = drawKV(doc,[['Monto CP',cop(dm.finCP)],['Cuota CP',cop(dm.CP.cuota)],['Total CP',cop(dm.CP.totCap+dm.CP.totInt)]],y);
-      y += 2; y = pdfSectionBar(doc,'TABLA AMORTIZACIÓN — CORTO PLAZO',y);
-      y = drawTable(doc, dm.CP.rows, y);
+      y = pdfSectionLabel(doc, y, 'Plan de pagos pregrado', `Cronograma del tramo CP (${dm.nCP || 0} cuotas).`, 'neutral');
+      y = pdfTablaAmort(doc, y, dm.CP.rows, dm.CP.totCap, dm.CP.totInt, 'PREGRADO - CORTO PLAZO');
     }
-    if(dm.LP) {
-      if(y > 180) { doc.addPage(); y=20; }
-      const nPagoComb = dm.LP.nPago || Math.round((dm.nLP||8)*6*1.5);
-      y = pdfSectionBar(doc,'LARGO PLAZO — '+dm.pLP+'% ('+nPagoComb+' cuotas - solo capital)',y,[46,125,50]);
-      y = drawKV(doc,[
-        ['Capital LP',cop(dm.finLP)],
-        ['Plazo Estimado',nPagoComb+' cuotas mensuales'],
-        ['Periodo de Gracia','12 meses post-grado']
-      ],y);
-      y += 2; y = pdfSectionBar(doc,'PLAN DE PAGOS LP — SOLO CAPITAL (interes: tasa futura)',y,[46,125,50]);
-      const hwLPc=['#','Capital','Saldo Capital','Interes'], cwLPc=[14,50,50,62];
-      doc.setTextColor(0,0,0); doc.setFontSize(9);
-      const semLPcomb=dm.nLP||8;
-      doc.setFillColor(235,243,238); doc.rect(14,y-4,180,38,'F');
-      doc.setDrawColor(61,107,74); doc.rect(14,y-4,180,38,'S'); doc.setDrawColor(0,0,0);
-      [['Capital a amortizar:',cop(dm.finLP)],
-       ['Semestres de la carrera:',semLPcomb+' semestres'],
-       ['Plazo estimado de pago:',nPagoComb+' meses ('+Math.round(nPagoComb/12*10)/10+' anos)'],
-       ['Interes:','Tasa vigente al iniciar amortizacion']
-      ].forEach(([k,v])=>{doc.setFont('helvetica','bold');pdfText(doc,k,16,y);doc.setFont('helvetica','normal');pdfText(doc,v,192,y,{align:'right'});y+=8;});
-      y+=4; doc.setFontSize(11);
-    }
-    const totCred2 = (dm.CP?(dm.CP.totCap+dm.CP.totInt):0)+(dm.LP?(dm.LP.totCap+dm.LP.totInt):0);
-    y = pdfCostoFootnote(doc, y);
-  }
-
-  // ══ PAGE 3: IDIOMAS DETAIL ═════════════════════════════════════
-  doc.addPage();
-  y = pdfHeader(doc, 'Detalle — Crédito Idiomas', dp.progNombre);
-  y = addFechaToDoc(doc, y); y+=2;
-
-  // Beneficios idiomas
-  const benefsIdSnap = SimuladorOFE.state.languages.benefits.filter(b=>b.val>0);
-  y = pdfBenefSection(doc,y,dp.mat,benefsIdSnap,SimuladorOFE.state.languages.benefits.reduce((s,b)=>s+(b.val||0),0),dp.mat-SimuladorOFE.state.languages.benefits.reduce((s,b)=>s+(b.val||0),0),dp.cuotaInicial);
-  y += 2; y = pdfSectionBar(doc,'PAGO INICIAL — al momento del desembolso',y);
-  y = drawKV(doc,[
-    ['Pago de Contado',cop(dp.cuotaInicial)],
-    ['Garantisa 4.17%',cop(dp.garantisa)],
-    ['Total Pago Inicial',cop(dp.pagoInicial)]
-  ], y);
-  y += 2; y = pdfSectionBar(doc,'CRÉDITO A AMORTIZAR',y);
-  y = drawKV(doc,[
-    ['Valor Idiomas',cop(dp.mat)],
-    ['Monto Financiado',cop(dp.financiado)],
-    ['Cuota Mensual',cop(dp.cuota)],
-    ['Total Intereses',cop(dp.totInt)],
-    ['Total Crédito Idiomas',cop(dp.totalCredito)],
-    ['COSTO TOTAL IDIOMAS',cop(dp.totalGeneral)]
-  ], y);
-  y = pdfCostoFootnote(doc, y, '* Valor idiomas + Garantisa + Intereses del crédito');
-
-  // Proyecciones (matricula + idiomas) al final del combinado
-  const _addProys = () => {
-    y = pdfProyeccionLP(doc, y, SimuladorOFE.state.results.projectionLP, 'Matricula');
-    y = pdfProyeccionLP(doc, y, SimuladorOFE.state.results.projectionLanguagesLP, 'Idiomas');
-  };
-  if(dp.isMixto && dp.idCP && dp.idLP) {
-    y += 2; y = pdfSectionBar(doc,'TABLA CP IDIOMAS - '+Math.round((SimuladorOFE.state.languages.context.pctCP||40))+'% ('+dp.n+' cuotas)',y);
-    y = drawTable(doc, dp.idCP.rows, y);
-    if(y > 180) { doc.addPage(); y=20; }
-    const nLPidPDF = dp.mesesLP || dp.idLP.nPago || 72;
-    y = pdfSectionBar(doc,'PLAN LP IDIOMAS - '+Math.round((SimuladorOFE.state.languages.context.pctLP||60))+'% ('+nLPidPDF+' cuotas - solo capital)',y,[46,125,50]);
-    // Capital-only LP table for idiomas
-    doc.setTextColor(0,0,0); doc.setFontSize(9);
-    const semLPidComb = dp.semLP||8;
-    doc.setFillColor(235,243,238); doc.rect(14,y-4,180,38,'F');
-    doc.setDrawColor(61,107,74); doc.rect(14,y-4,180,38,'S'); doc.setDrawColor(0,0,0);
-    [['Capital a amortizar:',cop(dp.finLP)],
-     ['Semestres de la carrera:',semLPidComb+' semestres'],
-     ['Plazo estimado de pago:',nLPidPDF+' meses ('+Math.round(nLPidPDF/12*10)/10+' anos)'],
-     ['Interes:','Tasa vigente al iniciar amortizacion']
-    ].forEach(([k,v])=>{doc.setFont('helvetica','bold');pdfText(doc,k,16,y);doc.setFont('helvetica','normal');pdfText(doc,v,192,y,{align:'right'});y+=8;});
-    y+=4; doc.setFontSize(11); y+=4;
-    // Disclaimer
-    doc.setFillColor(235,243,238); doc.rect(14,y-3,180,20,'F');
-    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(61,107,74);
-    pdfText(doc,'Sera amortizado en el numero de semestres que dure la carrera (x 1.5).',16,y); y+=5;
-    doc.setFont('helvetica','normal'); doc.setTextColor(58,53,50);
-    pdfText(doc,'Cuota definitiva: tasa vigente al iniciar amortizacion. Gracia: 1 año post-grado.',16,y); y+=8;
-    doc.setTextColor(0,0,0); doc.setFontSize(11);
-    y = pdfProyeccionLP(doc, y, SimuladorOFE.state.results.projectionLanguagesLP, 'Idiomas');
   } else {
-    y += 2; y = pdfSectionBar(doc,'TABLA AMORTIZACION IDIOMAS ('+dp.n+' cuotas)',y);
-    y = drawTable(doc, dp.rows, y);
+    y = pdfMetricCards(doc, y, [
+      {label:'Pago de contado', value: cop(dm.cuotaInicial)},
+      {label:'Aporte inicial', value: cop(dm.garantisa || dm.cargos || 0)},
+      {label:'Monto financiado', value: cop(dm.financiado || 0)},
+      {label:'Total credito', value: cop((dm.totCap || 0) + (dm.totInt || 0))}
+    ], {columns:2, tone:'accent'});
+    y = pdfSectionLabel(doc, y, 'Plan de pagos pregrado', `Cronograma principal (${dm.n || 0} cuotas).`, 'neutral');
+    y = pdfTablaAmort(doc, y, dm.rows, dm.totCap, dm.totInt, 'PREGRADO');
   }
+
+  doc.addPage();
+  y = 22;
+  y = pdfSectionLabel(doc, y, 'Detalle idiomas', 'Credito de idiomas asociado al mismo programa.', 'info');
+  y = pdfMetricCards(doc, y, [
+    {label:'Pago de contado', value: cop(dp.cuotaInicial)},
+    {label:'Garantisa', value: cop(dp.garantisa || ((dp.garCP||0) + (dp.garLP||0)))},
+    {label:'Monto financiado', value: cop(dp.financiado || ((dp.finCP||0) + (dp.finLP||0)))},
+    {label:'Total idiomas', value: cop(dp.totalGeneral || (pagoIdiomas + totalIdiomas))}
+  ], {columns:2, tone:'info'});
+  const filas = (dp.isMixto && dp.idCP) ? dp.idCP.rows : dp.rows;
+  const tc = (dp.isMixto && dp.idCP) ? dp.idCP.totCap : dp.totCap;
+  const ti = (dp.isMixto && dp.idCP) ? dp.idCP.totInt : dp.totInt;
+  y = pdfSectionLabel(doc, y, 'Plan de pagos idiomas', dp.isMixto ? `Cronograma del tramo CP de idiomas (${dp.n} cuotas).` : `Cronograma de idiomas (${dp.n} cuotas).`, 'neutral');
+  y = pdfTablaAmort(doc, y, filas, tc, ti, 'IDIOMAS');
+  y = pdfProyeccionLP(doc, y, SimuladorOFE.state.results.projectionLP, 'Matricula');
+  y = pdfProyeccionLP(doc, y, SimuladorOFE.state.results.projectionLanguagesLP, 'Idiomas');
 
   pdfPie(doc);
   doc.save(filename+'.pdf');

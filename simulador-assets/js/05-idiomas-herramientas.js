@@ -323,8 +323,8 @@ function calcularIdiomas() {
         <div class="kpi"><span class="kpi__label">Valor Idiomas</span><div class="kpi__value kpi__value--md">${cop(mat)}</div></div>
         <div class="kpi"><span class="kpi__label">Financiado CP + LP</span><div class="kpi__value kpi__value--md">${cop(finCP+finLP)}</div></div>
         <div class="kpi"><span class="kpi__label">Pago de Contado</span><div class="kpi__value kpi__value--md">${cop(cuotaInicial)}</div></div>
-        <div class="kpi kpi--warning"><span class="kpi__label">Garantisa CP (4.17%)</span><div class="kpi__value kpi__value--md">${cop(garCP)}</div></div>
-        <div class="kpi kpi--warning"><span class="kpi__label">Garantisa LP (2.86%)</span><div class="kpi__value kpi__value--md">${cop(garLP)}</div></div>
+        <div class="kpi kpi--warning"><span class="kpi__label">${icon('shield')} Garantisa CP (4.17%)</span><div class="kpi__value kpi__value--md">${cop(garCP)}</div></div>
+        <div class="kpi kpi--warning"><span class="kpi__label">${icon('shield')} Garantisa LP (2.86%)</span><div class="kpi__value kpi__value--md">${cop(garLP)}</div></div>
         <div class="kpi kpi--warning u-col-span-all"><span class="kpi__label">Total Pago Inicial</span><div class="kpi__value kpi__value--md">${cop(_pagoInicialId)}</div></div>
       </div>
 
@@ -415,7 +415,7 @@ function calcularIdiomas() {
       <div class="section__title u-mt-5 u-mt-0 u-text-danger">${icon('credit-card')} Pago Inicial — Idiomas</div>
       <div class="kpi-grid">
         <div class="kpi"><span class="kpi__label">Cuota Inicial Contado</span><div class="kpi__value kpi__value--md">${cop(cuotaInicial)}</div></div>
-        <div class="kpi kpi--warning"><span class="kpi__label">Garantisa (4.17%)</span><div class="kpi__value kpi__value--md">${cop(garantisa)}</div></div>
+        <div class="kpi kpi--warning"><span class="kpi__label">${icon('shield')} Garantisa (4.17%)</span><div class="kpi__value kpi__value--md">${cop(garantisa)}</div></div>
         <div class="kpi kpi--warning u-col-span-all"><span class="kpi__label">Total Pago Inicial Idiomas</span><div class="kpi__value kpi__value--md">${cop(pagoInicial)}</div></div>
       </div>
       <div class="section__title u-mt-5">${icon('calendar')} Crédito Idiomas</div>
@@ -483,68 +483,59 @@ function expPDFIdiomas(){
   const doc = new jsPDF();
   const pct = Math.round((d.financiado/d.mat)*100);
   const filename = (d.progNombre + ' - Idiomas').replace(/[^a-zA-Z0-9\-_ ]/g,'').trim();
+  const tea = ((Math.pow(1 + d.tm, 12) - 1) * 100).toFixed(2) + '% E.A.';
   let y = pdfHeader(doc, 'Credito de Idiomas', (d.progNombre||'') + ' - ' + pct + '% financiado');
 
-  y = pdfCondiciones(doc, y, {
-    modalidad: d.isMixto ? 'Credito de idiomas - mixto (corto y largo plazo)' : 'Credito de idiomas - corto plazo',
-    tasa: d.tm,
-    plazo: d.isMixto ? ('Corto plazo: ' + d.n + ' cuotas mensuales') : (d.n + ' cuotas mensuales'),
-    garantisa: d.isMixto ? 'Corto plazo 4.17% - Largo plazo 2.86% sobre cada tramo'
-                         : 'Aporte del 4.17% sobre el monto financiado (3.5% + IVA)',
-    gracia: d.isMixto ? '12 meses despues de graduarse (tramo de largo plazo)' : null
+  y = pdfHeroBand(doc, y, {
+    eyebrow: 'Credito de idiomas',
+    label: d.isMixto ? 'Cuota estimada del tramo corto plazo' : 'Cuota mensual estimada',
+    value: cop(d.isMixto && d.idCP ? d.idCP.cuota : d.cuota),
+    meta: d.isMixto ? `Esquema mixto · ${(d.tm*100).toFixed(2)}% M.V. · ${tea}` : `${d.n} cuotas mensuales · ${(d.tm*100).toFixed(2)}% M.V. · ${tea}`,
+    note: d.isMixto ? 'El tramo LP de idiomas se resume como capital, ya que su cuota se define al iniciar amortizacion.' : 'Resumen ejecutivo del credito de idiomas.',
+    tone: 'info'
   });
+  y = pdfMetricCards(doc, y, [
+    {label:'Valor idiomas', value: cop(d.mat)},
+    {label:'Pago inicial', value: cop(d.pagoInicial)},
+    {label:'Monto financiado', value: cop(d.financiado)},
+    {label:'Costo total', value: cop(d.totalGeneral)}
+  ], {columns:4, tone:'info'});
 
-  y = pdfSectionBar(doc, 'PAGO AL MOMENTO DEL DESEMBOLSO', y, PDF.ambar);
-  y = pdfKV(doc, y, [
-    ['Valor del programa de idiomas', cop(d.mat)],
-    ['Pago de contado', cop(d.cuotaInicial)],
-    d.isMixto && d.garCP ? ['Aporte Garantisa corto plazo (4.17%)', cop(d.garCP)] : null,
-    d.isMixto && d.garLP ? ['Aporte Garantisa largo plazo (2.86%)', cop(d.garLP)] : null,
-    !d.isMixto ? ['Aporte Garantisa (4.17%)', cop(d.garantisa)] : null,
-    ['Total a pagar hoy', cop(d.pagoInicial), 'total'],
-  ], {tintaTotal: PDF.ambarS, colorTotal: PDF.ambar});
+  y = pdfSectionLabel(doc, y, 'Desembolso al inicio', 'Conceptos que deben pagarse al momento del desembolso.', 'warning');
+  y = pdfMetricCards(doc, y, [
+    {label:'Pago de contado', value: cop(d.cuotaInicial)},
+    d.isMixto && d.garCP ? {label:'Garantisa CP', value: cop(d.garCP), hint:'4.17%'} : null,
+    d.isMixto && d.garLP ? {label:'Garantisa LP', value: cop(d.garLP), hint:'2.86%'} : null,
+    !d.isMixto ? {label:'Garantisa', value: cop(d.garantisa), hint:'4.17% sobre el monto financiado'} : null,
+    {label:'Total a pagar hoy', value: cop(d.pagoInicial)}
+  ], {columns:2, tone:'warning'});
 
   if(d.isMixto && d.idCP) {
-    y = pdfSectionBar(doc, 'TRAMO CORTO PLAZO (' + (d.pctCP||0).toFixed(1) + '%) - SE PAGA MIENTRAS ESTUDIA', y);
-    y = pdfKV(doc, y, [
-      ['Monto financiado', cop(d.finCP)],
-      ['Numero de cuotas', d.n + ' meses'],
-      ['Valor de la cuota mensual', cop(d.idCP.cuota)],
-      ['Total intereses', cop(d.idCP.totInt)],
-      ['Total tramo corto plazo', cop(d.idCP.totCap + d.idCP.totInt), 'total'],
-    ]);
-    const nLP = d.mesesLP || 72;
-    y = pdfSectionBar(doc, 'TRAMO LARGO PLAZO (' + (d.pctLP||0).toFixed(1) + '%) - SE PAGA AL GRADUARSE', y, PDF.verde);
-    y = pdfKV(doc, y, [
-      ['Capital a amortizar', cop(d.finLP)],
-      ['Semestres del programa', (d.semLP||8) + ' semestres'],
-      ['Periodo de gracia', '12 meses despues de graduarse'],
-      ['Plazo estimado de pago', nLP + ' cuotas mensuales'],
-      ['Valor de la cuota', 'Se define al iniciar la amortizacion'],
-    ]);
+    y = pdfSectionLabel(doc, y, 'Estructura del credito idiomas', 'Se separa entre corto plazo e idioma LP.', 'accent');
+    y = pdfMetricCards(doc, y, [
+      {label:'Monto CP idiomas', value: cop(d.finCP), hint:`${d.n} cuotas`},
+      {label:'Total CP idiomas', value: cop(d.idCP.totCap + d.idCP.totInt), hint:`Incluye ${cop(d.idCP.totInt)} en intereses`},
+      {label:'Capital LP idiomas', value: cop(d.finLP), hint:`Plazo estimado ${d.mesesLP || (d.idLP && d.idLP.nPago) || 72} cuotas`},
+      {label:'Periodo de gracia', value:'12 meses', hint:'Posterior al grado'}
+    ], {columns:2, tone:'accent'});
+    y = pdfCallout(doc, y, 'Importante sobre el tramo LP de idiomas', 'La tasa del largo plazo se definira al momento de iniciar su amortizacion. Por eso el PDF presenta el capital proyectado y no una cuota definitiva.', 'success');
   } else {
-    y = pdfSectionBar(doc, 'CREDITO A AMORTIZAR', y);
-    y = pdfKV(doc, y, [
-      ['Monto financiado', cop(d.financiado)],
-      ['Numero de cuotas', d.n + ' meses'],
-      ['Valor de la cuota mensual', cop(d.cuota)],
-      ['Total intereses', cop(d.totInt)],
-      ['Total del credito', cop(d.totalCredito), 'total'],
-    ]);
+    y = pdfSectionLabel(doc, y, 'Credito a amortizar', 'Condiciones del credito de idiomas en corto plazo.', 'accent');
+    y = pdfMetricCards(doc, y, [
+      {label:'Monto financiado', value: cop(d.financiado)},
+      {label:'Total intereses', value: cop(d.totInt)},
+      {label:'Plazo', value: `${d.n} cuotas mensuales`},
+      {label:'Total credito', value: cop(d.totalCredito)}
+    ], {columns:2, tone:'accent'});
   }
 
-  y = pdfSectionBar(doc, 'COSTO TOTAL DE IDIOMAS', y, PDF.verde);
-  y = pdfKV(doc, y, [['Costo total *', cop(d.totalGeneral), 'total']],
-    {tintaTotal: PDF.verdeS, colorTotal: PDF.verde});
-  y = pdfCostoFootnote(doc, y, '* Valor de idiomas + Aporte Garantisa + Intereses del credito');
-
+  doc.addPage();
+  y = 22;
   const filas = (d.isMixto && d.idCP) ? d.idCP.rows : d.rows;
   const tc = (d.isMixto && d.idCP) ? d.idCP.totCap : d.totCap;
   const ti = (d.isMixto && d.idCP) ? d.idCP.totInt : d.totInt;
-  if(y > 205) { doc.addPage(); y = 22; }
-  y = pdfTablaAmort(doc, y, filas, tc, ti,
-      'PLAN DE PAGOS' + (d.isMixto ? ' CORTO PLAZO' : ' IDIOMAS') + ' (' + d.n + ' CUOTAS)');
-
+  y = pdfSectionLabel(doc, y, 'Plan de pagos', d.isMixto ? `Cronograma del tramo CP de idiomas (${d.n} cuotas).` : `Cronograma de idiomas (${d.n} cuotas).`, 'accent');
+  y = pdfTablaAmort(doc, y, filas, tc, ti, d.isMixto ? 'CRONOGRAMA CP IDIOMAS' : 'CRONOGRAMA IDIOMAS');
   y = pdfProyeccionLP(doc, y, SimuladorOFE.state.results.projectionLanguagesLP, 'Idiomas');
   pdfPie(doc);
   doc.save(safePDF(filename) + '.pdf');

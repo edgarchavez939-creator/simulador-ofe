@@ -184,7 +184,7 @@ function calcular1(){
     <div class="section__title u-mt-0 u-mb-10 u-text-danger">${icon('credit-card')} Pago Inicial (al momento del desembolso)</div>
     <div class="kpi-grid">
       <div class="kpi"><span class="kpi__label">Cuota Inicial Contado</span><div class="kpi__value kpi__value--md">${cop(cuotaInicial)}</div></div>
-      <div class="kpi kpi--warning"><span class="kpi__label">Garantisa (4.17% s/financiado)</span><div class="kpi__value kpi__value--md">${cop(garantisa)}</div></div>
+      <div class="kpi kpi--warning"><span class="kpi__label">${icon('shield')} Garantisa (4.17% s/financiado)</span><div class="kpi__value kpi__value--md">${cop(garantisa)}</div></div>
       <div class="kpi kpi--warning u-col-span-all"><span class="kpi__label">Total Pago Inicial</span><div class="kpi__value kpi__value--md">${cop(pagoInicial)}</div></div>
     </div>
     <div class="section__title u-mt-5">${icon('calendar')} Crédito a Amortizar</div>
@@ -364,8 +364,8 @@ function calcular2(){
   html+=`<div class="section__title u-mt-0 u-mb-10 u-text-danger">${icon('credit-card')} Pago Inicial (al momento del desembolso)</div>
   <div class="kpi-grid">
     <div class="kpi"><span class="kpi__label">Cuota Inicial Contado</span><div class="kpi__value kpi__value--md">${cop(cuotaInicial)}</div></div>
-    ${garCP>0?`<div class="kpi kpi--warning"><span class="kpi__label">Garantisa CP (4.17%)</span><div class="kpi__value kpi__value--md">${cop(garCP)}</div></div>`:''}
-    ${garLP>0?`<div class="kpi kpi--warning"><span class="kpi__label">Garantisa LP (2.86%)</span><div class="kpi__value kpi__value--md">${cop(garLP)}</div></div>`:''}
+    ${garCP>0?`<div class="kpi kpi--warning"><span class="kpi__label">${icon('shield')} Garantisa CP (4.17%)</span><div class="kpi__value kpi__value--md">${cop(garCP)}</div></div>`:''}
+    ${garLP>0?`<div class="kpi kpi--warning"><span class="kpi__label">${icon('shield')} Garantisa LP (2.86%)</span><div class="kpi__value kpi__value--md">${cop(garLP)}</div></div>`:''}
     <div class="kpi kpi--warning u-col-span-all"><span class="kpi__label">Total Pago Inicial</span><div class="kpi__value kpi__value--md">${cop(pagoInicial)}</div></div>
   </div>`;
 
