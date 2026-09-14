@@ -12,6 +12,17 @@ const _reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const RE_PRE = new RegExp(_reEsc(MK_PRE_S) + '[\\s\\S]*?' + _reEsc(MK_PRE_E));
 const RE_POS = new RegExp(_reEsc(MK_POS_S) + '[\\s\\S]*?' + _reEsc(MK_POS_E));
 
+// Serializa datos de forma segura dentro de <script type="application/json">.
+// Se escapan caracteres que podrían cerrar el bloque o introducir markup.
+function safeEmbeddedJSON(value) {
+  return JSON.stringify(value, null, 2)
+    .replace(/</g, '\\u003C')
+    .replace(/>/g, '\\u003E')
+    .replace(/&/g, '\\u0026')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029');
+}
+
 
 
 
@@ -311,17 +322,17 @@ function construirHTMLActualizado() {
 
   if(preData && preData.rows.length > 0) {
     const normalized = preData.rows.map(([n,v,i,s]) => [String(n), Number(v), Number(i)||0, Number(s)||8]);
-    const jsArr = 'const PROGRAMAS = ' + JSON.stringify(normalized, null, 2) + ';';
+    const jsonData = safeEmbeddedJSON(normalized);
     if(!RE_PRE.test(newHtml)) return {error:'No se encontró el marcador de PROGRAMAS en el HTML'};
-    newHtml = newHtml.replace(RE_PRE, MK_PRE_S + jsArr + MK_PRE_E);
+    newHtml = newHtml.replace(RE_PRE, MK_PRE_S + jsonData + MK_PRE_E);
     cambios.push(`${preData.rows.length} programas de pregrado`);
   }
 
   if(posData && posData.rows.length > 0) {
     const normalized = posData.rows.map(([n,s,v]) => [String(n), String(s), Number(v)]);
-    const jsArr = 'const POSGRADOS = ' + JSON.stringify(normalized, null, 2) + ';';
+    const jsonData = safeEmbeddedJSON(normalized);
     if(!RE_POS.test(newHtml)) return {error:'No se encontró el marcador de POSGRADOS en el HTML'};
-    newHtml = newHtml.replace(RE_POS, MK_POS_S + jsArr + MK_POS_E);
+    newHtml = newHtml.replace(RE_POS, MK_POS_S + jsonData + MK_POS_E);
     cambios.push(`${posData.rows.length} programas de posgrado`);
   }
 
@@ -367,30 +378,25 @@ function generarHTML() {
 
 function extraerProgramasDelHTML(html) {
   try {
-    // Pregrado: ["Nombre", valor, idiomas, semestres]
-    const iP1 = html.indexOf(MK_PRE_S);
-    const iP2 = html.indexOf(MK_PRE_E);
-    if(iP1 < 0 || iP2 < 0) return null;
-    const blkPre = html.slice(iP1, iP2);
-    const pregrado = [];
-    const rePre = /\["((?:[^"\\]|\\.)*)"\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*(\d+)\s*)?\]/g;
-    let m;
-    while((m = rePre.exec(blkPre)) !== null) {
-      pregrado.push([m[1].replace(/\\"/g,'"'), +m[2], +m[3], m[4] ? +m[4] : 8]);
-    }
+    const parseBlock = (startMarker, endMarker, legacyName) => {
+      const i1 = html.indexOf(startMarker), i2 = html.indexOf(endMarker);
+      if(i1 < 0 || i2 < 0 || i2 <= i1) return [];
+      let raw = html.slice(i1 + startMarker.length, i2).trim();
+      // Compatibilidad con versiones P3.8 y anteriores, donde los bloques
+      // contenían `const PROGRAMAS = [...]` / `const POSGRADOS = [...]`.
+      raw = raw.replace(new RegExp('^const\\s+' + legacyName + '\\s*=\\s*'), '').replace(/;\s*$/, '');
+      raw = raw.replace(/^\s*\/\/.*$/gm, '').trim();
+      return JSON.parse(raw);
+    };
 
-    // Posgrado: ["Nombre", "Subnivel", valor]
-    const iG1 = html.indexOf(MK_POS_S);
-    const iG2 = html.indexOf(MK_POS_E);
-    const posgrado = [];
-    if(iG1 >= 0 && iG2 >= 0) {
-      const blkPos = html.slice(iG1, iG2);
-      const rePos = /\["((?:[^"\\]|\\.)*)"\s*,\s*"((?:[^"\\]|\\.)*)"\s*,\s*(\d+)\s*\]/g;
-      let n;
-      while((n = rePos.exec(blkPos)) !== null) {
-        posgrado.push([n[1].replace(/\\"/g,'"'), n[2].replace(/\\"/g,'"'), +n[3]]);
-      }
-    }
+    const preRaw = parseBlock(MK_PRE_S, MK_PRE_E, 'PROGRAMAS');
+    const posRaw = parseBlock(MK_POS_S, MK_POS_E, 'POSGRADOS');
+    const pregrado = Array.isArray(preRaw)
+      ? preRaw.map(r => [String(r[0] ?? ''), Number(r[1])||0, Number(r[2])||0, Number(r[3])||8])
+      : [];
+    const posgrado = Array.isArray(posRaw)
+      ? posRaw.map(r => [String(r[0] ?? ''), String(r[1] ?? ''), Number(r[2])||0])
+      : [];
     if(pregrado.length === 0 && posgrado.length === 0) return null;
     return {pregrado, posgrado};
   } catch(e) { return null; }

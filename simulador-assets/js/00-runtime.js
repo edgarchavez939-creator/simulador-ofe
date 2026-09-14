@@ -5,7 +5,25 @@
   const app = global.SimuladorOFE || {};
   const registry = new Map();
 
-  app.version = 'P3.8';
+  function readEmbeddedData(id){
+    const el = document.getElementById(id);
+    if(!el) return [];
+    const raw = (el.textContent || '').replace(/\/\*%%(?:PROGRAMAS|POSGRADOS)_(?:START|END)%%\*\//g, '').trim();
+    if(!raw) return [];
+    try { return JSON.parse(raw); }
+    catch(error) {
+      console.error('[SimuladorOFE] Datos embebidos inválidos en #' + id, error);
+      return [];
+    }
+  }
+
+  // Datos institucionales embebidos como JSON no ejecutable.
+  // Se exponen como propiedades globales de solo lectura para conservar
+  // compatibilidad con los módulos clásicos sin habilitar scripts inline.
+  Object.defineProperty(global, 'PROGRAMAS', {value: Object.freeze(readEmbeddedData('programas-data')), writable:false, configurable:false});
+  Object.defineProperty(global, 'POSGRADOS', {value: Object.freeze(readEmbeddedData('posgrados-data')), writable:false, configurable:false});
+
+  app.version = 'P3.10';
   app.config = Object.freeze({
     garantisaCP: 0.0417,
     garantisaLP: 0.0286,

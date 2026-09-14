@@ -1,4 +1,4 @@
-# Simulador de Crédito Educativo OFE — P3.8
+# Simulador de Crédito Educativo OFE — P3.10 RC
 
 Arquitectura modular sin framework ni build system.
 
@@ -121,3 +121,14 @@ La lógica financiera y los contratos de P2 permanecen sin cambios.
 - Las 10 pruebas internas del motor financiero continúan en estado OK.
 
 Nota de alcance: Chromium headless del entorno no produjo una sesión utilizable, por lo que la validación visual/navegador real continúa reservada para P3.9. El QA de P3.8 valida lógica y flujos con un DOM simulado y mocks de dependencias de descarga; no sustituye la prueba final en navegador.
+
+
+## P3.9 + P3.10 — Cierre de seguridad y aceptación
+
+- `PROGRAMAS` y `POSGRADOS` se almacenan como JSON embebido no ejecutable dentro de `index.html`.
+- La CSP no permite JavaScript inline; `script-src` queda limitado al propio origen y cdnjs para dependencias versionadas.
+- Chart.js 4.4.1, jsPDF 2.5.1 y SheetJS 0.18.5 permanecen fijados por versión y protegidos mediante Subresource Integrity (SRI).
+- No existe publicación directa a GitHub ni manejo de tokens en el cliente.
+- Se mantienen `connect-src 'self'`, `object-src 'none'`, `base-uri 'none'` y `form-action 'self'`.
+- El paquete conserva el actualizador mediante los marcadores `PROGRAMAS_START/END` y `POSGRADOS_START/END`.
+- Estado de aceptación: Release Candidate. La validación funcional automatizada previa es 15/15 rutas y 10/10 pruebas financieras; la prueba visual manual en navegadores objetivo sigue siendo una validación operativa recomendada antes del despliegue institucional definitivo.
