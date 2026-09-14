@@ -4732,46 +4732,77 @@ function calcularIdiomas() {
 }
 
 function expPDFIdiomas(){
-  const d=window._dIdiomas; if(!d)return;
-  const {jsPDF}=window.jspdf; const doc=new jsPDF();
-  const pctLabel = Math.round((d.financiado/d.mat)*100)+'%';
-  const filename = (d.progNombre+' - Idiomas '+pctLabel).replace(/[^a-zA-Z0-9\-_ áéíóúÁÉÍÓÚñÑ]/g,'').trim();
-  let y=pdfHeader(doc,'Crédito Idiomas', (d.progNombre||'')+' — '+Math.round((d.financiado/d.mat)*100)+'% financiado');
+  const d = window._dIdiomas;
+  if(!d) return toast('Primero calcula el credito de idiomas','warning');
+  const {jsPDF} = window.jspdf;
+  const doc = new jsPDF();
+  const pct = Math.round((d.financiado/d.mat)*100);
+  const filename = (d.progNombre + ' - Idiomas').replace(/[^a-zA-Z0-9\-_ ]/g,'').trim();
+  let y = pdfHeader(doc, 'Credito de Idiomas', (d.progNombre||'') + ' - ' + pct + '% financiado');
+
   y = pdfCondiciones(doc, y, {
     modalidad: d.isMixto ? 'Credito de idiomas - mixto (corto y largo plazo)' : 'Credito de idiomas - corto plazo',
     tasa: d.tm,
     plazo: d.isMixto ? ('Corto plazo: ' + d.n + ' cuotas mensuales') : (d.n + ' cuotas mensuales'),
-    garantisa: d.isMixto ? 'Corto plazo 4.17% - Largo plazo 2.86%' : 'Aporte del 4.17% sobre el monto financiado',
+    garantisa: d.isMixto ? 'Corto plazo 4.17% - Largo plazo 2.86% sobre cada tramo'
+                         : 'Aporte del 4.17% sobre el monto financiado (3.5% + IVA)',
     gracia: d.isMixto ? '12 meses despues de graduarse (tramo de largo plazo)' : null
   });
 
-  y=addFechaToDoc(doc,y); y+=2;
-  y=pdfSectionBar(doc,'INFORMACIÓN GENERAL',y);
-  doc.setFont('helvetica','bold'); doc.text(safePDF('Programa:'),16,y); doc.setFont('helvetica','normal'); doc.text(safePDF(d.progNombre),70,y); y+=7;
-  doc.setFont('helvetica','bold'); doc.text(safePDF('Valor Idiomas:'),16,y); doc.setFont('helvetica','normal'); doc.text(safePDF(cop(d.mat)),150,y,{align:'right'}); y+=7;
-  y+=2; y=pdfSectionBar(doc,'PAGO INICIAL — al momento del desembolso',y);
-  [['Cuota Inicial Contado',cop(d.cuotaInicial)],
-   ['Garantisa 4.17% s/financiado',cop(d.garantisa)],
-   ['Total Pago Inicial',cop(d.pagoInicial)]
-  ].forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(safePDF(k+':'),16,y); doc.setFont('helvetica','normal'); doc.text(safePDF(v),150,y,{align:'right'}); y+=7; });
-  y+=2; y=pdfSectionBar(doc,'CRÉDITO A AMORTIZAR',y);
-  [['Monto Financiado',cop(d.financiado)],
-   ['Cuota Mensual',cop(d.cuota)],
-   ['Total Intereses',cop(d.totInt)],
-   ['Total Crédito',cop(d.totalCredito)],
-   ['COSTO TOTAL IDIOMAS',cop(d.totalGeneral)]
-  ].forEach(([k,v])=>{ doc.setFont('helvetica','bold'); doc.text(safePDF(k+':'),16,y); doc.setFont('helvetica','normal'); doc.text(safePDF(v),150,y,{align:'right'}); y+=7; });
-  y=pdfCostoFootnote(doc,y,'* Valor idiomas + Aporte Garantisa + Intereses del crédito');
-  y+=2; y=pdfSectionBar(doc,'TABLA DE AMORTIZACIÓN ('+d.n+' meses)',y);
-  const hw=['#','Cuota','Capital','Interés','Saldo'],cw=[14,42,38,38,44];
-  doc.setFillColor(26,58,92); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
-  let x=14; hw.forEach((h,i)=>{doc.text(safePDF(h),x+1,y);x+=cw[i];}); doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
-  d.rows.forEach(r=>{ y+=7; if(y>270){doc.addPage();y=20;} x=14;
-    [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(safePDF(String(v)),x+1,y);x+=cw[i];});
-  });
-  _addProys();
+  y = pdfSectionBar(doc, 'PAGO AL MOMENTO DEL DESEMBOLSO', y, PDF.ambar);
+  y = pdfKV(doc, y, [
+    ['Valor del programa de idiomas', cop(d.mat)],
+    ['Pago de contado', cop(d.cuotaInicial)],
+    d.isMixto && d.garCP ? ['Aporte Garantisa corto plazo (4.17%)', cop(d.garCP)] : null,
+    d.isMixto && d.garLP ? ['Aporte Garantisa largo plazo (2.86%)', cop(d.garLP)] : null,
+    !d.isMixto ? ['Aporte Garantisa (4.17%)', cop(d.garantisa)] : null,
+    ['Total a pagar hoy', cop(d.pagoInicial), 'total'],
+  ], {tintaTotal: PDF.ambarS, colorTotal: PDF.ambar});
+
+  if(d.isMixto && d.idCP) {
+    y = pdfSectionBar(doc, 'TRAMO CORTO PLAZO (' + (d.pctCP||0).toFixed(1) + '%) - SE PAGA MIENTRAS ESTUDIA', y);
+    y = pdfKV(doc, y, [
+      ['Monto financiado', cop(d.finCP)],
+      ['Numero de cuotas', d.n + ' meses'],
+      ['Valor de la cuota mensual', cop(d.idCP.cuota)],
+      ['Total intereses', cop(d.idCP.totInt)],
+      ['Total tramo corto plazo', cop(d.idCP.totCap + d.idCP.totInt), 'total'],
+    ]);
+    const nLP = d.mesesLP || 72;
+    y = pdfSectionBar(doc, 'TRAMO LARGO PLAZO (' + (d.pctLP||0).toFixed(1) + '%) - SE PAGA AL GRADUARSE', y, PDF.verde);
+    y = pdfKV(doc, y, [
+      ['Capital a amortizar', cop(d.finLP)],
+      ['Semestres del programa', (d.semLP||8) + ' semestres'],
+      ['Periodo de gracia', '12 meses despues de graduarse'],
+      ['Plazo estimado de pago', nLP + ' cuotas mensuales'],
+      ['Valor de la cuota', 'Se define al iniciar la amortizacion'],
+    ]);
+  } else {
+    y = pdfSectionBar(doc, 'CREDITO A AMORTIZAR', y);
+    y = pdfKV(doc, y, [
+      ['Monto financiado', cop(d.financiado)],
+      ['Numero de cuotas', d.n + ' meses'],
+      ['Valor de la cuota mensual', cop(d.cuota)],
+      ['Total intereses', cop(d.totInt)],
+      ['Total del credito', cop(d.totalCredito), 'total'],
+    ]);
+  }
+
+  y = pdfSectionBar(doc, 'COSTO TOTAL DE IDIOMAS', y, PDF.verde);
+  y = pdfKV(doc, y, [['Costo total *', cop(d.totalGeneral), 'total']],
+    {tintaTotal: PDF.verdeS, colorTotal: PDF.verde});
+  y = pdfCostoFootnote(doc, y, '* Valor de idiomas + Aporte Garantisa + Intereses del credito');
+
+  const filas = (d.isMixto && d.idCP) ? d.idCP.rows : d.rows;
+  const tc = (d.isMixto && d.idCP) ? d.idCP.totCap : d.totCap;
+  const ti = (d.isMixto && d.idCP) ? d.idCP.totInt : d.totInt;
+  if(y > 205) { doc.addPage(); y = 22; }
+  y = pdfTablaAmort(doc, y, filas, tc, ti,
+      'PLAN DE PAGOS' + (d.isMixto ? ' CORTO PLAZO' : ' IDIOMAS') + ' (' + d.n + ' CUOTAS)');
+
+  y = pdfProyeccionLP(doc, y, window._proyLPIdiomas, 'Idiomas');
   pdfPie(doc);
-  doc.save(filename+'.pdf');
+  doc.save(safePDF(filename) + '.pdf');
 }
 
 function expXLSIdiomas(){
@@ -5596,28 +5627,24 @@ function expPDFCombinado() {
   const filename = (dp.progNombre+' - Combinado').replace(/[^a-zA-Z0-9\-_ áéíóúÁÉÍÓÚñÑ]/g,'').trim();
   const hw = ['#','Cuota','Capital','Interés','Saldo'], cw = [14,42,38,38,44];
 
-  function drawTable(doc, rows, y) {
-    doc.setFillColor(26,58,92); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
-    let x=14; hw.forEach((h,i)=>{doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text(safePDF(h),x+1,y);x+=cw[i];});
-    doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(9);
-    rows.forEach(r=>{ y+=6; if(y>270){doc.addPage();y=20;} x=14;
-      [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{doc.text(safePDF(String(v)),x+1,y);x+=cw[i];});
-    });
-    doc.setFontSize(11);
-    return y + 8;
+  function drawTable(doc, rows, y, titulo) {
+    const tc = rows.reduce((s,r)=>s+r.capital,0), ti = rows.reduce((s,r)=>s+r.interes,0);
+    return pdfTablaAmort(doc, y, rows, tc, ti, titulo || 'PLAN DE PAGOS');
   }
 
-  function drawKV(doc, rows, y, valX) {
-    const vx = valX || 150;
-    rows.filter(Boolean).forEach(([k,v])=>{
-      doc.setFont('helvetica','bold'); doc.text(safePDF(k+':'), 16, y);
-      doc.setFont('helvetica','normal'); doc.text(safePDF(v), vx, y, {align:'right'}); y+=7;
-    });
-    return y;
-  }
+  function drawKV(doc, rows, y) { return pdfKV(doc, y, rows); }
 
   // ══ PAGE 1: RESUMEN COMBINADO ══════════════════════════════════
   let y = pdfHeader(doc, 'Reporte Combinado — Pregrado + Idiomas', dp.progNombre+' · '+tipoLabel);
+  y = pdfCondiciones(doc, y, {
+    modalidad: tipoLabel + ' + Credito de idiomas',
+    tasa: dm.tm,
+    plazo: (tabId === 2 ? ('Corto plazo: ' + (dm.nCP||0) + ' cuotas') : ((dm.n||0) + ' cuotas mensuales'))
+           + '  |  Idiomas: ' + (dp.n||0) + ' cuotas',
+    garantisa: tabId === 2 ? 'Corto plazo 4.17% - Largo plazo 2.86%' : 'Aporte del 4.17% sobre el monto financiado',
+    gracia: tabId === 2 ? '12 meses despues de graduarse (tramo de largo plazo)' : null
+  });
+
   y = addFechaToDoc(doc, y); y+=4;
 
   const cuotaPre = dm.cuota || ((dm.CP?dm.CP.cuota:0)+(dm.LP?dm.LP.cuota:0));
