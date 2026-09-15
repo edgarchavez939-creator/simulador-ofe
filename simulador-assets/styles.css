@@ -2975,3 +2975,47 @@ table.tbl tfoot td { background: color-mix(in srgb, var(--uninorte-red) 6%, var(
     max-width: 96px;
   }
 }
+
+
+/* v3.8 — Proyección LP en disposición vertical estable */
+.projection-controls {
+  display: flex !important;
+  flex-direction: column;
+  align-items: stretch !important;
+  gap: 10px !important;
+  width: 100%;
+  max-width: 430px;
+}
+.projection-controls__ipc,
+.projection-controls > .inline-control-label--projection {
+  width: 100% !important;
+  max-width: 430px;
+  margin: 0 !important;
+}
+.projection-controls > .inline-control-label--projection {
+  min-height: 48px;
+  height: auto;
+  padding: 10px 14px;
+  justify-content: flex-start;
+}
+.projection-controls__ipc {
+  grid-template-columns: 96px minmax(0, 1fr);
+}
+.projection-controls__ipc .input {
+  width: 96px !important;
+  min-width: 96px !important;
+  max-width: 96px;
+}
+.projection-controls__ipc .input-affix__tag {
+  justify-content: flex-start;
+  padding-inline: 16px;
+}
+@media (max-width: 520px) {
+  .projection-controls {
+    max-width: none;
+  }
+  .projection-controls__ipc,
+  .projection-controls > .inline-control-label--projection {
+    max-width: none;
+  }
+}
