@@ -176,7 +176,7 @@ function calcular7() {
     ${resultHero({
       eyebrow:'Cálculo de Cuota Inicial',
       label:'Cuota inicial requerida', value:cop(cuotaInicial),
-      meta:`Capacidad mensual ${cop(d.cap)} · ${d.n} cuotas · ${(d.tm*100).toFixed(2)}% M.V.`, tone:cubreTodo?'success':'info',
+      meta:`Capacidad mensual ${cop(d.cap)} | ${d.n} cuotas | ${(d.tm*100).toFixed(2)}% M.V.`, tone:cubreTodo?'success':'info',
       metrics:[
         {label:'Monto financiable',value:cop(d.fin)},
         {label:'Cuota mensual',value:cop(A.cuota)},
@@ -275,24 +275,48 @@ function expPDF7() {
   if(!d) return toast('Primero realiza el calculo','warning');
   const {jsPDF}=window.jspdf; const doc=new jsPDF();
   const tea=((Math.pow(1+d.tm,12)-1)*100).toFixed(2)+'% E.A.';
-  let y=pdfHeader(doc,'Calculo de Cuota Inicial','Programa simulado: '+(d.progNombre||'Programa'));
-  y=pdfHeroBand(doc,y,{label:'Cuota inicial requerida',value:cop(d.cuotaInicial),meta:`${d.n} cuotas · ${(d.tm*100).toFixed(2)}% M.V. · ${tea}`,note:'Valor de entrada requerido para ajustar la cuota mensual a la capacidad de pago declarada.',tone:'accent'});
-  y=pdfMetricCards(doc,y,[
-    {label:'Capacidad mensual',value:cop(d.cap)},
-    {label:'Monto financiable',value:cop(d.fin)},
-    {label:'Garantisa',value:cop(d.gar)},
-    {label:'Total a pagar hoy',value:cop(d.desembolso)}
-  ],{columns:4,tone:'neutral'});
-  y=pdfSectionLabel(doc,y,'Resultado del calculo','Relacion entre matricula, capacidad y credito.','accent');
-  y=pdfMetricCards(doc,y,[
-    {label:'Programa academico',value:d.progNombre||'Programa',valueSize:10.5},
-    {label:'Matricula neta',value:cop(d.matNeta||d.mat)},
-    {label:'Cuota mensual resultante',value:cop(d.cuota)},
-    {label:'Costo total del semestre',value:cop(d.costoTotal)}
-  ],{columns:2,tone:'neutral'});
-  if(y+23+d.rows.length*6.2>275){doc.addPage();y=22;}
-  y=pdfSectionLabel(doc,y,'Detalle del credito resultante','Cronograma de pagos proyectado.','neutral');
-  y=pdfTablaAmort(doc,y,d.rows,d.totCap,d.totInt,'PLAN DE PAGOS');
+  let y=pdfHeader(doc,'Calculo de Cuota Inicial');
+  y=pdfContextBand(doc,y,
+    {label:'Programa academico',value:d.progNombre||'Programa',hint:'Programa simulado'},
+    {label:'Capacidad mensual declarada',value:cop(d.cap),hint:'Base del calculo inverso'}
+  );
+  y=pdfHeroSplit(doc,y,{
+    label:'Cuota inicial requerida',value:cop(d.cuotaInicial),
+    meta:`${d.n} cuotas | ${(d.tm*100).toFixed(2)}% M.V. (${tea})`,
+    noteTitle:'Que significa este valor?',
+    note:'Es el valor de entrada requerido para que la cuota mensual del credito se ajuste a la capacidad de pago declarada.'
+  });
+  y=pdfSectionTitle(doc,PDF.M,y,PDF.CW,'Resumen financiero');
+  y=pdfMetricRow(doc,y,[
+    {label:'Matricula neta',value:cop(d.matNeta||d.mat),hint:'Base del escenario'},
+    {label:'Monto financiable',value:cop(d.fin),hint:'Capital resultante'},
+    {label:'Aporte Garantisa',value:cop(d.gar),hint:'4.17% del financiado'},
+    {label:'Total al desembolso',value:cop(d.desembolso),hint:'Cuota inicial + Garantisa'}
+  ]);
+  const gap=6,colW=(PDF.CW-gap)/2,yDetail=y;
+  const yA=pdfDetailTable(doc,PDF.M,yDetail,colW,'Detalle del pago inicial',[
+    ['Cuota inicial requerida',cop(d.cuotaInicial)],
+    ['Aporte Garantisa',cop(d.gar)],
+    ['Total al desembolso',cop(d.desembolso),'total']
+  ]);
+  const yB=pdfDetailTable(doc,PDF.M+colW+gap,yDetail,colW,'Detalle del credito',[
+    ['Monto financiable',cop(d.fin)],
+    ['Total intereses',cop(d.totInt)],
+    ['Costo total del semestre',cop(d.costoTotal),'total']
+  ]);
+  y=Math.max(yA,yB)+2;
+  const cond=[['Plazo',`${d.n} meses`],['Tasa M.V.',(d.tm*100).toFixed(2)+'%'],['Tasa E.A.',tea.replace(' E.A.','')],['Cuota mensual resultante',cop(d.cuota)]];
+  const notes=['El resultado depende de la capacidad mensual declarada, el plazo y la tasa configurada.','La simulacion es informativa y puede cambiar segun las condiciones vigentes.','Verifica la informacion antes de formalizar el credito.'];
+  if((d.rows||[]).length<=6&&y<205){
+    const leftW=110,rightW=66,xR=PDF.M+leftW+6;
+    pdfPlanTable(doc,PDF.M,y,leftW,d.rows,d.totCap,d.totInt,'Plan de pagos estimado');
+    let yr=pdfConditionsBox(doc,xR,y,rightW,cond,'Condiciones del credito');
+    pdfNoteBox(doc,xR,yr,rightW,'Ten en cuenta',notes);
+  }else{
+    y=pdfConditionsBox(doc,PDF.M,y,PDF.CW,cond,'Condiciones del credito');
+    y=pdfNoteBox(doc,PDF.M,y,PDF.CW,'Ten en cuenta',notes);
+    doc.addPage(); pdfPlanTable(doc,PDF.M,22,PDF.CW,d.rows,d.totCap,d.totInt,'Plan de pagos estimado');
+  }
   pdfPie(doc);
   doc.save(safePDF('Calculo Cuota Inicial - '+(d.progNombre||'Simulacion'))+'.pdf');
   toast('PDF descargado','success');
@@ -413,29 +437,29 @@ function registrarHistorial(tabId) {
 
   if(tabId===1 && SimuladorOFE.state.results.shortTerm) {
     entry = {tabId, fecha, prog:SimuladorOFE.state.results.shortTerm.progNombre||'Programa', tipo:tabNames[1],
-      resumen:SimuladorOFE.state.results.shortTerm.pct+'% · '+SimuladorOFE.state.results.shortTerm.n+' meses · '+(SimuladorOFE.state.results.shortTerm.tm*100).toFixed(2)+'%',
+      resumen:SimuladorOFE.state.results.shortTerm.pct+'% | '+SimuladorOFE.state.results.shortTerm.n+' meses | '+(SimuladorOFE.state.results.shortTerm.tm*100).toFixed(2)+'%',
       cuota:SimuladorOFE.state.results.shortTerm.cuota, total:SimuladorOFE.state.results.shortTerm.totalGeneral,
       snap:JSON.parse(JSON.stringify(SimuladorOFE.state.results.shortTerm))};
   } else if(tabId===2 && SimuladorOFE.state.results.mixed) {
     const totCred = (SimuladorOFE.state.results.mixed.CP?(SimuladorOFE.state.results.mixed.CP.totCap+SimuladorOFE.state.results.mixed.CP.totInt):0)+(SimuladorOFE.state.results.mixed.LP?(SimuladorOFE.state.results.mixed.LP.noAmortize?SimuladorOFE.state.results.mixed.LP.capital:(SimuladorOFE.state.results.mixed.LP.totCap+SimuladorOFE.state.results.mixed.LP.totInt)):0);
     entry = {tabId, fecha, prog:SimuladorOFE.state.results.mixed.progNombre||'Programa', tipo:tabNames[2],
-      resumen:'CP'+SimuladorOFE.state.results.mixed.pCP+'% LP'+SimuladorOFE.state.results.mixed.pLP+'% · '+(SimuladorOFE.state.results.mixed.tm*100).toFixed(2)+'%',
+      resumen:'CP'+SimuladorOFE.state.results.mixed.pCP+'% LP'+SimuladorOFE.state.results.mixed.pLP+'% | '+(SimuladorOFE.state.results.mixed.tm*100).toFixed(2)+'%',
       cuota:(SimuladorOFE.state.results.mixed.CP?SimuladorOFE.state.results.mixed.CP.cuota:0), total:SimuladorOFE.state.results.mixed.pagoInicial+totCred,
       snap:JSON.parse(JSON.stringify(SimuladorOFE.state.results.mixed))};
   } else if(tabId===3 && SimuladorOFE.state.results.bank) {
     entry = {tabId, fecha, prog:SimuladorOFE.state.results.bank.progNombre||'Programa', tipo:tabNames[3],
-      resumen:SimuladorOFE.state.results.bank.pct+'% · '+SimuladorOFE.state.results.bank.n+' meses · '+(SimuladorOFE.state.results.bank.tm*100).toFixed(2)+'%',
+      resumen:SimuladorOFE.state.results.bank.pct+'% | '+SimuladorOFE.state.results.bank.n+' meses | '+(SimuladorOFE.state.results.bank.tm*100).toFixed(2)+'%',
       cuota:SimuladorOFE.state.results.bank.cuota, total:SimuladorOFE.state.results.bank.totalGeneral,
       snap:JSON.parse(JSON.stringify(SimuladorOFE.state.results.bank))};
   } else if(tabId===5 && SimuladorOFE.state.restructuring.current) {
     const d = SimuladorOFE.state.restructuring.current;
     entry = {tabId, fecha, prog:'Crédito reestructurado', tipo:tabNames[5],
-      resumen:d.n+' meses · '+(d.tm*100).toFixed(2)+'% · saldo '+cop(d.saldo),
+      resumen:d.n+' meses | '+(d.tm*100).toFixed(2)+'% | saldo '+cop(d.saldo),
       cuota:d.cuota, total:d.totalGeneral, snap:JSON.parse(JSON.stringify(d))};
   } else if(tabId===7 && SimuladorOFE.state.results.initialPayment) {
     const d = SimuladorOFE.state.results.initialPayment;
     entry = {tabId, fecha, prog:d.progNombre||'Programa', tipo:tabNames[7],
-      resumen:'capacidad '+cop(d.cap)+'/mes · '+d.n+' cuotas · '+(d.tm*100).toFixed(2)+'%',
+      resumen:'capacidad '+cop(d.cap)+'/mes | '+d.n+' cuotas | '+(d.tm*100).toFixed(2)+'%',
       cuota:d.cuota, total:d.costoTotal, snap:JSON.parse(JSON.stringify(d))};
   }
   if(!entry) return;
@@ -469,7 +493,7 @@ function historyRecordMeta(entry) {
   const financiado = entry.tabId===2 ? (d.finCP||0)+(d.finLP||0)
     : entry.tabId===5 ? (d.principal||d.saldo||0)
     : (d.financiado ?? d.fin ?? 0);
-  const plazo = entry.tabId===2 ? `${d.nCP||0}m CP · ${d.nLP||0}m LP` : `${d.n||0} meses`;
+  const plazo = entry.tabId===2 ? `${d.nCP||0}m CP | ${d.nLP||0}m LP` : `${d.n||0} meses`;
   return {financiado, plazo};
 }
 
@@ -514,7 +538,7 @@ function verHistorial(id) {
   const d = e.snap || {}; const meta = historyRecordMeta(e);
   const modal = document.getElementById('detail-modal');
   if(!modal) return;
-  document.getElementById('detail-title').textContent = e.tipo + ' · ' + e.prog;
+  document.getElementById('detail-title').textContent = e.tipo + ' - ' + e.prog;
   document.getElementById('detail-desc').textContent = 'Simulación realizada ' + e.fecha;
   const rows = [
     ['Monto financiado / base', cop(meta.financiado)],
@@ -557,9 +581,9 @@ function duplicarHistorial(id) {
 
 function historyScenario(entry) {
   const d=entry?.snap||{};
-  if(entry.tabId===1) return {label:(d.progNombre||'Programa')+' — '+(d.pct||0)+'%',sub:(d.n||0)+' meses · tasa '+((d.tm||0)*100).toFixed(2)+'%',cuota:d.cuota||0,totalCredito:(d.totCap||0)+(d.totInt||0),pagoInicial:d.pagoInicial||0,totalGeneral:d.totalGeneral||0,financiado:d.financiado||0,intereses:d.totInt||0,data:JSON.parse(JSON.stringify(d))};
-  if(entry.tabId===3) return {label:(d.progNombre||'Programa')+' — '+(d.pct||0)+'%',sub:(d.n||0)+' meses · tasa '+((d.tm||0)*100).toFixed(2)+'%',cuota:d.cuota||0,totalCredito:(d.totCap||0)+(d.totInt||0),pagoInicial:d.pagoInicial||0,totalGeneral:d.totalGeneral||0,financiado:d.financiado||0,intereses:d.totInt||0,data:JSON.parse(JSON.stringify(d))};
-  if(entry.tabId===2){ const totalCredito=(d.CP?d.CP.totCap+d.CP.totInt:0)+(d.LP?(d.LP.noAmortize?d.LP.capital:d.LP.totCap+d.LP.totInt):0); return {label:(d.progNombre||'Programa')+' — CP'+(d.pCP||0)+'% LP'+(d.pLP||0)+'%',sub:(d.nCP||0)+' m CP · '+(d.nLP||0)+' m LP · tasa '+((d.tm||0)*100).toFixed(2)+'%',cuota:(d.CP?.cuota||0)+(d.LP?.cuota||0),totalCredito,pagoInicial:d.pagoInicial||0,totalGeneral:(d.pagoInicial||0)+totalCredito,financiado:(d.finCP||0)+(d.finLP||0),intereses:(d.CP?.totInt||0)+(d.LP?.totInt||0),isMixto:true,finCP:d.finCP||0,finLP:d.finLP||0,nCP:d.nCP||0,nLP:d.nLP||0,cuotaCP:d.CP?.cuota||0,cuotaLP:d.LP?.cuota||0,intCP:d.CP?.totInt||0,intLP:d.LP?.totInt||0,totCP:d.CP?d.CP.totCap+d.CP.totInt:0,totLP:d.LP?(d.LP.noAmortize?d.LP.capital:d.LP.totCap+d.LP.totInt):0,lpGrace:d.nLP?Math.round(d.nLP*1.5):null,data:JSON.parse(JSON.stringify(d))}; }
+  if(entry.tabId===1) return {label:(d.progNombre||'Programa')+' — '+(d.pct||0)+'%',sub:(d.n||0)+' meses | tasa '+((d.tm||0)*100).toFixed(2)+'%',cuota:d.cuota||0,totalCredito:(d.totCap||0)+(d.totInt||0),pagoInicial:d.pagoInicial||0,totalGeneral:d.totalGeneral||0,financiado:d.financiado||0,intereses:d.totInt||0,data:JSON.parse(JSON.stringify(d))};
+  if(entry.tabId===3) return {label:(d.progNombre||'Programa')+' — '+(d.pct||0)+'%',sub:(d.n||0)+' meses | tasa '+((d.tm||0)*100).toFixed(2)+'%',cuota:d.cuota||0,totalCredito:(d.totCap||0)+(d.totInt||0),pagoInicial:d.pagoInicial||0,totalGeneral:d.totalGeneral||0,financiado:d.financiado||0,intereses:d.totInt||0,data:JSON.parse(JSON.stringify(d))};
+  if(entry.tabId===2){ const totalCredito=(d.CP?d.CP.totCap+d.CP.totInt:0)+(d.LP?(d.LP.noAmortize?d.LP.capital:d.LP.totCap+d.LP.totInt):0); return {label:(d.progNombre||'Programa')+' — CP'+(d.pCP||0)+'% LP'+(d.pLP||0)+'%',sub:(d.nCP||0)+' m CP | '+(d.nLP||0)+' m LP | tasa '+((d.tm||0)*100).toFixed(2)+'%',cuota:(d.CP?.cuota||0)+(d.LP?.cuota||0),totalCredito,pagoInicial:d.pagoInicial||0,totalGeneral:(d.pagoInicial||0)+totalCredito,financiado:(d.finCP||0)+(d.finLP||0),intereses:(d.CP?.totInt||0)+(d.LP?.totInt||0),isMixto:true,finCP:d.finCP||0,finLP:d.finLP||0,nCP:d.nCP||0,nLP:d.nLP||0,cuotaCP:d.CP?.cuota||0,cuotaLP:d.LP?.cuota||0,intCP:d.CP?.totInt||0,intLP:d.LP?.totInt||0,totCP:d.CP?d.CP.totCap+d.CP.totInt:0,totLP:d.LP?(d.LP.noAmortize?d.LP.capital:d.LP.totCap+d.LP.totInt):0,lpGrace:d.nLP?Math.round(d.nLP*1.5):null,data:JSON.parse(JSON.stringify(d))}; }
   return null;
 }
 
@@ -576,7 +600,7 @@ function guardarEscenario(tabId, replaceOldest = false) {
   if(tabId===1 && SimuladorOFE.state.results.shortTerm) {
     snapshot = {
       label: (SimuladorOFE.state.results.shortTerm.progNombre||'Programa') + ' — ' + SimuladorOFE.state.results.shortTerm.pct + '%',
-      sub: SimuladorOFE.state.results.shortTerm.n + ' meses · tasa ' + (SimuladorOFE.state.results.shortTerm.tm*100).toFixed(2) + '%',
+      sub: SimuladorOFE.state.results.shortTerm.n + ' meses | tasa ' + (SimuladorOFE.state.results.shortTerm.tm*100).toFixed(2) + '%',
       cuota: SimuladorOFE.state.results.shortTerm.cuota, totalCredito: SimuladorOFE.state.results.shortTerm.totCap+SimuladorOFE.state.results.shortTerm.totInt,
       pagoInicial: SimuladorOFE.state.results.shortTerm.pagoInicial, totalGeneral: SimuladorOFE.state.results.shortTerm.totalGeneral,
       financiado: SimuladorOFE.state.results.shortTerm.financiado, intereses: SimuladorOFE.state.results.shortTerm.totInt,
@@ -587,7 +611,7 @@ function guardarEscenario(tabId, replaceOldest = false) {
     const lpGracePeriod = SimuladorOFE.state.results.mixed.nLP ? Math.round(SimuladorOFE.state.results.mixed.nLP * 1.5) : null;
     snapshot = {
       label: (SimuladorOFE.state.results.mixed.progNombre||'Programa') + ' — CP' + SimuladorOFE.state.results.mixed.pCP + '% LP' + SimuladorOFE.state.results.mixed.pLP + '%',
-      sub: (SimuladorOFE.state.results.mixed.nCP||0) + ' m CP · ' + (SimuladorOFE.state.results.mixed.nLP||0) + ' m LP · tasa ' + (SimuladorOFE.state.results.mixed.tm*100).toFixed(2) + '%',
+      sub: (SimuladorOFE.state.results.mixed.nCP||0) + ' m CP | ' + (SimuladorOFE.state.results.mixed.nLP||0) + ' m LP | tasa ' + (SimuladorOFE.state.results.mixed.tm*100).toFixed(2) + '%',
       cuota: (SimuladorOFE.state.results.mixed.CP?SimuladorOFE.state.results.mixed.CP.cuota:0)+(SimuladorOFE.state.results.mixed.LP?SimuladorOFE.state.results.mixed.LP.cuota:0),
       totalCredito: totCred, pagoInicial: SimuladorOFE.state.results.mixed.pagoInicial,
       totalGeneral: SimuladorOFE.state.results.mixed.pagoInicial+totCred,
@@ -605,7 +629,7 @@ function guardarEscenario(tabId, replaceOldest = false) {
   } else if(tabId===3 && SimuladorOFE.state.results.bank) {
     snapshot = {
       label: (SimuladorOFE.state.results.bank.progNombre||'Programa') + ' — ' + SimuladorOFE.state.results.bank.pct + '%',
-      sub: SimuladorOFE.state.results.bank.n + ' meses · tasa ' + (SimuladorOFE.state.results.bank.tm*100).toFixed(2) + '%',
+      sub: SimuladorOFE.state.results.bank.n + ' meses | tasa ' + (SimuladorOFE.state.results.bank.tm*100).toFixed(2) + '%',
       cuota: SimuladorOFE.state.results.bank.cuota, totalCredito: SimuladorOFE.state.results.bank.totCap+SimuladorOFE.state.results.bank.totInt,
       pagoInicial: SimuladorOFE.state.results.bank.pagoInicial, totalGeneral: SimuladorOFE.state.results.bank.totalGeneral,
       financiado: SimuladorOFE.state.results.bank.financiado, intereses: SimuladorOFE.state.results.bank.totInt,
@@ -777,10 +801,10 @@ function compararEscenarios(tabId) {
     <th class="u-text-left">Concepto</th>
     ${list.map((e,i)=>{
       const sub = isMixto
-        ? `CP ${e.nCP}m · LP ${e.nLP}m · ${(e.data.tm*100).toFixed(2)}%`
+        ? `CP ${e.nCP}m | LP ${e.nLP}m | ${(e.data.tm*100).toFixed(2)}%`
         : e.label;
       return `<th class="th--fill" style="background:${colors[i]};">Escenario ${i+1}<br>
-        <span class="scenario-meta scenario-meta--primary">${e.label.replace('% LP','% · LP ')}</span><br>
+        <span class="scenario-meta scenario-meta--primary">${e.label.replace('% LP','% | LP ')}</span><br>
         <span class="scenario-meta scenario-meta--secondary">${sub}</span></th>`;
     }).join('')}
   </tr></thead><tbody>`;
@@ -847,7 +871,7 @@ function compareGroupHTML(tabId, list, title, subtitle, options={}) {
   const cards = list.map((e,i)=>{
     const d=e.data||e;
     const tasa=Number.isFinite(d.tm)?(d.tm*100).toFixed(2)+'% M.V.':'—';
-    const plazo=e.isMixto?`${e.nCP||0}m CP · ${e.nLP||0}m LP`:`${d.n||e.n||0} meses`;
+    const plazo=e.isMixto?`${e.nCP||0}m CP | ${e.nLP||0}m LP`:`${d.n||e.n||0} meses`;
     return `<article class="compare-card ${i===bestCost?'compare-card--best-cost':''} ${i===bestPayment?'compare-card--best-payment':''}">
       <div class="compare-card__num">Escenario ${String.fromCharCode(65+i)}</div>
       <div class="compare-card__title">${escHTML(e.label||title)}</div>
@@ -897,35 +921,55 @@ function expPDFCombinado() {
   const pagoPre=dm.pagoInicial||0,pagoIdi=dp.pagoInicial||0;
   const credPre=tabId===2?((dm.CP?dm.CP.totCap+dm.CP.totInt:0)+(dm.finLP||0)):((dm.totCap||0)+(dm.totInt||0));
   const credIdi=dp.isMixto&&dp.idCP?((dp.idCP.totCap+dp.idCP.totInt)+(dp.finLP||0)):(dp.totalCredito||0);
-  let y=pdfHeader(doc,'Resumen Combinado','Programa simulado: '+(dp.progNombre||'Programa'));
-  y=pdfHeroBand(doc,y,{label:'Cuota mensual combinada estimada',value:cop(cuotaPre+cuotaIdi),meta:`${tipoLabel} + Credito de Idiomas`,note:'Lectura consolidada de los dos escenarios asociados al mismo estudiante.',tone:'accent'});
-  y=pdfMetricCards(doc,y,[
-    {label:'Pago inicial combinado',value:cop(pagoPre+pagoIdi)},
-    {label:'Credito combinado',value:cop(credPre+credIdi)},
-    {label:'Pregrado · cuota',value:cop(cuotaPre)},
-    {label:'Idiomas · cuota',value:cop(cuotaIdi)}
-  ],{columns:4,tone:'neutral'});
-  y=pdfSectionLabel(doc,y,'Comparativo ejecutivo','Pregrado e idiomas en una sola lectura.','accent');
-  y=pdfMetricCards(doc,y,[
-    {label:'Pregrado · pago inicial',value:cop(pagoPre)},
-    {label:'Pregrado · credito',value:cop(credPre)},
-    {label:'Idiomas · pago inicial',value:cop(pagoIdi)},
-    {label:'Idiomas · credito',value:cop(credIdi)}
-  ],{columns:2,tone:'neutral'});
-  doc.addPage(); y=22;
-  y=pdfSectionLabel(doc,y,'Detalle pregrado',tipoLabel,'accent');
+  let y=pdfHeader(doc,'Resumen Combinado');
+  y=pdfContextBand(doc,y,
+    {label:'Programa academico',value:dp.progNombre||'Programa',hint:'Programa simulado'},
+    {label:'Escenario consolidado',value:`${tipoLabel} + Idiomas`,hint:'Lectura conjunta'}
+  );
+  y=pdfHeroSplit(doc,y,{
+    label:'Cuota mensual combinada estimada',value:cop(cuotaPre+cuotaIdi),
+    meta:'Suma de las cuotas estimadas de ambos escenarios',
+    noteTitle:'Como leer este resultado?',
+    note:'Resume la carga mensual estimada del credito academico y el credito de idiomas. Los tramos de largo plazo se presentan por separado cuando corresponda.'
+  });
+  y=pdfSectionTitle(doc,PDF.M,y,PDF.CW,'Resumen financiero');
+  y=pdfMetricRow(doc,y,[
+    {label:'Pago inicial combinado',value:cop(pagoPre+pagoIdi),hint:'Pregrado + idiomas'},
+    {label:'Credito combinado conocido',value:cop(credPre+credIdi),hint:'Sin intereses futuros LP'},
+    {label:'Cuota pregrado',value:cop(cuotaPre),hint:tipoLabel},
+    {label:'Cuota idiomas',value:cop(cuotaIdi),hint:'Credito de idiomas'}
+  ]);
+  const gap=6,colW=(PDF.CW-gap)/2;
+  const ya=pdfDetailTable(doc,PDF.M,y,colW,'Pregrado',[
+    ['Pago inicial',cop(pagoPre)],['Credito conocido',cop(credPre)],['Cuota estimada',cop(cuotaPre),'total']
+  ]);
+  const yb=pdfDetailTable(doc,PDF.M+colW+gap,y,colW,'Idiomas',[
+    ['Pago inicial',cop(pagoIdi)],['Credito conocido',cop(credIdi)],['Cuota estimada',cop(cuotaIdi),'total']
+  ]);
+  y=Math.max(ya,yb)+2;
+  pdfNoteBox(doc,PDF.M,y,PDF.CW,'Ten en cuenta',[
+    'Este reporte consolida dos simulaciones independientes para facilitar su lectura conjunta.',
+    'Los valores de largo plazo que dependan de una tasa futura se muestran como capital conocido, no como cuota definitiva.',
+    'La simulacion es informativa y puede cambiar segun las condiciones vigentes.'
+  ]);
+
+  doc.addPage();
+  let yp=pdfHeader(doc,'Detalle de Pregrado',tipoLabel);
+  yp=pdfContextBand(doc,yp,{label:'Programa academico',value:dp.progNombre||'Programa'},{label:'Pago inicial',value:cop(pagoPre),hint:tipoLabel});
   const preRows=tabId===2?(dm.CP?dm.CP.rows:[]):dm.rows;
   const preCap=tabId===2?(dm.CP?dm.CP.totCap:0):dm.totCap;
   const preInt=tabId===2?(dm.CP?dm.CP.totInt:0):dm.totInt;
-  if(preRows&&preRows.length) y=pdfTablaAmort(doc,y,preRows,preCap,preInt,'PLAN DE PAGOS PREGRADO');
-  doc.addPage(); y=22;
-  y=pdfSectionLabel(doc,y,'Detalle idiomas','Credito de idiomas asociado.','accent');
+  if(preRows&&preRows.length) pdfPlanTable(doc,PDF.M,yp,PDF.CW,preRows,preCap,preInt,'Plan de pagos - Pregrado');
+
+  doc.addPage();
+  let yi=pdfHeader(doc,'Detalle de Idiomas','Credito asociado al mismo programa academico.');
+  yi=pdfContextBand(doc,yi,{label:'Programa academico',value:dp.progNombre||'Programa'},{label:'Pago inicial idiomas',value:cop(pagoIdi),hint:'Credito de idiomas'});
   const rows=dp.isMixto&&dp.idCP?dp.idCP.rows:dp.rows;
   const tc=dp.isMixto&&dp.idCP?dp.idCP.totCap:dp.totCap;
   const ti=dp.isMixto&&dp.idCP?dp.idCP.totInt:dp.totInt;
-  if(rows&&rows.length) y=pdfTablaAmort(doc,y,rows,tc,ti,'PLAN DE PAGOS IDIOMAS');
-  y=pdfProyeccionLP(doc,y,SimuladorOFE.state.results.projectionLP,'Matricula');
-  y=pdfProyeccionLP(doc,y,SimuladorOFE.state.results.projectionLanguagesLP,'Idiomas');
+  if(rows&&rows.length) yi=pdfPlanTable(doc,PDF.M,yi,PDF.CW,rows,tc,ti,'Plan de pagos - Idiomas');
+  yi=pdfProyeccionLP(doc,yi,SimuladorOFE.state.results.projectionLP,'Matricula');
+  yi=pdfProyeccionLP(doc,yi,SimuladorOFE.state.results.projectionLanguagesLP,'Idiomas');
   pdfPie(doc);
   doc.save(safePDF((dp.progNombre||'Programa')+' - Combinado')+'.pdf');
   toast('PDF descargado','success');
