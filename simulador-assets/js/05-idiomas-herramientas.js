@@ -305,7 +305,7 @@ function calcularIdiomas() {
     let _proyIdiomasHtml = '';
     const verProyId = document.getElementById('id-proyLP')?.checked;
     if(verProyId && pctLP > 0 && semFinId > 0) {
-      const ipcPctId = parseFloat(document.getElementById('id-ipcLP')?.value);
+      const ipcPctId = parseFloat(String(document.getElementById('id-ipcLP')?.value ?? '').replace(',','.'));
       const ipcId = (isNaN(ipcPctId) ? 5 : ipcPctId) / 100;
       const inicioId = Math.max(1, semLPId - semFinId + 1);
       const proyId = proyectarLP(mat, pctLP, inicioId, semLPId, ipcId);

@@ -406,7 +406,7 @@ function calcular2(){
     // Proyección multi-semestre (si está activada)
     const verProy = document.getElementById('proyLP')?.checked;
     if(verProy && semLP > 0 && pLP > 0) {
-      const ipcPct = parseFloat(document.getElementById('ipcLP')?.value);
+      const ipcPct = parseFloat(String(document.getElementById('ipcLP')?.value ?? '').replace(',','.'));
       const ipc = (isNaN(ipcPct) ? 5 : ipcPct) / 100;
       const sf = getSemFinanciados();
       const proy = proyectarLP(mat, pLP, sf.inicio, sf.total, ipc);
@@ -418,8 +418,11 @@ function calcular2(){
   }
 
   if(CP&&LP){
-    html+=`<div class="section__title u-mt-5 u-mt-24">Comparativa Capital vs Intereses</div>
-    <div class="u-mt-4"><canvas id="chMixto" role="img" aria-label="Comparativa capital vs intereses corto y largo plazo">Gráfica comparativa</canvas></div>`;
+    html+=`<div class="section__title u-mt-5 u-mt-24">Composición del financiamiento</div>
+    <div class="financing-composition-chart u-mt-4">
+      <canvas id="chMixto" role="img" aria-label="Composición del financiamiento: capital e intereses de corto plazo y capital de largo plazo">Gráfica de composición del financiamiento</canvas>
+      <div class="financing-composition-chart__note">El tramo de largo plazo se muestra como <strong>capital proyectado</strong>. Sus intereses se determinarán cuando inicie la amortización, según la tasa vigente en ese momento.</div>
+    </div>`;
   }
 
   html+=`<div class="total-banner">
@@ -447,17 +450,27 @@ function calcular2(){
     setTimeout(()=>{
       const ctx=document.getElementById('chMixto');
       if(!ctx)return;
-      new Chart(ctx,{type:'bar',data:{
-        labels:['Corto Plazo','Largo Plazo (capital)'],
-        datasets:[
-          {label:'Capital',data:[Math.round(CP.totCap),Math.round(LP.capital)],backgroundColor:'var(--accent)',borderRadius:6},
-          {label:'Intereses CP',data:[Math.round(CP.totInt),0],backgroundColor:'var(--success)',borderRadius:6}
-        ]},
-        options:{responsive:true,maintainAspectRatio:false,
-          plugins:{legend:{display:true,position:'top',labels:{font:{family:'Montserrat',size:12},boxWidth:12,padding:16}},
-          tooltip:{callbacks:{label:c=>' '+cop(c.raw)}}},
-          scales:{x:{grid:{display:false},ticks:{font:{family:'Montserrat',size:12}}},
-            y:{ticks:{font:{family:'Montserrat',size:11},callback:v=>cop(v)}}}}
+      new Chart(ctx,{
+        type:'bar',
+        data:{
+          labels:['Corto plazo','Largo plazo'],
+          datasets:[
+            {label:'Capital',data:[Math.round(CP.totCap),Math.round(LP.capital)],backgroundColor:'#960A11',borderColor:'#960A11',borderWidth:1,borderRadius:5,borderSkipped:false},
+            {label:'Intereses conocidos',data:[Math.round(CP.totInt),0],backgroundColor:'#B78B1E',borderColor:'#B78B1E',borderWidth:1,borderRadius:5,borderSkipped:false}
+          ]
+        },
+        options:{
+          indexAxis:'y',responsive:true,maintainAspectRatio:false,
+          interaction:{mode:'index',intersect:false},
+          plugins:{
+            legend:{display:true,position:'top',align:'start',labels:{font:{family:'Montserrat',size:11,weight:'600'},boxWidth:12,boxHeight:12,padding:18,usePointStyle:true,pointStyle:'rectRounded'}},
+            tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${cop(c.raw)}`}}
+          },
+          scales:{
+            x:{stacked:true,beginAtZero:true,grid:{color:'rgba(100,100,100,.10)'},ticks:{font:{family:'Montserrat',size:10},callback:v=>cop(v)}},
+            y:{stacked:true,grid:{display:false},ticks:{font:{family:'Montserrat',size:11,weight:'600'}}}
+          }
+        }
       });
     },100);
   }

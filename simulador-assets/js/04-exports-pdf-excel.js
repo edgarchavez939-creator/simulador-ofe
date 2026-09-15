@@ -152,7 +152,7 @@ function pdfHeroSplit(doc,y,cfg={}){
   doc.setFont('helvetica','normal'); doc.setFontSize(8.6); doc.setTextColor(255,255,255);
   pdfText(doc,cfg.meta||'',P.M+8,y+36);
 
-  doc.setFillColor(...P.rojo); doc.circle(P.M+leftW+gap+9,y+11,2.6,'F');
+  pdfApprovedIcon(doc,'circle-help',P.M+leftW+gap+9,y+11,P.rojoOsc,.62);
   doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(...P.rojoOsc);
   pdfText(doc,cfg.noteTitle||'Que significa este valor?',P.M+leftW+gap+16,y+13);
   doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(...P.texto2);
@@ -185,7 +185,7 @@ function pdfDetailTable(doc,x,y,w,title,rows,opts={}){
   y=pdfEnsureSpace(doc,y,headerH+clean.length*rowH+5);
   doc.setFillColor(...PDF.negro); doc.rect(x,y,w,headerH,'F');
   doc.setFont('helvetica','bold'); doc.setFontSize(7.8); doc.setTextColor(255,255,255);
-  pdfText(doc,'Concepto',x+5,y+4.8); pdfText(doc,'Valor',x+w-5,y+4.8,{align:'right'});
+  pdfText(doc,'Concepto',x+w*.31,y+4.8,{align:'center'}); pdfText(doc,'Valor',x+w*.81,y+4.8,{align:'center'});
   y+=headerH;
   clean.forEach((r,idx)=>{
     const total=r[2]==='total';
@@ -238,7 +238,7 @@ function pdfPlanTable(doc,x,y,w,rows,totCap,totInt,title='Plan de pagos estimado
   const drawHead=()=>{
     doc.setFillColor(...PDF.negro); doc.rect(x,y,w,7,'F');
     doc.setFont('helvetica','bold'); doc.setFontSize(7.1); doc.setTextColor(255,255,255);
-    cols.forEach((c,i)=>{ const xx=c.a==='right'?xAt(i)+c.w-3:c.a==='center'?xAt(i)+c.w/2:xAt(i)+3; doc.text(c.t,xx,y+4.7,{align:c.a}); });
+    cols.forEach((c,i)=>{ const xx=xAt(i)+c.w/2; doc.text(c.t,xx,y+4.7,{align:'center'}); });
     y+=7;
   };
   drawHead();
@@ -289,9 +289,11 @@ function pdfPie(doc){
     doc.setFillColor(...P.rojo); doc.rect(P.M,h-8.7,8,1.15,'F');
     doc.setFont('helvetica','normal'); doc.setFontSize(6.6); doc.setTextColor(...P.texto3);
     doc.text('Simulador de Credito Educativo',P.M+11,h-7.6);
-    doc.text(safePDF('Generado el '+meta.fechaLarga+' - '+meta.hora),w/2,h-7.6,{align:'center'});
-    doc.setDrawColor(180,184,190); doc.line(w-P.M-21,h-11,w-P.M-21,h-5.3);
+    const pageSepX=w-P.M-21;
+    doc.text(safePDF('Generado el '+meta.fechaLarga+' - '+meta.hora),pageSepX-4.5,h-7.6,{align:'right'});
+    doc.setDrawColor(190,194,200); doc.setLineWidth(.22); doc.line(pageSepX,h-10.7,pageSepX,h-5.6);
     doc.text('Pag. '+i+' de '+n,w-P.M,h-7.6,{align:'right'});
+    doc.setLineWidth(.2);
   }
   doc.setTextColor(0,0,0);
 }
@@ -334,7 +336,14 @@ function pdfApprovedIcon(doc, type, cx, cy, color=PDF.rojo, size=1){
   }else if(name==='percent'){
     line(19,5,5,19); circle(6.5,6.5,2.5); circle(17.5,17.5,2.5);
   }else if(name==='info'){
-    circle(12,12,10); line(12,12,12,16); circle(12,8,.22,true);
+    circle(12,12,10); line(12,11,12,16); circle(12,7.5,.25,true);
+  }else if(name==='circle-help'){
+    circle(12,12,10);
+    // Lucide CircleHelp: upper question curve + stem + dot
+    poly([[9.5,9.2],[9.8,7.8],[10.9,6.8],[12.4,6.5],[13.9,6.9],[14.8,7.9],[14.9,9.1],[14.4,10.1],[13.4,10.8],[12.6,11.4],[12.2,12.4],[12.2,13.1]]);
+    circle(12.2,16.8,.28,true);
+  }else if(name==='circle-alert'){
+    circle(12,12,10); line(12,7.2,12,13.5); circle(12,17,.28,true);
   }else if(name==='file-text' || name==='document'){
     rect(4,2,16,20,2); line(14,2,14,7); line(14,7,20,7); line(8,13,16,13); line(8,17,16,17);
   }else if(name==='calculator'){
@@ -346,21 +355,21 @@ function pdfApprovedIcon(doc, type, cx, cy, color=PDF.rojo, size=1){
 }
 
 function pdfApprovedContext(doc,y,left,right){
-  const P=PDF,h=25.4,w=P.CW/2;
+  const P=PDF,h=27.8,w=P.CW/2;
   doc.setFillColor(250,250,251); doc.setDrawColor(218,221,226); doc.roundedRect(P.M,y,P.CW,h,2.4,2.4,'FD');
   doc.setDrawColor(205,209,215); doc.line(P.M+w,y+4.5,P.M+w,y+h-4.5);
   const draw=(x,obj)=>{
-    const iconX=x+11.6, iconY=y+12.7;
+    const iconX=x+11.6, iconY=y+13.9;
     doc.setFillColor(...P.rojoS); doc.circle(iconX,iconY,5.15,'F');
     pdfApprovedIcon(doc,obj.icon||'graduation-cap',iconX,iconY,P.rojoOsc,.80);
     const tx=x+22.8;
     doc.setFont('helvetica','bold'); doc.setFontSize(6.55); doc.setTextColor(...P.texto3);
-    pdfText(doc,(obj.label||'').toUpperCase(),tx,y+6.7);
+    pdfText(doc,(obj.label||'').toUpperCase(),tx,y+6.8);
     doc.setFont('helvetica','bold'); doc.setFontSize(10.15); doc.setTextColor(...P.negro);
-    const valueLines=doc.splitTextToSize(safePDF(obj.value||''),w-30); doc.text(valueLines,tx,y+13.8,{lineHeightFactor:1.05});
+    const valueLines=doc.splitTextToSize(safePDF(obj.value||''),w-30); doc.text(valueLines,tx,y+14.2,{lineHeightFactor:1.12});
     if(obj.hint){
       doc.setFont('helvetica','normal'); doc.setFontSize(6.65); doc.setTextColor(...P.texto2);
-      const hints=doc.splitTextToSize(safePDF(obj.hint),w-30); doc.text(hints,tx,y+20.4,{lineHeightFactor:1.06});
+      const hints=doc.splitTextToSize(safePDF(obj.hint),w-30); doc.text(hints,tx,y+21.6,{lineHeightFactor:1.20});
     }
   };
   draw(P.M,left||{}); draw(P.M+w,right||{});
@@ -380,7 +389,7 @@ function pdfApprovedHero(doc,y,cfg){
   doc.setFont('helvetica','normal');doc.setFontSize(8.1);pdfText(doc,cfg.meta||'',P.M+8,y+34.0);
 
   const noteX=P.M+leftW+12.4, iconY=y+10.5;
-  pdfApprovedIcon(doc,'info',noteX,iconY,P.rojoOsc,.66);
+  pdfApprovedIcon(doc,'circle-help',noteX,iconY,P.rojoOsc,.64);
   doc.setFont('helvetica','bold');doc.setFontSize(8.35);doc.setTextColor(...P.rojoOsc);pdfText(doc,cfg.noteTitle||'Que significa este valor?',noteX+5.9,y+11.1);
   doc.setFont('helvetica','normal');doc.setFontSize(7.45);doc.setTextColor(...P.texto2);
   const lines=doc.splitTextToSize(safePDF(cfg.note||''),rightW-22);doc.text(lines,noteX+5.9,y+18.4,{lineHeightFactor:1.24});
@@ -417,7 +426,9 @@ function pdfApprovedDetailTable(doc,x,y,w,title,rows){
   y=pdfApprovedSectionTitle(doc,x,y,title);
   const clean=(rows||[]).filter(Boolean),headerH=7.7,rowH=6.7;
   doc.setFillColor(...PDF.carbon);doc.rect(x,y,w,headerH,'F');
-  doc.setFont('helvetica','bold');doc.setFontSize(7.15);doc.setTextColor(255,255,255);pdfText(doc,'Concepto',x+5,y+5.0);pdfText(doc,'Valor',x+w-5,y+5.0,{align:'right'});
+  doc.setFont('helvetica','bold');doc.setFontSize(7.15);doc.setTextColor(255,255,255);
+  pdfText(doc,'Concepto',x+(w*.62)/2,y+5.0,{align:'center'});
+  pdfText(doc,'Valor',x+w*.62+(w*.38)/2,y+5.0,{align:'center'});
   doc.setDrawColor(108,116,124);doc.line(x+w*.62,y,x+w*.62,y+headerH);y+=headerH;
   clean.forEach((r,idx)=>{
     const total=r[2]==='total'; if(total){doc.setFillColor(...PDF.suave2);doc.rect(x,y,w,rowH,'F');} else if(idx%2){doc.setFillColor(250,250,251);doc.rect(x,y,w,rowH,'F');}
@@ -444,7 +455,7 @@ function pdfApprovedPlanCompact(doc,x,y,w,rows,totCap,totInt,title='Plan de pago
   ];
   const xAt=i=>x+cols.slice(0,i).reduce((s,c)=>s+c.w,0); const headerH=7.7,rowH=6.3;
   doc.setFillColor(...PDF.carbon);doc.rect(x,y,w,headerH,'F');doc.setFont('helvetica','bold');doc.setFontSize(6.25);doc.setTextColor(255,255,255);
-  cols.forEach((c,i)=>{const xx=c.a==='right'?xAt(i)+c.w-2.5:c.a==='center'?xAt(i)+c.w/2:xAt(i)+2.5;doc.text(c.t,xx,y+5.0,{align:c.a});});
+  cols.forEach((c,i)=>{const xx=xAt(i)+c.w/2;doc.text(c.t,xx,y+5.0,{align:'center'});});
   for(let i=1;i<cols.length;i++){doc.setDrawColor(105,114,122);doc.line(xAt(i),y,xAt(i),y+headerH);} y+=headerH;
   (rows||[]).forEach((r,idx)=>{
     if(idx%2){doc.setFillColor(250,250,251);doc.rect(x,y,w,rowH,'F');}
@@ -475,7 +486,7 @@ function pdfApprovedNotesCompact(doc,x,y,w,bullets){
   const lineCount=wrapped.reduce((s,a)=>s+a.length,0);
   const h=Math.max(30.8,13.0 + lineCount*2.95 + wrapped.length*1.2);
   doc.setFillColor(249,250,251);doc.setDrawColor(...PDF.linea);doc.roundedRect(x,y,w,h,2.0,2.0,'FD');
-  pdfApprovedIcon(doc,'info',x+6.1,y+6.9,PDF.carbon,.58);
+  pdfApprovedIcon(doc,'circle-alert',x+6.1,y+6.9,PDF.carbon,.56);
   doc.setFont('helvetica','bold');doc.setFontSize(7.95);doc.setTextColor(...PDF.negro);pdfText(doc,'Ten en cuenta',x+11.4,y+7.5);
   let yy=y+12.8;
   wrapped.forEach(lines=>{
