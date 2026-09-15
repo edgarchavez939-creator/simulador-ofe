@@ -3019,3 +3019,124 @@ table.tbl tfoot td { background: color-mix(in srgb, var(--uninorte-red) 6%, var(
     max-width: none;
   }
 }
+
+
+/* ============================================================
+   UNINORTE UI v3.9 — Idiomas, Garantisa & Select dark fix
+   ============================================================ */
+/* Select: una sola flecha Lucide. La capa final evita que un background
+   shorthand posterior reactive el repeat en dark mode. */
+.select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: var(--surface-panel);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235f6672' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat !important;
+  background-position: right 14px center !important;
+  background-size: 18px 18px !important;
+  padding-right: 44px;
+}
+[data-theme='dark'] .select {
+  background-color: var(--surface-panel);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c9c3c1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat !important;
+  background-position: right 14px center !important;
+  background-size: 18px 18px !important;
+}
+
+/* Banner Garantisa */
+.guarantee-info {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  gap: 11px;
+  align-items: center;
+  padding: 13px 14px;
+  min-height: 62px;
+  border: 1px solid color-mix(in srgb, var(--uninorte-gold) 28%, var(--border-default));
+  border-left: 4px solid var(--uninorte-gold);
+  border-radius: 12px;
+  background: linear-gradient(100deg, color-mix(in srgb, var(--uninorte-gold) 7%, var(--surface-panel)), var(--surface-panel) 62%);
+  color: var(--text-body);
+}
+.guarantee-info__icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--uninorte-gold) 13%, var(--surface-panel));
+  color: var(--uninorte-gold-dark, #8a6512);
+  border: 1px solid color-mix(in srgb, var(--uninorte-gold) 25%, transparent);
+}
+.guarantee-info__icon .icon { width: 19px; height: 19px; stroke-width: 2; }
+.guarantee-info__body { min-width: 0; display: grid; gap: 4px; }
+.guarantee-info__body strong { display: flex; align-items: center; gap: 6px; color: var(--text-heading); font-size: 12.5px; line-height: 1.25; }
+.guarantee-info__value { color: var(--text-body); font-size: 12px; line-height: 1.45; }
+.guarantee-info--compact { min-height: 54px; padding-block: 10px; }
+.guarantee-info--lp { border-left-color: var(--state-success); border-color: color-mix(in srgb, var(--state-success) 22%, var(--border-default)); }
+.guarantee-info--lp .guarantee-info__icon { color: var(--state-success); background: var(--success-soft); border-color: color-mix(in srgb, var(--state-success) 22%, transparent); }
+
+/* Acceso a Financiación de Idiomas: CTA de producto, no banner informativo */
+.idiomas-btn {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 70px;
+  margin-top: 12px;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-default);
+  border-left: 4px solid var(--uninorte-red);
+  border-radius: 12px;
+  background: var(--surface-panel);
+  color: var(--text-body);
+  box-shadow: 0 2px 8px rgba(21,21,21,.035);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--motion-fast) var(--ease), background var(--motion-fast) var(--ease), transform var(--motion-fast) var(--ease), box-shadow var(--motion-fast) var(--ease);
+}
+.idiomas-btn:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--uninorte-red) 38%, var(--border-default));
+  background: color-mix(in srgb, var(--uninorte-red) 3%, var(--surface-panel));
+  box-shadow: 0 8px 20px rgba(21,21,21,.07);
+}
+.idiomas-btn:focus-visible { outline: 2px solid var(--uninorte-red); outline-offset: 3px; }
+.idiomas-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--uninorte-red);
+}
+.idiomas-icon .icon { width: 20px; height: 20px; stroke-width: 2; }
+.idiomas-text { min-width: 0; display: grid; gap: 2px; }
+.idiomas-title { color: var(--text-heading); font-size: 12px; font-weight: 650; line-height: 1.3; }
+.idiomas-val { color: var(--text-heading); font-size: 15px; font-weight: 750; line-height: 1.25; font-variant-numeric: tabular-nums; }
+.idiomas-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  padding: 8px 10px;
+  border-radius: 9px;
+  background: var(--accent-soft);
+  color: var(--uninorte-red);
+  font-size: 11px;
+  font-weight: 700;
+}
+.idiomas-cta .icon { width: 15px; height: 15px; }
+[data-theme='dark'] .idiomas-btn { box-shadow: 0 2px 10px rgba(0,0,0,.16); }
+[data-theme='dark'] .idiomas-btn:hover { background: color-mix(in srgb, var(--uninorte-red) 10%, var(--surface-panel)); }
+[data-theme='dark'] .guarantee-info { background: linear-gradient(100deg, color-mix(in srgb, var(--uninorte-gold) 8%, var(--surface-panel)), var(--surface-panel) 68%); }
+
+@media (max-width: 520px) {
+  .idiomas-btn { grid-template-columns: 38px minmax(0,1fr); }
+  .idiomas-cta { grid-column: 1 / -1; justify-self: stretch; justify-content: center; }
+  .guarantee-info { grid-template-columns: 34px minmax(0,1fr); }
+  .guarantee-info__icon { width: 32px; height: 32px; }
+}

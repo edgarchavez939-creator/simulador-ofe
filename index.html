@@ -5,8 +5,8 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <meta content="no-referrer" name="referrer"/>
 <meta content="default-src 'self' data: blob:; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; worker-src 'self' blob:;" http-equiv="Content-Security-Policy"/>
-<link href="./simulador-assets/favicon.svg?v=uninorte-ui-3-8" rel="icon" type="image/svg+xml"/>
-<link href="./simulador-assets/favicon-180.png?v=uninorte-ui-3-8" rel="apple-touch-icon" sizes="180x180"/>
+<link href="./simulador-assets/favicon.svg?v=uninorte-ui-3-9" rel="icon" type="image/svg+xml"/>
+<link href="./simulador-assets/favicon-180.png?v=uninorte-ui-3-9" rel="apple-touch-icon" sizes="180x180"/>
 <title>Simulador de Crédito · OFE</title>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -14,7 +14,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<link href="./simulador-assets/styles.css?v=uninorte-ui-3-8" rel="stylesheet"/>
+<link href="./simulador-assets/styles.css?v=uninorte-ui-3-9" rel="stylesheet"/>
 </head>
 <body>
 <a class="skip-link" href="#main-content">Saltar al contenido principal</a>
@@ -155,17 +155,18 @@
 <div class="tasa-badge"><div><small>Equiv. Anual <span aria-label="Ayuda: Tasa Efectiva Anual: lo que realmente cuesta el crédito en un año, incluyendo el efecto de capitalización mensual. Permite comparar créditos con distintas periodicidades." class="tip" data-tip="Tasa Efectiva Anual: lo que realmente cuesta el crédito en un año, incluyendo el efecto de capitalización mensual. Permite comparar créditos con distintas periodicidades." tabindex="0">?</span></small><span id="ta1">19.56%</span></div><span><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg></span></div>
 </div>
 </div>
-<div class="note u-mt-3" id="garantisa1-info">
-<strong>Aporte Garantisa <span aria-label="Ayuda: Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." class="tip" data-tip="Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." tabindex="0">?</span></strong>
-<span id="garantisa1-val">—</span>
+<div class="note guarantee-info u-mt-3" id="garantisa1-info">
+<span class="guarantee-info__icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg></span>
+<div class="guarantee-info__body"><strong>Aporte Garantisa <span aria-label="Ayuda: Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." class="tip" data-tip="Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." tabindex="0">?</span></strong>
+<span class="guarantee-info__value" id="garantisa1-val">—</span></div>
 </div>
 <button class="idiomas-btn u-hide" data-action="abrir-idiomas" data-tab="1" id="btn-idiomas-1" type="button">
 <div class="idiomas-icon"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20"></path></svg></div>
 <div class="idiomas-text">
-<span class="idiomas-title">Este programa paga idiomas</span>
+<span class="idiomas-title">Financiación de Idiomas disponible</span>
 <span class="idiomas-val u-fw-600">—</span>
 </div>
-<div class="idiomas-cta">Simular también →</div>
+<div class="idiomas-cta"><span>Simular idiomas</span><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></div>
 </button>
 <button class="btn btn--primary btn--lg btn--block" data-action="calcular" data-tab="1">Calcular Crédito →</button>
 <button class="btn btn--block u-mt-2" data-action="limpiar-tab" data-tab="1"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" x2="10" y1="11" y2="17"></line><line x1="14" x2="14" y1="11" y2="17"></line></svg> Limpiar / Nueva simulación</button>
@@ -289,7 +290,7 @@
 <label class="field__label">Número de Meses</label>
 <div class="input-affix u-border-accent"><input aria-label="Meses de corto plazo" class="input u-input-clean" data-input-action="upd-eq-cp" id="plazoCP" min="1" placeholder="6" type="number" value="6"/><span class="input-affix__tag input-affix__tag--end">meses</span></div>
 </div>
-<div class="note u-mt-3 u-mb-0"><strong>Garantisa CP (4.17%)</strong><span aria-label="Ayuda: Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." class="tip" data-tip="Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." tabindex="0">?</span><span id="gCP-val">—</span></div>
+<div class="note guarantee-info guarantee-info--compact u-mt-3 u-mb-0"><span class="guarantee-info__icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg></span><div class="guarantee-info__body"><strong>Garantisa CP (4.17%) <span aria-label="Ayuda: Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." class="tip" data-tip="Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." tabindex="0">?</span></strong><span class="guarantee-info__value" id="gCP-val">—</span></div></div>
 </div>
 <div class="group group--success u-mt-12">
 <div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" fill="currentColor" r="3" stroke="none"></circle></svg> Segmento Largo Plazo <span aria-label="Ayuda: Porción que se empieza a pagar después de graduarse. No genera cuota durante los estudios y su tasa será la vigente al iniciar la amortización." class="tip" data-tip="Porción que se empieza a pagar después de graduarse. No genera cuota durante los estudios y su tasa será la vigente al iniciar la amortización." tabindex="0">?</span></div>
@@ -341,17 +342,18 @@
               </label>
 </div>
 </div>
-<div class="note u-mt-3 surface-success-text u-mb-0">
-<strong class="u-text-success">Garantisa LP (2.86%)</strong><span aria-label="Ayuda: Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." class="tip" data-tip="Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." tabindex="0">?</span><span id="gLP-val">—</span>
+<div class="note guarantee-info guarantee-info--compact guarantee-info--lp u-mt-3 surface-success-text u-mb-0">
+<span class="guarantee-info__icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg></span>
+<div class="guarantee-info__body"><strong class="u-text-success">Garantisa LP (2.86%) <span aria-label="Ayuda: Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." class="tip" data-tip="Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." tabindex="0">?</span></strong><span class="guarantee-info__value" id="gLP-val">—</span></div>
 </div>
 </div>
 <button class="idiomas-btn u-hide u-mt-12" data-action="abrir-idiomas" data-tab="2" id="btn-idiomas-2" type="button">
 <div class="idiomas-icon"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20"></path></svg></div>
 <div class="idiomas-text">
-<span class="idiomas-title">Este programa paga idiomas</span>
+<span class="idiomas-title">Financiación de Idiomas disponible</span>
 <span class="idiomas-val u-fw-600">—</span>
 </div>
-<div class="idiomas-cta">Simular también →</div>
+<div class="idiomas-cta"><span>Simular idiomas</span><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></div>
 </button>
 <button class="btn btn--primary btn--lg btn--block" data-action="calcular" data-tab="2">Calcular Crédito Mixto →</button>
 <button class="btn btn--block u-mt-2" data-action="limpiar-tab" data-tab="2"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" x2="10" y1="11" y2="17"></line><line x1="14" x2="14" y1="11" y2="17"></line></svg> Limpiar / Nueva simulación</button>
@@ -463,10 +465,10 @@
 <button class="idiomas-btn u-hide" data-action="abrir-idiomas" data-tab="3" id="btn-idiomas-3" type="button">
 <div class="idiomas-icon"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20"></path></svg></div>
 <div class="idiomas-text">
-<span class="idiomas-title">Este programa paga idiomas</span>
+<span class="idiomas-title">Financiación de Idiomas disponible</span>
 <span class="idiomas-val u-fw-600">—</span>
 </div>
-<div class="idiomas-cta">Simular también →</div>
+<div class="idiomas-cta"><span>Simular idiomas</span><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></div>
 </button>
 <button class="btn btn--primary btn--lg btn--block" data-action="calcular" data-tab="3">Calcular Crédito →</button>
 <button class="btn btn--block u-mt-2" data-action="limpiar-tab" data-tab="3"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" x2="10" y1="11" y2="17"></line><line x1="14" x2="14" y1="11" y2="17"></line></svg> Limpiar / Nueva simulación</button>
@@ -835,9 +837,9 @@
 </div>
 </div>
 </div>
-<div class="note u-mb-4" id="gar7-note">
-<span class="note__icon"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path></svg></span>
-<div><strong>Aporte Garantisa (4.17%)</strong> <span aria-label="Ayuda: Aporte obligatorio al fondo de garantía, calculado sobre el monto financiado. Se paga junto con la cuota inicial." class="tip" data-tip="Aporte obligatorio al fondo de garantía, calculado sobre el monto financiado. Se paga junto con la cuota inicial." tabindex="0">?</span><br/><span class="u-muted" id="gar7-val">—</span></div>
+<div class="note guarantee-info u-mb-4" id="gar7-note">
+<span class="guarantee-info__icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg></span>
+<div class="guarantee-info__body"><strong>Aporte Garantisa (4.17%) <span aria-label="Ayuda: Aporte obligatorio al fondo de garantía, calculado sobre el monto financiado. Se paga junto con la cuota inicial." class="tip" data-tip="Aporte obligatorio al fondo de garantía, calculado sobre el monto financiado. Se paga junto con la cuota inicial." tabindex="0">?</span></strong><span class="guarantee-info__value u-muted" id="gar7-val">—</span></div>
 </div>
 <button class="btn btn--primary btn--lg btn--block" data-action="calcular" data-tab="7"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><rect height="20" rx="2" width="16" x="4" y="2"></rect><line x1="8" x2="16" y1="6" y2="6"></line><line x1="16" x2="16" y1="14" y2="18"></line><path d="M16 10h.01M12 10h.01M8 10h.01M12 14h.01M8 14h.01M12 18h.01M8 18h.01"></path></svg> Calcular Cuota Inicial</button>
 <button class="btn btn--block u-mt-2" data-action="limpiar-tab" data-tab="7"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" x2="10" y1="11" y2="17"></line><line x1="14" x2="14" y1="11" y2="17"></line></svg> Limpiar / Nueva simulación</button>
@@ -1778,16 +1780,16 @@
   ]
 ]/*%%POSGRADOS_END%%*/
 </script>
-<script src="./simulador-assets/js/00-runtime.js?v=uninorte-ui-3-8"></script>
-<script src="./simulador-assets/js/01-core-ui.js?v=uninorte-ui-3-8"></script>
-<script src="./simulador-assets/js/02-reestructuracion.js?v=uninorte-ui-3-8"></script>
-<script src="./simulador-assets/js/03-finance-core.js?v=uninorte-ui-3-8"></script>
-<script src="./simulador-assets/js/04-exports-pdf-excel.js?v=uninorte-ui-3-8"></script>
-<script src="./simulador-assets/js/05-idiomas-herramientas.js?v=uninorte-ui-3-8"></script>
-<script src="./simulador-assets/js/06-actions-history.js?v=uninorte-ui-3-8"></script>
-<script src="./simulador-assets/js/07-financing-engine.js?v=uninorte-ui-3-8"></script>
-<script src="./simulador-assets/js/08-updater.js?v=uninorte-ui-3-8"></script>
-<script src="./simulador-assets/js/09-bootstrap.js?v=uninorte-ui-3-8"></script>
+<script src="./simulador-assets/js/00-runtime.js?v=uninorte-ui-3-9"></script>
+<script src="./simulador-assets/js/01-core-ui.js?v=uninorte-ui-3-9"></script>
+<script src="./simulador-assets/js/02-reestructuracion.js?v=uninorte-ui-3-9"></script>
+<script src="./simulador-assets/js/03-finance-core.js?v=uninorte-ui-3-9"></script>
+<script src="./simulador-assets/js/04-exports-pdf-excel.js?v=uninorte-ui-3-9"></script>
+<script src="./simulador-assets/js/05-idiomas-herramientas.js?v=uninorte-ui-3-9"></script>
+<script src="./simulador-assets/js/06-actions-history.js?v=uninorte-ui-3-9"></script>
+<script src="./simulador-assets/js/07-financing-engine.js?v=uninorte-ui-3-9"></script>
+<script src="./simulador-assets/js/08-updater.js?v=uninorte-ui-3-9"></script>
+<script src="./simulador-assets/js/09-bootstrap.js?v=uninorte-ui-3-9"></script>
 <!-- MODAL IDIOMAS -->
 <div aria-hidden="true" class="scrim" data-action="scrim-idiomas" hidden="" id="modal-idiomas">
 <div aria-describedby="modal-idiomas-desc" aria-labelledby="modal-idiomas-title" aria-modal="true" class="modal modal--wide" role="dialog" tabindex="-1">
