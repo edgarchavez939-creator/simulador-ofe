@@ -490,9 +490,9 @@ function expPDFIdiomas(){
       heroLabel:'Cuota mensual estimada',heroValue:cop(d.cuota),heroMeta:`${d.n} cuotas  |  ${(d.tm*100).toFixed(2)}% M.V.  (${tea} E.A.)`,
       note:'Es el pago mensual estimado del credito de idiomas una vez realizado el pago inicial.',
       metrics:[
-        {label:'Valor de idiomas',value:cop(d.mat),hint:'Base del escenario.',icon:'money'},
-        {label:'Pago inicial total',value:cop(d.pagoInicial),hint:'Contado + Garantisa.',icon:'shield'},
-        {label:'Monto financiado',value:cop(d.financiado),hint:'Capital financiado.',icon:'bars'},
+        {label:'Valor de idiomas',value:cop(d.mat),hint:'Base del escenario.',icon:'banknote'},
+        {label:'Pago inicial total',value:cop(d.pagoInicial),hint:'Contado + Garantisa.',icon:'wallet'},
+        {label:'Monto financiado',value:cop(d.financiado),hint:'Capital financiado.',icon:'credit-card'},
         {label:'Total intereses',value:cop(d.totInt),hint:'Costo financiero.',icon:'percent'}
       ],
       leftTitle:'Detalle del pago inicial',leftRows:[['Pago de contado',cop(d.cuotaInicial)],['Garantisa (4.17%)',cop(d.garantisa)],['Total pago inicial',cop(d.pagoInicial),'total']],
@@ -503,14 +503,14 @@ function expPDFIdiomas(){
     });
   } else {
     let y=pdfHeader(doc,'Credito de Idiomas - Corto y Largo Plazo');
-    y=pdfApprovedContext(doc,y,{label:'Programa academico',value:d.progNombre||'Programa',hint:'Programa asociado',icon:'program'},{label:'Distribucion financiada',value:`CP ${d.pctCP||0}% / LP ${d.pctLP||0}%`,hint:'Esquema mixto',icon:'bars'});
+    y=pdfApprovedContext(doc,y,{label:'Programa academico',value:d.progNombre||'Programa',hint:'Programa asociado',icon:'graduation-cap'},{label:'Distribucion financiada',value:`CP ${d.pctCP||0}% / LP ${d.pctLP||0}%`,hint:'Esquema mixto',icon:'bar-chart'});
     y=pdfApprovedHero(doc,y,{label:'Cuota estimada del corto plazo',value:cop(d.idCP?d.idCP.cuota:d.cuota),meta:`${d.n} cuotas CP  |  ${(d.tm*100).toFixed(2)}% M.V.  (${tea} E.A.)`,noteTitle:'Como leer este resultado?',note:'La cuota mostrada corresponde al tramo CP de idiomas. El tramo LP se presenta como capital y su cuota se define al iniciar amortizacion.'});
     y=pdfApprovedSectionTitle(doc,PDF.M,y,'Resumen financiero');
     y=pdfApprovedMetrics(doc,y,[
-      {label:'Valor de idiomas',value:cop(d.mat),hint:'Base del escenario.',icon:'money'},
-      {label:'Pago inicial total',value:cop(d.pagoInicial),hint:'Contado + Garantisa.',icon:'shield'},
-      {label:'Financiacion CP',value:cop(d.finCP||0),hint:`${d.n} cuotas`,icon:'bars'},
-      {label:'Capital LP',value:cop(d.finLP||0),hint:`${d.mesesLP||0} meses estimados`,icon:'percent'}
+      {label:'Valor de idiomas',value:cop(d.mat),hint:'Base del escenario.',icon:'banknote'},
+      {label:'Pago inicial total',value:cop(d.pagoInicial),hint:'Contado + Garantisa.',icon:'wallet'},
+      {label:'Financiacion CP',value:cop(d.finCP||0),hint:`${d.n} cuotas`,icon:'credit-card'},
+      {label:'Capital LP',value:cop(d.finLP||0),hint:`${d.mesesLP||0} meses estimados`,icon:'trending-up'}
     ]);
     const gap=6,colW=(PDF.CW-gap)/2,ya=pdfApprovedDetailTable(doc,PDF.M,y,colW,'Detalle del pago inicial',[
       ['Pago de contado',cop(d.cuotaInicial)],d.garCP?['Garantisa CP',cop(d.garCP)]:null,d.garLP?['Garantisa LP',cop(d.garLP)]:null,['Total pago inicial',cop(d.pagoInicial),'total']

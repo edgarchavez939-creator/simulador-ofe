@@ -280,9 +280,9 @@ function expPDF7() {
     heroLabel:'Cuota inicial requerida',heroValue:cop(d.cuotaInicial),heroMeta:`${d.n} cuotas  |  ${(d.tm*100).toFixed(2)}% M.V.  (${tea} E.A.)`,
     note:'Es el valor de entrada requerido para que la cuota mensual del credito se ajuste a la capacidad de pago declarada.',
     metrics:[
-      {label:'Matricula neta',value:cop(d.matNeta||d.mat),hint:'Base del escenario.',icon:'money'},
-      {label:'Monto financiable',value:cop(d.fin),hint:'Capital resultante.',icon:'bars'},
-      {label:'Aporte Garantisa',value:cop(d.gar),hint:'4.17% del financiado.',icon:'shield'},
+      {label:'Matricula neta',value:cop(d.matNeta||d.mat),hint:'Base del escenario.',icon:'banknote'},
+      {label:'Monto financiable',value:cop(d.fin),hint:'Capital resultante.',icon:'credit-card'},
+      {label:'Aporte Garantisa',value:cop(d.gar),hint:'4.17% del financiado.',icon:'shield-check'},
       {label:'Total al desembolso',value:cop(d.desembolso),hint:'Cuota inicial + Garantisa.',icon:'document'}
     ],
     leftTitle:'Detalle del pago inicial',leftRows:[['Cuota inicial requerida',cop(d.cuotaInicial)],['Aporte Garantisa',cop(d.gar)],['Total al desembolso',cop(d.desembolso),'total']],
@@ -893,13 +893,13 @@ function expPDFCombinado() {
   const credPre=tabId===2?((dm.CP?dm.CP.totCap+dm.CP.totInt:0)+(dm.finLP||0)):((dm.totCap||0)+(dm.totInt||0));
   const credIdi=dp.isMixto&&dp.idCP?((dp.idCP.totCap+dp.idCP.totInt)+(dp.finLP||0)):(dp.totalCredito||0);
   let y=pdfHeader(doc,'Resumen Combinado','Lectura conjunta de pregrado e idiomas.');
-  y=pdfApprovedContext(doc,y,{label:'Programa academico',value:dp.progNombre||'Programa',hint:'Programa simulado',icon:'program'},{label:'Escenario consolidado',value:`${tipoLabel} + Idiomas`,hint:'Lectura conjunta',icon:'document'});
+  y=pdfApprovedContext(doc,y,{label:'Programa academico',value:dp.progNombre||'Programa',hint:'Programa simulado',icon:'graduation-cap'},{label:'Escenario consolidado',value:`${tipoLabel} + Idiomas`,hint:'Lectura conjunta',icon:'document'});
   y=pdfApprovedHero(doc,y,{label:'Cuota mensual combinada estimada',value:cop(cuotaPre+cuotaIdi),meta:'Suma de las cuotas estimadas de ambos escenarios',noteTitle:'Como leer este resultado?',note:'Resume la carga mensual estimada del credito academico y el credito de idiomas. Los tramos de largo plazo se presentan por separado cuando corresponda.'});
   y=pdfApprovedSectionTitle(doc,PDF.M,y,'Resumen financiero');
   y=pdfApprovedMetrics(doc,y,[
-    {label:'Pago inicial combinado',value:cop(pagoPre+pagoIdi),hint:'Pregrado + idiomas.',icon:'shield'},
-    {label:'Credito conocido',value:cop(credPre+credIdi),hint:'Sin intereses futuros LP.',icon:'bars'},
-    {label:'Cuota pregrado',value:cop(cuotaPre),hint:tipoLabel,icon:'money'},
+    {label:'Pago inicial combinado',value:cop(pagoPre+pagoIdi),hint:'Pregrado + idiomas.',icon:'wallet'},
+    {label:'Credito conocido',value:cop(credPre+credIdi),hint:'Sin intereses futuros LP.',icon:'credit-card'},
+    {label:'Cuota pregrado',value:cop(cuotaPre),hint:tipoLabel,icon:'banknote'},
     {label:'Cuota idiomas',value:cop(cuotaIdi),hint:'Credito de idiomas.',icon:'percent'}
   ]);
   const gap=6,colW=(PDF.CW-gap)/2,ya=pdfApprovedDetailTable(doc,PDF.M,y,colW,'Pregrado', [['Pago inicial',cop(pagoPre)],['Credito conocido',cop(credPre)],['Cuota estimada',cop(cuotaPre),'total']]),yb=pdfApprovedDetailTable(doc,PDF.M+colW+gap,y,colW,'Idiomas',[['Pago inicial',cop(pagoIdi)],['Credito conocido',cop(credIdi)],['Cuota estimada',cop(cuotaIdi),'total']]);
@@ -908,12 +908,12 @@ function expPDFCombinado() {
   pdfApprovedNotesCompact(doc,PDF.M,yr,PDF.CW,['Este reporte consolida dos simulaciones independientes para facilitar su lectura conjunta.','Los valores de largo plazo que dependan de una tasa futura se muestran como capital conocido, no como cuota definitiva.','La simulacion es informativa y puede cambiar segun las condiciones vigentes.']);
 
   doc.addPage(); let yp=pdfHeader(doc,'Detalle de Pregrado',tipoLabel);
-  yp=pdfApprovedContext(doc,yp,{label:'Programa academico',value:dp.progNombre||'Programa',icon:'program'},{label:'Pago inicial',value:cop(pagoPre),hint:tipoLabel,icon:'money'});
+  yp=pdfApprovedContext(doc,yp,{label:'Programa academico',value:dp.progNombre||'Programa',icon:'graduation-cap'},{label:'Pago inicial',value:cop(pagoPre),hint:tipoLabel,icon:'banknote'});
   const preRows=tabId===2?(dm.CP?dm.CP.rows:[]):dm.rows,preCap=tabId===2?(dm.CP?dm.CP.totCap:0):dm.totCap,preInt=tabId===2?(dm.CP?dm.CP.totInt:0):dm.totInt;
   if(preRows&&preRows.length) pdfPlanTable(doc,PDF.M,yp,PDF.CW,preRows,preCap,preInt,'Plan de pagos - Pregrado');
 
   doc.addPage(); let yi=pdfHeader(doc,'Detalle de Idiomas','Credito asociado al mismo programa academico.');
-  yi=pdfApprovedContext(doc,yi,{label:'Programa academico',value:dp.progNombre||'Programa',icon:'program'},{label:'Pago inicial idiomas',value:cop(pagoIdi),hint:'Credito de idiomas',icon:'money'});
+  yi=pdfApprovedContext(doc,yi,{label:'Programa academico',value:dp.progNombre||'Programa',icon:'graduation-cap'},{label:'Pago inicial idiomas',value:cop(pagoIdi),hint:'Credito de idiomas',icon:'banknote'});
   const rows=dp.isMixto&&dp.idCP?dp.idCP.rows:dp.rows,tc=dp.isMixto&&dp.idCP?dp.idCP.totCap:dp.totCap,ti=dp.isMixto&&dp.idCP?dp.idCP.totInt:dp.totInt;
   if(rows&&rows.length) yi=pdfPlanTable(doc,PDF.M,yi,PDF.CW,rows,tc,ti,'Plan de pagos - Idiomas');
   yi=pdfProyeccionLP(doc,yi,SimuladorOFE.state.results.projectionLP,'Matricula');

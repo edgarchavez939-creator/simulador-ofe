@@ -73,31 +73,34 @@ function pdfHeader(doc, titulo, subtitulo = 'Resultados de tu simulacion de fina
   const meta = pdfGeneratedMeta();
   const codePrefix = /Corto Plazo/i.test(titulo) ? 'CP' : /Banco/i.test(titulo) ? 'BA' : /Mixto|Corto y Largo/i.test(titulo) ? 'MX' : /Idiomas/i.test(titulo) ? 'ID' : /Cuota Inicial/i.test(titulo) ? 'CI' : /Reestructuracion/i.test(titulo) ? 'RC' : 'SIM';
 
-  // Geometria superior: gris > rojo > dorado, mas contenida y precisa.
-  doc.setFillColor(...P.suave2); doc.triangle(174,0,210,0,210,14,'F');
-  doc.setFillColor(...P.rojo); doc.triangle(191,0,210,0,210,9,'F');
-  doc.setFillColor(...P.doradoS); doc.triangle(200,9,210,9,210,16,'F');
+  doc.setFillColor(...P.suave2); doc.triangle(175,0,210,0,210,12.8,'F');
+  doc.setFillColor(...P.rojo); doc.triangle(192,0,210,0,210,8.2,'F');
+  doc.setFillColor(...P.doradoS); doc.triangle(201.5,8.2,210,8.2,210,14.6,'F');
 
-  doc.setFillColor(...P.rojo); doc.rect(P.M, 8.5, 12, 1.4, 'F');
-  doc.setFont('helvetica','normal'); doc.setFontSize(8.0); doc.setTextColor(...P.texto2);
-  doc.text('SIMULACION DE CREDITO EDUCATIVO', P.M, 17.5);
-  doc.setFont('helvetica','bold'); doc.setFontSize(19.6); doc.setTextColor(...P.negro);
-  pdfText(doc, titulo, P.M, 28.0);
-  doc.setFont('helvetica','normal'); doc.setFontSize(9.7); doc.setTextColor(...P.texto2);
-  pdfText(doc, subtitulo, P.M, 36.0);
+  doc.setFillColor(...P.rojo); doc.rect(P.M, 8.5, 12, 1.35, 'F');
+  doc.setFont('helvetica','normal'); doc.setFontSize(7.85); doc.setTextColor(...P.texto2);
+  doc.text('SIMULACION DE CREDITO EDUCATIVO', P.M, 17.3);
+  doc.setFont('helvetica','bold'); doc.setFontSize(19.2); doc.setTextColor(...P.negro);
+  pdfText(doc, titulo, P.M, 27.7);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9.35); doc.setTextColor(...P.texto2);
+  pdfText(doc, subtitulo, P.M, 35.6);
 
-  const x=128, y=11.5, w=68, h=26, split=x+32.5;
-  doc.setFillColor(...P.suave); doc.setDrawColor(...P.linea); doc.roundedRect(x,y,w,h,2.2,2.2,'FD');
-  doc.setDrawColor(...P.linea); doc.line(split,y+4,split,y+h-4);
-  doc.line(x+5,y+9,x+w-5,y+9); doc.line(x+5,y+18,x+w-5,y+18);
-  doc.setFont('helvetica','normal'); doc.setFontSize(6.55); doc.setTextColor(...P.texto3);
-  doc.text('Fecha de simulacion',x+5,y+5.8); doc.text('Hora',x+5,y+14.5); doc.text('Codigo de simulacion',x+5,y+23.2);
-  doc.setFont('helvetica','normal'); doc.setTextColor(...P.texto2); doc.setFontSize(6.55);
-  doc.text(safePDF(meta.fechaLarga),x+w-5,y+5.8,{align:'right'});
-  doc.text(safePDF(meta.hora),x+w-5,y+14.5,{align:'right'});
-  doc.text(`${codePrefix}-${meta.stamp}`,x+w-5,y+23.2,{align:'right'});
+  const x=128.2, y=10.7, w=67.8, h=26.0, split=x+34.2;
+  doc.setFillColor(248,249,251); doc.setDrawColor(216,220,225); doc.roundedRect(x,y,w,h,2.5,2.5,'FD');
+  doc.setDrawColor(222,225,229); doc.line(split,y+4.0,split,y+h-4.0);
+  const rowH=h/3;
+  for(let r=1;r<3;r++) doc.line(x+5,y+rowH*r,x+w-5,y+rowH*r);
+  const baselines=[y+6.15,y+14.75,y+23.35];
+  const labels=['Fecha de simulacion','Hora','Codigo de simulacion'];
+  const values=[meta.fechaLarga,meta.hora,`${codePrefix}-${meta.stamp}`];
+  labels.forEach((label,i)=>{
+    doc.setFont('helvetica','normal'); doc.setFontSize(6.15); doc.setTextColor(...P.texto3);
+    pdfText(doc,label,x+5,baselines[i]);
+    doc.setFont('helvetica','bold'); doc.setFontSize(6.3); doc.setTextColor(...P.texto2);
+    pdfText(doc,values[i],x+w-5,baselines[i],{align:'right'});
+  });
   doc.setFont('helvetica','normal'); doc.setTextColor(0,0,0); doc.setFontSize(10);
-  return 42;
+  return 41.2;
 }
 
 function pdfEnsureSpace(doc, y, needed, startY = 20){
@@ -294,63 +297,94 @@ function pdfPie(doc){
 }
 
 
-function pdfApprovedIcon(doc, type, cx, cy, color=PDF.rojo){
-  doc.setDrawColor(...color); doc.setTextColor(...color); doc.setLineWidth(0.58);
-  if(type==='program'){
-    doc.line(cx-4,cy-1,cx,cy-3.5); doc.line(cx,cy-3.5,cx+4,cy-1); doc.line(cx+4,cy-1,cx,cy+1.5); doc.line(cx,cy+1.5,cx-4,cy-1);
-    doc.line(cx-2.6,cy+0.3,cx-2.6,cy+3.1); doc.line(cx+2.6,cy+0.3,cx+2.6,cy+3.1); doc.line(cx-2.6,cy+3.1,cx+2.6,cy+3.1);
-  }else if(type==='calendar'){
-    doc.roundedRect(cx-4,cy-3.4,8,7,1,1,'S'); doc.line(cx-4,cy-1,cx+4,cy-1); doc.line(cx-2.2,cy-4,cx-2.2,cy-2.2); doc.line(cx+2.2,cy-4,cx+2.2,cy-2.2);
-  }else if(type==='money'){
-    doc.circle(cx,cy,3.8,'S'); doc.setFont('helvetica','bold'); doc.setFontSize(7.2); doc.text('$',cx,cy+2.0,{align:'center'});
-  }else if(type==='shield'){
-    doc.line(cx,cy-3.8,cx+3.4,cy-2.3); doc.line(cx+3.4,cy-2.3,cx+2.6,cy+1.8); doc.line(cx+2.6,cy+1.8,cx,cy+3.8); doc.line(cx,cy+3.8,cx-2.6,cy+1.8); doc.line(cx-2.6,cy+1.8,cx-3.4,cy-2.3); doc.line(cx-3.4,cy-2.3,cx,cy-3.8);
-    doc.line(cx-1.6,cy,cx-.3,cy+1.2); doc.line(cx-.3,cy+1.2,cx+1.9,cy-1.1);
-  }else if(type==='bars'){
-    doc.rect(cx-4,cy+1,1.5,3,'S'); doc.rect(cx-1,cy-1,1.5,5,'S'); doc.rect(cx+2,cy-3.5,1.5,7.5,'S');
-  }else if(type==='percent'){
-    doc.circle(cx-2.4,cy-2.4,.95,'S'); doc.circle(cx+2.4,cy+2.4,.95,'S'); doc.line(cx-3.2,cy+3.2,cx+3.2,cy-3.2);
-  }else if(type==='info'){
-    doc.circle(cx,cy,2.65,'S'); doc.setFont('helvetica','bold'); doc.setFontSize(5.5); doc.text('i',cx,cy+1.55,{align:'center'});
-  }else if(type==='document'){
-    doc.roundedRect(cx-3.3,cy-4,6.6,8,0.8,0.8,'S'); doc.line(cx-1.8,cy-1.5,cx+1.8,cy-1.5); doc.line(cx-1.8,cy+.5,cx+1.8,cy+.5); doc.line(cx-1.8,cy+2.5,cx+.8,cy+2.5);
+function pdfApprovedIcon(doc, type, cx, cy, color=PDF.rojo, size=1){
+  // Geometría basada en los iconos Lucide usados por la interfaz (viewBox 0 0 24 24).
+  // Se dibuja con primitivas jsPDF para mantener nitidez vectorial en el PDF.
+  const aliases={program:'graduation-cap',money:'banknote',bars:'bar-chart'};
+  const name=aliases[type]||type;
+  const u=(7.2*size)/24;
+  const X=n=>cx+(n-12)*u, Y=n=>cy+(n-12)*u;
+  const line=(x1,y1,x2,y2)=>doc.line(X(x1),Y(y1),X(x2),Y(y2));
+  const circle=(x,y,r,fill=false)=>doc.circle(X(x),Y(y),r*u,fill?'F':'S');
+  const rect=(x,y,w,h,r=0)=> r?doc.roundedRect(X(x),Y(y),w*u,h*u,r*u,r*u,'S'):doc.rect(X(x),Y(y),w*u,h*u,'S');
+  const poly=pts=>{ for(let i=0;i<pts.length-1;i++) line(pts[i][0],pts[i][1],pts[i+1][0],pts[i+1][1]); };
+  doc.setDrawColor(...color); doc.setTextColor(...color); doc.setLineWidth(Math.max(.34,.48*size));
+
+  if(name==='graduation-cap'){
+    poly([[22,10],[12,5],[2,10],[12,15],[22,10]]);
+    line(22,10,22,16);
+    poly([[6,12],[6,17],[8,19],[12,20],[16,19],[18,17],[18,12]]);
+  }else if(name==='calendar'){
+    rect(3,4,18,18,2); line(3,10,21,10); line(8,2,8,6); line(16,2,16,6);
+  }else if(name==='banknote'){
+    rect(2,6,20,12,2); circle(12,12,2); circle(6,12,.18,true); circle(18,12,.18,true);
+  }else if(name==='wallet'){
+    rect(3,5,18,16,2); line(3,8,21,8); rect(15,11,7,5,1.2); circle(18,13.5,.22,true);
+  }else if(name==='credit-card'){
+    rect(2,5,20,14,2); line(2,10,22,10); line(6,15,10,15);
+  }else if(name==='shield'){
+    poly([[12,2],[18.2,4.8],[20,6],[20,13],[19,16],[16.8,18.8],[12,22],[7.2,18.8],[5,16],[4,13],[4,6],[5.8,4.8],[12,2]]);
+  }else if(name==='shield-check'){
+    poly([[12,2],[18.2,4.8],[20,6],[20,13],[19,16],[16.8,18.8],[12,22],[7.2,18.8],[5,16],[4,13],[4,6],[5.8,4.8],[12,2]]);
+    poly([[8.7,12.1],[11.1,14.4],[15.7,9.6]]);
+  }else if(name==='bar-chart'){
+    line(6,20,6,16); line(12,20,12,10); line(18,20,18,4);
+  }else if(name==='trending-up'){
+    poly([[2,17],[8.5,10.5],[13.5,15.5],[22,7]]); poly([[16,7],[22,7],[22,13]]);
+  }else if(name==='percent'){
+    line(19,5,5,19); circle(6.5,6.5,2.5); circle(17.5,17.5,2.5);
+  }else if(name==='info'){
+    circle(12,12,10); line(12,12,12,16); circle(12,8,.22,true);
+  }else if(name==='file-text' || name==='document'){
+    rect(4,2,16,20,2); line(14,2,14,7); line(14,7,20,7); line(8,13,16,13); line(8,17,16,17);
+  }else if(name==='calculator'){
+    rect(4,2,16,20,2); line(8,6,16,6); circle(8,11,.2,true);circle(12,11,.2,true);circle(16,11,.2,true);circle(8,15,.2,true);circle(12,15,.2,true);circle(16,15,.2,true);circle(8,19,.2,true);circle(12,19,.2,true);
   }else{
-    doc.circle(cx,cy,3.4,'S');
+    circle(12,12,8);
   }
-  doc.setLineWidth(0.2); doc.setTextColor(0,0,0);
+  doc.setLineWidth(.2); doc.setTextColor(0,0,0);
 }
 
 function pdfApprovedContext(doc,y,left,right){
-  const P=PDF,h=25.5,gap=0,w=P.CW/2;
-  doc.setFillColor(250,250,251); doc.setDrawColor(...P.linea); doc.roundedRect(P.M,y,P.CW,h,2.2,2.2,'FD');
-  doc.setDrawColor(201,205,211); doc.line(P.M+w,y+4.5,P.M+w,y+h-4.5);
+  const P=PDF,h=25.4,w=P.CW/2;
+  doc.setFillColor(250,250,251); doc.setDrawColor(218,221,226); doc.roundedRect(P.M,y,P.CW,h,2.4,2.4,'FD');
+  doc.setDrawColor(205,209,215); doc.line(P.M+w,y+4.5,P.M+w,y+h-4.5);
   const draw=(x,obj)=>{
-    doc.setFillColor(...P.rojoS); doc.circle(x+12,y+12.75,6.6,'F'); pdfApprovedIcon(doc,obj.icon||'program',x+12,y+12.75,P.rojoOsc);
-    doc.setFont('helvetica','bold'); doc.setFontSize(7.0); doc.setTextColor(...P.texto3); pdfText(doc,(obj.label||'').toUpperCase(),x+24,y+7.4);
-    doc.setFont('helvetica','bold'); doc.setFontSize(10.0); doc.setTextColor(...P.negro); const lines=doc.splitTextToSize(safePDF(obj.value||''),w-31); doc.text(lines,x+24,y+14.6);
-    if(obj.hint){ doc.setFont('helvetica','normal'); doc.setFontSize(7.0); doc.setTextColor(...P.texto2); const hints=doc.splitTextToSize(safePDF(obj.hint),w-31); doc.text(hints,x+24,y+21.9); }
+    const iconX=x+11.6, iconY=y+12.7;
+    doc.setFillColor(...P.rojoS); doc.circle(iconX,iconY,5.15,'F');
+    pdfApprovedIcon(doc,obj.icon||'graduation-cap',iconX,iconY,P.rojoOsc,.80);
+    const tx=x+22.8;
+    doc.setFont('helvetica','bold'); doc.setFontSize(6.55); doc.setTextColor(...P.texto3);
+    pdfText(doc,(obj.label||'').toUpperCase(),tx,y+6.7);
+    doc.setFont('helvetica','bold'); doc.setFontSize(10.15); doc.setTextColor(...P.negro);
+    const valueLines=doc.splitTextToSize(safePDF(obj.value||''),w-30); doc.text(valueLines,tx,y+13.8,{lineHeightFactor:1.05});
+    if(obj.hint){
+      doc.setFont('helvetica','normal'); doc.setFontSize(6.65); doc.setTextColor(...P.texto2);
+      const hints=doc.splitTextToSize(safePDF(obj.hint),w-30); doc.text(hints,tx,y+20.4,{lineHeightFactor:1.06});
+    }
   };
   draw(P.M,left||{}); draw(P.M+w,right||{});
-  return y+h+3;
+  doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
+  return y+h+3.2;
 }
 
 function pdfApprovedHero(doc,y,cfg){
-  const P=PDF,leftW=98,gap=0,rightW=P.CW-leftW,h=40;
+  const P=PDF,leftW=98,rightW=P.CW-leftW,h=39.2;
   doc.setFillColor(...P.rojo); doc.roundedRect(P.M,y,leftW,h,2.4,2.4,'F');
   doc.setFillColor(...P.rojoS); doc.roundedRect(P.M+leftW,y,rightW,h,2.4,2.4,'F');
-  // Angular interior discreto para conservar identidad sin competir con la cifra.
-  doc.setFillColor(...P.rojoOsc); doc.triangle(P.M+leftW-13,y,P.M+leftW,y,P.M+leftW,y+13,'F');
-  doc.setDrawColor(172,176,183); doc.line(P.M+leftW+4,y+6.5,P.M+leftW+4,y+h-6.5);
+  doc.setFillColor(...P.rojoOsc); doc.triangle(P.M+leftW-11.5,y,P.M+leftW,y,P.M+leftW,y+11.5,'F');
+  doc.setDrawColor(184,188,194); doc.line(P.M+leftW+4.2,y+7.0,P.M+leftW+4.2,y+h-7.0);
 
-  doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(255,255,255);pdfText(doc,(cfg.label||'').toUpperCase(),P.M+8,y+9.0);
-  doc.setFont('helvetica','bold');doc.setFontSize(25.2);pdfText(doc,cfg.value||'',P.M+8,y+25.5);
-  doc.setFont('helvetica','normal');doc.setFontSize(8.45);pdfText(doc,cfg.meta||'',P.M+8,y+34.2);
+  doc.setFont('helvetica','bold');doc.setFontSize(8.15);doc.setTextColor(255,255,255);pdfText(doc,(cfg.label||'').toUpperCase(),P.M+8,y+9.1);
+  doc.setFont('helvetica','bold');doc.setFontSize(24.5);pdfText(doc,cfg.value||'',P.M+8,y+25.0);
+  doc.setFont('helvetica','normal');doc.setFontSize(8.1);pdfText(doc,cfg.meta||'',P.M+8,y+34.0);
 
-  const noteX=P.M+leftW+13;
-  pdfApprovedIcon(doc,'info',noteX,y+10.7,P.rojoOsc);
-  doc.setFont('helvetica','bold');doc.setFontSize(8.8);doc.setTextColor(...P.rojoOsc);pdfText(doc,cfg.noteTitle||'Que significa este valor?',noteX+7,y+11.2);
-  doc.setFont('helvetica','normal');doc.setFontSize(7.85);doc.setTextColor(...P.texto2);const lines=doc.splitTextToSize(safePDF(cfg.note||''),rightW-23);doc.text(lines,noteX+7,y+18.8,{lineHeightFactor:1.24});
-  return y+h+4;
+  const noteX=P.M+leftW+12.4, iconY=y+10.5;
+  pdfApprovedIcon(doc,'info',noteX,iconY,P.rojoOsc,.66);
+  doc.setFont('helvetica','bold');doc.setFontSize(8.35);doc.setTextColor(...P.rojoOsc);pdfText(doc,cfg.noteTitle||'Que significa este valor?',noteX+5.9,y+11.1);
+  doc.setFont('helvetica','normal');doc.setFontSize(7.45);doc.setTextColor(...P.texto2);
+  const lines=doc.splitTextToSize(safePDF(cfg.note||''),rightW-22);doc.text(lines,noteX+5.9,y+18.4,{lineHeightFactor:1.24});
+  return y+h+4.2;
 }
 
 function pdfApprovedSectionTitle(doc,x,y,title){
@@ -360,32 +394,38 @@ function pdfApprovedSectionTitle(doc,x,y,title){
 }
 
 function pdfApprovedMetrics(doc,y,items){
-  const P=PDF,gap=4,w=(P.CW-gap*3)/4,h=29.5;
+  const P=PDF,gap=4,w=(P.CW-gap*3)/4,h=31.2;
   items.forEach((it,i)=>{
     const x=P.M+i*(w+gap);
-    doc.setFillColor(249,250,251); doc.setDrawColor(234,236,239); doc.roundedRect(x,y,w,h,2.0,2.0,'FD');
+    doc.setFillColor(249,250,251); doc.setDrawColor(231,234,238); doc.roundedRect(x,y,w,h,2.2,2.2,'FD');
     const iconColor=it.iconColor||((i===1)?P.rojo:P.carbon);
-    pdfApprovedIcon(doc,it.icon||'money',x+8,y+7.8,iconColor);
-    doc.setFont('helvetica','normal');doc.setFontSize(6.75);doc.setTextColor(...P.texto2);pdfText(doc,it.label,x+15,y+8.3);
-    doc.setFont('helvetica','bold');doc.setFontSize(12.25);doc.setTextColor(...P.negro);pdfText(doc,it.value,x+5,y+18.4);
-    if(it.hint){doc.setFont('helvetica','normal');doc.setFontSize(6.25);doc.setTextColor(...P.texto3);const lines=doc.splitTextToSize(safePDF(it.hint),w-10);doc.text(lines,x+5,y+24.1,{lineHeightFactor:1.1});}
+    pdfApprovedIcon(doc,it.icon||'banknote',x+7.5,y+8.25,iconColor,.72);
+    doc.setFont('helvetica','normal');doc.setFontSize(6.55);doc.setTextColor(...P.texto2);
+    const labelLines=doc.splitTextToSize(safePDF(it.label||''),w-20);
+    doc.text(labelLines,x+13.8,y+8.85,{lineHeightFactor:1.05});
+    doc.setFont('helvetica','bold');doc.setFontSize(11.95);doc.setTextColor(...P.negro);
+    pdfText(doc,it.value,x+5,y+19.2);
+    if(it.hint){
+      doc.setFont('helvetica','normal');doc.setFontSize(6.05);doc.setTextColor(...P.texto3);
+      const lines=doc.splitTextToSize(safePDF(it.hint),w-10);doc.text(lines,x+5,y+25.4,{lineHeightFactor:1.12});
+    }
   });
-  return y+h+4;
+  return y+h+4.0;
 }
 
 function pdfApprovedDetailTable(doc,x,y,w,title,rows){
   y=pdfApprovedSectionTitle(doc,x,y,title);
-  const clean=(rows||[]).filter(Boolean),headerH=7.5,rowH=6.5;
+  const clean=(rows||[]).filter(Boolean),headerH=7.7,rowH=6.7;
   doc.setFillColor(...PDF.carbon);doc.rect(x,y,w,headerH,'F');
-  doc.setFont('helvetica','bold');doc.setFontSize(7.25);doc.setTextColor(255,255,255);pdfText(doc,'Concepto',x+5,y+4.95);pdfText(doc,'Valor',x+w-5,y+4.95,{align:'right'});
-  doc.setDrawColor(120,128,136);doc.line(x+w*.62,y,x+w*.62,y+headerH);y+=headerH;
+  doc.setFont('helvetica','bold');doc.setFontSize(7.15);doc.setTextColor(255,255,255);pdfText(doc,'Concepto',x+5,y+5.0);pdfText(doc,'Valor',x+w-5,y+5.0,{align:'right'});
+  doc.setDrawColor(108,116,124);doc.line(x+w*.62,y,x+w*.62,y+headerH);y+=headerH;
   clean.forEach((r,idx)=>{
     const total=r[2]==='total'; if(total){doc.setFillColor(...PDF.suave2);doc.rect(x,y,w,rowH,'F');} else if(idx%2){doc.setFillColor(250,250,251);doc.rect(x,y,w,rowH,'F');}
     doc.setDrawColor(...PDF.linea);doc.line(x,y+rowH,x+w,y+rowH);doc.line(x+w*.62,y,x+w*.62,y+rowH);
-    doc.setFont('helvetica',total?'bold':'normal');doc.setFontSize(7.2);doc.setTextColor(...(total?PDF.negro:PDF.texto2));pdfText(doc,r[0],x+5,y+4.45);
-    doc.setFont('helvetica','bold');doc.setTextColor(...PDF.negro);pdfText(doc,String(r[1]),x+w-5,y+4.45,{align:'right'});y+=rowH;
+    doc.setFont('helvetica',total?'bold':'normal');doc.setFontSize(7.05);doc.setTextColor(...(total?PDF.negro:PDF.texto2));pdfText(doc,r[0],x+5,y+4.55);
+    doc.setFont('helvetica','bold');doc.setTextColor(...PDF.negro);pdfText(doc,String(r[1]),x+w-5,y+4.55,{align:'right'});y+=rowH;
   });
-  return y+2;
+  return y+2.2;
 }
 
 function pdfApprovedDateForInstallment(index){
@@ -396,53 +436,53 @@ function pdfApprovedDateForInstallment(index){
 function pdfApprovedPlanCompact(doc,x,y,w,rows,totCap,totInt,title='Plan de pagos estimado'){
   y=pdfApprovedSectionTitle(doc,x,y,title);
   const cols=[
-    {t:'Cuota',w:w*.12,a:'center'},
-    {t:'Fecha estimada',w:w*.23,a:'center'},
-    {t:'Capital',w:w*.22,a:'right'},
+    {t:'Cuota',w:w*.115,a:'center'},
+    {t:'Fecha estimada',w:w*.225,a:'center'},
+    {t:'Capital',w:w*.225,a:'right'},
     {t:'Intereses',w:w*.19,a:'right'},
-    {t:'Valor cuota',w:w*.24,a:'right'}
+    {t:'Valor cuota',w:w*.245,a:'right'}
   ];
-  const xAt=i=>x+cols.slice(0,i).reduce((s,c)=>s+c.w,0); const headerH=7.5,rowH=6.15;
-  doc.setFillColor(...PDF.carbon);doc.rect(x,y,w,headerH,'F');doc.setFont('helvetica','bold');doc.setFontSize(6.35);doc.setTextColor(255,255,255);
-  cols.forEach((c,i)=>{const xx=c.a==='right'?xAt(i)+c.w-2.5:c.a==='center'?xAt(i)+c.w/2:xAt(i)+2.5;doc.text(c.t,xx,y+4.95,{align:c.a});});
-  for(let i=1;i<cols.length;i++){doc.setDrawColor(107,116,125);doc.line(xAt(i),y,xAt(i),y+headerH);} y+=headerH;
+  const xAt=i=>x+cols.slice(0,i).reduce((s,c)=>s+c.w,0); const headerH=7.7,rowH=6.3;
+  doc.setFillColor(...PDF.carbon);doc.rect(x,y,w,headerH,'F');doc.setFont('helvetica','bold');doc.setFontSize(6.25);doc.setTextColor(255,255,255);
+  cols.forEach((c,i)=>{const xx=c.a==='right'?xAt(i)+c.w-2.5:c.a==='center'?xAt(i)+c.w/2:xAt(i)+2.5;doc.text(c.t,xx,y+5.0,{align:c.a});});
+  for(let i=1;i<cols.length;i++){doc.setDrawColor(105,114,122);doc.line(xAt(i),y,xAt(i),y+headerH);} y+=headerH;
   (rows||[]).forEach((r,idx)=>{
     if(idx%2){doc.setFillColor(250,250,251);doc.rect(x,y,w,rowH,'F');}
     doc.setDrawColor(...PDF.linea);doc.line(x,y+rowH,x+w,y+rowH);
-    doc.setFont('helvetica','normal');doc.setFontSize(6.45);doc.setTextColor(...PDF.texto2);
+    doc.setFont('helvetica','normal');doc.setFontSize(6.3);doc.setTextColor(...PDF.texto2);
     const vals=[String(r.i),pdfApprovedDateForInstallment(r.i),cop(r.capital),cop(r.interes),cop(r.cuota)];
-    cols.forEach((c,i)=>{const xx=c.a==='right'?xAt(i)+c.w-2.5:c.a==='center'?xAt(i)+c.w/2:xAt(i)+2.5;pdfText(doc,vals[i],xx,y+4.25,{align:c.a});}); y+=rowH;
+    cols.forEach((c,i)=>{const xx=c.a==='right'?xAt(i)+c.w-2.5:c.a==='center'?xAt(i)+c.w/2:xAt(i)+2.5;pdfText(doc,vals[i],xx,y+4.35,{align:c.a});}); y+=rowH;
   });
-  doc.setFillColor(...PDF.suave2);doc.rect(x,y,w,7.2,'F');doc.setFont('helvetica','bold');doc.setFontSize(6.7);doc.setTextColor(...PDF.negro);
-  pdfText(doc,'Total',x+3,y+4.8);pdfText(doc,cop(totCap),xAt(3)-2.5,y+4.8,{align:'right'});pdfText(doc,cop(totInt),xAt(4)-2.5,y+4.8,{align:'right'});pdfText(doc,cop((totCap||0)+(totInt||0)),x+w-2.5,y+4.8,{align:'right'});
-  return y+8.8;
+  doc.setFillColor(...PDF.suave2);doc.rect(x,y,w,7.4,'F');doc.setFont('helvetica','bold');doc.setFontSize(6.55);doc.setTextColor(...PDF.negro);
+  pdfText(doc,'Total',x+3,y+4.95);pdfText(doc,cop(totCap),xAt(3)-2.5,y+4.95,{align:'right'});pdfText(doc,cop(totInt),xAt(4)-2.5,y+4.95,{align:'right'});pdfText(doc,cop((totCap||0)+(totInt||0)),x+w-2.5,y+4.95,{align:'right'});
+  return y+9.0;
 }
 
 function pdfApprovedConditionsCompact(doc,x,y,w,rows){
-  const clean=(rows||[]).filter(Boolean),rowH=5.35,h=10+clean.length*rowH;
+  const clean=(rows||[]).filter(Boolean),rowH=5.55,h=10.6+clean.length*rowH;
   doc.setFillColor(249,250,251);doc.setDrawColor(...PDF.linea);doc.roundedRect(x,y,w,h,2.0,2.0,'FD');
-  doc.setFont('helvetica','bold');doc.setFontSize(8.35);doc.setTextColor(...PDF.negro);pdfText(doc,'Condiciones del credito',x+5,y+6.5);let yy=y+11.3;
+  doc.setFont('helvetica','bold');doc.setFontSize(8.2);doc.setTextColor(...PDF.negro);pdfText(doc,'Condiciones del credito',x+5,y+6.7);let yy=y+11.7;
   clean.forEach(([k,v],idx)=>{
-    doc.setFont('helvetica','normal');doc.setFontSize(6.15);doc.setTextColor(...PDF.texto2);pdfText(doc,k,x+5,yy);
-    doc.setFont('helvetica','bold');doc.setFontSize(6.35);doc.setTextColor(...PDF.texto2);pdfText(doc,String(v),x+w-5,yy,{align:'right'});
-    if(idx<clean.length-1){doc.setDrawColor(226,229,233);doc.line(x+5,yy+1.8,x+w-5,yy+1.8);} yy+=rowH;
+    doc.setFont('helvetica','normal');doc.setFontSize(6.1);doc.setTextColor(...PDF.texto3);pdfText(doc,k,x+5,yy);
+    doc.setFont('helvetica','bold');doc.setFontSize(6.45);doc.setTextColor(...PDF.texto2);pdfText(doc,String(v),x+w-5,yy,{align:'right'});
+    if(idx<clean.length-1){doc.setDrawColor(228,231,235);doc.line(x+5,yy+1.9,x+w-5,yy+1.9);} yy+=rowH;
   });
   return y+h+3;
 }
 
 function pdfApprovedNotesCompact(doc,x,y,w,bullets){
-  const wrapped=(bullets||[]).map(b=>doc.splitTextToSize(safePDF(b),w-16));
+  const wrapped=(bullets||[]).map(b=>doc.splitTextToSize(safePDF(b),w-18.5));
   const lineCount=wrapped.reduce((s,a)=>s+a.length,0);
-  const h=Math.max(30.5,12 + lineCount*3.05 + wrapped.length*1.2);
+  const h=Math.max(30.8,13.0 + lineCount*2.95 + wrapped.length*1.2);
   doc.setFillColor(249,250,251);doc.setDrawColor(...PDF.linea);doc.roundedRect(x,y,w,h,2.0,2.0,'FD');
-  pdfApprovedIcon(doc,'info',x+6.5,y+6.8,PDF.carbon);
-  doc.setFont('helvetica','bold');doc.setFontSize(8.2);doc.setTextColor(...PDF.negro);pdfText(doc,'Ten en cuenta',x+12.5,y+7.1);
-  let yy=y+12.0;
+  pdfApprovedIcon(doc,'info',x+6.1,y+6.9,PDF.carbon,.58);
+  doc.setFont('helvetica','bold');doc.setFontSize(7.95);doc.setTextColor(...PDF.negro);pdfText(doc,'Ten en cuenta',x+11.4,y+7.5);
+  let yy=y+12.8;
   wrapped.forEach(lines=>{
-    doc.setFillColor(...PDF.carbon); doc.circle(x+6.2,yy-1.0,.55,'F');
-    doc.setFont('helvetica','normal');doc.setFontSize(6.15);doc.setTextColor(...PDF.texto2);
-    doc.text(lines,x+9.5,yy,{lineHeightFactor:1.15});
-    yy += lines.length*3.05 + 1.2;
+    doc.setFillColor(...PDF.carbon); doc.circle(x+6.0,yy-1.0,.27,'F');
+    doc.setFont('helvetica','normal');doc.setFontSize(5.95);doc.setTextColor(...PDF.texto2);
+    doc.text(lines,x+9.0,yy,{lineHeightFactor:1.18});
+    yy += lines.length*2.95 + 1.2;
   });
   return y+h+2;
 }
@@ -450,7 +490,7 @@ function pdfApprovedNotesCompact(doc,x,y,w,bullets){
 function pdfApprovedOnePageCredit(doc,cfg){
   let y=pdfHeader(doc,cfg.title,cfg.subtitle||'Resultados de tu simulacion de financiacion.');
   y=pdfApprovedContext(doc,y,
-    {label:'Programa academico',value:cfg.program||'Programa',hint:cfg.programHint||'Pregrado',icon:'program'},
+    {label:'Programa academico',value:cfg.program||'Programa',hint:cfg.programHint||'Pregrado',icon:'graduation-cap'},
     {label:cfg.contextLabel||'Periodo financiado',value:cfg.contextValue||'',hint:cfg.contextHint||'Corresponde al valor de la matricula del periodo seleccionado.',icon:cfg.contextIcon||'calendar'}
   );
   y=pdfApprovedHero(doc,y,{label:cfg.heroLabel,value:cfg.heroValue,meta:cfg.heroMeta,noteTitle:cfg.noteTitle||'Que significa este valor?',note:cfg.note});
@@ -461,7 +501,7 @@ function pdfApprovedOnePageCredit(doc,cfg){
   const yb=pdfApprovedDetailTable(doc,PDF.M+colW+gap,y,colW,cfg.rightTitle,cfg.rightRows);
   y=Math.max(ya,yb)+1.5;
   if((cfg.rows||[]).length<=8){
-    const leftW=108,rightW=68,xR=PDF.M+leftW+6;
+    const leftW=104,rightW=72,xR=PDF.M+leftW+6;
     pdfApprovedPlanCompact(doc,PDF.M,y,leftW,cfg.rows,cfg.totCap,cfg.totInt,cfg.planTitle||'Plan de pagos estimado');
     let yr=pdfApprovedConditionsCompact(doc,xR,y,rightW,cfg.conditions||[]);
     pdfApprovedNotesCompact(doc,xR,yr,rightW,cfg.notes||[]);
@@ -483,9 +523,9 @@ function expPDF1(){
     heroLabel:'Cuota mensual estimada', heroValue:cop(d.cuota), heroMeta:`${d.n} cuotas  |  ${(d.tm*100).toFixed(2)}% M.V.  (${tea} E.A.)`,
     note:'Es el pago mensual estimado del credito una vez efectuado el pago inicial. Incluye capital e intereses, de acuerdo con las condiciones seleccionadas.',
     metrics:[
-      {label:'Valor de la matricula',value:cop(d.matNeta||d.mat),hint:'Corresponde al costo total del periodo.',icon:'money'},
-      {label:'Pago inicial total',value:cop(d.pagoInicial),hint:'Incluye cuota inicial y Garantisa.',icon:'shield'},
-      {label:'Valor financiado',value:cop(d.financiado),hint:'Monto del credito.',icon:'bars'},
+      {label:'Valor de la matricula',value:cop(d.matNeta||d.mat),hint:'Corresponde al costo total del periodo.',icon:'banknote'},
+      {label:'Pago inicial total',value:cop(d.pagoInicial),hint:'Incluye cuota inicial y Garantisa.',icon:'wallet'},
+      {label:'Valor financiado',value:cop(d.financiado),hint:'Monto del credito.',icon:'credit-card'},
       {label:'Total intereses',value:cop(d.totInt),hint:'Corresponde al costo financiero.',icon:'percent'}
     ],
     leftTitle:'Detalle del pago inicial', leftRows:[['Cuota inicial (contado)',cop(d.cuotaInicial)],['Garantisa (4.17% s/financiado)',cop(d.garantisa)],['Total pago inicial',cop(d.pagoInicial),'total']],
@@ -535,14 +575,14 @@ function expPDF2(){
   const totCP=d.CP?(d.CP.totCap+d.CP.totInt):0;
   const nPagoLP=(d.LP&&d.LP.nPago)||Math.round((d.nLP||8)*6*1.5);
   let y=pdfHeader(doc,'Credito Corto y Largo Plazo');
-  y=pdfApprovedContext(doc,y,{label:'Programa academico',value:d.progNombre||'Programa',hint:(SimuladorOFE.state.ui.levelByTab[2]==='posgrado'?'Posgrado':'Pregrado'),icon:'program'},{label:'Distribucion financiada',value:`CP ${d.pCP||0}% / LP ${d.pLP||0}%`,hint:'Distribucion del valor financiado.',icon:'bars'});
+  y=pdfApprovedContext(doc,y,{label:'Programa academico',value:d.progNombre||'Programa',hint:(SimuladorOFE.state.ui.levelByTab[2]==='posgrado'?'Posgrado':'Pregrado'),icon:'graduation-cap'},{label:'Distribucion financiada',value:`CP ${d.pCP||0}% / LP ${d.pLP||0}%`,hint:'Distribucion del valor financiado.',icon:'bars'});
   y=pdfApprovedHero(doc,y,{label:d.CP?'Cuota estimada del corto plazo':'Capital de largo plazo',value:d.CP?cop(d.CP.cuota):cop(d.finLP||0),meta:`${(d.tm*100).toFixed(2)}% M.V.  (${tea} E.A.)`,noteTitle:'Como leer este resultado?',note:'La cuota mostrada corresponde al tramo de corto plazo. El tramo de largo plazo se presenta como capital, porque su tasa y cuota se definen al iniciar la amortizacion.'});
   y=pdfApprovedSectionTitle(doc,PDF.M,y,'Resumen financiero');
   y=pdfApprovedMetrics(doc,y,[
-    {label:'Matricula neta',value:cop(d.matNeta||d.mat),hint:'Base financiable.',icon:'money'},
-    {label:'Pago inicial total',value:cop(d.pagoInicial),hint:'Contado + Garantisa.',icon:'shield'},
-    {label:'Financiacion CP',value:cop(d.finCP||0),hint:d.CP?`${d.nCP||0} cuotas`:'Sin tramo CP',icon:'bars'},
-    {label:'Capital LP',value:cop(d.finLP||0),hint:d.LP?`${nPagoLP} meses estimados`:'Sin tramo LP',icon:'percent'}
+    {label:'Matricula neta',value:cop(d.matNeta||d.mat),hint:'Base financiable.',icon:'banknote'},
+    {label:'Pago inicial total',value:cop(d.pagoInicial),hint:'Contado + Garantisa.',icon:'wallet'},
+    {label:'Financiacion CP',value:cop(d.finCP||0),hint:d.CP?`${d.nCP||0} cuotas`:'Sin tramo CP',icon:'credit-card'},
+    {label:'Capital LP',value:cop(d.finLP||0),hint:d.LP?`${nPagoLP} meses estimados`:'Sin tramo LP',icon:'trending-up'}
   ]);
   const gap=6,colW=(PDF.CW-gap)/2,ya=pdfApprovedDetailTable(doc,PDF.M,y,colW,'Detalle del pago inicial',[
     ['Pago de contado',cop(d.cuotaInicial)],d.garCP>0?['Garantisa CP (4.17%)',cop(d.garCP)]:null,d.garLP>0?['Garantisa LP (2.86%)',cop(d.garLP)]:null,['Total pago inicial',cop(d.pagoInicial),'total']
@@ -550,7 +590,7 @@ function expPDF2(){
     d.CP?['Total credito CP',cop(totCP)]:null,d.CP?['Intereses CP',cop(d.CP.totInt)]:null,d.LP?['Capital LP',cop(d.finLP)]:null,['Total conocido',cop(d.pagoInicial+totCP+(d.finLP||0)),'total']
   ]);
   y=Math.max(ya,yb)+2;
-  const leftW=108,rightW=68,xR=PDF.M+leftW+6;
+  const leftW=104,rightW=72,xR=PDF.M+leftW+6;
   if(d.CP && (d.CP.rows||[]).length<=8){
     pdfApprovedPlanCompact(doc,PDF.M,y,leftW,d.CP.rows,d.CP.totCap,d.CP.totInt,'Plan de pagos CP');
     let yr=pdfApprovedConditionsCompact(doc,xR,y,rightW,[['Tasa CP M.V.',(d.tm*100).toFixed(2)+'%'],['Tasa CP E.A.',tea],d.CP?['Plazo CP',`${d.nCP||0} meses`]:null,d.LP?['Plazo LP estimado',`${nPagoLP} meses`]:null,d.LP?['Periodo de gracia','12 meses']:null]);
@@ -558,7 +598,7 @@ function expPDF2(){
   } else {
     let yr=pdfApprovedConditionsCompact(doc,PDF.M,y,PDF.CW,[['Tasa CP M.V.',(d.tm*100).toFixed(2)+'%'],['Tasa CP E.A.',tea],d.CP?['Plazo CP',`${d.nCP||0} meses`]:null,d.LP?['Plazo LP estimado',`${nPagoLP} meses`]:null,d.LP?['Periodo de gracia','12 meses']:null]);
     pdfApprovedNotesCompact(doc,PDF.M,yr,PDF.CW,['La cuota definitiva del LP depende de la tasa vigente al iniciar amortizacion.','El capital LP no incluye intereses futuros.','La simulacion es informativa.']);
-    if(d.CP){doc.addPage();let yp=pdfHeader(doc,'Detalle del tramo de Corto Plazo','Plan de pagos asociado al escenario mixto.');yp=pdfApprovedContext(doc,yp,{label:'Programa academico',value:d.progNombre||'Programa',icon:'program'},{label:'Monto CP',value:cop(d.finCP),hint:`${d.nCP||0} cuotas`,icon:'money'});pdfPlanTable(doc,PDF.M,yp,PDF.CW,d.CP.rows,d.CP.totCap,d.CP.totInt,'Plan de pagos del corto plazo');}
+    if(d.CP){doc.addPage();let yp=pdfHeader(doc,'Detalle del tramo de Corto Plazo','Plan de pagos asociado al escenario mixto.');yp=pdfApprovedContext(doc,yp,{label:'Programa academico',value:d.progNombre||'Programa',icon:'graduation-cap'},{label:'Monto CP',value:cop(d.finCP),hint:`${d.nCP||0} cuotas`,icon:'wallet'});pdfPlanTable(doc,PDF.M,yp,PDF.CW,d.CP.rows,d.CP.totCap,d.CP.totInt,'Plan de pagos del corto plazo');}
   }
   if(SimuladorOFE.state.results.projectionLP){
     let yp=20;
@@ -705,9 +745,9 @@ function expPDF3(){
     heroLabel:'Cuota mensual estimada',heroValue:cop(d.cuota),heroMeta:`${d.n} cuotas  |  ${(d.tm*100).toFixed(2)}% M.V.  (${tea} E.A.)`,
     note:'Es la cuota mensual estimada con las condiciones configuradas para el banco aliado. Los cargos iniciales, cuando existan, se presentan por separado.',
     metrics:[
-      {label:'Valor de la matricula',value:cop(d.matNeta||d.mat),hint:'Base del periodo.',icon:'money'},
-      {label:'Pago inicial total',value:cop(d.pagoInicial),hint:d.cargos>0?'Incluye otros cargos.':'Pago de contado.',icon:'shield'},
-      {label:'Valor financiado',value:cop(d.financiado),hint:'Monto del credito.',icon:'bars'},
+      {label:'Valor de la matricula',value:cop(d.matNeta||d.mat),hint:'Base del periodo.',icon:'banknote'},
+      {label:'Pago inicial total',value:cop(d.pagoInicial),hint:d.cargos>0?'Incluye otros cargos.':'Pago de contado.',icon:'wallet'},
+      {label:'Valor financiado',value:cop(d.financiado),hint:'Monto del credito.',icon:'credit-card'},
       {label:'Total intereses',value:cop(d.totInt),hint:'Costo financiero.',icon:'percent'}
     ],
     leftTitle:'Detalle del pago inicial',leftRows:[['Cuota inicial (contado)',cop(d.cuotaInicial)],d.cargos>0?['Otros cargos',cop(d.cargos)]:null,['Total pago inicial',cop(d.pagoInicial),'total']],

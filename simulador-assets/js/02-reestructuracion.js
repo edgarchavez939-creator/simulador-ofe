@@ -141,10 +141,10 @@ function expPDFRefi() {
     heroLabel:'Nueva cuota mensual estimada',heroValue:cop(d.cuota),heroMeta:`${d.n} cuotas  |  ${(d.tm*100).toFixed(2)}% M.V.  (${tea} E.A.)`,
     note:'Es la cuota mensual estimada despues de aplicar las nuevas condiciones al saldo actual del credito.',
     metrics:[
-      {label:'Saldo actual',value:cop(d.saldo),hint:'Antes de reestructurar.',icon:'money'},
+      {label:'Saldo actual',value:cop(d.saldo),hint:'Antes de reestructurar.',icon:'banknote'},
       {label:'Monto reestructurado',value:cop(d.principal),hint:'Saldo + costos aplicables.',icon:'document'},
       {label:'Total intereses',value:cop(d.totInt),hint:'Costo financiero.',icon:'percent'},
-      {label:'Total a pagar',value:cop(d.totalGeneral),hint:'Nuevo escenario.',icon:'bars'}
+      {label:'Total a pagar',value:cop(d.totalGeneral),hint:'Nuevo escenario.',icon:'trending-up'}
     ],
     leftTitle:'Saldo a la fecha',leftRows:[['Capital pendiente',cop(d.capital)],d.intCorr>0?['Intereses corrientes',cop(d.intCorr)]:null,d.mora>0?['Mora / moratorios',cop(d.mora)]:null,['Saldo total',cop(d.saldo),'total']],
     rightTitle:'Nuevas condiciones',rightRows:[d.costos>0?['Costos de reestructuracion',cop(d.costos)]:null,['Nuevo plazo',`${d.n} meses`],['Nueva tasa M.V.',(d.tm*100).toFixed(2)+'%'],['Nueva cuota',cop(d.cuota),'total']],
