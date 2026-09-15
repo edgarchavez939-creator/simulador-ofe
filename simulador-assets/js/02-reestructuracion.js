@@ -132,444 +132,89 @@ function calcularRefi() {
 
 // ── PDF: single refinancing scenario ─────────────────────────────────────────
 function expPDFRefi() {
-  const d = SimuladorOFE.state.restructuring.current;
-  if(!d) return toast('Primero calcula un escenario.', 'warning');
-  const {jsPDF} = window.jspdf;
-  const doc = new jsPDF();
-  let y = pdfHeader(doc, 'Reestructuracion de Credito', d.label);
-  y = pdfCondiciones(doc, y, {
-    modalidad: 'Reestructuracion de credito',
-    tasa: d.tm,
-    plazo: d.n + ' cuotas mensuales',
-    extra: d.costos > 0 ? [['Costos de reestructuracion', cop(d.costos)]] : null
-  });
-
-  y = addFechaToDoc(doc, y); y+=2;
-
-  y = pdfSectionBar(doc,'SALDO A LA FECHA',y,[0,131,143]);
-  const sr = [['Capital pendiente',cop(d.capital)]];
-  if(d.intCorr>0) sr.push(['Intereses corrientes',cop(d.intCorr)]);
-  if(d.mora>0)    sr.push(['Mora / Moratorios',cop(d.mora)]);
-  sr.push(['Saldo total a refinanciar',cop(d.saldo)]);
-  sr.forEach(([k,v])=>{ doc.setFont('helvetica','bold'); pdfText(doc,k+':',16,y); doc.setFont('helvetica','normal'); pdfText(doc,v,192,y,{align:'right'}); y+=7; });
-
-  y+=2; y = pdfSectionBar(doc,'NUEVA FINANCIACION',y,[46,125,50]);
-  const fr = [
-    ['Plazo', d.n+' meses'],
-    ['Tasa mensual', (d.tm*100).toFixed(2)+'%'],
-    ['Tasa efectiva anual', ((Math.pow(1+d.tm,12)-1)*100).toFixed(2)+'%'],
-  ];
-  if(d.costos>0){ fr.push(['Costos reestructuracion',cop(d.costos)]); fr.push(['Monto financiado (saldo+costos)',cop(d.principal)]); }
-  fr.push(['Cuota Mensual',cop(d.cuota)]);
-  fr.push(['Total Intereses',cop(d.totInt)]);
-  fr.push(['TOTAL A PAGAR',cop(d.totalGeneral)]);
-  fr.forEach(([k,v])=>{ doc.setFont('helvetica','bold'); pdfText(doc,k+':',16,y); doc.setFont('helvetica','normal'); pdfText(doc,v,192,y,{align:'right'}); y+=7; });
-
-  // Capacidad de pago
-  if(d.ingreso > 0) {
-    const pct = (d.cuota/d.ingreso)*100;
-    let nivel, rgb;
-    if(pct<=30){ nivel='Sostenible'; rgb=[46,125,50]; }
-    else if(pct<=40){ nivel='Ajustada'; rgb=[249,168,37]; }
-    else { nivel='Riesgo de sobreendeudamiento'; rgb=[198,40,40]; }
-    y+=2; y = pdfSectionBar(doc,'CAPACIDAD DE PAGO',y,rgb);
-    [['Ingreso mensual',cop(d.ingreso)],
-     ['Cuota mensual',cop(d.cuota)],
-     ['Cuota / Ingreso',pct.toFixed(1)+'%  ('+nivel+')'],
-     ['Disponible tras cuota',cop(d.ingreso-d.cuota)]
-    ].forEach(([k,v])=>{ doc.setFont('helvetica','bold'); pdfText(doc,k+':',16,y); doc.setFont('helvetica','normal'); pdfText(doc,v,192,y,{align:'right'}); y+=7; });
-    y+=2;
+  const d=SimuladorOFE.state.restructuring.current;
+  if(!d) return toast('Primero calcula un escenario.','warning');
+  const {jsPDF}=window.jspdf; const doc=new jsPDF();
+  const tea=((Math.pow(1+d.tm,12)-1)*100).toFixed(2)+'% E.A.';
+  let y=pdfHeader(doc,'Reestructuracion de Credito','Escenario simulado: '+(d.label||'Reestructuracion'));
+  y=pdfHeroBand(doc,y,{label:'Nueva cuota mensual estimada',value:cop(d.cuota),meta:`${d.n} cuotas · ${(d.tm*100).toFixed(2)}% M.V. · ${tea}`,note:'Resultado de las nuevas condiciones aplicadas al saldo actual del credito.',tone:'accent'});
+  y=pdfMetricCards(doc,y,[
+    {label:'Saldo actual',value:cop(d.saldo)},
+    {label:'Monto reestructurado',value:cop(d.principal)},
+    {label:'Total intereses',value:cop(d.totInt)},
+    {label:'Total a pagar',value:cop(d.totalGeneral)}
+  ],{columns:4,tone:'neutral'});
+  y=pdfSectionLabel(doc,y,'Nuevas condiciones','Condiciones usadas en este escenario de reestructuracion.','accent');
+  y=pdfMetricCards(doc,y,[
+    {label:'Capital pendiente',value:cop(d.capital)},
+    d.intCorr>0?{label:'Intereses corrientes',value:cop(d.intCorr)}:null,
+    d.mora>0?{label:'Mora / moratorios',value:cop(d.mora)}:null,
+    d.costos>0?{label:'Costos de reestructuracion',value:cop(d.costos)}:null,
+    {label:'Nuevo plazo',value:`${d.n} meses`},
+    {label:'Nueva tasa',value:(d.tm*100).toFixed(2)+'% M.V.',hint:tea}
+  ],{columns:3,tone:'neutral'});
+  if(d.ingreso>0){
+    const pct=(d.cuota/d.ingreso)*100;
+    const nivel=pct<=30?'Sostenible':pct<=40?'Ajustada':'Requiere revision';
+    y=pdfCallout(doc,y,'Capacidad de pago',`La nueva cuota representa ${pct.toFixed(1)}% del ingreso mensual declarado (${nivel}). Disponible despues de la cuota: ${cop(d.ingreso-d.cuota)}.`,'info');
   }
-
-  y+=2; y = pdfSectionBar(doc,'PLAN DE PAGOS ('+d.n+' cuotas)',y);
-  const hw=['#','Cuota','Capital','Interes','Saldo'], cw=[14,42,42,40,42];
-  doc.setFillColor(26,58,92); doc.setTextColor(255,255,255); doc.rect(14,y-5,180,7,'F');
-  let x=14; hw.forEach((h,i)=>{doc.setFont('helvetica','bold');doc.setFontSize(9);pdfText(doc,h,x+1,y);x+=cw[i];});
-  doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(9);
-  d.rows.forEach(r=>{
-    y+=6; if(y>275){doc.addPage();y=20;}
-    x=14;
-    [r.i,cop(r.cuota),cop(r.capital),cop(r.interes),cop(r.saldo)].forEach((v,i)=>{pdfText(doc,String(v),x+1,y);x+=cw[i];});
-  });
-  doc.setFontSize(11);
-
+  if(y+23+d.rows.length*6.2>275){doc.addPage();y=22;}
+  y=pdfSectionLabel(doc,y,'Plan de pagos','Cronograma del nuevo credito.','neutral');
+  y=pdfTablaAmort(doc,y,d.rows,d.totCap,d.totInt,'PLAN DE PAGOS');
   pdfPie(doc);
-
-  doc.save(safePDF('Reestructuracion de Credito - '+d.label)+'.pdf');
-  toast('PDF descargado', 'success');
+  doc.save(safePDF('Reestructuracion de Credito - '+(d.label||'Escenario'))+'.pdf');
+  toast('PDF descargado','success');
 }
 
-// ── PDF: comparison of scenarios ─────────────────────────────────────────────
 function expPDFRefiComp() {
-  if(reestructState.scenarios.length < 2) return toast('Guarda al menos 2 escenarios para comparar.', 'warning');
-  const {jsPDF} = window.jspdf;
-  const doc = new jsPDF({orientation:'landscape'});  // horizontal
-  const PW = 297;  // landscape width
-  const MARGIN = 14, CONTENT_W = PW - MARGIN*2;  // 269
-
-  // Header banner (landscape width)
-  doc.setFillColor(26,58,92); doc.rect(0,0,PW,38,'F');
-  doc.setTextColor(255,255,255);
-  doc.setFont('helvetica','bold'); doc.setFontSize(18);
-  pdfText(doc,'Simulador de Credito Educativo',MARGIN,18);
-  doc.setFont('helvetica','normal'); doc.setFontSize(11);
-  pdfText(doc,'Comparativa de Reestructuracion de Credito - '+reestructState.scenarios.length+' escenarios',MARGIN,28);
-  doc.setTextColor(0,0,0);
-  let y = 48;
-  doc.setFont('helvetica','italic'); doc.setFontSize(9); doc.setTextColor(125,116,106);
-  pdfText(doc,'Generado el '+new Date().toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'}),MARGIN,y);
-  doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(11); y+=8;
-
-  // Saldo base bar
-  doc.setFillColor(45,95,110); doc.rect(MARGIN,y-5,CONTENT_W,8,'F');
-  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(10);
-  pdfText(doc,'SALDO BASE A REFINANCIAR',MARGIN+2,y);
-  pdfText(doc,cop(reestructState.scenarios[0].saldo),PW-MARGIN-2,y,{align:'right'});
-  doc.setTextColor(0,0,0); doc.setFontSize(11); y+=12;
-
-  // Comparison table — dynamic columns
-  doc.setFillColor(26,58,92); doc.rect(MARGIN,y-5,CONTENT_W,8,'F');
-  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(10);
-  pdfText(doc,'COMPARATIVA DE ESCENARIOS',MARGIN+2,y);
-  doc.setTextColor(0,0,0); doc.setFontSize(11); y+=10;
-
-  const n = reestructState.scenarios.length;
-  const conceptW = 70;
-  const colW = (CONTENT_W - conceptW) / n;  // distribute remaining width evenly
-  const colRight = i => MARGIN + conceptW + i*colW + colW - 4;  // right edge of each col
-
-  // Header row with scenario labels
-  doc.setFillColor(26,58,92); doc.setTextColor(255,255,255); doc.rect(MARGIN,y-5,CONTENT_W,9,'F');
-  doc.setFont('helvetica','bold'); doc.setFontSize(9);
-  pdfText(doc,'Concepto',MARGIN+2,y);
+  if(reestructState.scenarios.length<2) return toast('Guarda al menos 2 escenarios para comparar.','warning');
+  const {jsPDF}=window.jspdf; const doc=new jsPDF({orientation:'landscape'});
+  const PW=297,M=14,CW=PW-M*2;
+  doc.setFillColor(...PDF.rojo); doc.rect(M,10,14,1.7,'F');
+  doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(...PDF.texto2); doc.text('SIMULACION DE CREDITO EDUCATIVO',M,19);
+  doc.setFont('helvetica','bold'); doc.setFontSize(19); doc.setTextColor(...PDF.rojoOsc); doc.text('Comparativa de Reestructuracion',M,30);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9.5); doc.setTextColor(...PDF.texto2); doc.text(`${reestructState.scenarios.length} escenarios guardados`,M,37);
+  let y=49;
+  const saldo=reestructState.scenarios[0].saldo;
+  doc.setFillColor(...PDF.grisS); doc.setDrawColor(...PDF.linea); doc.roundedRect(M,y,CW,22,3,3,'FD');
+  doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(...PDF.texto2); doc.text('Saldo base a reestructurar',M+7,y+8);
+  doc.setFont('helvetica','bold'); doc.setFontSize(20); doc.setTextColor(...PDF.rojoOsc); doc.text(cop(saldo),M+7,y+18);
+  y+=32;
+  const n=reestructState.scenarios.length;
+  const gap=5, cardW=(CW-gap*(n-1))/n;
   reestructState.scenarios.forEach((e,i)=>{
-    pdfText(doc,'Escenario '+(i+1),colRight(i),y-1,{align:'right'});
-    doc.setFontSize(7); doc.setFont('helvetica','normal');
-    pdfText(doc,e.label,colRight(i),y+3,{align:'right'});
-    doc.setFontSize(9); doc.setFont('helvetica','bold');
+    const x=M+i*(cardW+gap);
+    doc.setFillColor(...(i===0?PDF.rojoS:PDF.grisS)); doc.setDrawColor(...PDF.linea); doc.roundedRect(x,y,cardW,56,3,3,'FD');
+    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(...PDF.negro); pdfText(doc,'Escenario '+(i+1),x+6,y+9);
+    doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(...PDF.texto3); pdfText(doc,e.label||'',x+6,y+15);
+    doc.setFont('helvetica','bold'); doc.setFontSize(17); doc.setTextColor(...PDF.rojoOsc); pdfText(doc,cop(e.cuota),x+6,y+28);
+    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...PDF.texto2);
+    pdfText(doc,`${e.n} meses · ${(e.tm*100).toFixed(2)}% M.V.`,x+6,y+35);
+    pdfText(doc,'Intereses: '+cop(e.totInt),x+6,y+42);
+    pdfText(doc,'Total: '+cop(e.totalGeneral),x+6,y+49);
   });
-  y+=11; doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
-
-  const rows = [
-    ['Plazo', reestructState.scenarios.map(e=>e.n+' meses')],
-    ['Tasa mensual', reestructState.scenarios.map(e=>(e.tm*100).toFixed(2)+'%')],
-    ['Tasa efectiva anual', reestructState.scenarios.map(e=>((Math.pow(1+e.tm,12)-1)*100).toFixed(2)+'%')],
-    ['Costos reestructuracion', reestructState.scenarios.map(e=>cop(e.costos))],
-    ['Monto financiado', reestructState.scenarios.map(e=>cop(e.principal))],
-    ['Cuota mensual', reestructState.scenarios.map(e=>cop(e.cuota))],
-    ['Total intereses', reestructState.scenarios.map(e=>cop(e.totInt))],
-    ['TOTAL A PAGAR', reestructState.scenarios.map(e=>cop(e.totalGeneral))],
+  y+=68;
+  doc.setFillColor(...PDF.negro); doc.rect(M,y-5,CW,8,'F'); doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(9);
+  const conceptW=70,colW=(CW-conceptW)/n;
+  doc.text('Concepto',M+3,y);
+  reestructState.scenarios.forEach((e,i)=>doc.text('Esc. '+(i+1),M+conceptW+(i+.5)*colW,y,{align:'center'}));
+  y+=9; doc.setTextColor(...PDF.texto2); doc.setFont('helvetica','normal'); doc.setFontSize(8.5);
+  const rows=[
+    ['Plazo',reestructState.scenarios.map(e=>e.n+' meses')],
+    ['Tasa mensual',reestructState.scenarios.map(e=>(e.tm*100).toFixed(2)+'%')],
+    ['Monto reestructurado',reestructState.scenarios.map(e=>cop(e.principal))],
+    ['Cuota mensual',reestructState.scenarios.map(e=>cop(e.cuota))],
+    ['Total intereses',reestructState.scenarios.map(e=>cop(e.totInt))],
+    ['Total a pagar',reestructState.scenarios.map(e=>cop(e.totalGeneral))]
   ];
-  rows.forEach(([label,vals])=>{
-    const isTotal = label==='TOTAL A PAGAR';
-    if(isTotal){ doc.setFillColor(251,244,233); doc.rect(MARGIN,y-5,CONTENT_W,8,'F'); doc.setFont('helvetica','bold'); }
-    else doc.setFont('helvetica','normal');
-    doc.setFontSize(9);
-    pdfText(doc,label,MARGIN+2,y);
-    vals.forEach((v,i)=>{ pdfText(doc,String(v),colRight(i),y,{align:'right'}); });
-    y+=8;
+  rows.forEach((r,idx)=>{
+    if(idx%2){doc.setFillColor(...PDF.suave);doc.rect(M,y-5,CW,8,'F');}
+    pdfText(doc,r[0],M+3,y);
+    r[1].forEach((v,i)=>pdfText(doc,v,M+conceptW+(i+1)*colW-4,y,{align:'right'})); y+=8;
   });
-  doc.setFontSize(11); y+=6;
-
-  // ── Detailed financial analysis (new page) ──
-  const a = analizarEscenariosRefi();
-  doc.addPage();
-  // Re-draw header banner on page 2
-  doc.setFillColor(26,58,92); doc.rect(0,0,PW,30,'F');
-  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(15);
-  pdfText(doc,'Analisis Financiero Detallado',MARGIN,18);
-  doc.setTextColor(0,0,0); let y2 = 40;
-
-  const halfW2 = (CONTENT_W - 10) / 2;
-  // Strip HTML tags from comentario lines
-  const strip = s => s.replace(/<[^>]+>/g,'');
-  const ce = comentarioEstudiante(a).map(strip);
-  const co = comentarioOtorgante(a).map(strip);
-
-  // Helper to render a wrapped text block in a column
-  function renderColumn(title, recomend, lines, x, color) {
-    let yy = y2;
-    doc.setFillColor(...color.bg); doc.rect(x, yy-4, halfW2, 8, 'F');
-    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(...color.text);
-    pdfText(doc, title, x+3, yy+1.5); yy += 11;
-    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(...color.text);
-    const recLines = doc.splitTextToSize(recomend, halfW2-6);
-    recLines.forEach(l=>{ pdfText(doc, l, x+3, yy); yy+=5; });
-    yy += 2;
-    doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(58,53,50);
-    lines.forEach(line => {
-      const wrapped = doc.splitTextToSize(line, halfW2-6);
-      wrapped.forEach(l=>{ if(yy>200){doc.addPage();yy=20;} pdfText(doc, l, x+3, yy); yy+=4.6; });
-      yy += 2.5;
-    });
-    doc.setTextColor(0,0,0);
-    return yy;
-  }
-
-  const yEnd1 = renderColumn(
-    'ANALISIS PARA EL ESTUDIANTE',
-    'Recomendado: Escenario '+(a.idxMenorCosto+1)+' ('+reestructState.scenarios[a.idxMenorCosto].label+')',
-    ce, MARGIN, {bg:[232,245,233], text:[46,125,50]}
-  );
-  const yEnd2 = renderColumn(
-    'ANALISIS PARA EL OTORGANTE',
-    'Recomendado: Escenario '+(a.idxMenorPlazo+1)+' ('+reestructState.scenarios[a.idxMenorPlazo].label+')',
-    co, MARGIN+halfW2+10, {bg:[224,247,250], text:[0,131,143]}
-  );
-
-  // Indicators summary table at bottom
-  let yInd = Math.max(yEnd1, yEnd2) + 6;
-  if(yInd > 175) { doc.addPage(); yInd = 24; }
-  doc.setFillColor(26,58,92); doc.rect(MARGIN,yInd-5,CONTENT_W,8,'F');
-  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(10);
-  pdfText(doc,'INDICADORES FINANCIEROS POR ESCENARIO',MARGIN+2,yInd);
-  doc.setTextColor(0,0,0); yInd += 10;
-
-  const nn = reestructState.scenarios.length, cW = (CONTENT_W-70)/nn;
-  const cRight = i => MARGIN+70+i*cW+cW-4;
-  doc.setFillColor(26,58,92); doc.setTextColor(255,255,255); doc.rect(MARGIN,yInd-5,CONTENT_W,7,'F');
-  doc.setFont('helvetica','bold'); doc.setFontSize(8.5);
-  pdfText(doc,'Indicador',MARGIN+2,yInd);
-  reestructState.scenarios.forEach((e,i)=>pdfText(doc,'Esc.'+(i+1),cRight(i),yInd,{align:'right'}));
-  yInd+=8; doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
-
-  [
-    ['Sobrecosto financiero', a.ind.map(x=>cop(x.sobrecosto))],
-    ['Sobrecosto sobre saldo', a.ind.map(x=>x.sobrecostoP.toFixed(1)+'%')],
-    ['Costo financiero / mes', a.ind.map(x=>cop(x.costoPorMes))],
-    ['Intereses / capital', a.ind.map(x=>x.ratioIntCap.toFixed(1)+'%')],
-    ['Carga mensual (cuota)', a.ind.map(x=>cop(x.cuota))],
-  ].forEach(([lbl,vals])=>{
-    doc.setFontSize(8.5);
-    pdfText(doc,lbl,MARGIN+2,yInd);
-    vals.forEach((v,i)=>pdfText(doc,String(v),cRight(i),yInd,{align:'right'}));
-    yInd+=7;
-  });
-
   pdfPie(doc);
   doc.save('Comparativa Reestructuracion de Credito.pdf');
-  toast('PDF descargado', 'success');
-}
-
-function guardarEscRefi() {
-  if(!SimuladorOFE.state.restructuring.current) return;
-  if(reestructState.scenarios.length >= 3) reestructState.scenarios.shift();
-  reestructState.scenarios.push(JSON.parse(JSON.stringify(SimuladorOFE.state.restructuring.current)));
-  renderEscRefi();
-  if(typeof renderComparisonHub==='function') renderComparisonHub();
-  toast('Escenario guardado para comparar','success');
-}
-
-function eliminarEscRefi(idx) {
-  reestructState.scenarios.splice(idx, 1);
-  renderEscRefi();
-  if(typeof renderComparisonHub==='function') renderComparisonHub();
-  toast('Escenario eliminado','success');
-}
-
-function renderEscRefi() {
-  const panel = document.getElementById('esc-panel-refi');
-  if(!panel) return;
-  if(reestructState.scenarios.length === 0) { panel.hidden = true; return; }
-  panel.hidden = false;
-  const colors = ['var(--info)','var(--success)','var(--info)'];
-  let html = `<div class="card__head u-mt-5">
-    <h3>${icon('clipboard')} Escenarios Guardados (${reestructState.scenarios.length}/3)</h3>
-    ${reestructState.scenarios.length >= 2 ? `<button class="btn btn--sm btn--primary" data-action="open-compare" data-tab="5">${icon('scale')} Comparar</button>` : ''}
-  </div><div class="list">`;
-  reestructState.scenarios.forEach((e,i) => {
-    html += `<div class="list-item">
-      <div class="step-num step-num--fill" style="background:${colors[i]}">${i+1}</div>
-      <div class="list-item__main"><strong>${escHTML(e.label)}</strong><span>${escHTML(e.sub)}</span></div>
-      <div class="u-text-right u-mr-8">
-        <div style="font-size:13px;font-weight:700;color:${colors[i]};">${cop(e.cuota)}/mes</div>
-        <div class="u-fs-11-muted">Total: ${cop(e.totalGeneral)}</div>
-      </div>
-      <button class="btn btn--ghost btn--icon btn--sm" data-action="eliminar-esc-refi" data-index="${i}" aria-label="Eliminar" title="Eliminar">${icon('x')}</button>
-    </div>`;
-  });
-  html += '</div>';
-  panel.innerHTML = html;
-}
-
-
-// ── Motor de análisis financiero de escenarios de reestructuración ─────────────
-function analizarEscenariosRefi() {
-  const list = reestructState.scenarios;
-  if(list.length < 1) return null;
-
-  // Compute per-scenario indicators
-  const ind = list.map(e => {
-    const sobrecosto = e.totalGeneral - e.saldo;             // costo financiero total (interes+costos)
-    const sobrecostoP = e.saldo>0 ? (sobrecosto/e.saldo)*100 : 0;  // % sobre saldo
-    const costoPorMes = e.n>0 ? sobrecosto/e.n : 0;          // costo financiero promedio mensual
-    const ratioIntCap = e.principal>0 ? (e.totInt/e.principal)*100 : 0;  // intereses como % del capital
-    const cargaMensual = e.cuota;                             // cuota = carga mensual
-    return {sobrecosto, sobrecostoP, costoPorMes, ratioIntCap, cargaMensual,
-            n:e.n, tm:e.tm, totalGeneral:e.totalGeneral, totInt:e.totInt,
-            cuota:e.cuota, saldo:e.saldo, label:e.label};
-  });
-
-  // Best per criterion
-  const idxMenorCosto  = ind.reduce((b,x,i)=> x.totalGeneral < ind[b].totalGeneral ? i : b, 0);
-  const idxMenorCuota  = ind.reduce((b,x,i)=> x.cuota < ind[b].cuota ? i : b, 0);
-  const idxMenorPlazo  = ind.reduce((b,x,i)=> x.n < ind[b].n ? i : b, 0);
-  const idxMayorInt    = ind.reduce((b,x,i)=> x.totInt > ind[b].totInt ? i : b, 0);
-  const idxMenorSobreP = ind.reduce((b,x,i)=> x.sobrecostoP < ind[b].sobrecostoP ? i : b, 0);
-
-  // Spreads
-  const costos = ind.map(x=>x.totalGeneral);
-  const spreadCosto = Math.max(...costos) - Math.min(...costos);
-  const cuotas = ind.map(x=>x.cuota);
-  const spreadCuota = Math.max(...cuotas) - Math.min(...cuotas);
-
-  return {ind, idxMenorCosto, idxMenorCuota, idxMenorPlazo, idxMayorInt,
-          idxMenorSobreP, spreadCosto, spreadCuota};
-}
-
-// Genera el texto de análisis para el estudiante
-function comentarioEstudiante(a) {
-  const best = a.ind[a.idxMenorCosto];
-  const lines = [];
-  lines.push(`<strong>Escenario ${a.idxMenorCosto+1}</strong> ofrece el menor costo total (${cop(best.totalGeneral)}), con un sobrecosto financiero de <strong>${cop(best.sobrecosto)}</strong> (${best.sobrecostoP.toFixed(1)}% sobre el saldo refinanciado).`);
-
-  // Cuota / carga mensual
-  if(a.idxMenorCuota !== a.idxMenorCosto) {
-    const bc = a.ind[a.idxMenorCuota];
-    lines.push(`Si la prioridad es <strong>aliviar la carga mensual</strong>, el Escenario ${a.idxMenorCuota+1} tiene la cuota más baja (${cop(bc.cuota)}/mes), aunque su costo total es mayor por el plazo más largo. Es un equilibrio entre cuota cómoda y costo acumulado.`);
-  } else {
-    lines.push(`Este mismo escenario tiene la <strong>cuota más baja</strong> (${cop(best.cuota)}/mes), por lo que combina menor costo y menor carga mensual — la opción más favorable.`);
-  }
-
-  // Spread / decisión
-  if(a.spreadCosto > 0) {
-    lines.push(`La diferencia entre el escenario más caro y el más económico es de <strong>${cop(a.spreadCosto)}</strong>. ${a.spreadCosto > best.saldo*0.05 ? 'Es una diferencia significativa que justifica elegir con cuidado.' : 'La diferencia es moderada, así que la decisión puede priorizar la comodidad de la cuota.'}`);
-  }
-
-  // Regla práctica
-  lines.push(`<em>Criterio:</em> a menor plazo, menos intereses totales pero mayor cuota; a mayor plazo, cuota más baja pero más intereses acumulados. La elección depende de la capacidad de pago mensual del estudiante.`);
-  return lines;
-}
-
-// Genera el texto de análisis para el otorgante
-function comentarioOtorgante(a) {
-  const best = a.ind[a.idxMenorPlazo];
-  const lines = [];
-  lines.push(`<strong>Escenario ${a.idxMenorPlazo+1}</strong> recupera el saldo en el menor tiempo (${best.n} meses), reduciendo la <strong>exposición al riesgo de impago</strong> y liberando capital antes para nuevas colocaciones.`);
-
-  // Ingreso por intereses
-  const bi = a.ind[a.idxMayorInt];
-  if(a.idxMayorInt !== a.idxMenorPlazo) {
-    lines.push(`El mayor ingreso por intereses lo genera el Escenario ${a.idxMayorInt+1} (${cop(bi.totInt)}), pero a costa de un plazo más largo y mayor exposición temporal. Hay una tensión entre <strong>maximizar ingreso</strong> y <strong>minimizar riesgo</strong>.`);
-  } else {
-    lines.push(`Además genera el mayor ingreso por intereses (${cop(best.totInt)}), combinando recuperación rápida con buen rendimiento.`);
-  }
-
-  // Costo por mes de exposición
-  lines.push(`Visto como costo financiero por mes de exposición, el Escenario ${a.idxMenorPlazo+1} concentra el rendimiento en menos tiempo (${cop(a.ind[a.idxMenorPlazo].costoPorMes)}/mes de financiación).`);
-
-  // Criterio
-  lines.push(`<em>Criterio:</em> plazos cortos reducen el riesgo de cartera y aceleran la rotación del capital; plazos largos aumentan el ingreso nominal por intereses pero elevan la probabilidad de mora. La política de riesgo de la institución define el balance óptimo.`);
-  return lines;
-}
-
-function compararEscRefi() {
-  if(reestructState.scenarios.length < 2) return;
-  const colors = ['var(--info)','var(--success)','var(--info)'];
-  const fields = [
-    {key:'saldo',        label:'Saldo a refinanciar'},
-    {key:'costos',       label:'Costos reestructuración'},
-    {key:'principal',    label:'Monto financiado'},
-    {key:'n',            label:'Plazo (meses)', isNum:true},
-    {key:'tm',           label:'Tasa mensual', isPct:true},
-    {key:'cuota',        label:'Cuota mensual'},
-    {key:'_capacidad',   label:'Cuota / Ingreso (%)', isCalc:true},
-    {key:'totInt',       label:'Total intereses'},
-    {key:'_sobrecostoP', label:'Sobrecosto financiero (%)', isCalc:true},
-    {key:'_costoPorMes', label:'Costo financiero / mes', isCalc:true},
-    {key:'totalGeneral', label:'TOTAL A PAGAR'},
-  ];
-  // Determine best scenario for each perspective
-  // Estudiante: prioriza menor costo total y menor cuota
-  const bestEstIdx = reestructState.scenarios.reduce((b,e,i)=> e.totalGeneral < reestructState.scenarios[b].totalGeneral ? i : b, 0);
-  const bestCuotaIdx = reestructState.scenarios.reduce((b,e,i)=> e.cuota < reestructState.scenarios[b].cuota ? i : b, 0);
-  // Otorgante: prioriza menor plazo (recupera más rápido) y mayor interés (ingreso)
-  const bestOtoIdx = reestructState.scenarios.reduce((b,e,i)=>{
-    if(e.n < reestructState.scenarios[b].n) return i;
-    if(e.n === reestructState.scenarios[b].n && e.totInt > reestructState.scenarios[b].totInt) return i;
-    return b;
-  }, 0);
-
-  const colE = 'var(--success)', colO = 'var(--info)';
-  const _a = analizarEscenariosRefi();
-  const _ce = comentarioEstudiante(_a);
-  const _co = comentarioOtorgante(_a);
-
-  let html = `<div class="card__head u-mt-5"><h3>${icon('scale')} Comparativa de Escenarios</h3>
-    <button class="btn btn--sm btn--primary u-bg-danger" data-action="pdf-refi-comp">${icon('file-text')} PDF Comparativa</button>
-  </div>
-
-  <div class="verdict-grid">
-    <div class="verdict" style="background:var(--success-soft);border-color:${colE};">
-      <div class="verdict__title" style="color:${colE};">${icon('graduation-cap')} Análisis para el Estudiante</div>
-      <div class="verdict__head" style="color:${colE};">Recomendado: Escenario ${_a.idxMenorCosto+1} — ${reestructState.scenarios[_a.idxMenorCosto].label}</div>
-      <div class="verdict__body">${_ce.map(l=>'<div class="u-mb-6">'+l+'</div>').join('')}</div>
-    </div>
-    <div class="verdict" style="background:var(--info-soft);border-color:${colO};">
-      <div class="verdict__title" style="color:${colO};">${icon('landmark')} Análisis para el Otorgante</div>
-      <div class="verdict__head" style="color:${colO};">Recomendado: Escenario ${_a.idxMenorPlazo+1} — ${reestructState.scenarios[_a.idxMenorPlazo].label}</div>
-      <div class="verdict__body">${_co.map(l=>'<div class="u-mb-6">'+l+'</div>').join('')}</div>
-    </div>
-  </div>
-  <div class="u-overflow-x"><table class="tbl"><thead><tr>
-    <th class="u-text-left">Concepto</th>
-    ${reestructState.scenarios.map((e,i)=>`<th class="th--fill" style="background:${colors[i]};">Escenario ${i+1}<br><span class="text-meta-soft">${e.label}</span></th>`).join('')}
-  </tr></thead><tbody>`;
-
-  fields.forEach(f => {
-    const vals = reestructState.scenarios.map((e,i) => {
-      if(f.key==='_sobrecostoP') return _a.ind[i].sobrecostoP;
-      if(f.key==='_costoPorMes') return _a.ind[i].costoPorMes;
-      if(f.key==='_capacidad') return (e.ingreso>0)?(e.cuota/e.ingreso*100):0;
-      return e[f.key]||0;
-    });
-    const allSame = vals.every(v=>v===vals[0]);
-    const minVal = Math.min(...vals), maxVal = Math.max(...vals);
-    const flagBest = ['cuota','totInt','totalGeneral','n','_sobrecostoP','_costoPorMes'].includes(f.key);
-    const isCalcRow = f.isCalc;
-    html += `<tr style="${f.key==='totalGeneral'?'font-weight:700;background:var(--warning-soft);':isCalcRow?'background:var(--surface-2);font-size:12px;':''}"><td style="${isCalcRow?'color:var(--text-3);':''}">${isCalcRow?'↳ '+f.label:f.label}</td>`;
-    vals.forEach(v => {
-      let disp;
-      if(f.isPct) disp = (v*100).toFixed(2)+'%';
-      else if(f.isNum) disp = v+' meses';
-      else if(f.key==='_sobrecostoP') disp = v.toFixed(1)+'%';
-      else if(f.key==='_capacidad') disp = v>0 ? v.toFixed(1)+'%' : '—';
-      else disp = cop(v);
-      let cls='';
-      if(flagBest && !allSame) cls = v===minVal ? 'cmp-best' : (v===maxVal ? 'cmp-worst' : '');
-      html += `<td class="${cls}">${disp}</td>`;
-    });
-    html += '</tr>';
-  });
-
-  // Difference vs Esc.1
-  html += `<tr><td>Diferencia vs Esc.1</td><td>—</td>
-    ${reestructState.scenarios.slice(1).map((e,i)=>{
-      const d = e.totalGeneral - reestructState.scenarios[0].totalGeneral;
-      const color = d<0?'var(--success)':'var(--danger)';
-      return `<td style="color:${color};font-weight:700;">${d<0?'-':'+'}${cop(Math.abs(d))}</td>`;
-    }).join('')}
-  </tr>`;
-  html += '</tbody></table></div>';
-
-  const panel = document.getElementById('esc-panel-refi');
-  const oldCmp = panel.querySelector('.cmp-wrap');
-  if(oldCmp) oldCmp.remove();
-  const wrap = document.createElement('div');
-  wrap.className = 'cmp-wrap';
-  wrap.innerHTML = html;
-  panel.appendChild(wrap);
-  wrap.scrollIntoView({behavior:'smooth', block:'nearest'});
+  toast('PDF comparativo descargado','success');
 }
 
 function limpiarRefi() {

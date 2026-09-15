@@ -271,46 +271,31 @@ function limpiar7() {
 
 // ── Exportables ──
 function expPDF7() {
-  const d = SimuladorOFE.state.results.initialPayment;
-  if(!d) return toast('Primero realiza el calculo', 'warning');
-  const {jsPDF} = window.jspdf;
-  const doc = new jsPDF();
-  const tea = ((Math.pow(1 + d.tm, 12) - 1) * 100).toFixed(2) + '% E.A.';
-  let y = pdfHeader(doc, 'Calculo de Cuota Inicial', (d.progNombre||'') + ' - capacidad de ' + cop(d.cap) + ' al mes');
-
-  y = pdfHeroBand(doc, y, {
-    eyebrow: 'Cuota inicial requerida',
-    label: 'Valor que debe cubrir hoy',
-    value: cop(d.cuotaInicial),
-    meta: `${d.n} cuotas mensuales · ${(d.tm*100).toFixed(2)}% M.V. · ${tea}`,
-    note: 'Esta vista resume el valor de entrada requerido para que la cuota mensual se ajuste a la capacidad de pago declarada.',
-    tone: 'warning'
-  });
-  y = pdfMetricCards(doc, y, [
-    {label:'Capacidad mensual', value: cop(d.cap)},
-    {label:'Monto financiable', value: cop(d.fin)},
-    {label:'Aporte Garantisa', value: cop(d.gar)},
-    {label:'Total a pagar hoy', value: cop(d.desembolso)}
-  ], {columns:4, tone:'warning'});
-
-  y = pdfSectionLabel(doc, y, 'Lectura del escenario', 'Relacion entre la capacidad declarada y el credito resultante.', 'accent');
-  y = pdfMetricCards(doc, y, [
-    {label:'Programa', value: d.progNombre || 'Programa'},
-    {label:'Matricula neta', value: cop(d.matNeta || d.mat)},
-    {label:'Cuota resultante', value: cop(d.cuota)},
-    {label:'Costo total del semestre', value: cop(d.costoTotal)}
-  ], {columns:2, tone:'accent'});
-
-  const activos = (d.beneficios||[]).filter(b => (b.val||0) > 0);
-  if(activos.length) y = pdfKV(doc, y, activos.map(b => [b.nombre || 'Descuento', '-' + cop(b.val)]));
-
-  doc.addPage();
-  y = 22;
-  y = pdfSectionLabel(doc, y, 'Plan de pagos del credito resultante', `Cronograma de las ${d.n} cuotas proyectadas.`, 'accent');
-  y = pdfTablaAmort(doc, y, d.rows, d.totCap, d.totInt, 'CRONOGRAMA DE PAGOS');
+  const d=SimuladorOFE.state.results.initialPayment;
+  if(!d) return toast('Primero realiza el calculo','warning');
+  const {jsPDF}=window.jspdf; const doc=new jsPDF();
+  const tea=((Math.pow(1+d.tm,12)-1)*100).toFixed(2)+'% E.A.';
+  let y=pdfHeader(doc,'Calculo de Cuota Inicial','Programa simulado: '+(d.progNombre||'Programa'));
+  y=pdfHeroBand(doc,y,{label:'Cuota inicial requerida',value:cop(d.cuotaInicial),meta:`${d.n} cuotas · ${(d.tm*100).toFixed(2)}% M.V. · ${tea}`,note:'Valor de entrada requerido para ajustar la cuota mensual a la capacidad de pago declarada.',tone:'accent'});
+  y=pdfMetricCards(doc,y,[
+    {label:'Capacidad mensual',value:cop(d.cap)},
+    {label:'Monto financiable',value:cop(d.fin)},
+    {label:'Garantisa',value:cop(d.gar)},
+    {label:'Total a pagar hoy',value:cop(d.desembolso)}
+  ],{columns:4,tone:'neutral'});
+  y=pdfSectionLabel(doc,y,'Resultado del calculo','Relacion entre matricula, capacidad y credito.','accent');
+  y=pdfMetricCards(doc,y,[
+    {label:'Programa academico',value:d.progNombre||'Programa',valueSize:10.5},
+    {label:'Matricula neta',value:cop(d.matNeta||d.mat)},
+    {label:'Cuota mensual resultante',value:cop(d.cuota)},
+    {label:'Costo total del semestre',value:cop(d.costoTotal)}
+  ],{columns:2,tone:'neutral'});
+  if(y+23+d.rows.length*6.2>275){doc.addPage();y=22;}
+  y=pdfSectionLabel(doc,y,'Detalle del credito resultante','Cronograma de pagos proyectado.','neutral');
+  y=pdfTablaAmort(doc,y,d.rows,d.totCap,d.totInt,'PLAN DE PAGOS');
   pdfPie(doc);
-  doc.save(safePDF('Calculo Cuota Inicial - ' + (d.progNombre||'Simulacion')) + '.pdf');
-  toast('PDF descargado', 'success');
+  doc.save(safePDF('Calculo Cuota Inicial - '+(d.progNombre||'Simulacion'))+'.pdf');
+  toast('PDF descargado','success');
 }
 
 function expXLS7() {
@@ -899,100 +884,52 @@ function renderComparisonHub() {
 
 // ── COMBINED PDF (pregrado + idiomas) ────────────────────────────────────────
 function expPDFCombinado() {
-  const dp   = SimuladorOFE.state.results.languages;
-  const tabId = SimuladorOFE.state.languages.context.tabId;
-  let dm = null, tipoLabel = '';
-  if(tabId===1 && SimuladorOFE.state.results.shortTerm)  { dm=SimuladorOFE.state.results.shortTerm; tipoLabel='Credito Corto Plazo'; }
-  if(tabId===2 && SimuladorOFE.state.results.mixed)  { dm=SimuladorOFE.state.results.mixed; tipoLabel='Credito Mixto'; }
-  if(tabId===3 && SimuladorOFE.state.results.bank)  { dm=SimuladorOFE.state.results.bank; tipoLabel='Credito Banco Aliado'; }
-  if(!dp||!dm) return toast('Primero calcula ambos creditos (pregrado e idiomas) para generar el PDF combinado.', 'warning');
-
-  const {jsPDF} = window.jspdf;
-  const doc = new jsPDF();
-  const filename = (dp.progNombre+' - Combinado').replace(/[^a-zA-Z0-9\-_ áéíóúÁÉÍÓÚñÑ]/g,'').trim();
-  const cuotaPre = tabId === 2 ? (dm.CP ? dm.CP.cuota : 0) : (dm.cuota || 0);
-  const totalPre = tabId === 2
-    ? ((dm.CP ? dm.CP.totCap + dm.CP.totInt : 0) + (dm.LP ? (dm.LP.capital || dm.finLP || 0) : 0))
-    : ((dm.totCap || 0) + (dm.totInt || 0));
-  const pagoPre = dm.pagoInicial || 0;
-  const pagoIdiomas = dp.pagoInicial || 0;
-  const totalIdiomas = dp.isMixto && dp.idCP
-    ? ((dp.idCP ? dp.idCP.totCap + dp.idCP.totInt : 0) + (dp.finLP || 0))
-    : (dp.totalCredito || 0);
-  const costoSemestre = pagoPre + pagoIdiomas + totalPre + totalIdiomas;
-  let y = pdfHeader(doc, 'Reporte Combinado - Pregrado + Idiomas', dp.progNombre+' · '+tipoLabel);
-
-  y = pdfHeroBand(doc, y, {
-    eyebrow: 'Vision consolidada',
-    label: 'Cuota mensual combinada estimada',
-    value: cop((cuotaPre || 0) + (dp.cuota || (dp.idCP ? dp.idCP.cuota : 0) || 0)),
-    meta: `${tipoLabel} + Credito de idiomas`,
-    note: 'El reporte concentra en una sola lectura el pago inicial, el credito y el costo total del semestre.',
-    tone: 'accent'
-  });
-  y = pdfMetricCards(doc, y, [
-    {label:'Pago inicial combinado', value: cop(pagoPre + pagoIdiomas)},
-    {label:'Credito total combinado', value: cop(totalPre + totalIdiomas)},
-    {label:'Costo total del semestre', value: cop(costoSemestre)},
-    {label:'Programa', value: dp.progNombre || 'Programa'}
-  ], {columns:4, tone:'accent'});
-
-  y = pdfSectionLabel(doc, y, 'Comparativo rapido', 'Cada bloque muestra el resumen ejecutivo de pregrado e idiomas.', 'info');
-  y = pdfMetricCards(doc, y, [
-    {label:'Pregrado · pago inicial', value: cop(pagoPre)},
-    {label:'Pregrado · credito', value: cop(totalPre)},
-    {label:'Idiomas · pago inicial', value: cop(pagoIdiomas)},
-    {label:'Idiomas · credito', value: cop(totalIdiomas)}
-  ], {columns:2, tone:'info'});
-
-  doc.addPage();
-  y = 22;
-  y = pdfSectionLabel(doc, y, 'Detalle pregrado', tipoLabel, 'accent');
-  if(tabId === 2) {
-    y = pdfMetricCards(doc, y, [
-      {label:'Pago de contado', value: cop(dm.cuotaInicial)},
-      {label:'Garantisa total', value: cop((dm.garCP||0) + (dm.garLP||0))},
-      {label:'Monto CP', value: cop(dm.finCP || 0)},
-      {label:'Capital LP', value: cop(dm.finLP || 0)}
-    ], {columns:2, tone:'accent'});
-    if(dm.CP) {
-      y = pdfSectionLabel(doc, y, 'Plan de pagos pregrado', `Cronograma del tramo CP (${dm.nCP || 0} cuotas).`, 'neutral');
-      y = pdfTablaAmort(doc, y, dm.CP.rows, dm.CP.totCap, dm.CP.totInt, 'PREGRADO - CORTO PLAZO');
-    }
-  } else {
-    y = pdfMetricCards(doc, y, [
-      {label:'Pago de contado', value: cop(dm.cuotaInicial)},
-      {label:'Aporte inicial', value: cop(dm.garantisa || dm.cargos || 0)},
-      {label:'Monto financiado', value: cop(dm.financiado || 0)},
-      {label:'Total credito', value: cop((dm.totCap || 0) + (dm.totInt || 0))}
-    ], {columns:2, tone:'accent'});
-    y = pdfSectionLabel(doc, y, 'Plan de pagos pregrado', `Cronograma principal (${dm.n || 0} cuotas).`, 'neutral');
-    y = pdfTablaAmort(doc, y, dm.rows, dm.totCap, dm.totInt, 'PREGRADO');
-  }
-
-  doc.addPage();
-  y = 22;
-  y = pdfSectionLabel(doc, y, 'Detalle idiomas', 'Credito de idiomas asociado al mismo programa.', 'info');
-  y = pdfMetricCards(doc, y, [
-    {label:'Pago de contado', value: cop(dp.cuotaInicial)},
-    {label:'Garantisa', value: cop(dp.garantisa || ((dp.garCP||0) + (dp.garLP||0)))},
-    {label:'Monto financiado', value: cop(dp.financiado || ((dp.finCP||0) + (dp.finLP||0)))},
-    {label:'Total idiomas', value: cop(dp.totalGeneral || (pagoIdiomas + totalIdiomas))}
-  ], {columns:2, tone:'info'});
-  const filas = (dp.isMixto && dp.idCP) ? dp.idCP.rows : dp.rows;
-  const tc = (dp.isMixto && dp.idCP) ? dp.idCP.totCap : dp.totCap;
-  const ti = (dp.isMixto && dp.idCP) ? dp.idCP.totInt : dp.totInt;
-  y = pdfSectionLabel(doc, y, 'Plan de pagos idiomas', dp.isMixto ? `Cronograma del tramo CP de idiomas (${dp.n} cuotas).` : `Cronograma de idiomas (${dp.n} cuotas).`, 'neutral');
-  y = pdfTablaAmort(doc, y, filas, tc, ti, 'IDIOMAS');
-  y = pdfProyeccionLP(doc, y, SimuladorOFE.state.results.projectionLP, 'Matricula');
-  y = pdfProyeccionLP(doc, y, SimuladorOFE.state.results.projectionLanguagesLP, 'Idiomas');
-
+  const dp=SimuladorOFE.state.results.languages;
+  const tabId=SimuladorOFE.state.languages.context.tabId;
+  let dm=null,tipoLabel='';
+  if(tabId===1&&SimuladorOFE.state.results.shortTerm){dm=SimuladorOFE.state.results.shortTerm;tipoLabel='Credito Corto Plazo';}
+  if(tabId===2&&SimuladorOFE.state.results.mixed){dm=SimuladorOFE.state.results.mixed;tipoLabel='Credito Mixto';}
+  if(tabId===3&&SimuladorOFE.state.results.bank){dm=SimuladorOFE.state.results.bank;tipoLabel='Credito Banco Aliado';}
+  if(!dp||!dm) return toast('Primero calcula ambos creditos para generar el PDF combinado.','warning');
+  const {jsPDF}=window.jspdf; const doc=new jsPDF();
+  const cuotaPre=tabId===2?(dm.CP?dm.CP.cuota:0):(dm.cuota||0);
+  const cuotaIdi=dp.isMixto&&dp.idCP?dp.idCP.cuota:(dp.cuota||0);
+  const pagoPre=dm.pagoInicial||0,pagoIdi=dp.pagoInicial||0;
+  const credPre=tabId===2?((dm.CP?dm.CP.totCap+dm.CP.totInt:0)+(dm.finLP||0)):((dm.totCap||0)+(dm.totInt||0));
+  const credIdi=dp.isMixto&&dp.idCP?((dp.idCP.totCap+dp.idCP.totInt)+(dp.finLP||0)):(dp.totalCredito||0);
+  let y=pdfHeader(doc,'Resumen Combinado','Programa simulado: '+(dp.progNombre||'Programa'));
+  y=pdfHeroBand(doc,y,{label:'Cuota mensual combinada estimada',value:cop(cuotaPre+cuotaIdi),meta:`${tipoLabel} + Credito de Idiomas`,note:'Lectura consolidada de los dos escenarios asociados al mismo estudiante.',tone:'accent'});
+  y=pdfMetricCards(doc,y,[
+    {label:'Pago inicial combinado',value:cop(pagoPre+pagoIdi)},
+    {label:'Credito combinado',value:cop(credPre+credIdi)},
+    {label:'Pregrado · cuota',value:cop(cuotaPre)},
+    {label:'Idiomas · cuota',value:cop(cuotaIdi)}
+  ],{columns:4,tone:'neutral'});
+  y=pdfSectionLabel(doc,y,'Comparativo ejecutivo','Pregrado e idiomas en una sola lectura.','accent');
+  y=pdfMetricCards(doc,y,[
+    {label:'Pregrado · pago inicial',value:cop(pagoPre)},
+    {label:'Pregrado · credito',value:cop(credPre)},
+    {label:'Idiomas · pago inicial',value:cop(pagoIdi)},
+    {label:'Idiomas · credito',value:cop(credIdi)}
+  ],{columns:2,tone:'neutral'});
+  doc.addPage(); y=22;
+  y=pdfSectionLabel(doc,y,'Detalle pregrado',tipoLabel,'accent');
+  const preRows=tabId===2?(dm.CP?dm.CP.rows:[]):dm.rows;
+  const preCap=tabId===2?(dm.CP?dm.CP.totCap:0):dm.totCap;
+  const preInt=tabId===2?(dm.CP?dm.CP.totInt:0):dm.totInt;
+  if(preRows&&preRows.length) y=pdfTablaAmort(doc,y,preRows,preCap,preInt,'PLAN DE PAGOS PREGRADO');
+  doc.addPage(); y=22;
+  y=pdfSectionLabel(doc,y,'Detalle idiomas','Credito de idiomas asociado.','accent');
+  const rows=dp.isMixto&&dp.idCP?dp.idCP.rows:dp.rows;
+  const tc=dp.isMixto&&dp.idCP?dp.idCP.totCap:dp.totCap;
+  const ti=dp.isMixto&&dp.idCP?dp.idCP.totInt:dp.totInt;
+  if(rows&&rows.length) y=pdfTablaAmort(doc,y,rows,tc,ti,'PLAN DE PAGOS IDIOMAS');
+  y=pdfProyeccionLP(doc,y,SimuladorOFE.state.results.projectionLP,'Matricula');
+  y=pdfProyeccionLP(doc,y,SimuladorOFE.state.results.projectionLanguagesLP,'Idiomas');
   pdfPie(doc);
-  doc.save(filename+'.pdf');
-  toast('PDF descargado', 'success');
+  doc.save(safePDF((dp.progNombre||'Programa')+' - Combinado')+'.pdf');
+  toast('PDF descargado','success');
 }
-
-
 
 function handleUIChange(event) {
   clearControlValidationFromEvent(event.target);

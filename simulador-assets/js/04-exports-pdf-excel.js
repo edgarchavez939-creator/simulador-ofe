@@ -34,60 +34,83 @@ function pdfText(doc, text, x, y, opts) {
 // tildes con sus fuentes estándar, por eso safePDF() las normaliza.
 // ══════════════════════════════════════════════════════════════════
 const PDF = {
-  azul:   [26, 79, 216],    // --brand-600
-  azulOsc:[23, 64, 184],    // --brand-700
-  verde:  [14, 143, 126],   // --success
-  ambar:  [179, 114, 13],   // --warning
-  rojo:   [207, 47, 61],    // --danger
-  violeta:[91, 69, 214],    // --info
-  texto:  [12, 18, 32],     // --text
-  texto2: [65, 75, 92],     // --text-2
-  texto3: [107, 118, 136],  // --text-3
-  linea:  [229, 232, 238],  // --border
-  suave:  [246, 247, 249],  // --bg
-  azulS:  [238, 243, 255],  // --accent-soft
-  verdeS: [226, 246, 242],
-  ambarS: [253, 243, 226],
-  M: 14,            // margen
-  W: 210,           // ancho A4
-  get CW() { return this.W - this.M * 2; },   // 182
+  rojo:    [150, 10, 17],     // Uninorte #960A11
+  rojoOsc: [112, 7, 13],
+  negro:   [21, 21, 21],      // #151515
+  dorado:  [183, 139, 30],    // #B78B1E
+  amarillo:[255, 204, 0],     // #FFCC00
+  texto:   [21, 21, 21],
+  texto2:  [63, 68, 78],
+  texto3:  [112, 117, 128],
+  linea:   [222, 224, 228],
+  suave:   [247, 247, 248],
+  rojoS:   [252, 242, 243],
+  grisS:   [243, 244, 246],
+  doradoS: [250, 247, 235],
+  azul:    [150, 10, 17],
+  azulOsc: [112, 7, 13],
+  azulS:   [252, 242, 243],
+  verde:   [63, 92, 75],
+  verdeS:  [239, 245, 241],
+  ambar:   [183, 139, 30],
+  ambarS:  [250, 247, 235],
+  violeta: [82, 70, 92],
+  M: 14,
+  W: 210,
+  get CW() { return this.W - this.M * 2; },
 };
 
 // Encabezado institucional con la marca OFE
 function pdfHeader(doc, titulo, subtitulo = '', sub2 = '') {
   const P = PDF;
-  doc.setFillColor(...P.azul);
-  doc.rect(0, 0, P.W, 34, 'F');
-
-  // Marca: cuadro con las siglas
-  doc.setFillColor(255, 255, 255);
-  doc.roundedRect(P.M, 8, 15, 15, 3.5, 3.5, 'F');
-  doc.setTextColor(...P.azul);
-  doc.setFont('helvetica', 'bold'); doc.setFontSize(9);
-  doc.text('OFE', P.M + 7.5, 17.6, {align: 'center'});
-
-  doc.setTextColor(255, 255, 255);
-  doc.setFont('helvetica', 'bold'); doc.setFontSize(13);
-  doc.text(safePDF(titulo), P.M + 20, 15);
-  doc.setFont('helvetica', 'normal'); doc.setFontSize(8);
-  doc.text('Oficina de Financiamiento Estudiantil - Universidad del Norte', P.M + 20, 21);
-  if(subtitulo) { doc.setFontSize(9.5); doc.text(safePDF(subtitulo), P.M + 20, 28); }
-
-  doc.setTextColor(0, 0, 0); doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
-  return 44;
+  // Firma visual Uninorte sin logotipo: linea roja, tipografia y estructura sobria.
+  doc.setFillColor(...P.rojo);
+  doc.rect(P.M, 9, 13, 1.6, 'F');
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(8.5);
+  doc.setTextColor(...P.texto2);
+  doc.text('SIMULACION DE CREDITO EDUCATIVO', P.M, 18);
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(20);
+  doc.setTextColor(...P.rojoOsc);
+  doc.text(safePDF(titulo), P.M, 29);
+  if(subtitulo) {
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(10.5);
+    doc.setTextColor(...P.texto2);
+    const lines = doc.splitTextToSize(safePDF(subtitulo), 116);
+    doc.text(lines, P.M, 36);
+  }
+  const ahora = new Date();
+  const fecha = ahora.toLocaleDateString('es-CO',{day:'2-digit',month:'2-digit',year:'numeric'});
+  const hora = ahora.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
+  doc.setFillColor(...P.grisS);
+  doc.setDrawColor(...P.linea);
+  doc.roundedRect(136, 13, 60, 26, 3, 3, 'FD');
+  doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(...P.texto3);
+  doc.text('Fecha de simulacion', 141, 20);
+  doc.text('Hora', 141, 27);
+  doc.setFont('helvetica','bold'); doc.setTextColor(...P.texto2);
+  doc.text(safePDF(fecha), 191, 20, {align:'right'});
+  doc.text(safePDF(hora), 191, 27, {align:'right'});
+  doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(10);
+  return 48;
 }
 
 // Barra de sección
 function pdfSectionBar(doc, label, y, color) {
   const P = PDF;
-  const rgb = color || P.azul;
+  const rgb = color || P.rojo;
+  if(y > 265) { doc.addPage(); y = 22; }
   doc.setFillColor(...rgb);
-  doc.rect(P.M, y - 5, P.CW, 7.5, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFont('helvetica', 'bold'); doc.setFontSize(9);
-  doc.text(safePDF(label), P.M + 2.5, y);
-  doc.setTextColor(0, 0, 0); doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
-  return y + 10;
+  doc.rect(P.M, y - 4.2, 9, 1.4, 'F');
+  doc.setTextColor(...P.negro);
+  doc.setFont('helvetica','bold'); doc.setFontSize(11);
+  doc.text(safePDF(label), P.M, y + 2.5);
+  doc.setDrawColor(...P.linea);
+  doc.line(P.M, y + 5.5, P.W - P.M, y + 5.5);
+  doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); doc.setFontSize(10);
+  return y + 12;
 }
 
 // Fila clave-valor con alineación a los márgenes
@@ -149,7 +172,7 @@ function pdfTablaAmort(doc, y, rows, totCap, totInt, titulo) {
   ];
   const xAt = i => P.M + cols.slice(0, i).reduce((s, c) => s + c.w, 0);
   const pintaCabecera = () => {
-    doc.setFillColor(...P.texto2);
+    doc.setFillColor(...P.negro);
     doc.rect(P.M, y - 4.8, P.CW, 7.5, 'F');
     doc.setTextColor(255, 255, 255);
     doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5);
@@ -174,7 +197,7 @@ function pdfTablaAmort(doc, y, rows, totCap, totInt, titulo) {
   });
   // Totales
   if(y > 264) { doc.addPage(); y = 22; }
-  doc.setFillColor(...P.azulS);
+  doc.setFillColor(...P.grisS);
   doc.rect(P.M, y - 4.4, P.CW, 7, 'F');
   doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5);
   doc.setTextColor(...P.texto);
@@ -196,14 +219,14 @@ function pdfPie(doc) {
     doc.setPage(i);
     const h = doc.internal.pageSize.getHeight();
     const w = doc.internal.pageSize.getWidth();
-    doc.setDrawColor(...P.linea); doc.setLineWidth(0.3);
+    doc.setDrawColor(...P.linea); doc.setLineWidth(0.25);
     doc.line(P.M, h - 13, w - P.M, h - 13);
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(7);
-    doc.setTextColor(...P.texto3);
-    doc.text(safePDF('Simulacion informativa - no constituye aprobacion de credito. Generado el ' + fechaSimulacion()), P.M, h - 8.5);
-    doc.text('Pagina ' + i + ' de ' + n, w - P.M, h - 8.5, {align: 'right'});
+    doc.setFont('helvetica','normal'); doc.setFontSize(7.2); doc.setTextColor(...P.texto3);
+    doc.text('Universidad del Norte - Oficina de Financiamiento Estudiantil', P.M, h - 8.2);
+    doc.text('Simulacion informativa - no constituye aprobacion de credito.', w/2, h - 8.2, {align:'center'});
+    doc.text('Pag. ' + i + ' de ' + n, w - P.M, h - 8.2, {align:'right'});
   }
-  doc.setTextColor(0, 0, 0);
+  doc.setTextColor(0,0,0);
 }
 
 function addFechaToDoc(doc, y) { return y; }   // la fecha ahora vive en el pie
@@ -215,11 +238,11 @@ function pdfEnsureSpace(doc, y, needed, startY = 20) {
 }
 function pdfTone(tone) {
   const map = {
-    accent: {main: PDF.azul, soft: PDF.azulS},
-    success: {main: PDF.verde, soft: PDF.verdeS},
-    warning: {main: PDF.ambar, soft: PDF.ambarS},
-    info: {main: PDF.violeta, soft: [240, 236, 255]},
-    neutral: {main: PDF.texto2, soft: PDF.suave}
+    accent: {main: PDF.rojo, soft: PDF.rojoS},
+    success: {main: PDF.rojo, soft: PDF.rojoS},
+    warning: {main: PDF.dorado, soft: PDF.doradoS},
+    info: {main: PDF.negro, soft: PDF.grisS},
+    neutral: {main: PDF.texto2, soft: PDF.grisS}
   };
   return map[tone] || map.accent;
 }
@@ -244,49 +267,29 @@ function pdfSectionLabel(doc, y, title, subtitle = '', tone = 'accent') {
 }
 function pdfCard(doc, x, y, w, h, tone = 'neutral') {
   const c = pdfTone(tone);
-  doc.setFillColor(...c.soft);
-  doc.setDrawColor(...PDF.linea);
-  doc.roundedRect(x, y, w, h, 4, 4, 'FD');
+  doc.setFillColor(...c.soft); doc.setDrawColor(...PDF.linea);
+  doc.roundedRect(x, y, w, h, 2.5, 2.5, 'FD');
 }
 function pdfHeroBand(doc, y, cfg = {}) {
-  const tone = cfg.tone || 'accent';
-  const c = pdfTone(tone);
-  const metaLines = cfg.meta ? doc.splitTextToSize(safePDF(cfg.meta), PDF.CW - 24) : [];
-  const noteLines = cfg.note ? doc.splitTextToSize(safePDF(cfg.note), PDF.CW - 24) : [];
-  const h = 28 + (metaLines.length * 4.5) + (noteLines.length ? (noteLines.length * 4.2 + 6) : 0);
-  y = pdfEnsureSpace(doc, y, h + 6);
-  doc.setFillColor(...c.soft);
-  doc.setDrawColor(...PDF.linea);
-  doc.roundedRect(PDF.M, y, PDF.CW, h, 6, 6, 'FD');
-  doc.setFillColor(...c.main);
-  doc.roundedRect(PDF.M, y, 5, h, 6, 6, 'F');
-  doc.setTextColor(...PDF.texto3);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8.5);
-  pdfText(doc, (cfg.eyebrow || '').toUpperCase(), PDF.M + 10, y + 8);
-  doc.setTextColor(...PDF.texto2);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
-  pdfText(doc, cfg.label || '', PDF.M + 10, y + 15);
-  doc.setTextColor(...PDF.texto);
-  doc.setFontSize(24);
-  pdfText(doc, cfg.value || '', PDF.M + 10, y + 26);
-  let lineY = y + 31;
-  if(metaLines.length) {
-    doc.setTextColor(...PDF.texto3);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8.5);
-    doc.text(metaLines, PDF.M + 10, lineY);
-    lineY += metaLines.length * 4.5;
-  }
+  const c = pdfTone(cfg.tone || 'accent');
+  const noteLines = cfg.note ? doc.splitTextToSize(safePDF(cfg.note), 72) : [];
+  const h = Math.max(42, 31 + noteLines.length * 4.2);
+  y = pdfEnsureSpace(doc, y, h + 5);
+  doc.setFillColor(...c.soft); doc.setDrawColor(...PDF.linea);
+  doc.roundedRect(PDF.M, y, PDF.CW, h, 3, 3, 'FD');
+  doc.setFillColor(...PDF.rojo); doc.rect(PDF.M + 7, y + 8, 1.3, 7, 'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(...PDF.texto2);
+  pdfText(doc, (cfg.label || cfg.eyebrow || '').toUpperCase(), PDF.M + 12, y + 13);
+  doc.setFont('helvetica','bold'); doc.setFontSize(27); doc.setTextColor(...PDF.rojoOsc);
+  pdfText(doc, cfg.value || '', PDF.M + 12, y + 27);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(...PDF.texto2);
+  if(cfg.meta) pdfText(doc, cfg.meta, PDF.M + 12, y + 35);
+  doc.setDrawColor(...PDF.texto3); doc.line(PDF.M + 104, y + 9, PDF.M + 104, y + h - 9);
   if(noteLines.length) {
-    lineY += 2;
-    doc.setTextColor(...PDF.texto2);
-    doc.setFontSize(8.5);
-    doc.text(noteLines, PDF.M + 10, lineY);
+    doc.setFontSize(9); doc.setTextColor(...PDF.texto2);
+    doc.text(noteLines, PDF.M + 112, y + 18);
   }
-  doc.setTextColor(0,0,0);
-  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
   return y + h + 6;
 }
 function pdfMetricCards(doc, y, items, opts = {}) {
@@ -390,66 +393,43 @@ function expPDF1(){
   const {jsPDF} = window.jspdf;
   const doc = new jsPDF();
   const tea = ((Math.pow(1 + d.tm, 12) - 1) * 100).toFixed(2) + '% E.A.';
-  let y = pdfHeader(doc, 'Simulacion de Credito', 'Credito a Corto Plazo - ' + (d.progNombre||''));
+  let y = pdfHeader(doc, 'Credito a Corto Plazo', 'Programa simulado: ' + (d.progNombre||'Programa'));
 
   y = pdfHeroBand(doc, y, {
-    eyebrow: 'Credito a corto plazo',
-    label: 'Cuota mensual estimada',
-    value: cop(d.cuota),
-    meta: `${d.n} cuotas mensuales · ${(d.tm*100).toFixed(2)}% M.V. · ${tea}`,
-    note: 'Vista ejecutiva del escenario. El detalle completo del plan de pagos se presenta en la pagina siguiente.',
-    tone: 'success'
+    label:'Cuota mensual estimada', value:cop(d.cuota),
+    meta:`${d.n} cuotas · ${(d.tm*100).toFixed(2)}% M.V. · ${tea}`,
+    note:'Este valor corresponde al pago mensual del credito una vez realizado el pago inicial.', tone:'accent'
   });
   y = pdfMetricCards(doc, y, [
-    {label:'Monto financiado', value: cop(d.financiado)},
-    {label:'Pago inicial', value: cop(d.pagoInicial)},
-    {label:'Intereses del credito', value: cop(d.totInt)},
-    {label:'Costo total del semestre', value: cop(d.totalGeneral)}
-  ], {columns:4, tone:'success'});
+    {label:'Programa academico', value:d.progNombre||'Programa', valueSize:10.5},
+    {label:'Valor de matricula', value:cop(d.matNeta||d.mat)},
+    {label:'Plazo del credito', value:`${d.n} meses`},
+    {label:'Tasa de interes', value:(d.tm*100).toFixed(2)+'% M.V.', hint:tea}
+  ], {columns:4, tone:'neutral'});
 
-  y = pdfSectionLabel(doc, y, 'Lectura rapida del escenario', 'Datos clave para explicar el resultado al estudiante.', 'accent');
+  y = pdfSectionLabel(doc, y, 'Resumen financiero', 'Pago inicial y credito educativo.', 'accent');
   y = pdfMetricCards(doc, y, [
-    {label:'Programa', value: d.progNombre || 'Programa'},
-    {label:'Porcentaje financiado', value: (d.pct||0) + '%'},
-    {label:'Aporte Garantisa', value: cop(d.garantisa), hint:'4.17% sobre el monto financiado'},
-    {label:'Total credito', value: cop(d.totCap + d.totInt)}
-  ], {columns:2, tone:'accent'});
+    {label:'Cuota inicial (contado)', value:cop(d.cuotaInicial)},
+    {label:'Garantisa', value:cop(d.garantisa), hint:'4.17% sobre el financiado'},
+    {label:'Total pago inicial', value:cop(d.pagoInicial)},
+    {label:'Valor financiado', value:cop(d.financiado)},
+    {label:'Total intereses', value:cop(d.totInt)},
+    {label:'Total del credito', value:cop(d.totCap+d.totInt)}
+  ], {columns:3, tone:'neutral'});
 
-  const activos = (d.beneficios||[]).filter(b => (b.val||0) > 0);
-  if(activos.length) {
-    y = pdfSectionLabel(doc, y, 'Beneficios y descuentos aplicados', 'Se descuenta primero la matricula y luego se calcula la financiacion.', 'info');
-    y = pdfMetricCards(doc, y, [
-      {label:'Matricula bruta', value: cop(d.mat)},
-      {label:'Total descuentos', value: '-' + cop(d.benefTotal || 0)},
-      {label:'Matricula neta', value: cop(d.matNeta || d.mat)},
-      {label:'Pago de contado', value: cop(d.cuotaInicial)}
-    ], {columns:2, tone:'info'});
-    y = pdfKV(doc, y, activos.map(b => [b.nombre || 'Descuento', '-' + cop(b.val)]));
-  } else {
-    y = pdfSectionLabel(doc, y, 'Base economica del caso', '', 'info');
-    y = pdfMetricCards(doc, y, [
-      {label:'Matricula base', value: cop(d.mat)},
-      {label:'Pago de contado', value: cop(d.cuotaInicial)},
-      {label:'Monto a financiar', value: cop(d.financiado)},
-      {label:'Aporte Garantisa', value: cop(d.garantisa)}
-    ], {columns:2, tone:'info'});
+  const activos=(d.beneficios||[]).filter(b=>(b.val||0)>0);
+  if(activos.length){
+    y = pdfCallout(doc,y,'Beneficios aplicados', activos.map(b=>`${b.nombre||'Descuento'}: -${cop(b.val)}`),'info');
   }
 
-  y = pdfSectionLabel(doc, y, 'Condiciones vigentes', 'Condiciones usadas para esta simulacion.', 'neutral');
-  y = pdfMetricCards(doc, y, [
-    {label:'Modalidad', value:'Credito a corto plazo'},
-    {label:'Plazo', value:`${d.n} cuotas mensuales`},
-    {label:'Tasa de interes', value:(d.tm*100).toFixed(2) + '% M.V.'},
-    {label:'Tasa equivalente', value:tea}
-  ], {columns:2, tone:'neutral'});
-
-  doc.addPage();
-  y = 22;
-  y = pdfSectionLabel(doc, y, 'Plan de pagos', `Detalle de las ${d.n} cuotas proyectadas.`, 'accent');
-  y = pdfTablaAmort(doc, y, d.rows, d.totCap, d.totInt, 'CRONOGRAMA DE PAGOS');
+  // Para plazos cortos, mantener el reporte en una sola pagina siempre que haya espacio.
+  const needed = 23 + (d.rows.length * 6.2);
+  if(y + needed > 275){ doc.addPage(); y=22; }
+  y = pdfSectionLabel(doc, y, 'Detalle del credito', 'Cronograma de pagos proyectado.', 'neutral');
+  y = pdfTablaAmort(doc, y, d.rows, d.totCap, d.totInt, 'PLAN DE PAGOS');
   pdfPie(doc);
-  doc.save(safePDF('Credito Corto Plazo - ' + (d.progNombre||'Simulacion')) + '.pdf');
-  toast('PDF descargado', 'success');
+  doc.save(safePDF('Credito Corto Plazo - '+(d.progNombre||'Simulacion'))+'.pdf');
+  toast('PDF descargado','success');
 }
 
 function expXLS1(){
@@ -484,74 +464,47 @@ function expXLS1(){
 function expPDF2(){
   if(!SimuladorOFE.state.results.mixed) return toast('Primero realiza el calculo','warning');
   const d = SimuladorOFE.state.results.mixed;
-  const {jsPDF} = window.jspdf;
-  const doc = new jsPDF();
-  const semLP  = d.nLP || 8;
-  const nPagoLP = (d.LP && d.LP.nPago) || Math.round(semLP * 6 * 1.5);
-  const tea = ((Math.pow(1 + d.tm, 12) - 1) * 100).toFixed(2) + '% E.A.';
-  const totCP = d.CP ? (d.CP.totCap + d.CP.totInt) : 0;
-  const totLP = d.LP ? (d.LP.capital || d.finLP || 0) : 0;
-  const costoConocido = d.pagoInicial + totCP + totLP;
-  let y = pdfHeader(doc, 'Simulacion de Credito', 'Credito Mixto Corto y Largo Plazo - ' + (d.progNombre||''));
+  const {jsPDF}=window.jspdf; const doc=new jsPDF();
+  const tea=((Math.pow(1+d.tm,12)-1)*100).toFixed(2)+'% E.A.';
+  const totCP=d.CP?(d.CP.totCap+d.CP.totInt):0;
+  const nPagoLP=(d.LP&&d.LP.nPago)||Math.round((d.nLP||8)*6*1.5);
+  let y=pdfHeader(doc,'Credito Corto y Largo Plazo','Programa simulado: '+(d.progNombre||'Programa'));
 
-  y = pdfHeroBand(doc, y, {
-    eyebrow: 'Credito mixto',
-    label: d.CP ? 'Cuota mensual estimada del tramo corto plazo' : 'Capital proyectado del tramo largo plazo',
-    value: d.CP ? cop(d.CP.cuota) : cop(totLP),
-    meta: `CP ${d.pCP || 0}% · LP ${d.pLP || 0}% · ${(d.tm*100).toFixed(2)}% M.V. · ${tea}`,
-    note: 'El tramo de largo plazo se resume como capital proyectado. Su cuota definitiva se conocerá cuando inicie la amortizacion.',
-    tone: 'success'
+  y=pdfHeroBand(doc,y,{
+    label:d.CP?'Cuota estimada de corto plazo':'Capital de largo plazo',
+    value:d.CP?cop(d.CP.cuota):cop(d.finLP||0),
+    meta:`CP ${d.pCP||0}% · LP ${d.pLP||0}% · ${(d.tm*100).toFixed(2)}% M.V. · ${tea}`,
+    note:'La cuota del largo plazo se definira con la tasa vigente cuando inicie su amortizacion.', tone:'accent'
   });
-  y = pdfMetricCards(doc, y, [
-    {label:'Pago inicial', value: cop(d.pagoInicial)},
-    {label:'Monto CP', value: cop(d.finCP || 0)},
-    {label:'Capital LP', value: cop(d.finLP || 0)},
-    {label:'Costo conocido hoy', value: cop(costoConocido)}
-  ], {columns:4, tone:'success'});
+  y=pdfMetricCards(doc,y,[
+    {label:'Programa academico',value:d.progNombre||'Programa',valueSize:10.5},
+    {label:'Matricula neta',value:cop(d.matNeta||d.mat)},
+    {label:'Financiacion CP',value:cop(d.finCP||0)},
+    {label:'Financiacion LP',value:cop(d.finLP||0)}
+  ],{columns:4,tone:'neutral'});
 
-  const activos = (d.beneficios||[]).filter(b => (b.val||0) > 0);
-  y = pdfSectionLabel(doc, y, 'Estructura de la operacion', 'Resume como se distribuye la matricula entre contado, CP y LP.', 'accent');
-  y = pdfMetricCards(doc, y, [
-    {label:'Programa', value: d.progNombre || 'Programa'},
-    {label:'Matricula neta', value: cop(d.matNeta || d.mat)},
-    {label:'Pago de contado', value: cop(d.cuotaInicial)},
-    {label:'Financiacion total', value: cop((d.finCP||0) + (d.finLP||0))}
-  ], {columns:2, tone:'accent'});
-  if(activos.length) y = pdfKV(doc, y, activos.map(b => [b.nombre || 'Descuento', '-' + cop(b.val)]));
+  y=pdfSectionLabel(doc,y,'Pago inicial','Conceptos que se cubren al momento del desembolso.','accent');
+  y=pdfMetricCards(doc,y,[
+    {label:'Pago de contado',value:cop(d.cuotaInicial)},
+    d.garCP>0?{label:'Garantisa CP',value:cop(d.garCP),hint:'4.17%'}:null,
+    d.garLP>0?{label:'Garantisa LP',value:cop(d.garLP),hint:'2.86%'}:null,
+    {label:'Total pago inicial',value:cop(d.pagoInicial)}
+  ],{columns:4,tone:'neutral'});
 
-  y = pdfSectionLabel(doc, y, 'Pago al desembolso', 'Conceptos que el estudiante debe cubrir hoy.', 'warning');
-  y = pdfMetricCards(doc, y, [
-    {label:'Contado', value: cop(d.cuotaInicial)},
-    d.garCP > 0 ? {label:'Garantisa CP', value: cop(d.garCP), hint:'4.17% sobre el tramo CP'} : null,
-    d.garLP > 0 ? {label:'Garantisa LP', value: cop(d.garLP), hint:'2.86% sobre el tramo LP'} : null,
-    {label:'Total a pagar hoy', value: cop(d.pagoInicial)}
-  ], {columns:2, tone:'warning'});
+  y=pdfSectionLabel(doc,y,'Estructura del credito','Lectura separada de ambos tramos.','neutral');
+  y=pdfMetricCards(doc,y,[
+    d.CP?{label:'Corto plazo · monto',value:cop(d.finCP),hint:`${d.nCP||0} cuotas`}:null,
+    d.CP?{label:'Corto plazo · total',value:cop(totCP),hint:`Intereses ${cop(d.CP.totInt)}`}:null,
+    d.LP?{label:'Largo plazo · capital',value:cop(d.finLP),hint:`Plazo estimado ${nPagoLP} meses`}:null,
+    d.LP?{label:'Periodo de gracia',value:'12 meses',hint:'Posterior al grado'}:null
+  ],{columns:2,tone:'neutral'});
+  if(d.LP) y=pdfCallout(doc,y,'Condicion del largo plazo','La tasa y la cuota definitiva del tramo LP se determinan al momento de iniciar la amortizacion.','warning');
 
-  y = pdfSectionLabel(doc, y, 'Desglose de la financiacion', 'El tramo CP tiene cuota estimable hoy; el tramo LP se expresa como capital futuro.', 'info');
-  y = pdfMetricCards(doc, y, [
-    d.CP ? {label:'Monto CP', value: cop(d.finCP), hint:`${d.nCP || 0} cuotas mensuales`} : null,
-    d.CP ? {label:'Total CP', value: cop(totCP), hint:`Incluye ${cop(d.CP.totInt)} en intereses`} : null,
-    d.LP ? {label:'Capital LP', value: cop(d.finLP), hint:`Amortizacion estimada en ${nPagoLP} cuotas`} : null,
-    d.LP ? {label:'Periodo de gracia', value:'12 meses', hint:'Despues de graduarse'} : null
-  ], {columns:2, tone:'info'});
-
-  if(d.LP) {
-    y = pdfCallout(doc, y, 'Importante sobre el largo plazo', [
-      'La tasa del tramo LP sera la vigente cuando inicie su amortizacion.',
-      `Se proyecta un plazo de pago de ${nPagoLP} cuotas, luego de un periodo de gracia de 12 meses.`
-    ], 'success');
-  }
-
-  if(d.CP) {
-    doc.addPage();
-    y = 22;
-    y = pdfSectionLabel(doc, y, 'Plan de pagos del corto plazo', `Cronograma del tramo CP (${d.nCP || 0} cuotas).`, 'accent');
-    y = pdfTablaAmort(doc, y, d.CP.rows, d.CP.totCap, d.CP.totInt, 'CRONOGRAMA CORTO PLAZO');
-  }
-  y = pdfProyeccionLP(doc, y, SimuladorOFE.state.results.projectionLP, 'Matricula');
+  if(d.CP){ doc.addPage(); y=22; y=pdfSectionLabel(doc,y,'Plan de pagos · corto plazo',`Detalle de ${d.nCP||0} cuotas.`,'accent'); y=pdfTablaAmort(doc,y,d.CP.rows,d.CP.totCap,d.CP.totInt,'PLAN DE PAGOS CP'); }
+  y=pdfProyeccionLP(doc,y,SimuladorOFE.state.results.projectionLP,'Matricula');
   pdfPie(doc);
-  doc.save(safePDF('Credito Mixto - ' + (d.progNombre||'Simulacion')) + '.pdf');
-  toast('PDF descargado', 'success');
+  doc.save(safePDF('Credito Mixto - '+(d.progNombre||'Simulacion'))+'.pdf');
+  toast('PDF descargado','success');
 }
 
 function expXLS2(){
@@ -683,52 +636,31 @@ function calcular3(){
 
 function expPDF3(){
   if(!SimuladorOFE.state.results.bank) return toast('Primero realiza el calculo','warning');
-  const d = SimuladorOFE.state.results.bank;
-  const {jsPDF} = window.jspdf;
-  const doc = new jsPDF();
-  const tea = ((Math.pow(1 + d.tm, 12) - 1) * 100).toFixed(2) + '% E.A.';
-  let y = pdfHeader(doc, 'Simulacion de Credito', 'Credito Banco Aliado - ' + (d.progNombre||''));
-
-  y = pdfHeroBand(doc, y, {
-    eyebrow: 'Credito banco aliado',
-    label: 'Cuota mensual estimada',
-    value: cop(d.cuota),
-    meta: `${d.n} cuotas mensuales · ${(d.tm*100).toFixed(2)}% M.V. · ${tea}`,
-    note: d.cargos > 0 ? 'El pago inicial incorpora cargos adicionales del banco aliado.' : 'Escenario proyectado con las condiciones configuradas para el banco aliado.',
-    tone: 'info'
-  });
-  y = pdfMetricCards(doc, y, [
-    {label:'Monto financiado', value: cop(d.financiado)},
-    {label:'Pago inicial', value: cop(d.pagoInicial)},
-    {label:'Intereses del credito', value: cop(d.totInt)},
-    {label:'Costo total del semestre', value: cop(d.totalGeneral)}
-  ], {columns:4, tone:'info'});
-
-  const activos = (d.beneficios||[]).filter(b => (b.val||0) > 0);
-  y = pdfSectionLabel(doc, y, 'Resumen del caso', 'Lectura rapida de la base economica y del desembolso inicial.', 'accent');
-  y = pdfMetricCards(doc, y, [
-    {label:'Programa', value: d.progNombre || 'Programa'},
-    {label:'Matricula neta', value: cop(d.matNeta || d.mat)},
-    {label:'Pago de contado', value: cop(d.cuotaInicial)},
-    {label:'Otros cargos', value: cop(d.cargos || 0)}
-  ], {columns:2, tone:'accent'});
-  if(activos.length) y = pdfKV(doc, y, activos.map(b => [b.nombre || 'Descuento', '-' + cop(b.val)]));
-
-  y = pdfSectionLabel(doc, y, 'Credito resultante', 'El banco financia el saldo definido con el plazo y la tasa vigentes.', 'neutral');
-  y = pdfMetricCards(doc, y, [
-    {label:'Porcentaje financiado', value: (d.pct || 0) + '%'},
-    {label:'Total credito', value: cop(d.totCap + d.totInt)},
-    {label:'Tasa de interes', value:(d.tm*100).toFixed(2) + '% M.V.'},
-    {label:'Tasa equivalente', value:tea}
-  ], {columns:2, tone:'neutral'});
-
-  doc.addPage();
-  y = 22;
-  y = pdfSectionLabel(doc, y, 'Plan de pagos', `Detalle de las ${d.n} cuotas proyectadas.`, 'accent');
-  y = pdfTablaAmort(doc, y, d.rows, d.totCap, d.totInt, 'CRONOGRAMA DE PAGOS');
+  const d=SimuladorOFE.state.results.bank; const {jsPDF}=window.jspdf; const doc=new jsPDF();
+  const tea=((Math.pow(1+d.tm,12)-1)*100).toFixed(2)+'% E.A.';
+  let y=pdfHeader(doc,'Credito Banco Aliado','Programa simulado: '+(d.progNombre||'Programa'));
+  y=pdfHeroBand(doc,y,{label:'Cuota mensual estimada',value:cop(d.cuota),meta:`${d.n} cuotas · ${(d.tm*100).toFixed(2)}% M.V. · ${tea}`,note:'Resultado estimado con las condiciones configuradas para el banco aliado.',tone:'accent'});
+  y=pdfMetricCards(doc,y,[
+    {label:'Programa academico',value:d.progNombre||'Programa',valueSize:10.5},
+    {label:'Matricula neta',value:cop(d.matNeta||d.mat)},
+    {label:'Plazo',value:`${d.n} meses`},
+    {label:'Tasa',value:(d.tm*100).toFixed(2)+'% M.V.',hint:tea}
+  ],{columns:4,tone:'neutral'});
+  y=pdfSectionLabel(doc,y,'Resumen financiero','Pago inicial y credito resultante.','accent');
+  y=pdfMetricCards(doc,y,[
+    {label:'Pago de contado',value:cop(d.cuotaInicial)},
+    d.cargos>0?{label:'Otros cargos',value:cop(d.cargos)}:null,
+    {label:'Total pago inicial',value:cop(d.pagoInicial)},
+    {label:'Monto financiado',value:cop(d.financiado)},
+    {label:'Total intereses',value:cop(d.totInt)},
+    {label:'Total credito',value:cop(d.totCap+d.totInt)}
+  ],{columns:3,tone:'neutral'});
+  const need=23+d.rows.length*6.2; if(y+need>275){doc.addPage();y=22;}
+  y=pdfSectionLabel(doc,y,'Detalle del credito','Cronograma de pagos proyectado.','neutral');
+  y=pdfTablaAmort(doc,y,d.rows,d.totCap,d.totInt,'PLAN DE PAGOS');
   pdfPie(doc);
-  doc.save(safePDF('Credito Banco Aliado - ' + (d.progNombre||'Simulacion')) + '.pdf');
-  toast('PDF descargado', 'success');
+  doc.save(safePDF('Credito Banco Aliado - '+(d.progNombre||'Simulacion'))+'.pdf');
+  toast('PDF descargado','success');
 }
 
 function expXLS3(){

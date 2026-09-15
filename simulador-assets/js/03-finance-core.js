@@ -454,10 +454,10 @@ function calcular2(){
           {label:'Intereses CP',data:[Math.round(CP.totInt),0],backgroundColor:'var(--success)',borderRadius:6}
         ]},
         options:{responsive:true,maintainAspectRatio:false,
-          plugins:{legend:{display:true,position:'top',labels:{font:{family:'Inter',size:12},boxWidth:12,padding:16}},
+          plugins:{legend:{display:true,position:'top',labels:{font:{family:'Montserrat',size:12},boxWidth:12,padding:16}},
           tooltip:{callbacks:{label:c=>' '+cop(c.raw)}}},
-          scales:{x:{grid:{display:false},ticks:{font:{family:'Inter',size:12}}},
-            y:{ticks:{font:{family:'Inter',size:11},callback:v=>cop(v)}}}}
+          scales:{x:{grid:{display:false},ticks:{font:{family:'Montserrat',size:12}}},
+            y:{ticks:{font:{family:'Montserrat',size:11},callback:v=>cop(v)}}}}
       });
     },100);
   }
