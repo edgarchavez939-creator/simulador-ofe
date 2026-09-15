@@ -23,7 +23,7 @@
   Object.defineProperty(global, 'PROGRAMAS', {value: Object.freeze(readEmbeddedData('programas-data')), writable:false, configurable:false});
   Object.defineProperty(global, 'POSGRADOS', {value: Object.freeze(readEmbeddedData('posgrados-data')), writable:false, configurable:false});
 
-  app.version = 'UX-P2.4-PDF-FORMAL';
+  app.version = 'UX-P2.5-PDF-FORMAL-V3';
   app.config = Object.freeze({
     garantisaCP: 0.0417,
     garantisaLP: 0.0286,

@@ -480,71 +480,53 @@ function expPDFIdiomas(){
   const d=SimuladorOFE.state.results.languages;
   if(!d) return toast('Primero calcula el credito de idiomas','warning');
   const {jsPDF}=window.jspdf; const doc=new jsPDF();
-  const tea=((Math.pow(1+d.tm,12)-1)*100).toFixed(2)+'% E.A.';
-  const cuotaPrincipal=d.isMixto&&d.idCP?d.idCP.cuota:d.cuota;
+  const tea=((Math.pow(1+d.tm,12)-1)*100).toFixed(2)+'%';
   const rows=d.isMixto&&d.idCP?d.idCP.rows:d.rows;
   const tc=d.isMixto&&d.idCP?d.idCP.totCap:d.totCap;
   const ti=d.isMixto&&d.idCP?d.idCP.totInt:d.totInt;
-  let y=pdfHeader(doc,'Credito de Idiomas');
-
-  y=pdfContextBand(doc,y,
-    {label:'Programa academico',value:d.progNombre||'Programa',hint:'Programa asociado'},
-    {label:'Valor del programa de idiomas',value:cop(d.mat),hint:d.isMixto?'Esquema mixto':'Credito de corto plazo'}
-  );
-  y=pdfHeroSplit(doc,y,{
-    label:d.isMixto?'Cuota estimada del corto plazo':'Cuota mensual estimada',
-    value:cop(cuotaPrincipal),
-    meta:d.isMixto?`Esquema mixto | ${(d.tm*100).toFixed(2)}% M.V. (${tea})`:`${d.n} cuotas | ${(d.tm*100).toFixed(2)}% M.V. (${tea})`,
-    noteTitle:'Como leer este resultado?',
-    note:d.isMixto?'La cuota mostrada corresponde al tramo de corto plazo. El largo plazo se presenta como capital proyectado.':'Es el pago mensual estimado del credito de idiomas una vez realizado el pago inicial.'
-  });
-  y=pdfSectionTitle(doc,PDF.M,y,PDF.CW,'Resumen financiero');
-  y=pdfMetricRow(doc,y,[
-    {label:'Valor de idiomas',value:cop(d.mat),hint:'Base del escenario'},
-    {label:'Pago inicial total',value:cop(d.pagoInicial),hint:'Contado + Garantisa'},
-    {label:'Monto financiado',value:cop(d.financiado),hint:'Capital financiado'},
-    {label:'Costo total',value:cop(d.totalGeneral),hint:'Escenario completo'}
-  ]);
-  const gap=6,colW=(PDF.CW-gap)/2,yDetail=y;
-  const yA=pdfDetailTable(doc,PDF.M,yDetail,colW,'Detalle del pago inicial',[
-    ['Pago de contado',cop(d.cuotaInicial)],
-    d.isMixto&&d.garCP?['Garantisa CP',cop(d.garCP)]:null,
-    d.isMixto&&d.garLP?['Garantisa LP',cop(d.garLP)]:null,
-    !d.isMixto?['Garantisa (4.17%)',cop(d.garantisa)]:null,
-    ['Total pago inicial',cop(d.pagoInicial),'total']
-  ]);
-  const yB=pdfDetailTable(doc,PDF.M+colW+gap,yDetail,colW,'Detalle del credito',[
-    d.isMixto&&d.idCP?['Capital CP',cop(d.finCP||d.idCP.totCap)]:['Capital financiado',cop(d.financiado)],
-    d.isMixto&&d.idCP?['Intereses CP',cop(d.idCP.totInt)]:['Total intereses',cop(d.totInt)],
-    d.isMixto&&d.finLP?['Capital LP',cop(d.finLP)]:null,
-    ['Total conocido',cop(d.totalCredito||((tc||0)+(ti||0))),'total']
-  ]);
-  y=Math.max(yA,yB)+2;
-  const cond=[
-    ['Tasa M.V.',(d.tm*100).toFixed(2)+'%'],
-    ['Tasa E.A.',tea.replace(' E.A.','')],
-    ['Plazo CP',`${d.n} meses`],
-    d.isMixto?['Tipo de credito','Mixto CP / LP']:['Tipo de credito','Corto plazo']
-  ];
-  const notes=[
-    d.isMixto?'La cuota del tramo LP se definira con la tasa vigente al iniciar la amortizacion.':'La cuota corresponde al credito de idiomas configurado.',
-    'La simulacion es informativa y puede cambiar segun las condiciones vigentes.',
-    'Verifica la informacion antes de formalizar el credito.'
-  ];
-  if(rows&&rows.length<=6&&y<205){
-    const leftW=110,rightW=66,xR=PDF.M+leftW+6;
-    pdfPlanTable(doc,PDF.M,y,leftW,rows,tc,ti,'Plan de pagos estimado');
-    let yr=pdfConditionsBox(doc,xR,y,rightW,cond,'Condiciones del credito');
-    pdfNoteBox(doc,xR,yr,rightW,'Ten en cuenta',notes);
-  }else{
-    y=pdfConditionsBox(doc,PDF.M,y,PDF.CW,cond,'Condiciones del credito');
-    y=pdfNoteBox(doc,PDF.M,y,PDF.CW,'Ten en cuenta',notes);
-    if(rows&&rows.length){ doc.addPage(); pdfPlanTable(doc,PDF.M,22,PDF.CW,rows,tc,ti,d.isMixto?'Plan de pagos CP - Idiomas':'Plan de pagos estimado'); }
+  if(!d.isMixto){
+    pdfApprovedOnePageCredit(doc,{
+      title:'Credito de Idiomas',program:d.progNombre||'Programa',programHint:'Programa asociado',contextLabel:'Valor del programa de idiomas',contextValue:cop(d.mat),contextHint:'Credito de corto plazo',contextIcon:'money',
+      heroLabel:'Cuota mensual estimada',heroValue:cop(d.cuota),heroMeta:`${d.n} cuotas  |  ${(d.tm*100).toFixed(2)}% M.V.  (${tea} E.A.)`,
+      note:'Es el pago mensual estimado del credito de idiomas una vez realizado el pago inicial.',
+      metrics:[
+        {label:'Valor de idiomas',value:cop(d.mat),hint:'Base del escenario.',icon:'money'},
+        {label:'Pago inicial total',value:cop(d.pagoInicial),hint:'Contado + Garantisa.',icon:'shield'},
+        {label:'Monto financiado',value:cop(d.financiado),hint:'Capital financiado.',icon:'bars'},
+        {label:'Total intereses',value:cop(d.totInt),hint:'Costo financiero.',icon:'percent'}
+      ],
+      leftTitle:'Detalle del pago inicial',leftRows:[['Pago de contado',cop(d.cuotaInicial)],['Garantisa (4.17%)',cop(d.garantisa)],['Total pago inicial',cop(d.pagoInicial),'total']],
+      rightTitle:'Detalle del credito',rightRows:[['Capital financiado',cop(d.financiado)],['Total intereses',cop(d.totInt)],['Total del credito',cop(d.totalCredito),'total']],
+      rows,totCap:tc,totInt:ti,
+      conditions:[['Plazo',`${d.n} meses`],['Tasa de interes (M.V.)',(d.tm*100).toFixed(2)+'%'],['Tasa de interes (E.A.)',tea],['Sistema de amortizacion','Cuota fija'],['Tipo de credito','Idiomas'],['Periodicidad de pago','Mensual']],
+      notes:['La cuota corresponde al credito de idiomas configurado.','La simulacion es informativa y puede cambiar segun las condiciones vigentes.','Verifica la informacion antes de formalizar el credito.']
+    });
+  } else {
+    let y=pdfHeader(doc,'Credito de Idiomas - Corto y Largo Plazo');
+    y=pdfApprovedContext(doc,y,{label:'Programa academico',value:d.progNombre||'Programa',hint:'Programa asociado',icon:'program'},{label:'Distribucion financiada',value:`CP ${d.pctCP||0}% / LP ${d.pctLP||0}%`,hint:'Esquema mixto',icon:'bars'});
+    y=pdfApprovedHero(doc,y,{label:'Cuota estimada del corto plazo',value:cop(d.idCP?d.idCP.cuota:d.cuota),meta:`${d.n} cuotas CP  |  ${(d.tm*100).toFixed(2)}% M.V.  (${tea} E.A.)`,noteTitle:'Como leer este resultado?',note:'La cuota mostrada corresponde al tramo CP de idiomas. El tramo LP se presenta como capital y su cuota se define al iniciar amortizacion.'});
+    y=pdfApprovedSectionTitle(doc,PDF.M,y,'Resumen financiero');
+    y=pdfApprovedMetrics(doc,y,[
+      {label:'Valor de idiomas',value:cop(d.mat),hint:'Base del escenario.',icon:'money'},
+      {label:'Pago inicial total',value:cop(d.pagoInicial),hint:'Contado + Garantisa.',icon:'shield'},
+      {label:'Financiacion CP',value:cop(d.finCP||0),hint:`${d.n} cuotas`,icon:'bars'},
+      {label:'Capital LP',value:cop(d.finLP||0),hint:`${d.mesesLP||0} meses estimados`,icon:'percent'}
+    ]);
+    const gap=6,colW=(PDF.CW-gap)/2,ya=pdfApprovedDetailTable(doc,PDF.M,y,colW,'Detalle del pago inicial',[
+      ['Pago de contado',cop(d.cuotaInicial)],d.garCP?['Garantisa CP',cop(d.garCP)]:null,d.garLP?['Garantisa LP',cop(d.garLP)]:null,['Total pago inicial',cop(d.pagoInicial),'total']
+    ]),yb=pdfApprovedDetailTable(doc,PDF.M+colW+gap,y,colW,'Detalle de la financiacion',[
+      ['Capital CP',cop(d.finCP||0)],['Intereses CP',cop(d.idCP?d.idCP.totInt:0)],['Capital LP',cop(d.finLP||0)],['Total conocido',cop(d.totalCredito),'total']
+    ]);
+    y=Math.max(ya,yb)+2;
+    const leftW=112,rightW=64,xR=PDF.M+leftW+6;
+    if(rows&&rows.length<=8){
+      pdfApprovedPlanCompact(doc,PDF.M,y,leftW,rows,tc,ti,'Plan de pagos CP - Idiomas');
+      let yr=pdfApprovedConditionsCompact(doc,xR,y,rightW,[['Tasa CP M.V.',(d.tm*100).toFixed(2)+'%'],['Tasa CP E.A.',tea],['Plazo CP',`${d.n} meses`],['Capital LP',cop(d.finLP||0)],['Plazo LP',`${d.mesesLP||0} meses`],['Gracia LP','12 meses']]);
+      pdfApprovedNotesCompact(doc,xR,yr,rightW,['La cuota LP se definira con la tasa vigente al iniciar amortizacion.','El capital LP no incluye intereses futuros.','La simulacion es informativa.']);
+    }else if(rows&&rows.length){doc.addPage();let yp=pdfHeader(doc,'Detalle CP - Idiomas','Plan de pagos del tramo de corto plazo.');pdfPlanTable(doc,PDF.M,yp,PDF.CW,rows,tc,ti,'Plan de pagos CP - Idiomas');}
+    if(SimuladorOFE.state.results.projectionLanguagesLP){doc.addPage();pdfProyeccionLP(doc,20,SimuladorOFE.state.results.projectionLanguagesLP,'Idiomas');}
   }
-  y=pdfProyeccionLP(doc,250,SimuladorOFE.state.results.projectionLanguagesLP,'Idiomas');
-  pdfPie(doc);
-  doc.save(safePDF((d.progNombre||'Programa')+' - Idiomas')+'.pdf');
-  toast('PDF descargado','success');
+  pdfPie(doc);doc.save(safePDF((d.progNombre||'Programa')+' - Idiomas')+'.pdf');toast('PDF descargado','success');
 }
 
 function expXLSIdiomas(){

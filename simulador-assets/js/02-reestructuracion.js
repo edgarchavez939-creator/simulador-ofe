@@ -135,60 +135,24 @@ function expPDFRefi() {
   const d=SimuladorOFE.state.restructuring.current;
   if(!d) return toast('Primero calcula un escenario.','warning');
   const {jsPDF}=window.jspdf; const doc=new jsPDF();
-  const tea=((Math.pow(1+d.tm,12)-1)*100).toFixed(2)+'% E.A.';
-  let y=pdfHeader(doc,'Reestructuracion de Credito');
-  y=pdfContextBand(doc,y,
-    {label:'Escenario',value:d.label||'Reestructuracion',hint:'Escenario simulado'},
-    {label:'Saldo actual',value:cop(d.saldo),hint:'Base a reestructurar'}
-  );
-  y=pdfHeroSplit(doc,y,{
-    label:'Nueva cuota mensual estimada',value:cop(d.cuota),
-    meta:`${d.n} cuotas | ${(d.tm*100).toFixed(2)}% M.V. (${tea})`,
-    noteTitle:'Que significa este valor?',
-    note:'Es la cuota mensual estimada despues de aplicar las nuevas condiciones al saldo actual del credito.'
+  const tea=((Math.pow(1+d.tm,12)-1)*100).toFixed(2)+'%';
+  pdfApprovedOnePageCredit(doc,{
+    title:'Reestructuracion de Credito',program:d.label||'Escenario de reestructuracion',programHint:'Escenario simulado',contextLabel:'Saldo actual',contextValue:cop(d.saldo),contextHint:'Base a reestructurar',contextIcon:'money',
+    heroLabel:'Nueva cuota mensual estimada',heroValue:cop(d.cuota),heroMeta:`${d.n} cuotas  |  ${(d.tm*100).toFixed(2)}% M.V.  (${tea} E.A.)`,
+    note:'Es la cuota mensual estimada despues de aplicar las nuevas condiciones al saldo actual del credito.',
+    metrics:[
+      {label:'Saldo actual',value:cop(d.saldo),hint:'Antes de reestructurar.',icon:'money'},
+      {label:'Monto reestructurado',value:cop(d.principal),hint:'Saldo + costos aplicables.',icon:'document'},
+      {label:'Total intereses',value:cop(d.totInt),hint:'Costo financiero.',icon:'percent'},
+      {label:'Total a pagar',value:cop(d.totalGeneral),hint:'Nuevo escenario.',icon:'bars'}
+    ],
+    leftTitle:'Saldo a la fecha',leftRows:[['Capital pendiente',cop(d.capital)],d.intCorr>0?['Intereses corrientes',cop(d.intCorr)]:null,d.mora>0?['Mora / moratorios',cop(d.mora)]:null,['Saldo total',cop(d.saldo),'total']],
+    rightTitle:'Nuevas condiciones',rightRows:[d.costos>0?['Costos de reestructuracion',cop(d.costos)]:null,['Nuevo plazo',`${d.n} meses`],['Nueva tasa M.V.',(d.tm*100).toFixed(2)+'%'],['Nueva cuota',cop(d.cuota),'total']],
+    rows:d.rows,totCap:d.totCap,totInt:d.totInt,
+    conditions:[['Plazo',`${d.n} meses`],['Tasa de interes (M.V.)',(d.tm*100).toFixed(2)+'%'],['Tasa de interes (E.A.)',tea],['Sistema de amortizacion','Cuota fija'],d.ingreso>0?['Cuota / ingreso',((d.cuota/d.ingreso)*100).toFixed(1)+'%']:null,['Periodicidad de pago','Mensual']],
+    notes:['El resultado parte del saldo y los conceptos ingresados en este escenario.','La simulacion es informativa y puede cambiar segun las condiciones vigentes.','Verifica la informacion antes de formalizar la reestructuracion.']
   });
-  y=pdfSectionTitle(doc,PDF.M,y,PDF.CW,'Resumen financiero');
-  y=pdfMetricRow(doc,y,[
-    {label:'Saldo actual',value:cop(d.saldo),hint:'Antes de reestructurar'},
-    {label:'Monto reestructurado',value:cop(d.principal),hint:'Saldo + costos aplicables'},
-    {label:'Total intereses',value:cop(d.totInt),hint:'Costo financiero'},
-    {label:'Total a pagar',value:cop(d.totalGeneral),hint:'Nuevo escenario'}
-  ]);
-  const gap=6,colW=(PDF.CW-gap)/2;
-  const ya=pdfDetailTable(doc,PDF.M,y,colW,'Saldo a la fecha',[
-    ['Capital pendiente',cop(d.capital)],
-    d.intCorr>0?['Intereses corrientes',cop(d.intCorr)]:null,
-    d.mora>0?['Mora / moratorios',cop(d.mora)]:null,
-    ['Saldo total',cop(d.saldo),'total']
-  ]);
-  const yb=pdfDetailTable(doc,PDF.M+colW+gap,y,colW,'Nuevas condiciones',[
-    d.costos>0?['Costos de reestructuracion',cop(d.costos)]:null,
-    ['Nuevo plazo',`${d.n} meses`],
-    ['Nueva tasa M.V.',(d.tm*100).toFixed(2)+'%'],
-    ['Nueva cuota',cop(d.cuota),'total']
-  ]);
-  y=Math.max(ya,yb)+2;
-  if(d.ingreso>0){
-    const pct=(d.cuota/d.ingreso)*100;
-    y=pdfNoteBox(doc,PDF.M,y,PDF.CW,'Capacidad de pago',[
-      `La nueva cuota representa ${pct.toFixed(1)}% del ingreso mensual declarado.`,
-      `Disponible estimado despues de pagar la cuota: ${cop(d.ingreso-d.cuota)}.`
-    ]);
-  }
-  const notes=['La simulacion es informativa y puede cambiar segun las condiciones vigentes.','El resultado parte del saldo y los conceptos ingresados en este escenario.','Verifica la informacion antes de formalizar la reestructuracion.'];
-  if((d.rows||[]).length<=6&&y<205){
-    const leftW=110,rightW=66,xR=PDF.M+leftW+6;
-    pdfPlanTable(doc,PDF.M,y,leftW,d.rows,d.totCap,d.totInt,'Plan de pagos estimado');
-    let yr=pdfConditionsBox(doc,xR,y,rightW,[['Plazo',`${d.n} meses`],['Tasa M.V.',(d.tm*100).toFixed(2)+'%'],['Tasa E.A.',tea.replace(' E.A.','')]],'Condiciones del credito');
-    pdfNoteBox(doc,xR,yr,rightW,'Ten en cuenta',notes);
-  }else{
-    y=pdfConditionsBox(doc,PDF.M,y,PDF.CW,[['Plazo',`${d.n} meses`],['Tasa M.V.',(d.tm*100).toFixed(2)+'%'],['Tasa E.A.',tea.replace(' E.A.','')]],'Condiciones del credito');
-    y=pdfNoteBox(doc,PDF.M,y,PDF.CW,'Ten en cuenta',notes);
-    doc.addPage(); pdfPlanTable(doc,PDF.M,22,PDF.CW,d.rows,d.totCap,d.totInt,'Plan de pagos estimado');
-  }
-  pdfPie(doc);
-  doc.save(safePDF('Reestructuracion de Credito - '+(d.label||'Escenario'))+'.pdf');
-  toast('PDF descargado','success');
+  pdfPie(doc);doc.save(safePDF('Reestructuracion de Credito - '+(d.label||'Escenario'))+'.pdf');toast('PDF descargado','success');
 }
 
 function expPDFRefiComp() {
