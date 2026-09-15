@@ -518,7 +518,7 @@ function expPDFIdiomas(){
       ['Capital CP',cop(d.finCP||0)],['Intereses CP',cop(d.idCP?d.idCP.totInt:0)],['Capital LP',cop(d.finLP||0)],['Total conocido',cop(d.totalCredito),'total']
     ]);
     y=Math.max(ya,yb)+2;
-    const leftW=112,rightW=64,xR=PDF.M+leftW+6;
+    const leftW=108,rightW=68,xR=PDF.M+leftW+6;
     if(rows&&rows.length<=8){
       pdfApprovedPlanCompact(doc,PDF.M,y,leftW,rows,tc,ti,'Plan de pagos CP - Idiomas');
       let yr=pdfApprovedConditionsCompact(doc,xR,y,rightW,[['Tasa CP M.V.',(d.tm*100).toFixed(2)+'%'],['Tasa CP E.A.',tea],['Plazo CP',`${d.n} meses`],['Capital LP',cop(d.finLP||0)],['Plazo LP',`${d.mesesLP||0} meses`],['Gracia LP','12 meses']]);
