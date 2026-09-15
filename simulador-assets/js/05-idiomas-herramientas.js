@@ -263,6 +263,11 @@ function calcularIdiomas() {
   let finCP, finLP, garCP, garLP, idCP, idLP, cuota, totInt, totCap, rows, totalCredito;
 
   if(isMixto) {
+    const porcentajeFinanciable = mat > 0 ? (financiado / mat) * 100 : 0;
+    const porcentajeDistribuido = pctCP + pctLP;
+    if(Math.abs(porcentajeDistribuido - porcentajeFinanciable) > 0.15) {
+      return showErr(`Distribuye todo el monto de idiomas a financiar: CP + LP debe sumar ${porcentajeFinanciable.toFixed(1)}%. Actualmente suma ${porcentajeDistribuido.toFixed(1)}%.`);
+    }
     // pctCP and pctLP are % of mat (valor idiomas total)
     finCP = mat * pctCP / 100;
     finLP = mat * pctLP / 100;
@@ -315,55 +320,94 @@ function calcularIdiomas() {
       SimuladorOFE.state.results.projectionLanguagesLP = null;
     }
 
+    const mainMix = SimuladorOFE.state.results.mixed;
+    const mainPagoInicial = mainMix?.pagoInicial || 0;
+    const mainCPTotal = mainMix?.CP ? (mainMix.CP.totCap + mainMix.CP.totInt) : 0;
+    const mainLPCapital = mainMix?.LP ? (mainMix.LP.capital || 0) : 0;
+    const mainCuotaCP = mainMix?.CP?.cuota || 0;
+    const combinedPagoInicial = mainPagoInicial + _pagoInicialId;
+    const combinedCuotaCP = mainCuotaCP + idCP.cuota;
+    const combinedCP = mainCPTotal + idCP.totCap + idCP.totInt;
+    const combinedLPCapital = mainLPCapital + finLP;
+    const totalConocido = combinedPagoInicial + combinedCP + combinedLPCapital;
+
     document.getElementById('res-idiomas').innerHTML = `
     <div class="section-divider-top">
       ${fechaBadgeHtml()}
-      <div class="section__title u-mt-5 u-mt-0 u-text-danger">${icon('credit-card')} Pago Inicial — Idiomas Mixto</div>
+      <div class="card-title">Resultado de financiación de idiomas</div>
+      ${resultHero({
+        eyebrow:'Idiomas · Crédito Mixto',
+        label:'Cuota mensual conocida (solo CP)',
+        value:cop(idCP.cuota),
+        meta:`CP ${pctCP.toFixed(1)}% · LP ${pctLP.toFixed(1)}% · ${(tm*100).toFixed(2)}% M.V.`,
+        tone:'success',
+        metrics:[
+          {label:'Pago inicial hoy',value:cop(_pagoInicialId)},
+          {label:'Financiación CP',value:cop(finCP)},
+          {label:'Capital LP',value:cop(finLP)},
+          {label:'Intereses conocidos (CP)',value:cop(idCP.totInt)}
+        ],
+        note:'La cuota mostrada corresponde únicamente al tramo CP de idiomas. El LP no tiene cuota ni intereses definitivos en esta simulación porque su tasa se conocerá cuando inicie la amortización.'
+      })}
+
+      <div class="result-clarity">
+        <div class="result-clarity__title">${icon('info')} Qué está definido y qué queda pendiente</div>
+        <div class="result-clarity__copy"><strong>Definido hoy:</strong> pago inicial, capital CP, cuota CP, intereses CP y capital LP. <strong>Pendiente:</strong> cuota e intereses del LP, que dependerán de la tasa vigente al iniciar la amortización.</div>
+      </div>
+
+      <div class="section__title u-mt-5 u-mt-0 u-text-danger">${icon('credit-card')} Pago inicial de Idiomas</div>
       <div class="kpi-grid">
-        <div class="kpi"><span class="kpi__label">Valor Idiomas</span><div class="kpi__value kpi__value--md">${cop(mat)}</div></div>
-        <div class="kpi"><span class="kpi__label">Financiado CP + LP</span><div class="kpi__value kpi__value--md">${cop(finCP+finLP)}</div></div>
-        <div class="kpi"><span class="kpi__label">Pago de Contado</span><div class="kpi__value kpi__value--md">${cop(cuotaInicial)}</div></div>
+        <div class="kpi"><span class="kpi__label">Pago de contado</span><div class="kpi__value kpi__value--md">${cop(cuotaInicial)}</div></div>
         <div class="kpi kpi--warning"><span class="kpi__label">${icon('shield')} Garantisa CP (4.17%)</span><div class="kpi__value kpi__value--md">${cop(garCP)}</div></div>
         <div class="kpi kpi--warning"><span class="kpi__label">${icon('shield')} Garantisa LP (2.86%)</span><div class="kpi__value kpi__value--md">${cop(garLP)}</div></div>
-        <div class="kpi kpi--warning u-col-span-all"><span class="kpi__label">Total Pago Inicial</span><div class="kpi__value kpi__value--md">${cop(_pagoInicialId)}</div></div>
+        <div class="kpi kpi--warning u-col-span-all"><span class="kpi__label">Total a pagar hoy</span><div class="kpi__value kpi__value--md">${cop(_pagoInicialId)}</div></div>
       </div>
 
-      <div class="tramo tramo--cp"><span>${icon('circle-dot')} CP Idiomas — ${pctCP.toFixed(1)}% | ${cop(finCP)} | ${n} meses (mientras estudia)</span></div>
+      <div class="tramo tramo--cp"><span>${icon('circle-dot')} Corto Plazo Idiomas — ${pctCP.toFixed(1)}% · ${cop(finCP)}</span></div>
       <div class="kpi-grid">
-        <div class="kpi kpi--success"><span class="kpi__label">Cuota Mensual CP</span><div class="kpi__value kpi__value--md">${cop(idCP.cuota)}</div></div>
+        <div class="kpi kpi--success"><span class="kpi__label">Cuota mensual CP</span><div class="kpi__value kpi__value--md">${cop(idCP.cuota)}</div></div>
         <div class="kpi"><span class="kpi__label">Intereses CP</span><div class="kpi__value kpi__value--md">${cop(idCP.totInt)}</div></div>
-        <div class="kpi u-col-span-all"><span class="kpi__label">Total Crédito CP Idiomas</span><div class="kpi__value kpi__value--md">${cop(idCP.totCap+idCP.totInt)}</div></div>
+        <div class="kpi"><span class="kpi__label">Plazo CP</span><div class="kpi__value kpi__value--md">${n} meses</div></div>
+        <div class="kpi"><span class="kpi__label">Total crédito CP</span><div class="kpi__value kpi__value--md">${cop(idCP.totCap+idCP.totInt)}</div></div>
       </div>
-      <div class="section__title u-mt-5">Tabla CP Idiomas (${n} meses)</div>
+      <div class="section__title u-mt-5">Plan de pagos CP Idiomas (${n} cuotas)</div>
       ${renderTabla(idCP.rows, idCP.cuota, idCP.totInt, idCP.totCap)}
 
-      <div class="tramo tramo--lp u-mt-16"><span>${icon('circle-dot')} LP Idiomas — ${pctLP.toFixed(1)}% | ${cop(finLP)}</span></div>
+      <div class="tramo tramo--lp u-mt-16"><span>${icon('circle-dot')} Largo Plazo Idiomas — ${pctLP.toFixed(1)}% · ${cop(finLP)}</span></div>
       <div class="kpi-grid">
-        <div class="kpi"><span class="kpi__label">Capital LP Idiomas</span><div class="kpi__value kpi__value--md">${cop(finLP)}</div></div>
-        <div class="kpi"><span class="kpi__label">Semestres Financiados</span><div class="kpi__value kpi__value--md">${semFinId} de ${semLPId}</div></div>
-        <div class="kpi"><span class="kpi__label">Período de Gracia</span><div class="kpi__value kpi__value--md">12 meses</div></div>
-        <div class="kpi"><span class="kpi__label">Plazo Estimado de Pago</span><div class="kpi__value kpi__value--md">${nLPpago} meses</div></div>
+        <div class="kpi"><span class="kpi__label">Capital LP</span><div class="kpi__value kpi__value--md">${cop(finLP)}</div></div>
+        <div class="kpi"><span class="kpi__label">Semestres financiados</span><div class="kpi__value kpi__value--md">${semFinId} de ${semLPId}</div></div>
+        <div class="kpi"><span class="kpi__label">Período de gracia</span><div class="kpi__value kpi__value--md">12 meses</div></div>
+        <div class="kpi"><span class="kpi__label">Plazo estimado de pago</span><div class="kpi__value kpi__value--md">${nLPpago} meses</div></div>
       </div>
       <div class="callout callout--success u-my-10">
-        <strong class="u-text-success u-block u-mb-6">${icon('info')} Crédito LP Idiomas — Tasa Futura</strong>
-        La cuota definitiva del crédito de largo plazo de idiomas no puede determinarse actualmente,
-        ya que la tasa de interés será la vigente al momento de iniciar la amortización.
-        Durante el período de gracia de un (1) año se causarán intereses conforme a las condiciones vigentes en esa fecha.<br><br>
-        <strong>Cronograma:</strong> ${icon('book-open')} ${semFinId*6} m. financiados | ${icon('clock')} 12 m. gracia | ${icon('credit-card')} ${nLPpago} m. amortización
+        <strong class="u-text-success u-block u-mb-6">${icon('info')} Largo Plazo de Idiomas: información disponible hoy</strong>
+        No se muestra una cuota LP porque la tasa se conocerá cuando empiece la amortización. El capital LP sí está definido; su cuota e intereses futuros no forman parte del total conocido actual.
       </div>
 
       ${_proyIdiomasHtml}
 
-      <div class="total-banner u-mt-16">
-        <div><div class="tl">Pago Inicial</div><div class="tv">${cop(_pagoInicialId)}</div><div class="ts">Contado + Garantisa</div></div>
-        <div class="total-banner__op" aria-hidden="true">+</div>
-        <div><div class="tl">Crédito CP (con intereses)</div><div class="tv">${cop(idCP.totCap+idCP.totInt)}</div></div>
-        <div class="total-banner__op" aria-hidden="true">+</div>
-        <div class="u-text-right"><div class="tl">Capital LP (sin intereses)</div><div class="tv">${cop(finLP)}</div><div class="ts">*tasa futura</div></div>
+      <div class="known-summary">
+        <div class="known-summary__head"><div class="known-summary__title">Resumen conocido de Idiomas</div><div class="known-summary__hint">No incluye intereses futuros del tramo LP.</div></div>
+        <div class="known-summary__grid">
+          <div class="known-summary__item"><span>Pago inicial hoy</span><strong>${cop(_pagoInicialId)}</strong></div>
+          <div class="known-summary__item"><span>Crédito CP conocido</span><strong>${cop(idCP.totCap+idCP.totInt)}</strong></div>
+          <div class="known-summary__item"><span>Capital LP pendiente de tasa</span><strong>${cop(finLP)}</strong></div>
+          <div class="known-summary__item known-summary__item--accent"><span>Total conocido hoy</span><strong>${cop(_totalGeneralId)}</strong></div>
+        </div>
       </div>
-      <div class="micro-note micro-note--success u-mt-6">
-        * El costo total definitivo del LP idiomas se determinará al iniciar amortización, según tasa vigente.
-      </div>
+
+      ${mainMix ? `<div class="highlight-panel u-mt-24">
+        <div class="eyebrow eyebrow--accent eyebrow--spaced u-mb-8">Vista combinada · Matrícula + Idiomas</div>
+        <div class="result-clarity__copy u-mb-12">La cuota combinada corresponde solo a los tramos CP. Los intereses futuros de ambos LP todavía no están incluidos.</div>
+        <div class="known-summary__grid">
+          <div class="known-summary__item"><span>Pago inicial combinado</span><strong>${cop(combinedPagoInicial)}</strong></div>
+          <div class="known-summary__item"><span>Cuota mensual CP combinada</span><strong>${cop(combinedCuotaCP)}</strong></div>
+          <div class="known-summary__item"><span>Capital LP combinado</span><strong>${cop(combinedLPCapital)}</strong></div>
+          <div class="known-summary__item known-summary__item--accent"><span>Total conocido hoy</span><strong>${cop(totalConocido)}</strong></div>
+        </div>
+        <div class="micro-note micro-note--success u-mt-8">* El total conocido hoy excluye los intereses futuros de los tramos LP de matrícula e idiomas.</div>
+      </div>` : ''}
 
       <div class="btn-row u-mt-16">
         <button class="btn btn--sm" data-action="pdf-idiomas">${icon('file-text')} PDF Idiomas</button>
@@ -412,13 +456,13 @@ function calcularIdiomas() {
   document.getElementById('res-idiomas').innerHTML = `
     <div class="section-divider-top">
       ${fechaBadgeHtml()}
-      <div class="section__title u-mt-5 u-mt-0 u-text-danger">${icon('credit-card')} Pago Inicial — Idiomas</div>
+      <div class="section__title u-mt-5 u-mt-0 u-text-danger">${icon('credit-card')} Pago inicial de Idiomas</div>
       <div class="kpi-grid">
         <div class="kpi"><span class="kpi__label">Cuota Inicial Contado</span><div class="kpi__value kpi__value--md">${cop(cuotaInicial)}</div></div>
         <div class="kpi kpi--warning"><span class="kpi__label">${icon('shield')} Garantisa (4.17%)</span><div class="kpi__value kpi__value--md">${cop(garantisa)}</div></div>
-        <div class="kpi kpi--warning u-col-span-all"><span class="kpi__label">Total Pago Inicial Idiomas</span><div class="kpi__value kpi__value--md">${cop(pagoInicial)}</div></div>
+        <div class="kpi kpi--warning u-col-span-all"><span class="kpi__label">Total a pagar hoy</span><div class="kpi__value kpi__value--md">${cop(pagoInicial)}</div></div>
       </div>
-      <div class="section__title u-mt-5">${icon('calendar')} Crédito Idiomas</div>
+      <div class="section__title u-mt-5">${icon('calendar')} Crédito de Idiomas</div>
       <div class="kpi-grid">
         <div class="kpi"><span class="kpi__label">Valor Idiomas</span><div class="kpi__value kpi__value--md">${cop(mat)}</div></div>
         <div class="kpi"><span class="kpi__label">Monto Financiado</span><div class="kpi__value kpi__value--md">${cop(financiado)}</div></div>
@@ -429,7 +473,7 @@ function calcularIdiomas() {
           <div class="kpi kpi--success"><span class="kpi__label">Cuota Mensual</span><div class="kpi__value kpi__value--md">${cop(cuota)}</div></div>
           <div class="kpi"><span class="kpi__label">Total Intereses</span><div class="kpi__value kpi__value--md">${cop(totInt)}</div></div>
         `}
-        <div class="kpi kpi--accent u-col-span-all"><span class="kpi__label">Total Crédito Idiomas</span><div class="kpi__value kpi__value--md">${cop(totalCredito)}</div></div>
+        <div class="kpi kpi--accent u-col-span-all"><span class="kpi__label">Total Crédito de Idiomas</span><div class="kpi__value kpi__value--md">${cop(totalCredito)}</div></div>
       </div>
 
       ${isMixto ? `
@@ -458,7 +502,7 @@ function calcularIdiomas() {
           <div class="total-banner__op" aria-hidden="true">+</div>
           <div><div class="tl">Costo Idiomas</div><div class="tv">${cop(totalGeneral)}</div></div>
           <div class="total-banner__op" aria-hidden="true">=</div>
-          <div class="u-text-right"><div class="tl">Costo Total Semestre</div><div class="tv">${cop(combinedPagoInicial+mainTotalCredito+totalCredito)}</div></div>
+          <div class="u-text-right"><div class="tl">Costo total conocido</div><div class="tv">${cop(combinedPagoInicial+mainTotalCredito+totalCredito)}</div></div>
         </div>
       </div>` : `
       <div class="callout callout--danger u-mt-16">
@@ -535,7 +579,7 @@ function expXLSIdiomas(){
   const filename = (d.progNombre+' - Idiomas '+pctLabel).replace(/[^a-zA-Z0-9\-_ áéíóúÁÉÍÓÚñÑ]/g,'').trim();
   const wb=XLSX.utils.book_new();
   const ws=XLSX.utils.aoa_to_sheet([
-    ['Crédito Idiomas — '+d.progNombre],[''],
+    ['Crédito de Idiomas — '+d.progNombre],[''],
     ['Valor Idiomas',Math.round(d.mat)],[''],
     ['--- PAGO INICIAL ---'],
     ['Cuota Inicial Contado',Math.round(d.cuotaInicial)],

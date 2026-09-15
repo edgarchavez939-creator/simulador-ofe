@@ -308,8 +308,13 @@ function calcular2(){
   if(!mat||mat<=0) return showAlert(2,'Ingresa el valor de matrícula.');
   if(finTotal<=0) return showAlert(2,'El monto financiado es cero. Revisa beneficios y pago de contado.');
   if(pCP+pLP<=0) return showAlert(2,'Define al menos un tramo (CP o LP).');
-  const totalPct2 = pCP + pLP + (mat>0?getTotalBeneficios(2)/mat*100:0) + (mat>0?cuotaInicial/mat*100:0);
-  if(pCP+pLP > mat > 0 ? (1-(getTotalBeneficios(2)/mat))*100 : 100) showAlert(2,icon('alert-triangle') + ' CP+LP supera el monto neto disponible para financiar.');
+  const benefPct2 = mat>0 ? getTotalBeneficios(2)/mat*100 : 0;
+  const contadoPct2 = mat>0 ? cuotaInicial/mat*100 : 0;
+  const disponiblePct2 = Math.max(0, 100 - benefPct2 - contadoPct2);
+  const splitPct2 = pCP + pLP;
+  if(Math.abs(splitPct2 - disponiblePct2) > 0.15) {
+    return showAlert(2, `Distribuye todo el saldo a financiar: CP + LP debe sumar ${disponiblePct2.toFixed(1)}%. Actualmente suma ${splitPct2.toFixed(1)}%.`);
+  }
   if(pCP>0&&(!nCP||nCP<=0)) return showAlert(2,'Ingresa el plazo para Corto Plazo.');
   if(pLP>0&&(!nLP||nLP<=0)) return showAlert(2,'Ingresa el plazo para Largo Plazo.');
 
@@ -345,19 +350,20 @@ function calcular2(){
 
   let html=`<div class="card">${fechaBadgeHtml()}<div class="card-title">Resultado de la simulación</div>
   ${resultHero({
-    eyebrow:'Corto y Largo Plazo',
-    label:CP?'Cuota estimada durante estudios':'Capital financiado a largo plazo',
+    eyebrow:'Crédito Mixto · Corto y Largo Plazo',
+    label:CP?'Cuota mensual conocida (solo CP)':'Capital proyectado a largo plazo',
     value:CP?cop(CP.cuota):cop(finLP),
     meta:`CP ${pCP}% · LP ${pLP}% · ${(tm*100).toFixed(2)}% M.V.`, tone:'success',
     metrics:[
-      {label:'Financiado total',value:cop(finCP+finLP)},
-      {label:'Pago inicial',value:cop(pagoInicial)},
-      {label:'Intereses CP',value:cop(CP?CP.totInt:0)},
-      {label:'Capital LP',value:cop(finLP)}
+      {label:'Pago inicial hoy',value:cop(pagoInicial)},
+      {label:'Financiación CP',value:cop(finCP)},
+      {label:'Capital LP',value:cop(finLP)},
+      {label:'Intereses conocidos (CP)',value:cop(CP?CP.totInt:0)}
     ],
-    note:LP?'La cuota y el costo definitivo del tramo LP dependerán de la tasa vigente al iniciar su amortización.':'El resultado corresponde al tramo de corto plazo configurado.'
+    note:LP?'La cuota mostrada corresponde únicamente al tramo CP. El tramo LP no tiene cuota ni costo final en esta simulación porque su tasa se definirá al iniciar la amortización.':'El resultado corresponde al tramo de corto plazo configurado.'
   })}
   ${resultActions(2,{canCompare:SimuladorOFE.state.comparison.scenarios[2].length>=2})}
+  ${LP?`<div class="result-clarity"><div class="result-clarity__title">${icon('info')} Cómo leer este resultado</div><div class="result-clarity__copy"><strong>La cuota mensual corresponde solo al Corto Plazo.</strong> Del Largo Plazo hoy conocemos el capital, la Garantisa, los semestres financiados y un plazo estimado; la cuota y los intereses se definirán con la tasa vigente cuando comience su amortización.</div></div>`:''}
   <div class="financial-details">`;
 
   // Bloque pago inicial
@@ -392,10 +398,8 @@ function calcular2(){
       <div class="kpi"><span class="kpi__label">Plazo Estimado de Pago</span><div class="kpi__value kpi__value--md">${LP.nPago} meses</div></div>
     </div>
     <div class="callout callout--success u-my-12">
-      <strong class="u-text-success u-block u-mb-6">${icon('info')} Información sobre el Crédito Largo Plazo</strong>
-      La cuota definitiva del crédito de largo plazo no puede determinarse actualmente, ya que la
-      tasa de interés será la vigente al momento de iniciar la amortización. Durante el período
-      de gracia de un (1) año se causarán intereses conforme a las condiciones vigentes en esa fecha.
+      <strong class="u-text-success u-block u-mb-6">${icon('info')} Largo Plazo: información disponible hoy</strong>
+      <strong>No se muestra una cuota LP</strong> porque la tasa se conocerá al iniciar la amortización. En esta simulación se presenta únicamente el capital LP, el período de gracia y el plazo estimado de pago. Durante la gracia podrán causarse intereses según las condiciones vigentes en ese momento.
       <br><br>
       <strong>Cronograma estimado:</strong><br>
       ${icon('book-open')} Semestres financiados: ${getSemFinanciados().financiados} (${getSemFinanciados().financiados*6} meses) · 
@@ -418,7 +422,7 @@ function calcular2(){
   }
 
   if(CP&&LP){
-    html+=`<div class="section__title u-mt-5 u-mt-24">Composición del financiamiento</div>
+    html+=`<div class="section__title u-mt-5 u-mt-24">Capital e intereses conocidos</div>
     <div class="financing-composition-chart u-mt-4">
       <canvas id="chMixto" role="img" aria-label="Composición del financiamiento: capital e intereses de corto plazo y capital de largo plazo">Gráfica de composición del financiamiento</canvas>
       <div class="financing-composition-chart__note">El tramo de largo plazo se muestra como <strong>capital proyectado</strong>. Sus intereses se determinarán cuando inicie la amortización, según la tasa vigente en ese momento.</div>
@@ -429,15 +433,15 @@ function calcular2(){
     <div><div class="tl">Pago Inicial</div><div class="tv">${cop(pagoInicial)}</div><div class="ts">Contado + Garantisa</div></div>
     <div class="total-banner__op" aria-hidden="true">+</div>
     <div>
-      <div class="tl">Crédito CP (con intereses)</div><div class="tv">${cop(totCP)}</div>
+      <div class="tl">Crédito CP conocido</div><div class="tv">${cop(totCP)}</div>
       <div class="ts">${CP?nCP+' cuotas':''}</div>
     </div>
     ${LP?`<div class="total-banner__op" aria-hidden="true">+</div>
-    <div><div class="tl">Capital LP (sin intereses)</div><div class="tv">${cop(totLP)}</div>
+    <div><div class="tl">Capital LP pendiente de tasa</div><div class="tv">${cop(totLP)}</div>
     <div class="ts">${LP.nPago} meses al graduarse</div></div>`:''}
   </div>
   ${LP?`<div class="micro-note micro-note--success u-mt-8">
-    * El costo total definitivo del crédito LP se determinará al momento de iniciar la amortización, según la tasa vigente.
+    * El total mostrado no incluye intereses futuros del LP. Su costo definitivo se conocerá cuando inicie la amortización.
   </div>`:''}
   </div></div>`;
 

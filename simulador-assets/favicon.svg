@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Simulador de Crédito Educativo">
+  <rect width="64" height="64" rx="14" fill="#960A11"/>
+  <path d="M45 0h19v19L45 0Z" fill="#B78B1E"/>
+  <path d="M12 27 32 17l20 10-20 10-20-10Z" fill="none" stroke="#fff" stroke-width="3.25" stroke-linejoin="round"/>
+  <path d="M19 31v9c6.5 5.4 19.5 5.4 26 0v-9" fill="none" stroke="#fff" stroke-width="3.25" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M52 27v13" fill="none" stroke="#fff" stroke-width="3.25" stroke-linecap="round"/>
+  <circle cx="52" cy="43" r="2.6" fill="#FFCC00"/>
+</svg>

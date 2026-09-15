@@ -2815,3 +2815,34 @@ table.tbl tfoot td { background: color-mix(in srgb, var(--uninorte-red) 6%, var(
   .financing-composition-chart { min-height: 235px; padding-inline: 12px; }
   .financing-composition-chart canvas { height: 195px !important; }
 }
+
+/* v3.5 — claridad Mixto + Idiomas */
+.result-clarity {
+  margin: 12px 0 18px;
+  padding: 13px 15px;
+  border: 1px solid var(--border-subtle);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--r-md);
+  background: color-mix(in srgb, var(--surface-featured) 82%, var(--surface-panel));
+}
+.result-clarity__title {
+  display: flex; align-items: center; gap: 7px;
+  margin-bottom: 5px; color: var(--text-heading);
+  font-size: 12px; font-weight: 750;
+}
+.result-clarity__copy { color: var(--text-body); font-size: 12px; line-height: 1.55; }
+.result-clarity__copy strong { color: var(--text-heading); }
+.known-summary {
+  margin-top: 14px; padding: 14px 16px; border-radius: var(--r-md);
+  border: 1px solid var(--border-default); background: var(--surface-panel);
+}
+.known-summary__head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:10px; }
+.known-summary__title { font-size:12px; font-weight:750; color:var(--text-heading); }
+.known-summary__hint { font-size:10.5px; color:var(--text-muted); line-height:1.45; max-width:520px; }
+.known-summary__grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
+.known-summary__item { padding:10px 11px; border-radius:10px; background:var(--surface-2); border:1px solid var(--border-subtle); }
+.known-summary__item span { display:block; color:var(--text-muted); font-size:10px; margin-bottom:4px; }
+.known-summary__item strong { display:block; color:var(--text-heading); font-size:14px; line-height:1.15; }
+.known-summary__item--accent { background:var(--accent-soft); border-color:color-mix(in srgb,var(--accent) 28%,var(--border-subtle)); }
+@media (max-width: 700px){ .known-summary__grid{grid-template-columns:1fr 1fr;} .known-summary__head{display:block;} .known-summary__hint{margin-top:4px;} }
+@media (max-width: 430px){ .known-summary__grid{grid-template-columns:1fr;} }
