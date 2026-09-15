@@ -365,7 +365,7 @@ function calcularIdiomas() {
 
       <div class="tramo tramo--cp"><span>${icon('circle-dot')} Corto Plazo Idiomas — ${pctCP.toFixed(1)}% · ${cop(finCP)}</span></div>
       <div class="kpi-grid">
-        <div class="kpi kpi--success"><span class="kpi__label">Cuota mensual CP</span><div class="kpi__value kpi__value--md">${cop(idCP.cuota)}</div></div>
+        <div class="kpi language-monthly-kpi"><span class="kpi__label">Cuota mensual CP</span><div class="kpi__value kpi__value--md">${cop(idCP.cuota)}</div></div>
         <div class="kpi"><span class="kpi__label">Intereses CP</span><div class="kpi__value kpi__value--md">${cop(idCP.totInt)}</div></div>
         <div class="kpi"><span class="kpi__label">Plazo CP</span><div class="kpi__value kpi__value--md">${n} meses</div></div>
         <div class="kpi"><span class="kpi__label">Total crédito CP</span><div class="kpi__value kpi__value--md">${cop(idCP.totCap+idCP.totInt)}</div></div>
@@ -463,14 +463,14 @@ function calcularIdiomas() {
         <div class="kpi kpi--warning u-col-span-all"><span class="kpi__label">Total a pagar hoy</span><div class="kpi__value kpi__value--md">${cop(pagoInicial)}</div></div>
       </div>
       <div class="section__title u-mt-5">${icon('calendar')} Crédito de Idiomas</div>
-      <div class="kpi-grid">
+      <div class="kpi-grid language-credit-grid">
         <div class="kpi"><span class="kpi__label">Valor Idiomas</span><div class="kpi__value kpi__value--md">${cop(mat)}</div></div>
         <div class="kpi"><span class="kpi__label">Monto Financiado</span><div class="kpi__value kpi__value--md">${cop(financiado)}</div></div>
         ${isMixto ? `
           <div class="kpi"><span class="kpi__label"> Cuota Mensual CP</span><div class="kpi__value kpi__value--md">${cop(idCP.cuota)}</div></div>
           <div class="kpi"><span class="kpi__label"> Cuota Mensual LP</span><div class="kpi__value kpi__value--md">${cop(idLP.cuota)}</div></div>
         ` : `
-          <div class="kpi kpi--success"><span class="kpi__label">Cuota Mensual</span><div class="kpi__value kpi__value--md">${cop(cuota)}</div></div>
+          <div class="kpi language-monthly-kpi"><span class="kpi__label">Cuota mensual</span><div class="kpi__value kpi__value--md">${cop(cuota)}</div></div>
           <div class="kpi"><span class="kpi__label">Total Intereses</span><div class="kpi__value kpi__value--md">${cop(totInt)}</div></div>
         `}
         <div class="kpi kpi--accent u-col-span-all"><span class="kpi__label">Total Crédito de Idiomas</span><div class="kpi__value kpi__value--md">${cop(totalCredito)}</div></div>
@@ -494,7 +494,7 @@ function calcularIdiomas() {
           <div class="kpi"><span class="kpi__label">Pago Inicial (idiomas)</span><div class="kpi__value kpi__value--md">${cop(pagoInicial)}</div></div>
           <div class="kpi kpi--warning u-col-span-all"><span class="kpi__label">Total Pago Inicial Combinado</span><div class="kpi__value kpi__value--md">${cop(combinedPagoInicial)}</div></div>
           <div class="kpi"><span class="kpi__label">Cuota Mensual Pregrado</span><div class="kpi__value kpi__value--md">${cop(mainCuotaMensual)}</div></div>
-          <div class="kpi kpi--success"><span class="kpi__label">Cuota Mensual Idiomas</span><div class="kpi__value kpi__value--md">${cop(cuota)}</div></div>
+          <div class="kpi language-monthly-kpi"><span class="kpi__label">Cuota mensual Idiomas</span><div class="kpi__value kpi__value--md">${cop(cuota)}</div></div>
           <div class="kpi kpi--accent u-col-span-all"><span class="kpi__label">Cuota Mensual Total Combinada</span><div class="kpi__value kpi__value--md">${cop(mainCuotaMensual+cuota)}</div></div>
         </div>
         <div class="total-banner u-mt-14 u-mb-0">
