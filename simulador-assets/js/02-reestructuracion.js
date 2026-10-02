@@ -188,13 +188,13 @@ function expPDFRefiComp(){
 
 function limpiarRefi() {
   document.getElementById('refi-capital').value = '';
-  document.getElementById('refi-intcorr').value = 0;
-  document.getElementById('refi-mora').value = 0;
+  document.getElementById('refi-intcorr').value = '';
+  document.getElementById('refi-mora').value = '';
   document.getElementById('refi-saldo-total').textContent = '$ 0';
   document.getElementById('refi-cuotas-nva').value = 24;
   document.getElementById('refi-tasa-nva').value = 1.53;
-  document.getElementById('refi-costos').value = 0;
-  document.getElementById('refi-ingreso').value = 0;
+  document.getElementById('refi-costos').value = '';
+  document.getElementById('refi-ingreso').value = '';
   calcTaRefi('nva');
   reestructState.scenarios.splice(0, reestructState.scenarios.length);
   SimuladorOFE.state.restructuring.current = null;

@@ -355,9 +355,9 @@ function limpiarTab(tabId, confirmed = false) {
   if(mat){ mat.value=''; fmtLbl('mat'+tabId); }
   // Reset common fields
   const fields = {
-    1: [['cont1-pct','0'],['cont1-val',''],['plazo1','6'],['tasa1','1.53']],
-    2: [['cont2-pct','0'],['cont2-val',''],['pctCP','40'],['finvalCP',''],['pctLP','60'],['finvalLP',''],['plazoCP','6'],['plazoLP','9'],['tasa2','1.53']],
-    3: [['cont3-pct','0'],['cont3-val',''],['plazo3','12'],['tasa3','1.53'],['cargos3','0']]
+    1: [['cont1-pct',''],['cont1-val',''],['plazo1','6'],['tasa1','1.53']],
+    2: [['cont2-pct',''],['cont2-val',''],['pctCP','40'],['finvalCP',''],['pctLP','60'],['finvalLP',''],['plazoCP','6'],['plazoLP','9'],['tasa2','1.53']],
+    3: [['cont3-pct',''],['cont3-val',''],['plazo3','12'],['tasa3','1.53'],['cargos3','']]
   };
   (fields[tabId]||[]).forEach(([id,val]) => {
     const el = document.getElementById(id);
@@ -546,16 +546,16 @@ function duplicarHistorial(id) {
   if([1,2,3,7].includes(tab)) {
     setNivel(tab,'pregrado');
     selectProgramByName(tab,d.progNombre);
-    const mat=document.getElementById('mat'+tab); if(mat) mat.value=Math.round(d.mat||0);
+    const mat=document.getElementById('mat'+tab); if(mat) mat.value=(d.mat>0?Math.round(d.mat):'');
     if(SimuladorOFE.state.financing.benefits[tab] && Array.isArray(d.beneficios)) {
       SimuladorOFE.state.financing.benefits[tab]=d.beneficios.map((b,i)=>({id:Date.now()+i,nombre:b.nombre||'Descuento',val:b.val||0,pct:b.pct||0,modo:'valor'})); renderBeneficios(tab);
     }
   }
-  if(tab===1){ document.getElementById('cont1-val').value=Math.round(d.cuotaInicial||0); document.getElementById('plazo1').value=d.n||6; document.getElementById('tasa1').value=((d.tm||.0153)*100).toFixed(2); recalcAll(1); }
-  if(tab===2){ document.getElementById('cont2-val').value=Math.round(d.cuotaInicial||0); document.getElementById('pctCP').value=d.pCP||0; document.getElementById('pctLP').value=d.pLP||0; document.getElementById('plazoCP').value=d.nCP||6; document.getElementById('plazoLP').value=d.nLP||8; document.getElementById('tasa2').value=((d.tm||.0153)*100).toFixed(2); recalcAll(2); }
-  if(tab===3){ document.getElementById('cont3-val').value=Math.round(d.cuotaInicial||0); document.getElementById('plazo3').value=d.n||12; document.getElementById('tasa3').value=((d.tm||.0153)*100).toFixed(2); document.getElementById('cargos3').value=Math.round(d.cargos||0); recalcAll(3); }
-  if(tab===5){ document.getElementById('refi-capital').value=Math.round(d.capital||0); document.getElementById('refi-intcorr').value=Math.round(d.intCorr||0); document.getElementById('refi-mora').value=Math.round(d.mora||0); document.getElementById('refi-costos').value=Math.round(d.costos||0); document.getElementById('refi-ingreso').value=Math.round(d.ingreso||0); document.getElementById('refi-cuotas-nva').value=d.n||24; document.getElementById('refi-tasa-nva').value=((d.tm||.0153)*100).toFixed(2); sumarSaldoRefi(); calcTaRefi(); }
-  if(tab===7){ document.getElementById('cap7').value=Math.round(d.cap||0); document.getElementById('plazo7').value=d.n||6; document.getElementById('tasa7').value=((d.tm||.0153)*100).toFixed(2); recalc7(); }
+  if(tab===1){ document.getElementById('cont1-val').value=(d.cuotaInicial>0?Math.round(d.cuotaInicial):''); document.getElementById('plazo1').value=d.n||6; document.getElementById('tasa1').value=((d.tm||.0153)*100).toFixed(2); recalcAll(1); }
+  if(tab===2){ document.getElementById('cont2-val').value=(d.cuotaInicial>0?Math.round(d.cuotaInicial):''); document.getElementById('pctCP').value=(d.pCP>0?d.pCP:''); document.getElementById('pctLP').value=(d.pLP>0?d.pLP:''); document.getElementById('plazoCP').value=d.nCP||6; document.getElementById('plazoLP').value=d.nLP||8; document.getElementById('tasa2').value=((d.tm||.0153)*100).toFixed(2); recalcAll(2); }
+  if(tab===3){ document.getElementById('cont3-val').value=(d.cuotaInicial>0?Math.round(d.cuotaInicial):''); document.getElementById('plazo3').value=d.n||12; document.getElementById('tasa3').value=((d.tm||.0153)*100).toFixed(2); document.getElementById('cargos3').value=(d.cargos>0?Math.round(d.cargos):''); recalcAll(3); }
+  if(tab===5){ document.getElementById('refi-capital').value=(d.capital>0?Math.round(d.capital):''); document.getElementById('refi-intcorr').value=(d.intCorr>0?Math.round(d.intCorr):''); document.getElementById('refi-mora').value=(d.mora>0?Math.round(d.mora):''); document.getElementById('refi-costos').value=(d.costos>0?Math.round(d.costos):''); document.getElementById('refi-ingreso').value=(d.ingreso>0?Math.round(d.ingreso):''); document.getElementById('refi-cuotas-nva').value=d.n||24; document.getElementById('refi-tasa-nva').value=((d.tm||.0153)*100).toFixed(2); sumarSaldoRefi(); calcTaRefi(); }
+  if(tab===7){ document.getElementById('cap7').value=(d.cap>0?Math.round(d.cap):''); document.getElementById('plazo7').value=d.n||6; document.getElementById('tasa7').value=((d.tm||.0153)*100).toFixed(2); recalc7(); }
   toast('Simulación duplicada. Puedes ajustar los datos y volver a calcular.','success');
 }
 

@@ -187,7 +187,7 @@ function abrirIdiomas(tabId) {
         pct: b.pct, val: Math.round(valorIdiomas * b.pct / 100)});
     });
   } else {
-    document.getElementById('id-cont-pct').value = 0;
+    document.getElementById('id-cont-pct').value = '';
     document.getElementById('id-cont-val').value = '';
   }
 

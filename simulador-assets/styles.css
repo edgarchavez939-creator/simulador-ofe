@@ -3170,3 +3170,14 @@ table.tbl tfoot td { background: color-mix(in srgb, var(--uninorte-red) 6%, var(
   .guarantee-info { grid-template-columns: 34px minmax(0,1fr); }
   .guarantee-info__icon { width: 32px; height: 32px; }
 }
+
+
+/* v3.11 — Empty numeric fields use shaded zero placeholders */
+.input[type="number"]::placeholder {
+  color: color-mix(in srgb, var(--text-muted) 58%, transparent);
+  opacity: 1;
+  font-weight: 500;
+}
+[data-theme="dark"] .input[type="number"]::placeholder {
+  color: color-mix(in srgb, var(--text-muted) 68%, transparent);
+}

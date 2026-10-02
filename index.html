@@ -14,7 +14,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<link href="./simulador-assets/styles.css?v=uninorte-ui-3-10" rel="stylesheet"/>
+<link href="./simulador-assets/styles.css?v=uninorte-ui-3-12-pdf-aptos" rel="stylesheet"/>
 </head>
 <body>
 <a class="skip-link" href="#main-content">Saltar al contenido principal</a>
@@ -459,7 +459,7 @@
 </div>
 <div class="field">
 <label class="field__label">Otros Cargos Iniciales (opcional)</label>
-<div class="input-affix"><span class="input-affix__tag">$</span><input aria-label="Cargos adicionales" class="input" data-money-field="" id="cargos3" min="0" placeholder="0" step="1000" type="number" value="0"/></div>
+<div class="input-affix"><span class="input-affix__tag">$</span><input aria-label="Cargos adicionales" class="input" data-money-field="" id="cargos3" min="0" placeholder="0" step="1000" type="number"/></div>
 <div class="field__hint">Estudio de crédito, seguro, etc.</div>
 </div>
 <button class="idiomas-btn u-hide" data-action="abrir-idiomas" data-tab="3" id="btn-idiomas-3" type="button">
@@ -581,11 +581,11 @@
 </div>
 <div class="field u-mb-8">
 <label class="field__label">Intereses corrientes <span class="u-fs-10-muted">(causados no pagados)</span></label>
-<div class="input-affix u-border-info"><span class="input-affix__tag">$</span><input aria-label="Intereses corrientes pendientes" class="input" data-input-action="sumar-refi" data-money-field="" id="refi-intcorr" min="0" placeholder="0" step="1000" type="number" value="0"/></div>
+<div class="input-affix u-border-info"><span class="input-affix__tag">$</span><input aria-label="Intereses corrientes pendientes" class="input" data-input-action="sumar-refi" data-money-field="" id="refi-intcorr" min="0" placeholder="0" step="1000" type="number"/></div>
 </div>
 <div class="field u-mb-10">
 <label class="field__label">Mora / Intereses moratorios <span class="u-fs-10-muted">(si está vencido)</span></label>
-<div class="input-affix u-border-info"><span class="input-affix__tag">$</span><input aria-label="Intereses de mora" class="input" data-input-action="sumar-refi" data-money-field="" id="refi-mora" min="0" placeholder="0" step="1000" type="number" value="0"/></div>
+<div class="input-affix u-border-info"><span class="input-affix__tag">$</span><input aria-label="Intereses de mora" class="input" data-input-action="sumar-refi" data-money-field="" id="refi-mora" min="0" placeholder="0" step="1000" type="number"/></div>
 </div>
 <div class="kpi kpi--info u-mb-3"><div class="kpi__label">Saldo total a refinanciar</div><div class="kpi__value kpi__value--md" id="refi-saldo-total">$ 0</div>
 <span class="u-fs-18"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg></span>
@@ -606,12 +606,12 @@
 </div>
 <div class="field u-mb-10">
 <label class="field__label">Costos de reestructuración (opcional)</label>
-<div class="input-affix u-border-success"><span class="input-affix__tag">$</span><input aria-label="Costos adicionales de la reestructuración" class="input" data-money-field="" id="refi-costos" min="0" placeholder="0" step="1000" type="number" value="0"/></div>
+<div class="input-affix u-border-success"><span class="input-affix__tag">$</span><input aria-label="Costos adicionales de la reestructuración" class="input" data-money-field="" id="refi-costos" min="0" placeholder="0" step="1000" type="number"/></div>
 <div class="field__hint">Estudio, comisiones, seguros, etc.</div>
 </div>
 <div class="field u-mb-0">
 <label class="field__label">Ingreso mensual del estudiante <span class="u-fs-10-muted">(opcional — para capacidad de pago)</span></label>
-<div class="input-affix u-border-success"><span class="input-affix__tag">$</span><input aria-label="Ingreso mensual disponible" class="input" data-money-field="" id="refi-ingreso" min="0" placeholder="0" step="1000" type="number" value="0"/></div>
+<div class="input-affix u-border-success"><span class="input-affix__tag">$</span><input aria-label="Ingreso mensual disponible" class="input" data-money-field="" id="refi-ingreso" min="0" placeholder="0" step="1000" type="number"/></div>
 <div class="field__hint">Permite evaluar si la cuota es sostenible</div>
 </div>
 </div>
@@ -1780,16 +1780,17 @@
   ]
 ]/*%%POSGRADOS_END%%*/
 </script>
-<script src="./simulador-assets/js/00-runtime.js?v=uninorte-ui-3-10"></script>
-<script src="./simulador-assets/js/01-core-ui.js?v=uninorte-ui-3-10"></script>
-<script src="./simulador-assets/js/02-reestructuracion.js?v=uninorte-ui-3-10"></script>
-<script src="./simulador-assets/js/03-finance-core.js?v=uninorte-ui-3-10"></script>
-<script src="./simulador-assets/js/04-exports-pdf-excel.js?v=uninorte-ui-3-10"></script>
-<script src="./simulador-assets/js/05-idiomas-herramientas.js?v=uninorte-ui-3-10"></script>
-<script src="./simulador-assets/js/06-actions-history.js?v=uninorte-ui-3-10"></script>
-<script src="./simulador-assets/js/07-financing-engine.js?v=uninorte-ui-3-10"></script>
-<script src="./simulador-assets/js/08-updater.js?v=uninorte-ui-3-10"></script>
-<script src="./simulador-assets/js/09-bootstrap.js?v=uninorte-ui-3-10"></script>
+<script src="./simulador-assets/js/00-runtime.js?v=uninorte-ui-3-12-pdf-aptos"></script>
+<script src="./simulador-assets/js/01-core-ui.js?v=uninorte-ui-3-12-pdf-aptos"></script>
+<script src="./simulador-assets/js/02-reestructuracion.js?v=uninorte-ui-3-12-pdf-aptos"></script>
+<script src="./simulador-assets/js/03-finance-core.js?v=uninorte-ui-3-12-pdf-aptos"></script>
+<script src="./simulador-assets/js/04-exports-pdf-excel.js?v=uninorte-ui-3-12-pdf-aptos"></script>
+<script src="./simulador-assets/js/05-idiomas-herramientas.js?v=uninorte-ui-3-12-pdf-aptos"></script>
+<script src="./simulador-assets/js/06-actions-history.js?v=uninorte-ui-3-12-pdf-aptos"></script>
+<script src="./simulador-assets/js/07-financing-engine.js?v=uninorte-ui-3-12-pdf-aptos"></script>
+<script src="./simulador-assets/js/08-updater.js?v=uninorte-ui-3-12-pdf-aptos"></script>
+<script src="./simulador-assets/js/09-bootstrap.js?v=uninorte-ui-3-12-pdf-aptos"></script>
+<script src="./simulador-assets/js/10-pdf-aptos.js?v=uninorte-ui-3-12-pdf-aptos"></script>
 <!-- MODAL IDIOMAS -->
 <div aria-hidden="true" class="scrim" data-action="scrim-idiomas" hidden="" id="modal-idiomas">
 <div aria-describedby="modal-idiomas-desc" aria-labelledby="modal-idiomas-title" aria-modal="true" class="modal modal--wide" role="dialog" tabindex="-1">
@@ -1816,7 +1817,7 @@
 <div class="group__title"> Pago de Contado — Idiomas</div>
 <div class="dual">
 <div class="input-affix u-border-warning">
-<input aria-label="Porcentaje de pago de contado de idiomas" class="input" data-input-action="contado-id" data-modo="pct" id="id-cont-pct" max="100" min="0" placeholder="0" step="0.1" type="number" value="0"/><span class="input-affix__tag input-affix__tag--end">%</span>
+<input aria-label="Porcentaje de pago de contado de idiomas" class="input" data-input-action="contado-id" data-modo="pct" id="id-cont-pct" max="100" min="0" placeholder="0" step="0.1" type="number"/><span class="input-affix__tag input-affix__tag--end">%</span>
 </div>
 <div aria-hidden="true" class="dual__sep"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="m18 8 4 4-4 4M2 12h20M6 8l-4 4 4 4"></path></svg></div>
 <div class="input-affix u-border-warning"><span class="input-affix__tag">$</span><input aria-label="Valor del pago de contado de idiomas" class="input" data-input-action="contado-id" data-modo="val" data-money-field="" id="id-cont-val" min="0" placeholder="0" step="1000" type="number"/>

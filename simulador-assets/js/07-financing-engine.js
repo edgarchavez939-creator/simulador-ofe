@@ -45,7 +45,7 @@ function syncFinPctToVal(tabId) {
   const cpEl   = document.getElementById('cont'+tabId+'-pct');
   const cvEl   = document.getElementById('cont'+tabId+'-val');
   if(cvEl) cvEl.value = cont > 0 ? Math.round(cont) : '';
-  if(cpEl) cpEl.value = mat > 0 ? Math.round((cont/mat)*1000)/10 : '';
+  if(cpEl) cpEl.value = (mat > 0 && cont > 0) ? Math.round((cont/mat)*1000)/10 : '';
   recalcAll(tabId);
 }
 
@@ -58,7 +58,7 @@ function syncFinanciadoFromVal(tabId) {
   const cpEl   = document.getElementById('cont'+tabId+'-pct');
   const cvEl   = document.getElementById('cont'+tabId+'-val');
   if(cvEl) cvEl.value = cont > 0 ? Math.round(cont) : '';
-  if(cpEl) cpEl.value = mat > 0 ? Math.round((cont/mat)*1000)/10 : '';
+  if(cpEl) cpEl.value = (mat > 0 && cont > 0) ? Math.round((cont/mat)*1000)/10 : '';
   recalcAll(tabId);
 }
 // For Tab2 CP financed $ → update CP% based on total financiado
@@ -99,7 +99,7 @@ function recalcAll(tabId) {
   // Sync contado % from value
   const cPctEl = document.getElementById('cont'+tabId+'-pct');
   if(cPctEl && mat > 0 && document.activeElement !== cPctEl) {
-    cPctEl.value = mat > 0 ? Math.round((cont/mat)*1000)/10 : 0;
+    cPctEl.value = (mat > 0 && cont > 0) ? Math.round((cont/mat)*1000)/10 : '';
   }
 
   // Update breakdown panel
