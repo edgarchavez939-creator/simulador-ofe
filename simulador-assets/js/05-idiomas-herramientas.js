@@ -58,8 +58,8 @@ function renderBenefId() {
           </div>
         </div>
       </div>
-      <button class="btn btn--ghost btn--icon btn--sm" data-action="del-benef-idiomas" data-id="${b.id}"
-        aria-label="Eliminar beneficio">${icon('x')}</button>
+      <button class="btn btn--icon btn--sm benef-item__delete" data-action="del-benef-idiomas" data-id="${b.id}"
+        aria-label="Eliminar beneficio" title="Eliminar beneficio">${icon('x')}</button>
     </div>`).join('');
   const total = SimuladorOFE.state.languages.benefits.reduce((s,b)=>s+(parseFloat(b.val)||0),0);
   const mat   = SimuladorOFE.state.languages.context.valorIdiomas||0;
@@ -138,7 +138,7 @@ function abrirIdiomas(tabId) {
 
   if(tabId === 1) {
     // Inherit tasa, meses, contado, beneficios from Tab1
-    const tasa1 = parseFloat(document.getElementById('tasa1').value)||1.5;
+    const tasa1 = parseFloat(document.getElementById('tasa1').value)||1.53;
     const meses1 = parseInt(document.getElementById('plazo1').value)||6;
     document.getElementById('id-tasa').value = tasa1.toFixed(2);
     document.getElementById('id-meses').value = meses1;
@@ -154,7 +154,7 @@ function abrirIdiomas(tabId) {
 
   } else if(tabId === 2) {
     // Tab2 Mixto: inherit tasa, CP meses, contado, beneficios
-    const tasa2 = parseFloat(document.getElementById('tasa2').value)||1.5;
+    const tasa2 = parseFloat(document.getElementById('tasa2').value)||1.53;
     const mesesCP = parseInt(document.getElementById('plazoCP').value)||6;
     document.getElementById('id-tasa').value  = tasa2.toFixed(2);
     document.getElementById('id-meses').value = mesesCP;
@@ -175,7 +175,7 @@ function abrirIdiomas(tabId) {
     SimuladorOFE.state.languages.context.mesesLP = Math.round(SimuladorOFE.state.languages.context.semLP * 6 * 1.5);  // auto-calculated payoff months
 
   } else if(tabId === 3) {
-    const tasa3 = parseFloat(document.getElementById('tasa3').value)||1.5;
+    const tasa3 = parseFloat(document.getElementById('tasa3').value)||1.53;
     const meses3 = parseInt(document.getElementById('plazo3').value)||12;
     document.getElementById('id-tasa').value  = tasa3.toFixed(2);
     document.getElementById('id-meses').value = meses3;
@@ -336,10 +336,10 @@ function calcularIdiomas() {
       ${fechaBadgeHtml()}
       <div class="card-title">Resultado de financiación de idiomas</div>
       ${resultHero({
-        eyebrow:'Idiomas · Crédito Mixto',
+        eyebrow:'Idiomas | Crédito Mixto',
         label:'Cuota mensual conocida (solo CP)',
         value:cop(idCP.cuota),
-        meta:`CP ${pctCP.toFixed(1)}% · LP ${pctLP.toFixed(1)}% · ${(tm*100).toFixed(2)}% M.V.`,
+        meta:`CP ${pctCP.toFixed(1)}% | LP ${pctLP.toFixed(1)}% | ${(tm*100).toFixed(2)}% M.V.`,
         tone:'success',
         metrics:[
           {label:'Pago inicial hoy',value:cop(_pagoInicialId)},
@@ -363,7 +363,7 @@ function calcularIdiomas() {
         <div class="kpi kpi--warning u-col-span-all"><span class="kpi__label">Total a pagar hoy</span><div class="kpi__value kpi__value--md">${cop(_pagoInicialId)}</div></div>
       </div>
 
-      <div class="tramo tramo--cp"><span>${icon('circle-dot')} Corto Plazo Idiomas — ${pctCP.toFixed(1)}% · ${cop(finCP)}</span></div>
+      <div class="tramo tramo--cp"><span>${icon('circle-dot')} Corto Plazo Idiomas — ${pctCP.toFixed(1)}% | ${cop(finCP)}</span></div>
       <div class="kpi-grid">
         <div class="kpi language-monthly-kpi"><span class="kpi__label">Cuota mensual CP</span><div class="kpi__value kpi__value--md">${cop(idCP.cuota)}</div></div>
         <div class="kpi"><span class="kpi__label">Intereses CP</span><div class="kpi__value kpi__value--md">${cop(idCP.totInt)}</div></div>
@@ -373,7 +373,7 @@ function calcularIdiomas() {
       <div class="section__title u-mt-5">Plan de pagos CP Idiomas (${n} cuotas)</div>
       ${renderTabla(idCP.rows, idCP.cuota, idCP.totInt, idCP.totCap)}
 
-      <div class="tramo tramo--lp u-mt-16"><span>${icon('circle-dot')} Largo Plazo Idiomas — ${pctLP.toFixed(1)}% · ${cop(finLP)}</span></div>
+      <div class="tramo tramo--lp u-mt-16"><span>${icon('circle-dot')} Largo Plazo Idiomas — ${pctLP.toFixed(1)}% | ${cop(finLP)}</span></div>
       <div class="kpi-grid">
         <div class="kpi"><span class="kpi__label">Capital LP</span><div class="kpi__value kpi__value--md">${cop(finLP)}</div></div>
         <div class="kpi"><span class="kpi__label">Semestres financiados</span><div class="kpi__value kpi__value--md">${semFinId} de ${semLPId}</div></div>
@@ -398,7 +398,7 @@ function calcularIdiomas() {
       </div>
 
       ${mainMix ? `<div class="highlight-panel u-mt-24">
-        <div class="eyebrow eyebrow--accent eyebrow--spaced u-mb-8">Vista combinada · Matrícula + Idiomas</div>
+        <div class="eyebrow eyebrow--accent eyebrow--spaced u-mb-8">Vista combinada | Matrícula + Idiomas</div>
         <div class="result-clarity__copy u-mb-12">La cuota combinada corresponde solo a los tramos CP. Los intereses futuros de ambos LP todavía no están incluidos.</div>
         <div class="known-summary__grid">
           <div class="known-summary__item"><span>Pago inicial combinado</span><strong>${cop(combinedPagoInicial)}</strong></div>
@@ -525,50 +525,44 @@ function expPDFIdiomas(){
   if(!d) return toast('Primero calcula el credito de idiomas','warning');
   const {jsPDF}=window.jspdf; const doc=new jsPDF();
   const tea=((Math.pow(1+d.tm,12)-1)*100).toFixed(2)+'%';
+  const level=SimuladorOFE.state.ui.levelByTab[SimuladorOFE.state.languages.context.tabId]==='posgrado'?'Posgrado':'Pregrado';
   const rows=d.isMixto&&d.idCP?d.idCP.rows:d.rows;
   const tc=d.isMixto&&d.idCP?d.idCP.totCap:d.totCap;
   const ti=d.isMixto&&d.idCP?d.idCP.totInt:d.totInt;
   if(!d.isMixto){
-    pdfApprovedOnePageCredit(doc,{
-      title:'Credito de Idiomas',program:d.progNombre||'Programa',programHint:'Programa asociado',contextLabel:'Valor del programa de idiomas',contextValue:cop(d.mat),contextHint:'Credito de corto plazo',contextIcon:'money',
-      heroLabel:'Cuota mensual estimada',heroValue:cop(d.cuota),heroMeta:`${d.n} cuotas  |  ${(d.tm*100).toFixed(2)}% M.V.  (${tea} E.A.)`,
-      note:'Es el pago mensual estimado del credito de idiomas una vez realizado el pago inicial.',
-      metrics:[
-        {label:'Valor de idiomas',value:cop(d.mat),hint:'Base del escenario.',icon:'banknote'},
-        {label:'Pago inicial total',value:cop(d.pagoInicial),hint:'Contado + Garantisa.',icon:'wallet'},
-        {label:'Monto financiado',value:cop(d.financiado),hint:'Capital financiado.',icon:'credit-card'},
-        {label:'Total intereses',value:cop(d.totInt),hint:'Costo financiero.',icon:'percent'}
+    pdfPremiumCreditReport(doc,{
+      type:'Credito de Idiomas',program:d.progNombre||'Programa',level,
+      heroLabel:'Cuota mensual estimada',heroValue:cop(d.cuota),heroMeta:`${d.n} cuotas | ${(d.tm*100).toFixed(2)}% M.V. | ${tea} E.A.`,
+      heroSide:[{label:'Monto financiado',value:cop(d.financiado)},{label:'Total intereses',value:cop(d.totInt)},{label:'Total del credito',value:cop(d.totalCredito),highlight:true}],
+      summary:[
+        {label:'Cuota inicial',value:cop(d.cuotaInicial)},
+        {label:'Plazo del credito',value:`${d.n} meses`},
+        {label:'Tasa de interes (EA)',value:tea},
+        {label:'Aporte a Garantisa',value:cop(d.garantisa),hint:'4.17% del financiado'}
       ],
-      leftTitle:'Detalle del pago inicial',leftRows:[['Pago de contado',cop(d.cuotaInicial)],['Garantisa (4.17%)',cop(d.garantisa)],['Total pago inicial',cop(d.pagoInicial),'total']],
-      rightTitle:'Detalle del credito',rightRows:[['Capital financiado',cop(d.financiado)],['Total intereses',cop(d.totInt)],['Total del credito',cop(d.totalCredito),'total']],
-      rows,totCap:tc,totInt:ti,
-      conditions:[['Plazo',`${d.n} meses`],['Tasa de interes (M.V.)',(d.tm*100).toFixed(2)+'%'],['Tasa de interes (E.A.)',tea],['Sistema de amortizacion','Cuota fija'],['Tipo de credito','Idiomas'],['Periodicidad de pago','Mensual']],
-      notes:['La cuota corresponde al credito de idiomas configurado.','La simulacion es informativa y puede cambiar segun las condiciones vigentes.','Verifica la informacion antes de formalizar el credito.']
+      conditionsLeft:[['Tipo de credito','Credito de idiomas'],['Tasa de interes (EA)',tea],['Plazo',`${d.n} meses`],['Cuota inicial',cop(d.cuotaInicial)]],
+      conditionsRight:[['Monto financiado',cop(d.financiado)],['Total intereses',cop(d.totInt)],['Total del credito',cop(d.totalCredito)],['Aporte a Garantisa',`${cop(d.garantisa)} (4.17%)`]],
+      rows,totCap:tc,totInt:ti,firstPageRows:5,
+      note:'Esta simulacion corresponde al credito de idiomas y es informativa. Los valores pueden variar segun las condiciones vigentes.'
     });
-  } else {
-    let y=pdfHeader(doc,'Credito de Idiomas - Corto y Largo Plazo');
-    y=pdfApprovedContext(doc,y,{label:'Programa academico',value:d.progNombre||'Programa',hint:'Programa asociado',icon:'graduation-cap'},{label:'Distribucion financiada',value:`CP ${d.pctCP||0}% / LP ${d.pctLP||0}%`,hint:'Esquema mixto',icon:'bar-chart'});
-    y=pdfApprovedHero(doc,y,{label:'Cuota estimada del corto plazo',value:cop(d.idCP?d.idCP.cuota:d.cuota),meta:`${d.n} cuotas CP  |  ${(d.tm*100).toFixed(2)}% M.V.  (${tea} E.A.)`,noteTitle:'Como leer este resultado?',note:'La cuota mostrada corresponde al tramo CP de idiomas. El tramo LP se presenta como capital y su cuota se define al iniciar amortizacion.'});
-    y=pdfApprovedSectionTitle(doc,PDF.M,y,'Resumen financiero');
-    y=pdfApprovedMetrics(doc,y,[
-      {label:'Valor de idiomas',value:cop(d.mat),hint:'Base del escenario.',icon:'banknote'},
-      {label:'Pago inicial total',value:cop(d.pagoInicial),hint:'Contado + Garantisa.',icon:'wallet'},
-      {label:'Financiacion CP',value:cop(d.finCP||0),hint:`${d.n} cuotas`,icon:'credit-card'},
-      {label:'Capital LP',value:cop(d.finLP||0),hint:`${d.mesesLP||0} meses estimados`,icon:'trending-up'}
-    ]);
-    const gap=6,colW=(PDF.CW-gap)/2,ya=pdfApprovedDetailTable(doc,PDF.M,y,colW,'Detalle del pago inicial',[
-      ['Pago de contado',cop(d.cuotaInicial)],d.garCP?['Garantisa CP',cop(d.garCP)]:null,d.garLP?['Garantisa LP',cop(d.garLP)]:null,['Total pago inicial',cop(d.pagoInicial),'total']
-    ]),yb=pdfApprovedDetailTable(doc,PDF.M+colW+gap,y,colW,'Detalle de la financiacion',[
-      ['Capital CP',cop(d.finCP||0)],['Intereses CP',cop(d.idCP?d.idCP.totInt:0)],['Capital LP',cop(d.finLP||0)],['Total conocido',cop(d.totalCredito),'total']
-    ]);
-    y=Math.max(ya,yb)+2;
-    const leftW=108,rightW=68,xR=PDF.M+leftW+6;
-    if(rows&&rows.length<=8){
-      pdfApprovedPlanCompact(doc,PDF.M,y,leftW,rows,tc,ti,'Plan de pagos CP - Idiomas');
-      let yr=pdfApprovedConditionsCompact(doc,xR,y,rightW,[['Tasa CP M.V.',(d.tm*100).toFixed(2)+'%'],['Tasa CP E.A.',tea],['Plazo CP',`${d.n} meses`],['Capital LP',cop(d.finLP||0)],['Plazo LP',`${d.mesesLP||0} meses`],['Gracia LP','12 meses']]);
-      pdfApprovedNotesCompact(doc,xR,yr,rightW,['La cuota LP se definira con la tasa vigente al iniciar amortizacion.','El capital LP no incluye intereses futuros.','La simulacion es informativa.']);
-    }else if(rows&&rows.length){doc.addPage();let yp=pdfHeader(doc,'Detalle CP - Idiomas','Plan de pagos del tramo de corto plazo.');pdfPlanTable(doc,PDF.M,yp,PDF.CW,rows,tc,ti,'Plan de pagos CP - Idiomas');}
-    if(SimuladorOFE.state.results.projectionLanguagesLP){doc.addPage();pdfProyeccionLP(doc,20,SimuladorOFE.state.results.projectionLanguagesLP,'Idiomas');}
+  }else{
+    const garTotal=(d.garCP||0)+(d.garLP||0), totalKnown=(d.idCP?d.idCP.totCap+d.idCP.totInt:0)+(d.finLP||0);
+    pdfPremiumCreditReport(doc,{
+      type:'Credito de Idiomas - Corto y Largo Plazo',program:d.progNombre||'Programa',level,
+      heroLabel:'Cuota mensual estimada CP',heroValue:cop(d.idCP?d.idCP.cuota:d.cuota),heroMeta:`${d.n} cuotas CP | ${(d.tm*100).toFixed(2)}% M.V. | ${tea} E.A.`,
+      heroSide:[{label:'Financiacion CP',value:cop(d.finCP||0)},{label:'Intereses conocidos CP',value:cop(d.idCP?d.idCP.totInt:0)},{label:'Capital LP',value:cop(d.finLP||0),highlight:true}],
+      summary:[
+        {label:'Pago inicial',value:cop(d.pagoInicial)},
+        {label:'Plazo CP',value:`${d.n} meses`},
+        {label:'Tasa CP (EA)',value:tea},
+        {label:'Aporte total Garantisa',value:cop(garTotal)}
+      ],
+      conditionsLeft:[['Tipo de credito','Idiomas corto y largo plazo'],['Tasa CP (EA)',tea],['Plazo CP',`${d.n} meses`],['Pago inicial',cop(d.pagoInicial)]],
+      conditionsRight:[['Financiacion CP',cop(d.finCP||0)],['Intereses CP',cop(d.idCP?d.idCP.totInt:0)],['Capital LP',cop(d.finLP||0)],['Aporte Garantisa',cop(garTotal)]],
+      rows,totCap:tc,totInt:ti,firstPageRows:5,planTitle:'Tabla de amortizacion CP - Idiomas',
+      note:'La cuota mostrada corresponde al tramo CP de idiomas. El capital LP no incluye intereses futuros porque su tasa se define al iniciar la amortizacion.'
+    });
+    if(SimuladorOFE.state.results.projectionLanguagesLP){doc.addPage();let yp=pdfPremiumHeader(doc,{program:d.progNombre||'Programa',level,type:'Proyeccion de Idiomas'});pdfProyeccionLP(doc,yp,SimuladorOFE.state.results.projectionLanguagesLP,'Idiomas');}
   }
   pdfPie(doc);doc.save(safePDF((d.progNombre||'Programa')+' - Idiomas')+'.pdf');toast('PDF descargado','success');
 }

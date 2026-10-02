@@ -342,8 +342,8 @@ function renderBeneficios(tabId) {
           </div>
         </div>
       </div>
-      <button class="btn btn--ghost btn--icon btn--sm" data-action="del-benef" data-tab="${tabId}" data-id="${b.id}"
-        aria-label="Eliminar beneficio">${icon('x')}</button>
+      <button class="btn btn--icon btn--sm benef-item__delete" data-action="del-benef" data-tab="${tabId}" data-id="${b.id}"
+        aria-label="Eliminar beneficio" title="Eliminar beneficio">${icon('x')}</button>
     </div>`).join('');
   activarSeparadorMiles(container);
   if(tabId === 7) recalc7(); else recalcAll(tabId);

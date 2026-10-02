@@ -939,6 +939,36 @@ table.tbl tfoot td:first-child { text-align: left; }
 .input-affix--sm .input { font-size: var(--fs-sm); }
 .input-affix--sm .input-affix__tag { font-size: var(--fs-xs); padding: 0 var(--sp-2); }
 .benef-item .dual__sep .icon { width: 13px; height: 13px; }
+
+.benef-item__delete {
+  align-self: start;
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px;
+  padding: 0 !important;
+  color: var(--uninorte-red);
+  background: color-mix(in srgb, var(--uninorte-red) 7%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--uninorte-red) 32%, var(--border-default));
+  border-radius: 10px;
+  box-shadow: none;
+}
+.benef-item__delete .icon { width: 18px; height: 18px; stroke-width: 2.2; }
+.benef-item__delete:hover {
+  color: #fff;
+  background: var(--uninorte-red);
+  border-color: var(--uninorte-red);
+  transform: translateY(-1px);
+}
+.benef-item__delete:focus-visible {
+  outline: 2px solid var(--uninorte-red);
+  outline-offset: 2px;
+}
+[data-theme="dark"] .benef-item__delete {
+  background: color-mix(in srgb, var(--uninorte-red) 18%, var(--surface));
+  border-color: color-mix(in srgb, var(--uninorte-red) 55%, var(--border-default));
+  color: #ffb7ba;
+}
+[data-theme="dark"] .benef-item__delete:hover { color: #fff; background: var(--uninorte-red); }
 .benef-subtotal { font-size: var(--fs-sm); font-weight: 570; color: var(--success); text-align: right; margin-top: var(--sp-2); }
 
 /* Fecha de generación */

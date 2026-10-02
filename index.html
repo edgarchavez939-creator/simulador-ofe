@@ -5,8 +5,8 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <meta content="no-referrer" name="referrer"/>
 <meta content="default-src 'self' data: blob:; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; worker-src 'self' blob:;" http-equiv="Content-Security-Policy"/>
-<link href="./simulador-assets/favicon.svg?v=uninorte-ui-3-9" rel="icon" type="image/svg+xml"/>
-<link href="./simulador-assets/favicon-180.png?v=uninorte-ui-3-9" rel="apple-touch-icon" sizes="180x180"/>
+<link href="./simulador-assets/favicon.svg?v=uninorte-pdf-premium-4-0" rel="icon" type="image/svg+xml"/>
+<link href="./simulador-assets/favicon-180.png?v=uninorte-pdf-premium-4-0" rel="apple-touch-icon" sizes="180x180"/>
 <title>Simulador de Crédito · OFE</title>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -14,7 +14,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<link href="./simulador-assets/styles.css?v=uninorte-ui-3-9" rel="stylesheet"/>
+<link href="./simulador-assets/styles.css?v=uninorte-ui-3-10" rel="stylesheet"/>
 </head>
 <body>
 <a class="skip-link" href="#main-content">Saltar al contenido principal</a>
@@ -149,9 +149,9 @@
 <div class="input-affix"><input aria-label="Número de meses del crédito" class="input" id="plazo1" min="1" placeholder="6" type="number" value="6"/><span class="input-affix__tag input-affix__tag--end">meses</span></div>
 </div>
 <div class="field">
-<label class="field__label" for="tasa1">Tasa de Interés (Mes Vencido) <span aria-label="Ayuda: La tasa se aplica sobre el saldo al final de cada mes. Es el estándar del sistema financiero colombiano. Una tasa de 1.5% mes vencido equivale a 19.56% efectivo anual." class="tip" data-tip="La tasa se aplica sobre el saldo al final de cada mes. Es el estándar del sistema financiero colombiano. Una tasa de 1.5% mes vencido equivale a 19.56% efectivo anual." tabindex="0">?</span></label>
+<label class="field__label" for="tasa1">Tasa de Interés (Mes Vencido) <span aria-label="Ayuda: La tasa se aplica sobre el saldo al final de cada mes. Es el estándar del sistema financiero colombiano. Una tasa de 1.53% mes vencido equivale aproximadamente a 19.99% efectivo anual." class="tip" data-tip="La tasa se aplica sobre el saldo al final de cada mes. Es el estándar del sistema financiero colombiano. Una tasa de 1.53% mes vencido equivale aproximadamente a 19.99% efectivo anual." tabindex="0">?</span></label>
 <div class="tasa-row">
-<div class="input-affix"><input class="input" data-input-action="calc-ta" data-tab="1" id="tasa1" max="10" min="0" placeholder="1.5" step="0.01" type="number" value="1.5"/><span class="input-affix__tag input-affix__tag--end">%</span></div>
+<div class="input-affix"><input class="input" data-input-action="calc-ta" data-tab="1" id="tasa1" max="10" min="0" placeholder="1.53" step="0.01" type="number" value="1.53"/><span class="input-affix__tag input-affix__tag--end">%</span></div>
 <div class="tasa-badge"><div><small>Equiv. Anual <span aria-label="Ayuda: Tasa Efectiva Anual: lo que realmente cuesta el crédito en un año, incluyendo el efecto de capitalización mensual. Permite comparar créditos con distintas periodicidades." class="tip" data-tip="Tasa Efectiva Anual: lo que realmente cuesta el crédito en un año, incluyendo el efecto de capitalización mensual. Permite comparar créditos con distintas periodicidades." tabindex="0">?</span></small><span id="ta1">19.56%</span></div><span><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg></span></div>
 </div>
 </div>
@@ -278,9 +278,9 @@
 <div class="dist" hidden="" id="split-total-2"></div>
 </div>
 <div class="field">
-<label class="field__label" for="tasa2">Tasa de Interés (Mes Vencido) <span aria-label="Ayuda: La tasa se aplica sobre el saldo al final de cada mes. Es el estándar del sistema financiero colombiano. Una tasa de 1.5% mes vencido equivale a 19.56% efectivo anual." class="tip" data-tip="La tasa se aplica sobre el saldo al final de cada mes. Es el estándar del sistema financiero colombiano. Una tasa de 1.5% mes vencido equivale a 19.56% efectivo anual." tabindex="0">?</span></label>
+<label class="field__label" for="tasa2">Tasa de Interés (Mes Vencido) <span aria-label="Ayuda: La tasa se aplica sobre el saldo al final de cada mes. Es el estándar del sistema financiero colombiano. Una tasa de 1.53% mes vencido equivale aproximadamente a 19.99% efectivo anual." class="tip" data-tip="La tasa se aplica sobre el saldo al final de cada mes. Es el estándar del sistema financiero colombiano. Una tasa de 1.53% mes vencido equivale aproximadamente a 19.99% efectivo anual." tabindex="0">?</span></label>
 <div class="tasa-row">
-<div class="input-affix"><input class="input" data-input-action="calc-ta" data-tab="2" id="tasa2" max="10" min="0" placeholder="1.5" step="0.01" type="number" value="1.5"/><span class="input-affix__tag input-affix__tag--end">%</span></div>
+<div class="input-affix"><input class="input" data-input-action="calc-ta" data-tab="2" id="tasa2" max="10" min="0" placeholder="1.53" step="0.01" type="number" value="1.53"/><span class="input-affix__tag input-affix__tag--end">%</span></div>
 <div class="tasa-badge"><div><small>Equiv. Anual <span aria-label="Ayuda: Tasa Efectiva Anual: lo que realmente cuesta el crédito en un año, incluyendo el efecto de capitalización mensual. Permite comparar créditos con distintas periodicidades." class="tip" data-tip="Tasa Efectiva Anual: lo que realmente cuesta el crédito en un año, incluyendo el efecto de capitalización mensual. Permite comparar créditos con distintas periodicidades." tabindex="0">?</span></small><span id="ta2">19.56%</span></div><span><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg></span></div>
 </div>
 </div>
@@ -451,9 +451,9 @@
 <div class="input-affix u-border-info"><input aria-label="Número de meses del crédito" class="input" id="plazo3" min="1" placeholder="12" type="number" value="12"/><span class="input-affix__tag input-affix__tag--end">meses</span></div>
 </div>
 <div class="field">
-<label class="field__label" for="tasa3">Tasa de Interés (Mes Vencido) <span aria-label="Ayuda: La tasa se aplica sobre el saldo al final de cada mes. Es el estándar del sistema financiero colombiano. Una tasa de 1.5% mes vencido equivale a 19.56% efectivo anual." class="tip" data-tip="La tasa se aplica sobre el saldo al final de cada mes. Es el estándar del sistema financiero colombiano. Una tasa de 1.5% mes vencido equivale a 19.56% efectivo anual." tabindex="0">?</span></label>
+<label class="field__label" for="tasa3">Tasa de Interés (Mes Vencido) <span aria-label="Ayuda: La tasa se aplica sobre el saldo al final de cada mes. Es el estándar del sistema financiero colombiano. Una tasa de 1.53% mes vencido equivale aproximadamente a 19.99% efectivo anual." class="tip" data-tip="La tasa se aplica sobre el saldo al final de cada mes. Es el estándar del sistema financiero colombiano. Una tasa de 1.53% mes vencido equivale aproximadamente a 19.99% efectivo anual." tabindex="0">?</span></label>
 <div class="tasa-row">
-<div class="input-affix"><input class="input" data-input-action="calc-ta" data-tab="3" id="tasa3" max="10" min="0" placeholder="1.5" step="0.01" type="number" value="1.5"/><span class="input-affix__tag input-affix__tag--end">%</span></div>
+<div class="input-affix"><input class="input" data-input-action="calc-ta" data-tab="3" id="tasa3" max="10" min="0" placeholder="1.53" step="0.01" type="number" value="1.53"/><span class="input-affix__tag input-affix__tag--end">%</span></div>
 <div class="tasa-badge"><div><small>Equiv. Anual <span aria-label="Ayuda: Tasa Efectiva Anual: lo que realmente cuesta el crédito en un año, incluyendo el efecto de capitalización mensual. Permite comparar créditos con distintas periodicidades." class="tip" data-tip="Tasa Efectiva Anual: lo que realmente cuesta el crédito en un año, incluyendo el efecto de capitalización mensual. Permite comparar créditos con distintas periodicidades." tabindex="0">?</span></small><span id="ta3">19.56%</span></div><span><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg></span></div>
 </div>
 </div>
@@ -600,7 +600,7 @@
 <div class="field u-mb-10">
 <label class="field__label">Tasa (mes vencido)</label>
 <div class="tasa-row">
-<div class="input-affix u-border-success"><input aria-label="Tasa del nuevo escenario" class="input" data-input-action="ta-refi" data-tipo="nva" id="refi-tasa-nva" min="0" placeholder="1.5" step="0.01" type="number" value="1.5"/><span class="input-affix__tag input-affix__tag--end">%</span></div>
+<div class="input-affix u-border-success"><input aria-label="Tasa del nuevo escenario" class="input" data-input-action="ta-refi" data-tipo="nva" id="refi-tasa-nva" min="0" placeholder="1.53" step="0.01" type="number" value="1.53"/><span class="input-affix__tag input-affix__tag--end">%</span></div>
 <div class="tasa-badge"><div><small>Equiv. Anual <span aria-label="Ayuda: Tasa Efectiva Anual: lo que realmente cuesta el crédito en un año, incluyendo el efecto de capitalización mensual. Permite comparar créditos con distintas periodicidades." class="tip" data-tip="Tasa Efectiva Anual: lo que realmente cuesta el crédito en un año, incluyendo el efecto de capitalización mensual. Permite comparar créditos con distintas periodicidades." tabindex="0">?</span></small><span id="refi-ta-nva">19.56%</span></div><span><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg></span></div>
 </div>
 </div>
@@ -830,7 +830,7 @@
 <div class="field">
 <label class="field__label" for="tasa7">Tasa de Interés (Mes Vencido) <span aria-label="Ayuda: La tasa se aplica sobre el saldo al final de cada mes. Es el estándar del sistema financiero colombiano." class="tip" data-tip="La tasa se aplica sobre el saldo al final de cada mes. Es el estándar del sistema financiero colombiano." tabindex="0">?</span></label>
 <div class="tasa-row">
-<div class="input-affix"><input class="input" data-input-action="recalc7" id="tasa7" min="0" placeholder="1.5" step="0.01" type="number" value="1.5"/><span class="input-affix__tag input-affix__tag--end">%</span></div>
+<div class="input-affix"><input class="input" data-input-action="recalc7" id="tasa7" min="0" placeholder="1.53" step="0.01" type="number" value="1.53"/><span class="input-affix__tag input-affix__tag--end">%</span></div>
 <div class="tasa-badge">
 <div><small>Equiv. Anual <span aria-label="Ayuda: Tasa Efectiva Anual: lo que cuesta el crédito en un año incluyendo la capitalización mensual." class="tip" data-tip="Tasa Efectiva Anual: lo que cuesta el crédito en un año incluyendo la capitalización mensual." tabindex="0">?</span></small><span id="ta7">19.56%</span></div>
 <svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
@@ -1780,16 +1780,16 @@
   ]
 ]/*%%POSGRADOS_END%%*/
 </script>
-<script src="./simulador-assets/js/00-runtime.js?v=uninorte-ui-3-9"></script>
-<script src="./simulador-assets/js/01-core-ui.js?v=uninorte-ui-3-9"></script>
-<script src="./simulador-assets/js/02-reestructuracion.js?v=uninorte-ui-3-9"></script>
-<script src="./simulador-assets/js/03-finance-core.js?v=uninorte-ui-3-9"></script>
-<script src="./simulador-assets/js/04-exports-pdf-excel.js?v=uninorte-ui-3-9"></script>
-<script src="./simulador-assets/js/05-idiomas-herramientas.js?v=uninorte-ui-3-9"></script>
-<script src="./simulador-assets/js/06-actions-history.js?v=uninorte-ui-3-9"></script>
-<script src="./simulador-assets/js/07-financing-engine.js?v=uninorte-ui-3-9"></script>
-<script src="./simulador-assets/js/08-updater.js?v=uninorte-ui-3-9"></script>
-<script src="./simulador-assets/js/09-bootstrap.js?v=uninorte-ui-3-9"></script>
+<script src="./simulador-assets/js/00-runtime.js?v=uninorte-ui-3-10"></script>
+<script src="./simulador-assets/js/01-core-ui.js?v=uninorte-ui-3-10"></script>
+<script src="./simulador-assets/js/02-reestructuracion.js?v=uninorte-ui-3-10"></script>
+<script src="./simulador-assets/js/03-finance-core.js?v=uninorte-ui-3-10"></script>
+<script src="./simulador-assets/js/04-exports-pdf-excel.js?v=uninorte-ui-3-10"></script>
+<script src="./simulador-assets/js/05-idiomas-herramientas.js?v=uninorte-ui-3-10"></script>
+<script src="./simulador-assets/js/06-actions-history.js?v=uninorte-ui-3-10"></script>
+<script src="./simulador-assets/js/07-financing-engine.js?v=uninorte-ui-3-10"></script>
+<script src="./simulador-assets/js/08-updater.js?v=uninorte-ui-3-10"></script>
+<script src="./simulador-assets/js/09-bootstrap.js?v=uninorte-ui-3-10"></script>
 <!-- MODAL IDIOMAS -->
 <div aria-hidden="true" class="scrim" data-action="scrim-idiomas" hidden="" id="modal-idiomas">
 <div aria-describedby="modal-idiomas-desc" aria-labelledby="modal-idiomas-title" aria-modal="true" class="modal modal--wide" role="dialog" tabindex="-1">
@@ -1900,9 +1900,9 @@
 </div>
 </div>
 <div class="u-mb-16">
-<label class="field__label" for="id-tasa">Tasa de Interés (Mes Vencido) <span aria-label="Ayuda: La tasa se aplica sobre el saldo al final de cada mes. Es el estándar del sistema financiero colombiano. Una tasa de 1.5% mes vencido equivale a 19.56% efectivo anual." class="tip" data-tip="La tasa se aplica sobre el saldo al final de cada mes. Es el estándar del sistema financiero colombiano. Una tasa de 1.5% mes vencido equivale a 19.56% efectivo anual." tabindex="0">?</span></label>
+<label class="field__label" for="id-tasa">Tasa de Interés (Mes Vencido) <span aria-label="Ayuda: La tasa se aplica sobre el saldo al final de cada mes. Es el estándar del sistema financiero colombiano. Una tasa de 1.53% mes vencido equivale aproximadamente a 19.99% efectivo anual." class="tip" data-tip="La tasa se aplica sobre el saldo al final de cada mes. Es el estándar del sistema financiero colombiano. Una tasa de 1.53% mes vencido equivale aproximadamente a 19.99% efectivo anual." tabindex="0">?</span></label>
 <div class="tasa-row">
-<div class="input-affix"><input class="input" data-input-action="ta-idiomas" id="id-tasa" max="10" min="0" placeholder="1.5" step="0.01" type="number" value="1.5"/><span class="input-affix__tag input-affix__tag--end">%</span></div>
+<div class="input-affix"><input class="input" data-input-action="ta-idiomas" id="id-tasa" max="10" min="0" placeholder="1.53" step="0.01" type="number" value="1.53"/><span class="input-affix__tag input-affix__tag--end">%</span></div>
 <div class="tasa-badge"><div><small>Equiv. Anual <span aria-label="Ayuda: Tasa Efectiva Anual: lo que realmente cuesta el crédito en un año, incluyendo el efecto de capitalización mensual. Permite comparar créditos con distintas periodicidades." class="tip" data-tip="Tasa Efectiva Anual: lo que realmente cuesta el crédito en un año, incluyendo el efecto de capitalización mensual. Permite comparar créditos con distintas periodicidades." tabindex="0">?</span></small><span id="id-ta">19.56%</span></div><span></span></div>
 </div>
 </div>

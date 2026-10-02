@@ -131,84 +131,59 @@ function calcularRefi() {
 }
 
 // ── PDF: single refinancing scenario ─────────────────────────────────────────
-function expPDFRefi() {
+function expPDFRefi(){
   const d=SimuladorOFE.state.restructuring.current;
   if(!d) return toast('Primero calcula un escenario.','warning');
   const {jsPDF}=window.jspdf; const doc=new jsPDF();
   const tea=((Math.pow(1+d.tm,12)-1)*100).toFixed(2)+'%';
-  pdfApprovedOnePageCredit(doc,{
-    title:'Reestructuracion de Credito',program:d.label||'Escenario de reestructuracion',programHint:'Escenario simulado',contextLabel:'Saldo actual',contextValue:cop(d.saldo),contextHint:'Base a reestructurar',contextIcon:'money',
-    heroLabel:'Nueva cuota mensual estimada',heroValue:cop(d.cuota),heroMeta:`${d.n} cuotas  |  ${(d.tm*100).toFixed(2)}% M.V.  (${tea} E.A.)`,
-    note:'Es la cuota mensual estimada despues de aplicar las nuevas condiciones al saldo actual del credito.',
-    metrics:[
-      {label:'Saldo actual',value:cop(d.saldo),hint:'Antes de reestructurar.',icon:'banknote'},
-      {label:'Monto reestructurado',value:cop(d.principal),hint:'Saldo + costos aplicables.',icon:'document'},
-      {label:'Total intereses',value:cop(d.totInt),hint:'Costo financiero.',icon:'percent'},
-      {label:'Total a pagar',value:cop(d.totalGeneral),hint:'Nuevo escenario.',icon:'trending-up'}
+  pdfPremiumCreditReport(doc,{
+    type:'Reestructuracion de Credito',program:d.label||'Escenario de reestructuracion',level:'Escenario simulado',
+    heroLabel:'Nueva cuota mensual estimada',heroValue:cop(d.cuota),heroMeta:`${d.n} cuotas | ${(d.tm*100).toFixed(2)}% M.V. | ${tea} E.A.`,
+    heroSide:[{label:'Monto reestructurado',value:cop(d.principal)},{label:'Total intereses',value:cop(d.totInt)},{label:'Total a pagar',value:cop(d.totalGeneral),highlight:true}],
+    summary:[
+      {label:'Saldo actual',value:cop(d.saldo)},
+      {label:'Nuevo plazo',value:`${d.n} meses`},
+      {label:'Tasa de interes (EA)',value:tea},
+      {label:'Costos aplicables',value:cop(d.costos||0)}
     ],
-    leftTitle:'Saldo a la fecha',leftRows:[['Capital pendiente',cop(d.capital)],d.intCorr>0?['Intereses corrientes',cop(d.intCorr)]:null,d.mora>0?['Mora / moratorios',cop(d.mora)]:null,['Saldo total',cop(d.saldo),'total']],
-    rightTitle:'Nuevas condiciones',rightRows:[d.costos>0?['Costos de reestructuracion',cop(d.costos)]:null,['Nuevo plazo',`${d.n} meses`],['Nueva tasa M.V.',(d.tm*100).toFixed(2)+'%'],['Nueva cuota',cop(d.cuota),'total']],
-    rows:d.rows,totCap:d.totCap,totInt:d.totInt,
-    conditions:[['Plazo',`${d.n} meses`],['Tasa de interes (M.V.)',(d.tm*100).toFixed(2)+'%'],['Tasa de interes (E.A.)',tea],['Sistema de amortizacion','Cuota fija'],d.ingreso>0?['Cuota / ingreso',((d.cuota/d.ingreso)*100).toFixed(1)+'%']:null,['Periodicidad de pago','Mensual']],
-    notes:['El resultado parte del saldo y los conceptos ingresados en este escenario.','La simulacion es informativa y puede cambiar segun las condiciones vigentes.','Verifica la informacion antes de formalizar la reestructuracion.']
+    conditionsLeft:[['Tipo de operacion','Reestructuracion'],['Tasa de interes (EA)',tea],['Nuevo plazo',`${d.n} meses`],['Nueva cuota',cop(d.cuota)]],
+    conditionsRight:[['Saldo actual',cop(d.saldo)],['Monto reestructurado',cop(d.principal)],['Total intereses',cop(d.totInt)],['Costos aplicables',cop(d.costos||0)]],
+    rows:d.rows,totCap:d.totCap,totInt:d.totInt,firstPageRows:5,
+    note:'El resultado parte del saldo y de los conceptos ingresados. La simulacion es informativa y puede variar segun las condiciones vigentes.'
   });
   pdfPie(doc);doc.save(safePDF('Reestructuracion de Credito - '+(d.label||'Escenario'))+'.pdf');toast('PDF descargado','success');
 }
 
-function expPDFRefiComp() {
+function expPDFRefiComp(){
   if(reestructState.scenarios.length<2) return toast('Guarda al menos 2 escenarios para comparar.','warning');
   const {jsPDF}=window.jspdf; const doc=new jsPDF({orientation:'landscape'});
-  const P=PDF, PW=297, M=14, CW=PW-M*2;
-  doc.setFillColor(...P.rojo); doc.rect(M,9,12,1.5,'F');
-  doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(...P.texto2); doc.text('SIMULACION DE CREDITO EDUCATIVO',M,18);
-  doc.setFont('helvetica','bold'); doc.setFontSize(20); doc.setTextColor(...P.negro); doc.text('Comparativa de Reestructuracion',M,29);
-  doc.setFont('helvetica','normal'); doc.setFontSize(9.5); doc.setTextColor(...P.texto2); doc.text('Comparacion de escenarios guardados',M,37);
-  const meta=pdfGeneratedMeta();
-  doc.setFillColor(...P.suave); doc.setDrawColor(...P.linea); doc.roundedRect(PW-78,12,64,24,2.5,2.5,'FD');
-  doc.setFontSize(7.2); doc.setTextColor(...P.texto3); doc.text('Fecha',PW-73,20); doc.text('Hora',PW-73,28);
-  doc.setFont('helvetica','bold'); doc.setTextColor(...P.texto2); doc.text(meta.fecha,PW-19,20,{align:'right'}); doc.text(meta.hora,PW-19,28,{align:'right'});
-  let y=48;
-  doc.setFillColor(...P.suave); doc.setDrawColor(...P.linea); doc.roundedRect(M,y,CW,24,2.5,2.5,'FD');
-  doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...P.texto2); doc.text('Saldo base a reestructurar',M+7,y+9);
-  doc.setFont('helvetica','bold'); doc.setFontSize(19); doc.setTextColor(...P.negro); doc.text(cop(reestructState.scenarios[0].saldo),M+7,y+19);
-  y+=32;
+  const P=PDF,PW=297,M=14,CW=PW-M*2,meta=pdfGeneratedMeta();
+  try{doc.addImage(PDF_UNINORTE_LOGO,'PNG',M,8,52,16,undefined,'FAST');}catch(_e){}
+  doc.setFillColor(...P.rojo);doc.rect(246,0,51,23,'F');doc.setFillColor(...P.rojoOsc);doc.triangle(277,0,297,0,297,23,'F');doc.setDrawColor(...P.dorado);doc.setLineWidth(.4);doc.line(225,0,244,18);doc.line(244,18,252,18);doc.setLineWidth(.2);
+  doc.setFont('helvetica','normal');doc.setFontSize(12);doc.setTextColor(...P.texto2);pdfText(doc,'Simulacion de Credito Educativo',M,34);
+  doc.setFont('times','bold');doc.setFontSize(22);doc.setTextColor(...P.negro);pdfText(doc,'Comparativa de Reestructuracion',M,46);
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...P.texto3);pdfText(doc,'Generado el '+meta.fechaLarga+' - '+meta.hora,PW-M,44,{align:'right'});
+  doc.setDrawColor(...P.linea);doc.line(M,51,PW-M,51);
+  let y=58;
+  doc.setFillColor(248,249,250);doc.setDrawColor(...P.linea);doc.roundedRect(M,y,CW,23,2,2,'FD');
+  doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(...P.texto2);pdfText(doc,'Saldo base a reestructurar',M+7,y+8);
+  doc.setFont('helvetica','bold');doc.setFontSize(18);doc.setTextColor(...P.negro);pdfText(doc,cop(reestructState.scenarios[0].saldo),M+7,y+18);
+  y+=31;
   const n=reestructState.scenarios.length,gap=5,cardW=(CW-gap*(n-1))/n;
   reestructState.scenarios.forEach((e,i)=>{
-    const x=M+i*(cardW+gap);
-    doc.setFillColor(...P.suave); doc.setDrawColor(...P.linea); doc.roundedRect(x,y,cardW,48,2.5,2.5,'FD');
-    doc.setFillColor(...P.rojo); doc.rect(x,y,cardW,2,'F');
-    doc.setFont('helvetica','bold'); doc.setFontSize(9.5); doc.setTextColor(...P.negro); pdfText(doc,'Escenario '+(i+1),x+6,y+10);
-    doc.setFont('helvetica','normal'); doc.setFontSize(7.2); doc.setTextColor(...P.texto3); pdfText(doc,e.label||'',x+6,y+16);
-    doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.setTextColor(...P.rojoOsc); pdfText(doc,cop(e.cuota),x+6,y+28);
-    doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(...P.texto2);
-    pdfText(doc,`${e.n} meses | ${(e.tm*100).toFixed(2)}% M.V.`,x+6,y+35);
-    pdfText(doc,'Total a pagar: '+cop(e.totalGeneral),x+6,y+42);
+    const x=M+i*(cardW+gap);doc.setFillColor(249,249,250);doc.setDrawColor(...P.linea);doc.roundedRect(x,y,cardW,44,2,2,'FD');doc.setFillColor(...P.rojo);doc.rect(x,y,cardW,2,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(...P.negro);pdfText(doc,'Escenario '+(i+1),x+6,y+10);
+    doc.setFont('helvetica','normal');doc.setFontSize(6.8);doc.setTextColor(...P.texto3);pdfText(doc,e.label||'',x+6,y+16);
+    doc.setFont('times','bold');doc.setFontSize(17);doc.setTextColor(...P.rojo);pdfText(doc,cop(e.cuota),x+6,y+28);
+    doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...P.texto2);pdfText(doc,`${e.n} meses | ${(e.tm*100).toFixed(2)}% M.V.`,x+6,y+35);pdfText(doc,'Total a pagar: '+cop(e.totalGeneral),x+6,y+41);
   });
-  y+=59;
-  doc.setFillColor(...P.negro); doc.rect(M,y,CW,8,'F');
-  doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(255,255,255);
-  const conceptW=67,colW=(CW-conceptW)/n;
-  doc.text('Concepto',M+4,y+5.2); reestructState.scenarios.forEach((e,i)=>doc.text('Esc. '+(i+1),M+conceptW+(i+.5)*colW,y+5.2,{align:'center'}));
-  y+=8;
-  const rows=[
-    ['Plazo',reestructState.scenarios.map(e=>e.n+' meses')],
-    ['Tasa M.V.',reestructState.scenarios.map(e=>(e.tm*100).toFixed(2)+'%')],
-    ['Monto reestructurado',reestructState.scenarios.map(e=>cop(e.principal))],
-    ['Cuota mensual',reestructState.scenarios.map(e=>cop(e.cuota))],
-    ['Total intereses',reestructState.scenarios.map(e=>cop(e.totInt))],
-    ['Total a pagar',reestructState.scenarios.map(e=>cop(e.totalGeneral))]
-  ];
-  rows.forEach((r,idx)=>{
-    if(idx%2){doc.setFillColor(...P.suave);doc.rect(M,y,CW,8,'F');}
-    doc.setFont('helvetica',idx===rows.length-1?'bold':'normal');doc.setFontSize(8);doc.setTextColor(...P.texto2);pdfText(doc,r[0],M+4,y+5.2);
-    r[1].forEach((v,i)=>{doc.setFont('helvetica','bold');pdfText(doc,v,M+conceptW+(i+1)*colW-4,y+5.2,{align:'right'});}); y+=8;
-  });
-  // Pie landscape
-  const h=doc.internal.pageSize.getHeight();
-  doc.setDrawColor(...P.linea);doc.line(M,h-14,PW-M,h-14);doc.setFillColor(...P.rojo);doc.rect(M,h-8.5,8,1.2,'F');
-  doc.setFont('helvetica','normal');doc.setFontSize(6.8);doc.setTextColor(...P.texto3);doc.text('Simulador de Credito Educativo',M+11,h-7.5);doc.text('Generado el '+meta.fecha+' - '+meta.hora,PW/2,h-7.5,{align:'center'});doc.text('Pag. 1 de 1',PW-M,h-7.5,{align:'right'});
-  doc.save('Comparativa Reestructuracion de Credito.pdf');
-  toast('PDF comparativo descargado','success');
+  y+=53;
+  const headers=['Concepto',...reestructState.scenarios.map((_,i)=>'Escenario '+(i+1))], conceptW=68,colW=(CW-conceptW)/n,rowH=8;
+  doc.setFillColor(...P.rojo);doc.rect(M,y,CW,rowH,'F');doc.setFont('helvetica','bold');doc.setFontSize(7.2);doc.setTextColor(255,255,255);pdfText(doc,'Concepto',M+conceptW/2,y+5.2,{align:'center'});
+  reestructState.scenarios.forEach((_,i)=>pdfText(doc,'Escenario '+(i+1),M+conceptW+i*colW+colW/2,y+5.2,{align:'center'})); y+=rowH;
+  const rows=[['Nueva cuota',e=>cop(e.cuota)],['Nuevo plazo',e=>`${e.n} meses`],['Tasa M.V.',e=>(e.tm*100).toFixed(2)+'%'],['Total intereses',e=>cop(e.totInt)],['Total a pagar',e=>cop(e.totalGeneral)]];
+  rows.forEach((r,ri)=>{if(ri%2===0){doc.setFillColor(250,250,251);doc.rect(M,y,CW,rowH,'F');}doc.setDrawColor(...P.linea);doc.line(M,y+rowH,M+CW,y+rowH);doc.setFont('helvetica','normal');doc.setFontSize(7.2);doc.setTextColor(...P.texto2);pdfText(doc,r[0],M+4,y+5.2);reestructState.scenarios.forEach((e,i)=>{doc.setFont('helvetica','bold');doc.setTextColor(...P.negro);pdfText(doc,r[1](e),M+conceptW+(i+1)*colW-4,y+5.2,{align:'right'});});y+=rowH;});
+  pdfPie(doc);doc.save('Comparativa Reestructuracion.pdf');toast('PDF comparativo descargado','success');
 }
 
 function limpiarRefi() {
@@ -217,7 +192,7 @@ function limpiarRefi() {
   document.getElementById('refi-mora').value = 0;
   document.getElementById('refi-saldo-total').textContent = '$ 0';
   document.getElementById('refi-cuotas-nva').value = 24;
-  document.getElementById('refi-tasa-nva').value = 1.5;
+  document.getElementById('refi-tasa-nva').value = 1.53;
   document.getElementById('refi-costos').value = 0;
   document.getElementById('refi-ingreso').value = 0;
   calcTaRefi('nva');

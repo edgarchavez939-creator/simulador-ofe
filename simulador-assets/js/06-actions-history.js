@@ -255,7 +255,7 @@ function limpiar7() {
   ['mat7','cap7'].forEach(id => { const e=document.getElementById(id); if(e) e.value=''; });
   ['mat7-lbl','cap7-lbl'].forEach(id => { const e=document.getElementById(id); if(e) e.textContent=''; });
   document.getElementById('plazo7').value = 6;
-  document.getElementById('tasa7').value  = 1.5;
+  document.getElementById('tasa7').value  = 1.53;
   document.getElementById('prog7').value  = '';
   SimuladorOFE.state.financing.benefits[7] = [];
   renderBeneficios(7);
@@ -270,26 +270,34 @@ function limpiar7() {
 }
 
 // ── Exportables ──
-function expPDF7() {
+function expPDF7(){
   const d=SimuladorOFE.state.results.initialPayment;
   if(!d) return toast('Primero realiza el calculo','warning');
   const {jsPDF}=window.jspdf; const doc=new jsPDF();
   const tea=((Math.pow(1+d.tm,12)-1)*100).toFixed(2)+'%';
-  pdfApprovedOnePageCredit(doc,{
-    title:'Calculo de Cuota Inicial',program:d.progNombre||'Programa',contextLabel:'Capacidad mensual declarada',contextValue:cop(d.cap),contextHint:'Base del calculo inverso',contextIcon:'money',
-    heroLabel:'Cuota inicial requerida',heroValue:cop(d.cuotaInicial),heroMeta:`${d.n} cuotas  |  ${(d.tm*100).toFixed(2)}% M.V.  (${tea} E.A.)`,
-    note:'Es el valor de entrada requerido para que la cuota mensual del credito se ajuste a la capacidad de pago declarada.',
-    metrics:[
-      {label:'Matricula neta',value:cop(d.matNeta||d.mat),hint:'Base del escenario.',icon:'banknote'},
-      {label:'Monto financiable',value:cop(d.fin),hint:'Capital resultante.',icon:'credit-card'},
-      {label:'Aporte Garantisa',value:cop(d.gar),hint:'4.17% del financiado.',icon:'shield-check'},
-      {label:'Total al desembolso',value:cop(d.desembolso),hint:'Cuota inicial + Garantisa.',icon:'document'}
+  const level=SimuladorOFE.state.ui.levelByTab[7]==='posgrado'?'Posgrado':'Pregrado';
+  pdfPremiumCreditReport(doc,{
+    type:'Calculo de Cuota Inicial',program:d.progNombre||'Programa',level,
+    heroLabel:'Cuota inicial requerida',heroValue:cop(d.cuotaInicial),heroMeta:`${d.n} cuotas | ${(d.tm*100).toFixed(2)}% M.V. | ${tea} E.A.`,
+    heroSide:[
+      {label:'Monto financiable',value:cop(d.fin)},
+      {label:'Total intereses',value:cop(d.totInt)},
+      {label:'Costo total estimado',value:cop(d.costoTotal),highlight:true}
     ],
-    leftTitle:'Detalle del pago inicial',leftRows:[['Cuota inicial requerida',cop(d.cuotaInicial)],['Aporte Garantisa',cop(d.gar)],['Total al desembolso',cop(d.desembolso),'total']],
-    rightTitle:'Detalle del credito',rightRows:[['Monto financiable',cop(d.fin)],['Total intereses',cop(d.totInt)],['Costo total del semestre',cop(d.costoTotal),'total']],
-    rows:d.rows,totCap:d.totCap,totInt:d.totInt,
-    conditions:[['Plazo',`${d.n} meses`],['Tasa de interes (M.V.)',(d.tm*100).toFixed(2)+'%'],['Tasa de interes (E.A.)',tea],['Cuota mensual resultante',cop(d.cuota)],['Sistema de amortizacion','Cuota fija'],['Periodicidad de pago','Mensual']],
-    notes:['El resultado depende de la capacidad mensual declarada, el plazo y la tasa configurada.','La simulacion es informativa y puede cambiar segun las condiciones vigentes.','Verifica la informacion antes de formalizar el credito.']
+    summary:[
+      {label:'Capacidad mensual',value:cop(d.cap)},
+      {label:'Plazo del credito',value:`${d.n} meses`},
+      {label:'Tasa de interes (EA)',value:tea},
+      {label:'Aporte a Garantisa',value:cop(d.gar),hint:'4.17% del financiado'}
+    ],
+    conditionsLeft:[
+      ['Tipo de calculo','Cuota inicial requerida'],['Tasa de interes (EA)',tea],['Plazo',`${d.n} meses`],['Capacidad mensual',cop(d.cap)]
+    ],
+    conditionsRight:[
+      ['Monto financiable',cop(d.fin)],['Total intereses',cop(d.totInt)],['Cuota mensual resultante',cop(d.cuota)],['Aporte a Garantisa',`${cop(d.gar)} (4.17%)`]
+    ],
+    rows:d.rows,totCap:d.totCap,totInt:d.totInt,firstPageRows:5,
+    note:'El valor de entrada se calcula para que la cuota mensual resultante se ajuste a la capacidad de pago declarada. La simulacion es informativa.'
   });
   pdfPie(doc);doc.save(safePDF('Calculo Cuota Inicial - '+(d.progNombre||'Simulacion'))+'.pdf');toast('PDF descargado','success');
 }
@@ -347,9 +355,9 @@ function limpiarTab(tabId, confirmed = false) {
   if(mat){ mat.value=''; fmtLbl('mat'+tabId); }
   // Reset common fields
   const fields = {
-    1: [['cont1-pct','0'],['cont1-val',''],['plazo1','6'],['tasa1','1.5']],
-    2: [['cont2-pct','0'],['cont2-val',''],['pctCP','40'],['finvalCP',''],['pctLP','60'],['finvalLP',''],['plazoCP','6'],['plazoLP','9'],['tasa2','1.5']],
-    3: [['cont3-pct','0'],['cont3-val',''],['plazo3','12'],['tasa3','1.5'],['cargos3','0']]
+    1: [['cont1-pct','0'],['cont1-val',''],['plazo1','6'],['tasa1','1.53']],
+    2: [['cont2-pct','0'],['cont2-val',''],['pctCP','40'],['finvalCP',''],['pctLP','60'],['finvalLP',''],['plazoCP','6'],['plazoLP','9'],['tasa2','1.53']],
+    3: [['cont3-pct','0'],['cont3-val',''],['plazo3','12'],['tasa3','1.53'],['cargos3','0']]
   };
   (fields[tabId]||[]).forEach(([id,val]) => {
     const el = document.getElementById(id);
@@ -543,11 +551,11 @@ function duplicarHistorial(id) {
       SimuladorOFE.state.financing.benefits[tab]=d.beneficios.map((b,i)=>({id:Date.now()+i,nombre:b.nombre||'Descuento',val:b.val||0,pct:b.pct||0,modo:'valor'})); renderBeneficios(tab);
     }
   }
-  if(tab===1){ document.getElementById('cont1-val').value=Math.round(d.cuotaInicial||0); document.getElementById('plazo1').value=d.n||6; document.getElementById('tasa1').value=((d.tm||.015)*100).toFixed(2); recalcAll(1); }
-  if(tab===2){ document.getElementById('cont2-val').value=Math.round(d.cuotaInicial||0); document.getElementById('pctCP').value=d.pCP||0; document.getElementById('pctLP').value=d.pLP||0; document.getElementById('plazoCP').value=d.nCP||6; document.getElementById('plazoLP').value=d.nLP||8; document.getElementById('tasa2').value=((d.tm||.015)*100).toFixed(2); recalcAll(2); }
-  if(tab===3){ document.getElementById('cont3-val').value=Math.round(d.cuotaInicial||0); document.getElementById('plazo3').value=d.n||12; document.getElementById('tasa3').value=((d.tm||.015)*100).toFixed(2); document.getElementById('cargos3').value=Math.round(d.cargos||0); recalcAll(3); }
-  if(tab===5){ document.getElementById('refi-capital').value=Math.round(d.capital||0); document.getElementById('refi-intcorr').value=Math.round(d.intCorr||0); document.getElementById('refi-mora').value=Math.round(d.mora||0); document.getElementById('refi-costos').value=Math.round(d.costos||0); document.getElementById('refi-ingreso').value=Math.round(d.ingreso||0); document.getElementById('refi-cuotas-nva').value=d.n||24; document.getElementById('refi-tasa-nva').value=((d.tm||.015)*100).toFixed(2); sumarSaldoRefi(); calcTaRefi(); }
-  if(tab===7){ document.getElementById('cap7').value=Math.round(d.cap||0); document.getElementById('plazo7').value=d.n||6; document.getElementById('tasa7').value=((d.tm||.015)*100).toFixed(2); recalc7(); }
+  if(tab===1){ document.getElementById('cont1-val').value=Math.round(d.cuotaInicial||0); document.getElementById('plazo1').value=d.n||6; document.getElementById('tasa1').value=((d.tm||.0153)*100).toFixed(2); recalcAll(1); }
+  if(tab===2){ document.getElementById('cont2-val').value=Math.round(d.cuotaInicial||0); document.getElementById('pctCP').value=d.pCP||0; document.getElementById('pctLP').value=d.pLP||0; document.getElementById('plazoCP').value=d.nCP||6; document.getElementById('plazoLP').value=d.nLP||8; document.getElementById('tasa2').value=((d.tm||.0153)*100).toFixed(2); recalcAll(2); }
+  if(tab===3){ document.getElementById('cont3-val').value=Math.round(d.cuotaInicial||0); document.getElementById('plazo3').value=d.n||12; document.getElementById('tasa3').value=((d.tm||.0153)*100).toFixed(2); document.getElementById('cargos3').value=Math.round(d.cargos||0); recalcAll(3); }
+  if(tab===5){ document.getElementById('refi-capital').value=Math.round(d.capital||0); document.getElementById('refi-intcorr').value=Math.round(d.intCorr||0); document.getElementById('refi-mora').value=Math.round(d.mora||0); document.getElementById('refi-costos').value=Math.round(d.costos||0); document.getElementById('refi-ingreso').value=Math.round(d.ingreso||0); document.getElementById('refi-cuotas-nva').value=d.n||24; document.getElementById('refi-tasa-nva').value=((d.tm||.0153)*100).toFixed(2); sumarSaldoRefi(); calcTaRefi(); }
+  if(tab===7){ document.getElementById('cap7').value=Math.round(d.cap||0); document.getElementById('plazo7').value=d.n||6; document.getElementById('tasa7').value=((d.tm||.0153)*100).toFixed(2); recalc7(); }
   toast('Simulación duplicada. Puedes ajustar los datos y volver a calcular.','success');
 }
 
@@ -879,7 +887,7 @@ function renderComparisonHub() {
 }
 
 // ── COMBINED PDF (pregrado + idiomas) ────────────────────────────────────────
-function expPDFCombinado() {
+function expPDFCombinado(){
   const dp=SimuladorOFE.state.results.languages;
   const tabId=SimuladorOFE.state.languages.context.tabId;
   let dm=null,tipoLabel='';
@@ -888,36 +896,35 @@ function expPDFCombinado() {
   if(tabId===3&&SimuladorOFE.state.results.bank){dm=SimuladorOFE.state.results.bank;tipoLabel='Credito Banco Aliado';}
   if(!dp||!dm) return toast('Primero calcula ambos creditos para generar el PDF combinado.','warning');
   const {jsPDF}=window.jspdf; const doc=new jsPDF();
+  const level=SimuladorOFE.state.ui.levelByTab[tabId]==='posgrado'?'Posgrado':'Pregrado';
   const cuotaPre=tabId===2?(dm.CP?dm.CP.cuota:0):(dm.cuota||0), cuotaIdi=dp.isMixto&&dp.idCP?dp.idCP.cuota:(dp.cuota||0);
   const pagoPre=dm.pagoInicial||0,pagoIdi=dp.pagoInicial||0;
   const credPre=tabId===2?((dm.CP?dm.CP.totCap+dm.CP.totInt:0)+(dm.finLP||0)):((dm.totCap||0)+(dm.totInt||0));
   const credIdi=dp.isMixto&&dp.idCP?((dp.idCP.totCap+dp.idCP.totInt)+(dp.finLP||0)):(dp.totalCredito||0);
-  let y=pdfHeader(doc,'Resumen Combinado','Lectura conjunta de pregrado e idiomas.');
-  y=pdfApprovedContext(doc,y,{label:'Programa academico',value:dp.progNombre||'Programa',hint:'Programa simulado',icon:'graduation-cap'},{label:'Escenario consolidado',value:`${tipoLabel} + Idiomas`,hint:'Lectura conjunta',icon:'document'});
-  y=pdfApprovedHero(doc,y,{label:'Cuota mensual combinada estimada',value:cop(cuotaPre+cuotaIdi),meta:'Suma de las cuotas estimadas de ambos escenarios',noteTitle:'Como leer este resultado?',note:'Resume la carga mensual estimada del credito academico y el credito de idiomas. Los tramos de largo plazo se presentan por separado cuando corresponda.'});
-  y=pdfApprovedSectionTitle(doc,PDF.M,y,'Resumen financiero');
-  y=pdfApprovedMetrics(doc,y,[
-    {label:'Pago inicial combinado',value:cop(pagoPre+pagoIdi),hint:'Pregrado + idiomas.',icon:'wallet'},
-    {label:'Credito conocido',value:cop(credPre+credIdi),hint:'Sin intereses futuros LP.',icon:'credit-card'},
-    {label:'Cuota pregrado',value:cop(cuotaPre),hint:tipoLabel,icon:'banknote'},
-    {label:'Cuota idiomas',value:cop(cuotaIdi),hint:'Credito de idiomas.',icon:'percent'}
-  ]);
-  const gap=6,colW=(PDF.CW-gap)/2,ya=pdfApprovedDetailTable(doc,PDF.M,y,colW,'Pregrado', [['Pago inicial',cop(pagoPre)],['Credito conocido',cop(credPre)],['Cuota estimada',cop(cuotaPre),'total']]),yb=pdfApprovedDetailTable(doc,PDF.M+colW+gap,y,colW,'Idiomas',[['Pago inicial',cop(pagoIdi)],['Credito conocido',cop(credIdi)],['Cuota estimada',cop(cuotaIdi),'total']]);
-  y=Math.max(ya,yb)+2;
-  let yr=pdfApprovedConditionsCompact(doc,PDF.M,y,PDF.CW,[['Modalidad pregrado',tipoLabel],['Credito idiomas',dp.isMixto?'Mixto CP / LP':'Corto plazo'],['Pago inicial total',cop(pagoPre+pagoIdi)],['Credito conocido total',cop(credPre+credIdi)]]);
-  pdfApprovedNotesCompact(doc,PDF.M,yr,PDF.CW,['Este reporte consolida dos simulaciones independientes para facilitar su lectura conjunta.','Los valores de largo plazo que dependan de una tasa futura se muestran como capital conocido, no como cuota definitiva.','La simulacion es informativa y puede cambiar segun las condiciones vigentes.']);
+  let y=pdfPremiumHeader(doc,{program:dp.progNombre||'Programa',level,type:'Reporte Combinado'});
+  y=pdfPremiumHero(doc,y,{label:'Cuota mensual combinada estimada',value:cop(cuotaPre+cuotaIdi),meta:`${tipoLabel} + Credito de idiomas`,side:[
+    {label:'Pago inicial combinado',value:cop(pagoPre+pagoIdi)},
+    {label:'Credito conocido total',value:cop(credPre+credIdi)},
+    {label:'Costo conocido',value:cop(pagoPre+pagoIdi+credPre+credIdi),highlight:true}
+  ]});
+  y=pdfPremiumSummary(doc,y,[
+    {label:'Pago inicial pregrado',value:cop(pagoPre)},
+    {label:'Pago inicial idiomas',value:cop(pagoIdi)},
+    {label:'Cuota pregrado',value:cop(cuotaPre)},
+    {label:'Cuota idiomas',value:cop(cuotaIdi)}
+  ],'Resumen consolidado');
+  y=pdfPremiumConditions(doc,y,
+    [['Modalidad pregrado',tipoLabel],['Pago inicial',cop(pagoPre)],['Cuota estimada',cop(cuotaPre)],['Credito conocido',cop(credPre)]],
+    [['Credito idiomas',dp.isMixto?'Corto y largo plazo':'Corto plazo'],['Pago inicial',cop(pagoIdi)],['Cuota estimada',cop(cuotaIdi)],['Credito conocido',cop(credIdi)]],
+    'Detalle de las simulaciones');
+  y=pdfPremiumInfo(doc,y,'Este reporte consolida dos simulaciones independientes. Los valores de largo plazo sujetos a una tasa futura se presentan como capital conocido y no como cuota definitiva.');
 
-  doc.addPage(); let yp=pdfHeader(doc,'Detalle de Pregrado',tipoLabel);
-  yp=pdfApprovedContext(doc,yp,{label:'Programa academico',value:dp.progNombre||'Programa',icon:'graduation-cap'},{label:'Pago inicial',value:cop(pagoPre),hint:tipoLabel,icon:'banknote'});
-  const preRows=tabId===2?(dm.CP?dm.CP.rows:[]):dm.rows,preCap=tabId===2?(dm.CP?dm.CP.totCap:0):dm.totCap,preInt=tabId===2?(dm.CP?dm.CP.totInt:0):dm.totInt;
-  if(preRows&&preRows.length) pdfPlanTable(doc,PDF.M,yp,PDF.CW,preRows,preCap,preInt,'Plan de pagos - Pregrado');
-
-  doc.addPage(); let yi=pdfHeader(doc,'Detalle de Idiomas','Credito asociado al mismo programa academico.');
-  yi=pdfApprovedContext(doc,yi,{label:'Programa academico',value:dp.progNombre||'Programa',icon:'graduation-cap'},{label:'Pago inicial idiomas',value:cop(pagoIdi),hint:'Credito de idiomas',icon:'banknote'});
-  const rows=dp.isMixto&&dp.idCP?dp.idCP.rows:dp.rows,tc=dp.isMixto&&dp.idCP?dp.idCP.totCap:dp.totCap,ti=dp.isMixto&&dp.idCP?dp.idCP.totInt:dp.totInt;
-  if(rows&&rows.length) yi=pdfPlanTable(doc,PDF.M,yi,PDF.CW,rows,tc,ti,'Plan de pagos - Idiomas');
-  yi=pdfProyeccionLP(doc,yi,SimuladorOFE.state.results.projectionLP,'Matricula');
-  yi=pdfProyeccionLP(doc,yi,SimuladorOFE.state.results.projectionLanguagesLP,'Idiomas');
+  const preRows=tabId===2?(dm.CP?dm.CP.rows:[]):dm.rows, preCap=tabId===2?(dm.CP?dm.CP.totCap:0):dm.totCap, preInt=tabId===2?(dm.CP?dm.CP.totInt:0):dm.totInt;
+  if(preRows&&preRows.length){doc.addPage();let yp=pdfPremiumHeader(doc,{program:dp.progNombre||'Programa',level,type:tipoLabel});yp=pdfPremiumPlan(doc,yp,preRows,preCap,preInt,'Tabla de amortizacion - Pregrado',8);if(preRows.length>8) pdfPremiumFullPlanPage(doc,{program:dp.progNombre||'Programa',level,type:tipoLabel,rows:preRows,totCap:preCap,totInt:preInt});}
+  const rows=dp.isMixto&&dp.idCP?dp.idCP.rows:dp.rows, tc=dp.isMixto&&dp.idCP?dp.idCP.totCap:dp.totCap, ti=dp.isMixto&&dp.idCP?dp.idCP.totInt:dp.totInt;
+  if(rows&&rows.length){doc.addPage();let yi=pdfPremiumHeader(doc,{program:dp.progNombre||'Programa',level,type:'Credito de Idiomas'});yi=pdfPremiumPlan(doc,yi,rows,tc,ti,'Tabla de amortizacion - Idiomas',8);}
+  if(SimuladorOFE.state.results.projectionLP){doc.addPage();let yy=pdfPremiumHeader(doc,{program:dp.progNombre||'Programa',level,type:'Proyeccion de Matricula'});pdfProyeccionLP(doc,yy,SimuladorOFE.state.results.projectionLP,'Matricula');}
+  if(SimuladorOFE.state.results.projectionLanguagesLP){doc.addPage();let yy=pdfPremiumHeader(doc,{program:dp.progNombre||'Programa',level,type:'Proyeccion de Idiomas'});pdfProyeccionLP(doc,yy,SimuladorOFE.state.results.projectionLanguagesLP,'Idiomas');}
   pdfPie(doc);doc.save(safePDF((dp.progNombre||'Programa')+' - Combinado')+'.pdf');toast('PDF descargado','success');
 }
 
