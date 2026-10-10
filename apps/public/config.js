@@ -7,7 +7,7 @@ window.SIMULADOR_CONFIG = {
     tuitionOverride: false
   },
   catalog: {
-    provider: "mock",
+    provider: "embedded",
     cache: true
   }
 };

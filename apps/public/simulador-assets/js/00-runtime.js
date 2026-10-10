@@ -5,23 +5,36 @@
   const app = global.SimuladorOFE || {};
   const registry = new Map();
 
-  function readEmbeddedData(id){
-    const el = document.getElementById(id);
-    if(!el) return [];
-    const raw = (el.textContent || '').replace(/\/\*%%(?:PROGRAMAS|POSGRADOS)_(?:START|END)%%\*\//g, '').trim();
-    if(!raw) return [];
-    try { return JSON.parse(raw); }
-    catch(error) {
-      console.error('[SimuladorOFE] Datos embebidos inválidos en #' + id, error);
-      return [];
-    }
+  // Catálogo institucional.
+  // La fuente concreta queda desacoplada del runtime del simulador.
+  const catalogAdapter = global.ProgramCatalogEmbeddedAdapter;
+
+  if(
+    !catalogAdapter ||
+    typeof catalogAdapter.snapshot !== 'function'
+  ) {
+    throw new Error(
+      '[SimuladorOFE] Program catalog adapter not configured'
+    );
   }
 
-  // Datos institucionales embebidos como JSON no ejecutable.
-  // Se exponen como propiedades globales de solo lectura para conservar
-  // compatibilidad con los módulos clásicos sin habilitar scripts inline.
-  Object.defineProperty(global, 'PROGRAMAS', {value: Object.freeze(readEmbeddedData('programas-data')), writable:false, configurable:false});
-  Object.defineProperty(global, 'POSGRADOS', {value: Object.freeze(readEmbeddedData('posgrados-data')), writable:false, configurable:false});
+  const catalogSnapshot = catalogAdapter.snapshot();
+
+  Object.defineProperty(global, 'PROGRAMAS', {
+    value: catalogSnapshot.programas,
+    writable: false,
+    configurable: false
+  });
+
+  Object.defineProperty(global, 'POSGRADOS', {
+    value: catalogSnapshot.posgrados,
+    writable: false,
+    configurable: false
+  });
+
+  app.catalog = Object.freeze({
+    source: catalogAdapter.source || 'unknown'
+  });
 
   app.version = 'UNINORTE-V3.12-PDF-APTOS';
   app.config = Object.freeze({
