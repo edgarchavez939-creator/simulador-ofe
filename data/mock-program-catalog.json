@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "updatedAt": "2026-10-09T00:00:00-05:00",
+  "programs": [
+    {
+      "id": "PRE-EJEMPLO",
+      "codigo": "EJEMPLO",
+      "nombre": "Programa de ejemplo",
+      "nivel": "pregrado",
+      "valorMatricula": 13000000,
+      "valorIdiomas": 0,
+      "activo": true,
+      "vigenciaDesde": "2026-01-01",
+      "vigenciaHasta": null
+    }
+  ]
+}
