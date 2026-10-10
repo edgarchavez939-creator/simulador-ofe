@@ -1,20 +1,35 @@
-window.ProgramCatalogApiAdapter = {
-  baseUrl: "/api",
-  async request(path, options = {}) {
-    const response = await fetch(`${this.baseUrl}${path}`, {
-      credentials: "same-origin",
-      headers: { "Content-Type": "application/json", ...(options.headers || {}) },
-      ...options
+(function initProgramCatalogApiAdapter(global){
+  'use strict';
+
+  function withConfig(settings = {}) {
+    const baseUrl = (settings.baseUrl ?? '/api').replace(/\/+$/, '');
+    const timeoutMs = settings.requestTimeoutMs ?? 15000;
+    const request = (path, options = {}, allowNotFound = false) =>
+      global.ProgramCatalogHttp.request(baseUrl + path, options, { timeoutMs, allowNotFound });
+    const json = data => ({ headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+
+    return Object.freeze({
+      source: 'api',
+      baseUrl,
+      capabilities: Object.freeze({ read: true, write: true, import: true, history: true }),
+      withConfig,
+      request,
+      async list(params = {}) {
+        const programs = global.ProgramCatalogValidator.readList(await request('/programs'));
+        return global.ProgramCatalogNormalizer.filter(programs, params);
+      },
+      async get(id) {
+        if (!id) return null;
+        const result = await request(`/programs/${encodeURIComponent(id)}`, {}, true);
+        return global.ProgramCatalogValidator.readProgram(result, id);
+      },
+      create(data) { return request('/admin/programs', { method: 'POST', ...json(data) }); },
+      update(id, data) { return request(`/admin/programs/${encodeURIComponent(id)}`, { method: 'PUT', ...json(data) }); },
+      setStatus(id, status) { return request(`/admin/programs/${encodeURIComponent(id)}/status`, { method: 'PATCH', ...json({ status }) }); },
+      import(data) { return request('/admin/programs/import', { method: 'POST', ...json(data) }); },
+      history(id) { return request(`/admin/programs/${encodeURIComponent(id)}/history`); }
     });
-    if (!response.ok) throw new Error(`Program catalog API error: ${response.status}`);
-    if (response.status === 204) return null;
-    return response.json();
-  },
-  list() { return this.request("/programs"); },
-  get(id) { return this.request(`/programs/${encodeURIComponent(id)}`); },
-  create(data) { return this.request("/admin/programs", { method: "POST", body: JSON.stringify(data) }); },
-  update(id, data) { return this.request(`/admin/programs/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(data) }); },
-  setStatus(id, status) { return this.request(`/admin/programs/${encodeURIComponent(id)}/status`, { method: "PATCH", body: JSON.stringify({ status }) }); },
-  import(data) { return this.request("/admin/programs/import", { method: "POST", body: JSON.stringify(data) }); },
-  history(id) { return this.request(`/admin/programs/${encodeURIComponent(id)}/history`); }
-};
+  }
+
+  global.ProgramCatalogApiAdapter = withConfig();
+})(window);

@@ -3,7 +3,8 @@
 ## Alcance preparado por el proyecto
 - Aplicación pública separada de la aplicación OFE.
 - Contrato de catálogo dinámico de programas.
-- Adaptador API desacoplado.
+- Adaptador API desacoplado con validación de lectura, tiempo de espera y arranque asíncrono (Program Catalog v1C).
+- Proveedor embedded activo: 29 pregrados y 144 posgrados; API/mock probados con transporte simulado.
 - Adaptador de autenticación desacoplado.
 - Plantillas de headers de seguridad.
 

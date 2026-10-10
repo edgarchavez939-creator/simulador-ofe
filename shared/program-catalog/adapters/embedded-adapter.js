@@ -69,7 +69,9 @@
       );
     }
 
-    return normalizer.fromSnapshot(snapshot());
+    return global.ProgramCatalogValidator.readList(
+      normalizer.fromSnapshot(snapshot())
+    );
   }
 
   function readonly(operation) {

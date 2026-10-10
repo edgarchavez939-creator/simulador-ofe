@@ -2,10 +2,9 @@ const assert = require('node:assert/strict');
 const { createHash } = require('node:crypto');
 const { readFileSync } = require('node:fs');
 const path = require('node:path');
-const vm = require('node:vm');
 const { test } = require('node:test');
+const { root, plain, read, embeddedElements, snapshotFrom, loadApp } = require('./test-support/catalog-context.cjs');
 
-const root = path.resolve(__dirname, '..');
 const baseId = 'posgrado:especializacion:especializacion-en-seguridad-de-la-informacion';
 const hashes = {
   programas: '64f05236a5dfcb9eec5d3556ad3f271bbbd82bce07a6ed88c809c8c82a9ce4ff',
@@ -13,55 +12,12 @@ const hashes = {
   '03-finance-core.js': 'e74c1e10f5f3aeb3215d09bd6a14cf1348c167c64f38c24636e3beffbf0ea9f7',
   '07-financing-engine.js': '54d3f4be288bfb28962a4bc01f46cd77d3e5cf7d661fc9ab5bfc5221c6ead098'
 };
-const plain = value => JSON.parse(JSON.stringify(value));
 const hash = value => createHash('sha256').update(value).digest('hex');
-const read = relative => readFileSync(path.join(root, relative), 'utf8');
-
-function embeddedElements(html) {
-  const elements = {};
-  for (const id of ['programas-data', 'posgrados-data']) {
-    const match = html.match(new RegExp(`<script[^>]*id=["']${id}["'][^>]*>([\\s\\S]*?)</script>`, 'i'));
-    assert.ok(match, `Missing embedded block ${id}`);
-    elements[id] = { textContent: match[1] };
-  }
-  return elements;
-}
-
-function snapshotFrom(elements) {
-  const parse = id => JSON.parse(elements[id].textContent.replace(
-    /\/\*%%(?:PROGRAMAS|POSGRADOS)_(?:START|END)%%\*\//g, ''
-  ));
-  return { programas: parse('programas-data'), posgrados: parse('posgrados-data') };
-}
-
-function loadApp(app) {
-  const relative = `apps/${app}/index.html`;
-  const html = read(relative);
-  const elements = embeddedElements(html);
-  const context = vm.createContext({ document: { getElementById: id => elements[id] || null } });
-  context.window = context;
-  // Execute the actual HTML script order through the runtime, without UI modules.
-  let reachedRuntime = false;
-  for (const match of html.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/gi)) {
-    const src = match[1].split('?')[0];
-    if (/^https?:/.test(src)) continue;
-    const filename = path.resolve(root, path.dirname(relative), src);
-    vm.runInContext(readFileSync(filename, 'utf8'), context, { filename });
-    if (src.includes('/00-runtime.js')) {
-      reachedRuntime = true;
-      break;
-    }
-  }
-  assert.ok(reachedRuntime);
-  for (const filename of ['program-catalog-schema.js', 'program-catalog-validator.js']) {
-    vm.runInContext(read(`shared/program-catalog/${filename}`), context, { filename });
-  }
-  return { context, elements, snapshot: snapshotFrom(elements) };
-}
 
 for (const app of ['public', 'ofe']) {
   test(`${app}: facade reads 173 unique programs without altering legacy data`, async () => {
     const { context, elements, snapshot } = loadApp(app);
+    await context.SimuladorOFE.init();
     const catalog = context.ProgramCatalog;
     const before = JSON.stringify(elements);
     const programs = await catalog.list();

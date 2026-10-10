@@ -30,10 +30,12 @@
       if (
         !nextProvider ||
         typeof nextProvider.list !== 'function' ||
-        typeof nextProvider.get !== 'function'
+        typeof nextProvider.get !== 'function' ||
+        typeof nextProvider.source !== 'string' ||
+        nextProvider.capabilities?.read !== true
       ) {
         throw new TypeError(
-          '[ProgramCatalog] Provider must implement list() and get()'
+          '[ProgramCatalog] Provider must declare source, read capability, list() and get()'
         );
       }
 
@@ -58,11 +60,15 @@
     },
 
     async list(params = {}) {
-      return requireMethod('list').list(params);
+      const result = await requireMethod('list').list(params);
+      const programs = global.ProgramCatalogValidator.readList(result);
+      return global.ProgramCatalogNormalizer.filter(programs, params);
     },
 
     async get(id) {
-      return requireMethod('get').get(id);
+      if (!id) return null;
+      const result = await requireMethod('get').get(id);
+      return global.ProgramCatalogValidator.readProgram(result, id);
     },
 
     async create(data) {

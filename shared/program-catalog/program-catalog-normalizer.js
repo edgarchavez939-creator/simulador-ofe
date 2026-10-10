@@ -152,6 +152,12 @@
   }
 
   function filter(programs, params = {}) {
+    if (!params || typeof params !== 'object' || Array.isArray(params)) {
+      throw new TypeError('[ProgramCatalog] Filtros inválidos');
+    }
+    if (params.activo !== undefined && typeof params.activo !== 'boolean') {
+      throw new TypeError('[ProgramCatalog] El filtro activo debe ser booleano');
+    }
     let result = Array.from(programs || []);
 
     if (params.nivel) {
@@ -168,7 +174,7 @@
 
     if (params.activo !== undefined) {
       result = result.filter(
-        program => program.activo === Boolean(params.activo)
+        program => program.activo === params.activo
       );
     }
 
@@ -184,8 +190,24 @@
     return Object.freeze(result);
   }
 
+  // Puente temporal para los consumidores legacy; no genera IDs ni códigos.
+  function toSnapshot(programs) {
+    const rows = global.ProgramCatalogValidator.readList(programs);
+    const active = rows.filter(program => program.activo);
+    const freeze = items => Object.freeze(items.map(row => Object.freeze(row)));
+    return Object.freeze({
+      programas: freeze(active.filter(program => program.nivel === 'pregrado').map(program => [
+        program.nombre, program.valorMatricula, program.valorIdiomas, program.semestres
+      ])),
+      posgrados: freeze(active.filter(program => program.nivel === 'posgrado').map(program => [
+        program.nombre, program.subnivel, program.valorMatricula
+      ]))
+    });
+  }
+
   global.ProgramCatalogNormalizer = Object.freeze({
     fromSnapshot,
+    toSnapshot,
     filter
   });
 

@@ -5,61 +5,73 @@
   const app = global.SimuladorOFE || {};
   const registry = new Map();
 
-  // Catálogo institucional.
-  //
-  // ProgramCatalog es la fachada estable de lectura.
-  // El adapter concreto se selecciona mediante SIMULADOR_CONFIG.
-  //
-  // Los arrays PROGRAMAS/POSGRADOS se mantienen temporalmente
-  // como interfaz legacy para no alterar los simuladores actuales.
-
-  const configuredCatalogProvider =
-    global.SIMULADOR_CONFIG?.catalog?.provider || 'embedded';
-
+  // La carga del catálogo precede a la inicialización de módulos.
+  // PROGRAMAS/POSGRADOS siguen siendo el puente temporal de los simuladores.
+  const catalogOptions = global.SIMULADOR_CONFIG?.catalog || {};
+  const configuredCatalogProvider = catalogOptions.provider || 'embedded';
   const catalogFacade = global.ProgramCatalog;
-
-  if (
-    !catalogFacade ||
-    typeof catalogFacade.use !== 'function'
-  ) {
-    throw new Error(
-      '[SimuladorOFE] ProgramCatalog facade not configured'
-    );
+  if (!catalogFacade || typeof catalogFacade.use !== 'function') {
+    throw new Error('[SimuladorOFE] ProgramCatalog facade not configured');
   }
-
   const availableCatalogAdapters = {
-    embedded: global.ProgramCatalogEmbeddedAdapter
+    embedded: global.ProgramCatalogEmbeddedAdapter,
+    mock: global.ProgramCatalogMockAdapter,
+    api: global.ProgramCatalogApiAdapter
   };
-
-  const catalogAdapter =
-    availableCatalogAdapters[configuredCatalogProvider];
-
+  let catalogAdapter = availableCatalogAdapters[configuredCatalogProvider];
   if (!catalogAdapter) {
-    throw new Error(
-      '[SimuladorOFE] Catalog provider not available: ' +
-      configuredCatalogProvider
-    );
+    throw new Error('[SimuladorOFE] Catalog provider not available: ' + configuredCatalogProvider);
   }
-
+  if (configuredCatalogProvider === 'mock') {
+    catalogAdapter = catalogAdapter.withConfig({
+      url: catalogOptions.mockUrl,
+      requestTimeoutMs: catalogOptions.requestTimeoutMs
+    });
+  } else if (configuredCatalogProvider === 'api') {
+    catalogAdapter = catalogAdapter.withConfig({
+      baseUrl: catalogOptions.apiBaseUrl,
+      requestTimeoutMs: catalogOptions.requestTimeoutMs
+    });
+  }
   catalogFacade.use(catalogAdapter);
 
-  const catalogSnapshot = catalogFacade.snapshot();
-
-  Object.defineProperty(global, 'PROGRAMAS', {
-    value: catalogSnapshot.programas,
-    writable: false,
-    configurable: false
-  });
-
-  Object.defineProperty(global, 'POSGRADOS', {
-    value: catalogSnapshot.posgrados,
-    writable: false,
-    configurable: false
-  });
-
+  let catalogLoad = null;
+  let catalogPrograms = null;
+  function loadCatalog() {
+    if (!catalogLoad) {
+      app.state.catalog.status = 'loading';
+      app.state.catalog.error = null;
+      catalogLoad = (async () => {
+        const programs = await catalogFacade.list();
+        if (!programs.length) throw new Error('[ProgramCatalog] El catálogo está vacío');
+        const snapshot = typeof catalogAdapter.snapshot === 'function'
+          ? await catalogFacade.snapshot()
+          : global.ProgramCatalogNormalizer.toSnapshot(programs);
+        if (!snapshot.programas.length && !snapshot.posgrados.length) {
+          throw new Error('[ProgramCatalog] No hay programas activos');
+        }
+        // Publicar los arrays solo después de validar el catálogo completo.
+        Object.defineProperties(global, {
+          PROGRAMAS: { value: snapshot.programas, writable: false, configurable: false },
+          POSGRADOS: { value: snapshot.posgrados, writable: false, configurable: false }
+        });
+        catalogPrograms = programs;
+        app.state.catalog.status = 'ready';
+        return programs;
+      })().catch(error => {
+        app.state.catalog.status = 'error';
+        app.state.catalog.error = error.message;
+        catalogLoad = null;
+        throw error;
+      });
+    }
+    return catalogLoad;
+  }
   app.catalog = Object.freeze({
     source: catalogFacade.source,
-    provider: catalogFacade
+    provider: catalogFacade,
+    get programs() { return catalogPrograms; },
+    ready: loadCatalog
   });
 
   app.version = 'UNINORTE-V3.12-PDF-APTOS';
@@ -70,6 +82,7 @@
     currency: 'COP'
   });
   app.state = app.state || Object.create(null);
+  app.state.catalog = { status: 'idle', error: null };
 
   // Estado por dominio. Ningún módulo debe usar window._* como fuente de verdad.
   app.state.access = app.state.access || {
@@ -124,24 +137,32 @@
     return definition;
   };
 
-  app.init = async function init(){
-    if(app.state.initialized || app.state.initializing) return;
-    app.state.initializing = true;
-    try {
-      for(const [name, mod] of registry) {
-        try {
-          await mod.init(app);
-          mod.initialized = true;
-        } catch(error) {
-          console.error('[SimuladorOFE] Error inicializando ' + name, error);
-          throw error;
+  let initialization = null;
+  app.init = function init(){
+    if (app.state.initialized) return Promise.resolve();
+    if (initialization) return initialization;
+    initialization = (async () => {
+      app.state.initializing = true;
+      try {
+        await loadCatalog();
+        for (const [name, mod] of registry) {
+          if (mod.initialized) continue;
+          try {
+            await mod.init(app);
+            mod.initialized = true;
+          } catch (error) {
+            console.error('[SimuladorOFE] Error inicializando ' + name, error);
+            throw error;
+          }
         }
+        app.state.initialized = true;
+        global.dispatchEvent(new CustomEvent('simulador:ready', { detail: { version: app.version } }));
+      } finally {
+        app.state.initializing = false;
+        initialization = null;
       }
-      app.state.initialized = true;
-      global.dispatchEvent(new CustomEvent('simulador:ready', {detail:{version:app.version}}));
-    } finally {
-      app.state.initializing = false;
-    }
+    })();
+    return initialization;
   };
 
   global.SimuladorOFE = app;

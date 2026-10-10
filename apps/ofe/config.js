@@ -8,6 +8,9 @@ window.SIMULADOR_CONFIG = {
   },
   catalog: {
     provider: "embedded",
+    apiBaseUrl: "/api",
+    mockUrl: "../../data/mock-program-catalog.json",
+    requestTimeoutMs: 15000,
     cache: true
   }
 };

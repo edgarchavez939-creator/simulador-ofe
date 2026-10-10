@@ -61,7 +61,8 @@
 <span class="status-dot" aria-hidden="true"></span><span class="header__status" id="header-status">Lineamientos vigentes</span>
 </div>
 </header>
-<main class="main-area" id="main-content" tabindex="-1">
+<div aria-live="polite" class="note u-mb-4" id="app-startup-status" role="status">Cargando programas…</div>
+<main class="main-area" id="main-content" aria-busy="true" inert="" tabindex="-1">
 <!-- TAB 1 -->
 <div class="view view--simulation" data-view="1" id="tab1">
 <div class="split">
@@ -1781,9 +1782,14 @@
 ]/*%%POSGRADOS_END%%*/
 </script>
 <script src="./config.js"></script>
+<script src="../../shared/program-catalog/program-catalog-schema.js"></script>
+<script src="../../shared/program-catalog/program-catalog-validator.js"></script>
 <script src="../../shared/program-catalog/program-catalog-provider.js"></script>
 <script src="../../shared/program-catalog/program-catalog-normalizer.js"></script>
+<script src="../../shared/program-catalog/catalog-http.js"></script>
 <script src="../../shared/program-catalog/adapters/embedded-adapter.js"></script>
+<script src="../../shared/program-catalog/adapters/mock-adapter.js"></script>
+<script src="../../shared/program-catalog/adapters/api-adapter.js"></script>
 <script src="./simulador-assets/js/00-runtime.js?v=uninorte-ui-3-12-pdf-aptos"></script>
 <script src="./simulador-assets/js/01-core-ui.js?v=uninorte-ui-3-12-pdf-aptos"></script>
 <script src="./simulador-assets/js/02-reestructuracion.js?v=uninorte-ui-3-12-pdf-aptos"></script>
