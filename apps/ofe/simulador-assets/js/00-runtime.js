@@ -6,19 +6,44 @@
   const registry = new Map();
 
   // Catálogo institucional.
-  // La fuente concreta queda desacoplada del runtime del simulador.
-  const catalogAdapter = global.ProgramCatalogEmbeddedAdapter;
+  //
+  // ProgramCatalog es la fachada estable de lectura.
+  // El adapter concreto se selecciona mediante SIMULADOR_CONFIG.
+  //
+  // Los arrays PROGRAMAS/POSGRADOS se mantienen temporalmente
+  // como interfaz legacy para no alterar los simuladores actuales.
 
-  if(
-    !catalogAdapter ||
-    typeof catalogAdapter.snapshot !== 'function'
+  const configuredCatalogProvider =
+    global.SIMULADOR_CONFIG?.catalog?.provider || 'embedded';
+
+  const catalogFacade = global.ProgramCatalog;
+
+  if (
+    !catalogFacade ||
+    typeof catalogFacade.use !== 'function'
   ) {
     throw new Error(
-      '[SimuladorOFE] Program catalog adapter not configured'
+      '[SimuladorOFE] ProgramCatalog facade not configured'
     );
   }
 
-  const catalogSnapshot = catalogAdapter.snapshot();
+  const availableCatalogAdapters = {
+    embedded: global.ProgramCatalogEmbeddedAdapter
+  };
+
+  const catalogAdapter =
+    availableCatalogAdapters[configuredCatalogProvider];
+
+  if (!catalogAdapter) {
+    throw new Error(
+      '[SimuladorOFE] Catalog provider not available: ' +
+      configuredCatalogProvider
+    );
+  }
+
+  catalogFacade.use(catalogAdapter);
+
+  const catalogSnapshot = catalogFacade.snapshot();
 
   Object.defineProperty(global, 'PROGRAMAS', {
     value: catalogSnapshot.programas,
@@ -33,7 +58,8 @@
   });
 
   app.catalog = Object.freeze({
-    source: catalogAdapter.source || 'unknown'
+    source: catalogFacade.source,
+    provider: catalogFacade
   });
 
   app.version = 'UNINORTE-V3.12-PDF-APTOS';
