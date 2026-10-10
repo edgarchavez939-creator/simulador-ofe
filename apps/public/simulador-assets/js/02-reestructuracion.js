@@ -207,49 +207,6 @@ function limpiarRefi() {
     </div>`;
 }
 
-function calcTA(id) {
-  const tm = parseFloat(document.getElementById('tasa'+id).value)/100;
-  if(!isNaN(tm)) document.getElementById('ta'+id).textContent = ((Math.pow(1+tm,12)-1)*100).toFixed(2)+'%';
-}
-calcTA(1); calcTA(2); calcTA(3);
-
-function setMat(id) {
-  const sel = document.getElementById('prog'+id);
-  if(!sel || !sel.value) return;
-  let data;
-  try { data = JSON.parse(sel.value); } catch(e) { return; }
-  const {v: valor, idiomas, nivel, semestres, subnivel} = data;
-  const progNombre = sel.options[sel.selectedIndex].textContent.replace(/ \(.*\)$/,'');
-  // Set matrícula
-  document.getElementById('mat'+id).value = valor;
-  fmtLbl('mat'+id);
-  // Set plazoLP — always look up directly from PROGRAMAS array (most reliable)
-  if(id === 2 && nivel === 'pregrado') {
-    // First try to get from option value (new format), fall back to PROGRAMAS lookup
-    const semFromOption = semestres;
-    const semFromArray  = (PROGRAMAS.find(p => p[0] === progNombre) || [])[3];
-    const sem = semFromArray || semFromOption || 8;
-    const plazoEl = document.getElementById('plazoLP');
-    if(plazoEl) {
-      plazoEl.value = sem;
-      calcPlazoLPAuto();
-    }
-  }
-  if(id < 3) recalcAll(id);
-  if(id === 7) { SimuladorOFE.state.results.initialPaymentProgramName = progNombre; recalc7(); }
-  // idiomas only for pregrado
-  const btnEl = document.getElementById('btn-idiomas-'+id);
-  if(btnEl){
-    if(nivel==='pregrado' && idiomas > 0){
-      btnEl.style.display = 'flex';
-      btnEl.dataset.idiomas = idiomas;
-      btnEl.dataset.prog = progNombre;
-      btnEl.querySelector('.idiomas-val').textContent = cop(idiomas);
-    } else {
-      btnEl.style.display = 'none';
-    }
-  }
-}
 
 
 
