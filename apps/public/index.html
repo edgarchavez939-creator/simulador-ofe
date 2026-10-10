@@ -33,15 +33,12 @@
 <button aria-current="page" class="nav__item" data-action="switch-tab" data-tab="1"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="M8 2v4M16 2v4"></path><rect height="18" rx="2" width="18" x="3" y="4"></rect><path d="M3 10h18"></path></svg><span class="nav__item-text">Crédito a Corto Plazo</span></button>
 <button class="nav__item" data-action="switch-tab" data-tab="2"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><line x1="6" x2="6" y1="3" y2="15"></line><circle cx="18" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><path d="M18 9a9 9 0 0 1-9 9"></path></svg><span class="nav__item-text">Corto y Largo Plazo</span></button>
 <button class="nav__item" data-action="switch-tab" data-tab="3"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><rect height="20" rx="2" width="16" x="4" y="2"></rect><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"></path></svg><span class="nav__item-text">Crédito Banco Aliado</span></button>
-<button class="nav__item" data-action="switch-tab" data-tab="5"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg><span class="nav__item-text">Reestructuración</span></button>
 <div class="nav__label">ANALIZAR</div>
 <button class="nav__item" data-action="switch-tab" data-tab="7"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"></path><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"></path></svg><span class="nav__item-text">Cuota Inicial</span></button>
 <button class="nav__item" data-action="switch-tab" data-tab="4"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"></path><path d="M3 11v-1a4 4 0 0 1 4-4h14"></path><path d="m7 22-4-4 4-4"></path><path d="M21 13v1a4 4 0 0 1-4 4H3"></path></svg><span class="nav__item-text">Conversor de Tasas</span></button>
 <button class="nav__item" data-action="switch-tab" data-tab="8"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="M16 3h5v5"></path><path d="M8 3H3v5"></path><path d="M21 3l-7 7"></path><path d="M3 3l7 7"></path><path d="M12 14v7"></path><path d="M8 17l4 4 4-4"></path></svg><span class="nav__item-text">Comparar escenarios</span></button>
 <div class="nav__label">HISTORIAL</div>
 <button class="nav__item" data-action="switch-tab" data-tab="9"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5"></path><path d="M12 7v5l3 2"></path></svg><span class="nav__item-text">Mis simulaciones</span></button>
-<div class="nav__label">ADMINISTRACIÓN</div>
-<button class="nav__item" data-action="switch-tab" data-tab="6"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg><span class="nav__item-text">Actualizar Programas</span></button>
 </nav>
 <div class="nav__foot">
 <button aria-label="Cambiar tema" class="nav__item" data-action="theme-toggle" id="theme-toggle">
@@ -562,223 +559,6 @@
           </div>
 </div>
 </div>
-</div>
-</div>
-</div>
-<!-- TAB 5: REESTRUCTURACIÓN DE CRÉDITO -->
-<div class="view view--simulation" data-view="5" hidden="" id="tab5">
-<div class="split">
-<div>
-<div class="card form-panel">
-<div class="card__title u-text-info"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg> Simulador de Reestructuración de Crédito</div>
-<p class="text-muted-md u-mb-18">Ingresa el saldo que se debe a la fecha y crea distintos escenarios de reestructuración para compararlos.</p>
-<div class="summary-panel summary-panel--info u-mb-16">
-<div class="eyebrow eyebrow--info u-mb-4"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><rect height="4" rx="1" width="8" x="8" y="2"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><path d="M12 11h4M12 16h4M8 11h.01M8 16h.01"></path></svg> Saldo a la Fecha</div>
-<p class="text-muted-xs u-mb-12">Valores ya causados — no se les aplica ningún cálculo.</p>
-<div class="field u-mb-8">
-<label class="field__label">Capital pendiente</label>
-<div class="input-affix u-border-info"><span class="input-affix__tag">$</span><input aria-label="Capital pendiente" class="input" data-input-action="sumar-refi" data-money-field="" id="refi-capital" min="0" placeholder="0" step="1000" type="number"/></div>
-</div>
-<div class="field u-mb-8">
-<label class="field__label">Intereses corrientes <span class="u-fs-10-muted">(causados no pagados)</span></label>
-<div class="input-affix u-border-info"><span class="input-affix__tag">$</span><input aria-label="Intereses corrientes pendientes" class="input" data-input-action="sumar-refi" data-money-field="" id="refi-intcorr" min="0" placeholder="0" step="1000" type="number"/></div>
-</div>
-<div class="field u-mb-10">
-<label class="field__label">Mora / Intereses moratorios <span class="u-fs-10-muted">(si está vencido)</span></label>
-<div class="input-affix u-border-info"><span class="input-affix__tag">$</span><input aria-label="Intereses de mora" class="input" data-input-action="sumar-refi" data-money-field="" id="refi-mora" min="0" placeholder="0" step="1000" type="number"/></div>
-</div>
-<div class="kpi kpi--info u-mb-3"><div class="kpi__label">Saldo total a refinanciar</div><div class="kpi__value kpi__value--md" id="refi-saldo-total">$ 0</div>
-<span class="u-fs-18"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg></span>
-</div>
-</div>
-<div class="summary-panel summary-panel--success u-mb-16">
-<div class="eyebrow eyebrow--success u-mb-12"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M5 12h14M12 5v14"></path></svg> Escenario de Reestructuración</div>
-<div class="field u-mb-10">
-<label class="field__label">Plazo</label>
-<div class="input-affix u-border-success"><input aria-label="Número de cuotas del nuevo escenario" class="input" id="refi-cuotas-nva" min="1" placeholder="24" type="number" value="24"/><span class="input-affix__tag input-affix__tag--end">meses</span></div>
-</div>
-<div class="field u-mb-10">
-<label class="field__label">Tasa (mes vencido)</label>
-<div class="tasa-row">
-<div class="input-affix u-border-success"><input aria-label="Tasa del nuevo escenario" class="input" data-input-action="ta-refi" data-tipo="nva" id="refi-tasa-nva" min="0" placeholder="1.53" step="0.01" type="number" value="1.53"/><span class="input-affix__tag input-affix__tag--end">%</span></div>
-<div class="tasa-badge"><div><small>Equiv. Anual <span aria-label="Ayuda: Tasa Efectiva Anual: lo que realmente cuesta el crédito en un año, incluyendo el efecto de capitalización mensual. Permite comparar créditos con distintas periodicidades." class="tip" data-tip="Tasa Efectiva Anual: lo que realmente cuesta el crédito en un año, incluyendo el efecto de capitalización mensual. Permite comparar créditos con distintas periodicidades." tabindex="0">?</span></small><span id="refi-ta-nva">19.56%</span></div><span><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg></span></div>
-</div>
-</div>
-<div class="field u-mb-10">
-<label class="field__label">Costos de reestructuración (opcional)</label>
-<div class="input-affix u-border-success"><span class="input-affix__tag">$</span><input aria-label="Costos adicionales de la reestructuración" class="input" data-money-field="" id="refi-costos" min="0" placeholder="0" step="1000" type="number"/></div>
-<div class="field__hint">Estudio, comisiones, seguros, etc.</div>
-</div>
-<div class="field u-mb-0">
-<label class="field__label">Ingreso mensual del estudiante <span class="u-fs-10-muted">(opcional — para capacidad de pago)</span></label>
-<div class="input-affix u-border-success"><span class="input-affix__tag">$</span><input aria-label="Ingreso mensual disponible" class="input" data-money-field="" id="refi-ingreso" min="0" placeholder="0" step="1000" type="number"/></div>
-<div class="field__hint">Permite evaluar si la cuota es sostenible</div>
-</div>
-</div>
-<button class="btn btn--primary btn--lg btn--block" data-action="calcular-refi">Calcular Escenario →</button>
-<button class="btn btn--block u-mt-2" data-action="limpiar-refi"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" x2="10" y1="11" y2="17"></line><line x1="14" x2="14" y1="11" y2="17"></line></svg> Limpiar todo</button>
-</div>
-</div>
-<div>
-<div aria-live="polite" aria-atomic="false" class="result-region" id="res-refi"><div class="card"><div class="empty"><div class="empty__icon"><svg aria-hidden="true" class="icon icon-xl" viewbox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg></div><div class="empty__title">Sin escenarios todavía</div><div class="empty__desc">Ingresa el saldo a la fecha y los datos de un escenario, luego presiona <strong>Calcular Escenario</strong>.</div></div></div></div>
-<div class="section" hidden="" id="esc-panel-refi"></div>
-</div>
-</div>
-</div>
-<!-- TAB 6: ACTUALIZADOR DE PROGRAMAS -->
-<div class="view view--admin" data-view="6" hidden="" id="tab6">
-<!-- STEP 0: Instructions -->
-<div class="card u-mb-4">
-<div class="step__head">
-<div class="step-num"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><rect height="4" rx="1" width="8" x="8" y="2"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><path d="M12 11h4M12 16h4M8 11h.01M8 16h.01"></path></svg></div>
-<div>
-<h2>Formato del archivo Excel</h2>
-<p>El Excel debe tener exactamente estas columnas según el tipo de programa</p>
-</div>
-</div>
-<div class="guide guide--accent u-mt-3">
-<h3>Pregrado — 4 columnas</h3>
-<ol>
-<li><code>Programa</code> — nombre del programa</li>
-<li><code>Valor Pregrado</code> — valor numérico de la matrícula (sin puntos ni $)</li>
-<li><code>Valor Idiomas</code> — valor numérico, usar <code>0</code> si no aplica</li>
-<li><code>Semestres</code> — duración del programa en semestres (ej: 8, 9, 10, 12)</li>
-</ol>
-<p class="text-muted-sm u-mt-8"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path><path d="M9 18h6M10 22h4"></path></svg> Los semestres determinan el plazo automático del crédito LP. Los beneficios/descuentos los configura el asesor en la simulación.</p>
-</div>
-<div class="guide guide--accent u-mt-3 surface-success-soft u-mt-12">
-<h3 class="u-text-success">Posgrado — 3 columnas</h3>
-<ol>
-<li><code>Programa</code> — nombre del programa</li>
-<li><code>Subnivel</code> — debe ser exactamente: <code>Doctorado</code>, <code>Maestría</code> o <code>Especialización</code></li>
-<li><code>Valor</code> — valor numérico de la matrícula (sin puntos ni $)</li>
-</ol>
-</div>
-<div class="template-btns">
-<button class="btn" data-action="descargar-plantilla"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg> Descargar Plantilla con Programas Actuales</button>
-<div class="note note--info u-mt-3" hidden="" id="sync-badge"></div>
-</div>
-</div>
-<!-- STEP 1: Load index.html -->
-<div class="card u-mb-4">
-<div class="step__head">
-<div class="step-num">1</div>
-<div>
-<h2>Origen del simulador</h2>
-<p>Se lee automáticamente desde esta misma página. Solo necesitas subir un archivo si abriste el simulador localmente.</p>
-</div>
-</div>
-<div aria-live="polite" class="note u-mb-3" hidden="" id="self-read-status"></div>
-<div class="dropzone" data-action="file-proxy" data-dropzone="html" data-target="inp-html" id="dz-html">
-<input accept=".html" aria-label="Seleccionar archivo HTML del simulador" data-change-action="cargar-html" id="inp-html" type="file"/>
-<div class="dropzone__icon"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8M16 13H8M16 17H8"></path></svg></div>
-<div class="dropzone__title"><strong>Haz clic</strong> o arrastra aquí el archivo <strong>index.html</strong></div>
-</div>
-<div aria-live="polite" class="feedback" id="msg-html"></div>
-<button class="btn u-mt-10" data-action="auto-leer"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path><path d="M16 16h5v5"></path></svg> Releer simulador desde esta página</button>
-</div>
-<!-- STEP 2: Load Excel -->
-<div class="card u-mb-4">
-<div class="step__head">
-<div class="step-num">2</div>
-<div>
-<h2>Cargar el Excel con los nuevos valores</h2>
-<p>Descarga la plantilla ya poblada con los programas vigentes. Si primero cargas tu index.html en el paso siguiente, la plantilla se sincroniza automáticamente con lo que está publicado.</p>
-</div>
-</div>
-<div class="dropzone" data-action="file-proxy" data-dropzone="xls" data-target="inp-xls" id="dz-xls">
-<input accept=".xlsx,.xls" aria-label="Seleccionar archivo Excel con programas" data-change-action="cargar-excel" id="inp-xls" type="file"/>
-<div class="dropzone__icon"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><line x1="12" x2="12" y1="20" y2="10"></line><line x1="18" x2="18" y1="20" y2="4"></line><line x1="6" x2="6" y1="20" y2="16"></line></svg></div>
-<div class="dropzone__title"><strong>Haz clic</strong> o arrastra aquí el archivo <strong>Excel (.xlsx)</strong></div>
-</div>
-<div aria-live="polite" class="feedback" id="msg-xls"></div>
-<!-- Sheet tabs -->
-<div id="sheets-area" class="u-hide u-mt-20">
-<div class="sheet-tabs" id="sheet-tabs"></div>
-<!-- Column mapper -->
-<div id="mapper-area" class="u-mb-16">
-<p class="u-section-kicker">Tipo de hoja</p>
-<div class="tipo-row" id="tipo-row">
-<button aria-pressed="true" class="seg-btn" data-action="set-tipo" data-tipo="pregrado" id="tipo-pre" type="button"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg> Pregrado</button>
-<button aria-pressed="false" class="seg-btn" data-action="set-tipo" data-tipo="posgrado" id="tipo-pos" type="button"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><line x1="3" x2="21" y1="22" y2="22"></line><line x1="6" x2="6" y1="18" y2="11"></line><line x1="10" x2="10" y1="18" y2="11"></line><line x1="14" x2="14" y1="18" y2="11"></line><line x1="18" x2="18" y1="18" y2="11"></line><polygon points="12 2 20 7 4 7"></polygon></svg> Posgrado</button>
-</div>
-<div id="mapper-cols"></div>
-</div>
-<!-- Preview -->
-<div id="preview-area"></div>
-<div aria-live="polite" class="feedback" id="parsed-status"></div>
-</div>
-</div>
-<!-- STEP 3: Generate -->
-<div class="card u-mb-4">
-<div class="step__head">
-<div class="step-num">3</div>
-<div>
-<h2>Generar nuevo index.html</h2>
-<p>Se descargará automáticamente — luego súbelo a GitHub para reemplazar el actual</p>
-</div>
-</div>
-<div id="resumen-cambios" class="u-hide u-mb-20">
-<div class="u-grid-summary">
-<div class="summary-tile summary-tile--accent">
-<div class="summary-tile__label">Programas Pregrado</div>
-<div id="cnt-pre" class="summary-tile__value summary-tile__value--accent">—</div>
-</div>
-<div class="summary-tile summary-tile--success">
-<div class="summary-tile__label">Programas Posgrado</div>
-<div id="cnt-pos" class="summary-tile__value summary-tile__value--success">—</div>
-</div>
-</div>
-<div aria-live="polite" class="feedback feedback--success u-mt-12" hidden id="msg-gen-ok"></div>
-</div>
-<!-- ── Publicación segura ── -->
-<div class="note note--warning u-mb-4" id="gh-security-note">
-<span class="note__icon">
-<svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V5l8-3 8 3v8Z"></path><path d="m9 12 2 2 4-4"></path></svg>
-</span>
-<div>
-<strong>Publicación directa deshabilitada por seguridad.</strong><br/>
-          Este archivo ya no solicita ni procesa tokens de GitHub en el navegador. Genera el <strong>index.html</strong> actualizado y publícalo mediante GitHub web, GitHub Desktop o un flujo autenticado externo.
-        </div>
-</div>
-<!-- ── Descarga manual (respaldo) ── -->
-<div class="u-panel-divider">
-<p class="u-fs-12-muted u-mb-10">
-          Genera el archivo actualizado. Luego súbelo al repositorio mediante un canal autenticado fuera de esta página.
-        </p>
-<button class="btn btn--primary btn--lg btn--block u-bg-muted" data-action="generar-html" disabled="" id="btn-gen">
-<svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg> Descargar index.html para publicar
-        </button>
-</div>
-<div aria-live="polite" class="feedback" id="msg-gen"></div>
-</div>
-<!-- STEP 4: Instructions for publishing -->
-<div class="card u-mb-4">
-<div class="step__head">
-<div class="step-num">4</div>
-<div>
-<h2>Publicar en GitHub Pages</h2>
-<p>Pasos para reemplazar el simulador en línea</p>
-</div>
-</div>
-<div class="guide guide--accent u-mt-3">
-<h3>Método recomendado — Upload directo (más fácil)</h3>
-<ol>
-<li>Ve a tu repositorio en <strong>github.com</strong></li>
-<li>Haz clic en <strong>Add file → Upload files</strong></li>
-<li>Arrastra el nuevo <code>index.html</code> descargado — GitHub reemplaza automáticamente el existente</li>
-<li>Escribe un mensaje como <code>Actualizar programas semestre vigente</code></li>
-<li>Haz clic en <strong>Commit changes</strong></li>
-<li>Espera 1–2 minutos y recarga tu sitio <svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M21.8 10A10 10 0 1 1 17 3.34"></path><path d="m9 11 3 3L22 4"></path></svg></li>
-</ol>
-</div>
-<div class="guide guide--accent u-mt-3 surface-warning-soft u-mt-12">
-<h3 class="u-text-warning"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" x2="12" y1="9" y2="13"></line><line x1="12" x2="12.01" y1="17" y2="17"></line></svg> Notas importantes</h3>
-<ol>
-<li>El archivo generado es una <strong>copia completa de este simulador</strong> con los programas actualizados — conserva todas las pestañas, el actualizador y las funcionalidades.</li>
-<li>La auto-lectura funciona cuando el simulador corre en GitHub Pages. Si lo abres localmente (file://), sube el <code>index.html</code> manualmente.</li>
-<li>Los beneficios, descuentos y el pago de contado los configura el asesor en cada simulación — no van en el Excel de programas.</li>
-</ol>
 </div>
 </div>
 </div>
@@ -1912,24 +1692,6 @@
 </div>
 </div>
 </div>
-<!-- REFI PIN MODAL -->
-
-
-
-<div aria-hidden="true" class="scrim" data-action="scrim-pin" hidden="" id="refi-pin-modal">
-<div aria-describedby="pin-desc" aria-labelledby="pin-title" aria-modal="true" class="modal modal--narrow" role="dialog" tabindex="-1">
-<div class="modal__body u-center">
-<div class="pin-icon" id="pin-icon"><svg aria-hidden="true" class="icon icon-lg" viewbox="0 0 24 24"><rect height="11" rx="2" width="18" x="3" y="11"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
-<div class="modal__title u-justify-center" id="pin-title">Acceso Restringido</div>
-<p class="modal__desc" id="pin-desc">Ingresa la clave operativa. Este control se ejecuta únicamente en el navegador.</p>
-<div class="pin-inputs" id="refi-pin-inputs"></div>
-<div aria-live="assertive" class="note note--danger u-mb-3" hidden="" id="refi-pin-error" role="alert"></div>
-<button class="btn btn--primary btn--block btn-refi-pin" data-action="verificar-pin">Ingresar</button>
-<button class="btn btn--ghost btn--block u-mt-2" data-action="cancelar-pin">Cancelar</button>
-</div>
-</div>
-</div>
-
 <!-- DETALLE DE SIMULACIÓN -->
 <div aria-hidden="true" class="scrim" data-action="scrim-detail" hidden id="detail-modal">
   <div aria-describedby="detail-desc" aria-labelledby="detail-title" aria-modal="true" class="modal modal--narrow" role="dialog" tabindex="-1">
