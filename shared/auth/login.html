@@ -1,13 +1,18 @@
 <!doctype html>
-<html lang="es" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Iniciar sesión · Simulador de Crédito</title><script src="/auth-assets/theme.js"></script><link rel="stylesheet" href="/auth-assets/styles.css"></head>
-<body class="auth-page"><main class="auth-card card"><div class="auth-brand">OFE · UNIVERSIDAD DEL NORTE</div><h1>Simulador de Crédito</h1><p class="auth-intro">Tu espacio de simulación y administración.</p>
-<button class="btn btn--ghost btn--sm" id="auth-theme" type="button">Cambiar tema</button>
-<form id="login-form"><h2 id="auth-title">Iniciar sesión</h2>
-<div class="field" id="email-field"><label class="field__label" for="email">Correo</label><input class="input" id="email" name="email" type="email" autocomplete="username" required maxlength="200"></div>
-<div class="field" id="current-field" hidden><label class="field__label" for="currentPassword">Contraseña actual</label><input class="input" id="currentPassword" type="password" autocomplete="current-password"></div>
-<div class="field"><label class="field__label" for="password">Contraseña</label><div class="input-affix"><input class="input" id="password" name="password" type="password" autocomplete="current-password" required maxlength="128"><button class="btn btn--ghost btn--sm" id="toggle-password" type="button" aria-controls="password" aria-pressed="false">Mostrar</button></div></div>
-<div class="field" id="confirm-field" hidden><label class="field__label" for="confirmation">Confirmar nueva contraseña</label><input class="input" id="confirmation" type="password" autocomplete="new-password"></div>
-<p class="field__hint" id="password-policy" hidden>Elige una contraseña personal de 12 a 128 caracteres.</p>
-<p class="feedback feedback--danger" id="auth-error" role="alert" hidden></p>
-<button class="btn btn--primary btn--block" id="login-submit" type="submit">Iniciar sesión</button></form>
-<p class="text-muted-sm">El acceso y las operaciones administrativas quedan registrados para trazabilidad.</p></main><script src="/auth-assets/login.js"></script></body></html>
+<html lang="es" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Acceder · Simulador de Crédito · Universidad del Norte</title><script src="/auth-assets/theme.js"></script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"><link rel="stylesheet" href="/auth-assets/styles.css"></head>
+<body class="auth-page"><a class="skip-link" href="#login-form">Saltar al acceso</a>
+<header class="auth-header"><span class="auth-brand">UNIVERSIDAD DEL NORTE</span><span>Oficina de Financiamiento Estudiantil</span></header>
+<main class="auth-layout"><section class="auth-introduction" aria-labelledby="product-title"><p class="auth-eyebrow">FINANCIAMIENTO ESTUDIANTIL</p><h1 id="product-title">Simulador<br> de Crédito</h1><p>Explora opciones de financiación.<br>Construye escenarios con claridad.</p><span class="auth-rule" aria-hidden="true"></span><small>Una herramienta de la Universidad del Norte.</small></section>
+<section class="auth-access" aria-labelledby="auth-title"><p class="auth-eyebrow">ACCESO AL SIMULADOR</p><h2 id="auth-title">Accede para continuar</h2><p id="auth-description">Ingresa con el acceso asignado por tu administrador.</p>
+<div id="auth-provider-region" data-auth-provider="local"><form id="login-form">
+<div class="field" id="email-field"><label class="field__label" for="email">Correo</label><input class="input" id="email" name="email" type="email" autocomplete="username" required maxlength="200" placeholder="usuario@uninorte.edu.co"></div>
+<div class="field" id="current-field" hidden><label class="field__label" for="currentPassword">Clave inicial asignada</label><input class="input" id="currentPassword" type="password" autocomplete="current-password"></div>
+<div class="field"><label class="field__label" for="password" id="password-label">Contraseña</label><div class="input-affix auth-password"><input class="input" id="password" name="password" type="password" autocomplete="current-password" required maxlength="128"><button class="btn btn--ghost btn--sm" id="toggle-password" type="button" aria-controls="password" aria-pressed="false" aria-label="Mostrar contraseña"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+<div class="field" id="confirm-field" hidden><label class="field__label" for="confirmation">Confirmar contraseña personal</label><input class="input" id="confirmation" type="password" autocomplete="new-password"></div>
+<p class="field__hint" id="password-policy" hidden>Usa entre 12 y 128 caracteres para activar tu acceso local.</p>
+<p class="feedback feedback--danger" id="auth-error" role="alert" tabindex="-1" hidden></p>
+<button class="btn btn--primary btn--block" id="login-submit" type="submit"><span id="login-submit-label">Iniciar sesión</span><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
+</form></div><p class="auth-access-note">Acceso reservado a usuarios autorizados.</p>
+<!-- La región institucional permanece inerte hasta que DTIC implemente el proveedor real. -->
+<template id="institutional-provider-template"><section data-auth-provider="entra"><p>Acceso institucional</p><button type="button" class="btn btn--block" disabled>Continuar con Microsoft</button></section></template>
+</section></main><footer class="auth-footer">Simulador de Crédito · Universidad del Norte</footer><script src="/auth-assets/login.js"></script></body></html>

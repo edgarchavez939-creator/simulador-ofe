@@ -11,7 +11,7 @@
 <title>Simulador de Crédito · OFE</title>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -28,6 +28,7 @@
 <div class="brand__name">SIMULADOR DE CRÉDITO</div>
 <div class="brand__sub">Oficina de Financiamiento Estudiantil</div>
 </div>
+<button type="button" class="btn btn--ghost btn--icon sidebar-mobile-close" data-action="sidebar-close" aria-label="Cerrar navegación"><svg class="icon" aria-hidden="true" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></svg></button>
 </div>
 <nav aria-label="Secciones" class="nav">
 <div class="nav__label">SIMULAR</div>
@@ -44,11 +45,7 @@
 <div class="nav__label" data-requires-permission="programs.update" hidden="">ADMINISTRACIÓN</div>
 <button class="nav__item" data-action="switch-tab" data-tab="6" data-requires-permission="programs.update" hidden=""><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg><span class="nav__item-text">Actualizar Programas</span></button>
 </nav>
-<div class="nav__foot">
-<button aria-label="Cambiar tema" class="nav__item" data-action="theme-toggle" id="theme-toggle">
-<span id="theme-ico"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg></span><span class="nav__item-text" id="theme-label">Tema oscuro</span>
-</button>
-</div>
+<button id="sidebar-collapse" class="sidebar-collapse btn btn--ghost" type="button" aria-label="Contraer navegación" aria-expanded="true" aria-controls="sidebar"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></svg><span>Contraer navegación</span></button>
 </aside>
 <div class="main-col">
 <header class="header">
@@ -58,9 +55,7 @@
 <h1 class="header__title" id="header-title">Crédito a Corto Plazo</h1>
 <p class="header__desc" id="header-desc">Simula las condiciones de financiación para este escenario.</p>
 </div>
-<div class="header__tools">
-<span class="status-dot" aria-hidden="true"></span><span class="header__status" id="header-status">Lineamientos vigentes</span>
-</div>
+<div class="header__tools" id="header-user"></div>
 </header>
 <div aria-live="polite" class="note u-mb-4" id="app-startup-status" role="status">Cargando programas…</div>
 <main class="main-area" id="main-content" aria-busy="true" inert="" tabindex="-1">
@@ -658,147 +653,8 @@
 </div>
 </div>
 </div>
-<!-- TAB 6: ACTUALIZADOR DE PROGRAMAS -->
-<div class="view view--admin" data-view="6" hidden="" id="tab6">
-<!-- STEP 0: Instructions -->
-<div class="card u-mb-4">
-<div class="step__head">
-<div class="step-num"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><rect height="4" rx="1" width="8" x="8" y="2"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><path d="M12 11h4M12 16h4M8 11h.01M8 16h.01"></path></svg></div>
-<div>
-<h2>Formato del archivo Excel</h2>
-<p>El Excel debe tener exactamente estas columnas según el tipo de programa</p>
-</div>
-</div>
-<div class="guide guide--accent u-mt-3">
-<h3>Pregrado — 4 columnas</h3>
-<ol>
-<li><code>Programa</code> — nombre del programa</li>
-<li><code>Valor Pregrado</code> — valor numérico de la matrícula (sin puntos ni $)</li>
-<li><code>Valor Idiomas</code> — valor numérico, usar <code>0</code> si no aplica</li>
-<li><code>Semestres</code> — duración del programa en semestres (ej: 8, 9, 10, 12)</li>
-</ol>
-<p class="text-muted-sm u-mt-8"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path><path d="M9 18h6M10 22h4"></path></svg> Los semestres determinan el plazo automático del crédito LP. Los beneficios/descuentos los configura el asesor en la simulación.</p>
-</div>
-<div class="guide guide--accent u-mt-3 surface-success-soft u-mt-12">
-<h3 class="u-text-success">Posgrado — 3 columnas</h3>
-<ol>
-<li><code>Programa</code> — nombre del programa</li>
-<li><code>Subnivel</code> — debe ser exactamente: <code>Doctorado</code>, <code>Maestría</code> o <code>Especialización</code></li>
-<li><code>Valor</code> — valor numérico de la matrícula (sin puntos ni $)</li>
-</ol>
-</div>
-<div class="template-btns">
-<button class="btn" data-action="descargar-plantilla"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg> Descargar Plantilla con Programas Actuales</button>
-<div class="note note--info u-mt-3" hidden="" id="sync-badge"></div>
-</div>
-</div>
-<!-- STEP 1: Load index.html -->
-<div class="card u-mb-4">
-<div class="step__head">
-<div class="step-num">1</div>
-<div>
-<h2>Origen del simulador</h2>
-<p>Se lee automáticamente desde esta misma página. Solo necesitas subir un archivo si abriste el simulador localmente.</p>
-</div>
-</div>
-<div aria-live="polite" class="note u-mb-3" hidden="" id="self-read-status"></div>
-<div class="dropzone" data-action="file-proxy" data-dropzone="html" data-target="inp-html" id="dz-html">
-<input accept=".html" aria-label="Seleccionar archivo HTML del simulador" data-change-action="cargar-html" id="inp-html" type="file"/>
-<div class="dropzone__icon"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8M16 13H8M16 17H8"></path></svg></div>
-<div class="dropzone__title"><strong>Haz clic</strong> o arrastra aquí el archivo <strong>index.html</strong></div>
-</div>
-<div aria-live="polite" class="feedback" id="msg-html"></div>
-<button class="btn u-mt-10" data-action="auto-leer"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path><path d="M16 16h5v5"></path></svg> Releer simulador desde esta página</button>
-</div>
-<!-- STEP 2: Load Excel -->
-<div class="card u-mb-4">
-<div class="step__head">
-<div class="step-num">2</div>
-<div>
-<h2>Cargar el Excel con los nuevos valores</h2>
-<p>Descarga la plantilla ya poblada con los programas vigentes. Si primero cargas tu index.html en el paso siguiente, la plantilla se sincroniza automáticamente con lo que está publicado.</p>
-</div>
-</div>
-<div class="dropzone" data-action="file-proxy" data-dropzone="xls" data-target="inp-xls" id="dz-xls">
-<input accept=".xlsx,.xls" aria-label="Seleccionar archivo Excel con programas" data-change-action="cargar-excel" id="inp-xls" type="file"/>
-<div class="dropzone__icon"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><line x1="12" x2="12" y1="20" y2="10"></line><line x1="18" x2="18" y1="20" y2="4"></line><line x1="6" x2="6" y1="20" y2="16"></line></svg></div>
-<div class="dropzone__title"><strong>Haz clic</strong> o arrastra aquí el archivo <strong>Excel (.xlsx)</strong></div>
-</div>
-<div aria-live="polite" class="feedback" id="msg-xls"></div>
-<!-- Sheet tabs -->
-<div id="sheets-area" class="u-hide u-mt-20">
-<div class="sheet-tabs" id="sheet-tabs"></div>
-<!-- Column mapper -->
-<div id="mapper-area" class="u-mb-16">
-<p class="u-section-kicker">Tipo de hoja</p>
-<div class="tipo-row" id="tipo-row">
-<button aria-pressed="true" class="seg-btn" data-action="set-tipo" data-tipo="pregrado" id="tipo-pre" type="button"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg> Pregrado</button>
-<button aria-pressed="false" class="seg-btn" data-action="set-tipo" data-tipo="posgrado" id="tipo-pos" type="button"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><line x1="3" x2="21" y1="22" y2="22"></line><line x1="6" x2="6" y1="18" y2="11"></line><line x1="10" x2="10" y1="18" y2="11"></line><line x1="14" x2="14" y1="18" y2="11"></line><line x1="18" x2="18" y1="18" y2="11"></line><polygon points="12 2 20 7 4 7"></polygon></svg> Posgrado</button>
-</div>
-<div id="mapper-cols"></div>
-</div>
-<!-- Preview -->
-<div id="preview-area"></div>
-<div aria-live="polite" class="feedback" id="parsed-status"></div>
-</div>
-</div>
-<!-- STEP 3: Generate -->
-<div class="card u-mb-4">
-<div class="step__head">
-<div class="step-num">3</div>
-<div>
-<h2>Revisar propuesta de actualización</h2>
-<p>Valida los datos antes de conectarlos al servicio institucional</p>
-</div>
-</div>
-<div id="resumen-cambios" class="u-hide u-mb-20">
-<div class="u-grid-summary">
-<div class="summary-tile summary-tile--accent">
-<div class="summary-tile__label">Programas Pregrado</div>
-<div id="cnt-pre" class="summary-tile__value summary-tile__value--accent">—</div>
-</div>
-<div class="summary-tile summary-tile--success">
-<div class="summary-tile__label">Programas Posgrado</div>
-<div id="cnt-pos" class="summary-tile__value summary-tile__value--success">—</div>
-</div>
-</div>
-<div aria-live="polite" class="feedback feedback--success u-mt-12" hidden id="msg-gen-ok"></div>
-</div>
-<!-- ── Publicación segura ── -->
-<div class="note note--warning u-mb-4" id="gh-security-note">
-<span class="note__icon">
-<svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V5l8-3 8 3v8Z"></path><path d="m9 12 2 2 4-4"></path></svg>
-</span>
-<div>
-<strong>Publicación directa deshabilitada por seguridad.</strong><br/>
-          La actualización del catálogo requiere una sesión institucional, el permiso de administración y un registro de cada cambio dentro de la misma transacción del servidor.
-        </div>
-</div>
-<!-- ── Descarga manual (respaldo) ── -->
-<div class="u-panel-divider">
-<p class="u-fs-12-muted u-mb-10">
-          Actualización por propuesta identificada. Los archivos cargados se usan únicamente para validación y vista previa.
-        </p>
-<button class="btn btn--primary btn--lg btn--block u-bg-muted" data-action="generar-html" disabled="" id="btn-gen">
-<svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg> Publicación mediante API auditada
-        </button>
-</div>
-<div aria-live="polite" class="feedback" id="msg-gen"></div>
-</div>
-<!-- STEP 4: Instructions for publishing -->
-<div class="card u-mb-4">
-<div class="step__head">
-<div class="step-num">4</div>
-<div>
-<h2>Actualización por propuesta identificada</h2>
-<p>La propuesta no modifica el catálogo vigente</p>
-</div></div>
-<div class="guide guide--accent u-mt-3">
-<p>El servicio autónomo gestiona la autenticación, los permisos y la persistencia del catálogo. Cada actualización deberá guardar el valor anterior, el valor nuevo, el usuario y la fecha dentro de la misma transacción.</p>
-<p>Los programas con el mismo nombre requieren una identidad institucional confirmada antes de aplicar cambios. La vista previa conserva todos los registros.</p>
-</div>
-</div>
-</div>
+<!-- TAB 6: ADMINISTRACIÓN DE PROGRAMAS -->
+<section class="view view--admin" data-view="6" hidden id="tab6"></section>
 <!-- VISTA 7: CUOTA INICIAL REQUERIDA (cálculo inverso) -->
 <div class="view view--simulation" data-view="7" hidden="" id="tab7">
 <div class="split">
@@ -1830,7 +1686,9 @@
 <script src="./simulador-assets/js/06-actions-history.js?v=uninorte-ui-3-12-pdf-aptos"></script>
 <script src="./simulador-assets/js/07-financing-engine.js?v=uninorte-ui-3-12-pdf-aptos"></script>
 <script src="../../shared/program-catalog/catalog-import.js"></script>
-<script src="./simulador-assets/js/08-updater.js?v=uninorte-ui-3-12-pdf-aptos"></script>
+<script src="../../shared/admin/program-template.js"></script>
+<script src="../../shared/ui/overlays.js"></script>
+<script src="../../shared/ui/app-shell.js"></script>
 <script src="../../shared/admin/filters.js"></script>
 <script src="../../shared/admin/settings-ui.js"></script>
 <script src="../../shared/admin/admin-ui.js"></script>

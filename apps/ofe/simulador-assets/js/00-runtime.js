@@ -121,15 +121,6 @@
   };
   app.state.comparison = app.state.comparison || { scenarios: {1:[], 2:[], 3:[]} };
   app.state.history = app.state.history || { key: global.OFE_SERVER?.userId ? 'simulador_credito_historial_v1:'+global.OFE_SERVER.userId : 'simulador_credito_historial_v1', max:10 };
-  app.state.updater = app.state.updater || {
-    htmlContent: null,
-    workbook: null,
-    activeSheet: null,
-    sheetType: {},
-    parsedData: {},
-    currentUndergrad: null,
-    currentPostgrad: null
-  };
   app.services = app.services || Object.create(null);
   app.modules = app.modules || Object.create(null);
 

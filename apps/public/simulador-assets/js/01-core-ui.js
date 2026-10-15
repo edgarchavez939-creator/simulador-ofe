@@ -340,24 +340,9 @@ function toggleSidebar(open){
 }
 
 // ── Theme toggle (claro/oscuro) ──────────────────────────────────────────────
-function applyTheme(theme) {
-  document.documentElement.setAttribute('data-theme', theme);
-  const ico = document.getElementById('theme-ico');
-  const lbl = document.getElementById('theme-label');
-  if(ico) ico.innerHTML = icon(theme === 'dark' ? 'sun' : 'moon');
-  if(lbl) lbl.textContent = theme === 'dark' ? 'Tema claro' : 'Tema oscuro';
-  try { localStorage.setItem('simulador_tema', theme); } catch(e){}
-  window.OFETheme?.charts();
-}
-function toggleTheme() {
-  const cur = document.documentElement.getAttribute('data-theme') || 'light';
-  applyTheme(cur === 'dark' ? 'light' : 'dark');
-}
-function initTheme(){
-  let saved = 'light';
-  try { saved = localStorage.getItem('simulador_tema') || 'light'; } catch(e){}
-  applyTheme(saved);
-}
+function applyTheme(theme) { window.OFETheme.setPreference(theme); }
+function toggleTheme() { applyTheme(window.OFETheme.resolved()==='dark'?'light':'dark'); }
+function initTheme(){ window.OFETheme.charts(); }
 
 const GARANTISA_CP = SimuladorOFE.config.garantisaCP;
 const GARANTISA_LP = SimuladorOFE.config.garantisaLP;

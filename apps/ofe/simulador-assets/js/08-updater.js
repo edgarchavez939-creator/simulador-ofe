@@ -31,7 +31,10 @@ function safeEmbeddedJSON(value) {
 // ══════════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════════
-const updaterState = SimuladorOFE.state.updater;
+// Compatibility module: create legacy review state only when explicitly loaded.
+const updaterState = SimuladorOFE.state.updater || (SimuladorOFE.state.updater = {
+  htmlContent:null,workbook:null,activeSheet:null,sheetType:{},parsedData:{},currentUndergrad:null,currentPostgrad:null
+});
 
 function setDropzoneBusy(id, busy) {
   const el = document.getElementById(id);

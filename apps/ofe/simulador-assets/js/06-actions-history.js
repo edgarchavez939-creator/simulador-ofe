@@ -11,7 +11,6 @@ function handleUIAction(event) {
   switch(action) {
     case 'sidebar-close': return toggleSidebar(false);
     case 'sidebar-open': return toggleSidebar(true);
-    case 'theme-toggle': return toggleTheme();
     case 'switch-tab': return switchTab(tab);
     case 'set-nivel': return setNivel(tab, el.dataset.nivel);
     case 'add-benef': return addBenef(tab);
@@ -27,11 +26,6 @@ function handleUIAction(event) {
     case 'tipo-eq': return setTipoEq(el.dataset.tipo);
     case 'calcular-refi': return runCalculation(el, 5, () => calcularRefi(), 'Calculando nuevas condiciones…');
     case 'limpiar-refi': return limpiarRefi();
-    case 'descargar-plantilla': return runButtonTask(el, () => descargarPlantilla());
-    case 'file-proxy': return document.getElementById(el.dataset.target)?.click();
-    case 'auto-leer': return runButtonTask(el, () => autoLeerSimulador());
-    case 'set-tipo': return setTipo(el.dataset.tipo);
-    case 'generar-html': return runButtonTask(el, () => generarHTML());
     case 'guardar-esc-refi': return guardarEscRefi();
     case 'pdf-refi': return runButtonTask(el, () => expPDFRefi());
     case 'comparar-esc-refi': return compararEscRefi();
@@ -960,21 +954,6 @@ function handleUIChange(event) {
   if(action==='filtrar-programas') return filtrarProgramas(tab);
   if(action==='set-mat') return setMat(tab);
   if(action==='convertir-tasas') return convertirTasas();
-  if(action==='cargar-html') return cargarHTML(event);
-  if(action==='cargar-excel') return cargarExcel(event);
-}
-
-function handleUIDragOver(event) {
-  const dz = event.target.closest('[data-dropzone]');
-  if(dz) dzOver(event, dz.id);
-}
-function handleUIDragLeave(event) {
-  const dz = event.target.closest('[data-dropzone]');
-  if(dz) dzLeave(dz.id);
-}
-function handleUIDrop(event) {
-  const dz = event.target.closest('[data-dropzone]');
-  if(dz) dzDrop(event, dz.dataset.dropzone);
 }
 
 SimuladorOFE.register('actions-history', {
@@ -982,9 +961,6 @@ SimuladorOFE.register('actions-history', {
     document.addEventListener('click', handleUIAction);
     document.addEventListener('input', handleUIInput);
     document.addEventListener('change', handleUIChange);
-    document.addEventListener('dragover', handleUIDragOver);
-    document.addEventListener('dragleave', handleUIDragLeave);
-    document.addEventListener('drop', handleUIDrop);
     try { runFinancialSelfTests(); }
     catch(e) { console.error('[Motor financiero] Error ejecutando pruebas internas', e); }
   }

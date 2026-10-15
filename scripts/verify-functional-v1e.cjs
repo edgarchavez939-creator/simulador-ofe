@@ -129,6 +129,8 @@ test('initial payment history retains zero interest and makes the initial total 
 });
 test('invalid remapping clears preview readiness and uploaded HTML is validated without numeric defaults',async()=>{
   const {context:c,elements:e}=selectorContext('ofe');await c.SimuladorOFE.init();
+  // The legacy validator remains an isolated compatibility test; its UI is retired.
+  for(const id of ['preview-area','parsed-status','btn-gen','cnt-pre','cnt-pos','resumen-cambios','msg-gen'])e[id]=c.document.createElement('div');
   vm.runInContext(read('shared/program-catalog/catalog-import.js'),c);
   vm.runInContext(read('apps/ofe/simulador-assets/js/08-updater.js'),c);
   const html=read('apps/ofe/index.html');const extracted=c.extraerProgramasDelHTML(html);

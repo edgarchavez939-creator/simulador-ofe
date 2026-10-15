@@ -1,6 +1,13 @@
 (function(global){
  'use strict';
- try { document.documentElement.setAttribute('data-theme',localStorage.getItem('simulador_tema')==='dark'?'dark':'light'); } catch(_){}
+ const modes=['light','dark','system'],listeners=new Set(),media=global.matchMedia?.('(prefers-color-scheme: dark)');
+ let preference='system';try{const saved=localStorage.getItem('simulador_tema');if(modes.includes(saved))preference=saved;}catch(_){}
+ const resolved=()=>preference==='system'?(media?.matches?'dark':'light'):preference;
+ function apply(){document.documentElement?.setAttribute('data-theme',resolved());document.documentElement?.setAttribute('data-theme-preference',preference);charts();listeners.forEach(fn=>fn(preference,resolved()));}
+ function setPreference(value){if(!modes.includes(value))throw new TypeError('Apariencia inválida.');preference=value;try{localStorage.setItem('simulador_tema',value);}catch(_){}apply();}
+ function subscribe(fn){listeners.add(fn);return ()=>listeners.delete(fn);}
+ media?.addEventListener?.('change',()=>{if(preference==='system')apply();});
+ global.addEventListener?.('storage',event=>{if(event.key==='simulador_tema'){preference=modes.includes(event.newValue)?event.newValue:'system';apply();}});
  function charts(){
   const Chart=global.Chart;if(!Chart?.defaults)return;
   const css=getComputedStyle(document.documentElement),color=name=>css.getPropertyValue(name).trim();
@@ -18,5 +25,6 @@
   if(!global.OFETheme.registered&&Chart.register){Chart.register({id:'ofeTheme',beforeUpdate:update});global.OFETheme.registered=true;}
   document.querySelectorAll('canvas').forEach(canvas=>{const chart=Chart.getChart?.(canvas);if(chart){update(chart);chart.update('none');}});
  }
- global.OFETheme={charts,registered:false};
+ global.OFETheme={charts,registered:false,setPreference,getPreference:()=>preference,resolved,subscribe};
+ apply();
 })(window);

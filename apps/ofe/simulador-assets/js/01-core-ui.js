@@ -2,6 +2,11 @@
 // Iconografía — set Lucide, SVG inline con currentColor (viewBox 0 0 24 24)
 // ══════════════════════════════════════════════════════════════════
 const ICONS = {
+  'more-vertical':'<circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>',
+  'users':'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2m20 0v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/><path d="M16 3a4 4 0 0 1 0 8"/>',
+  'monitor':'<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/>',
+  'log-out':'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H9"/>',
+  'upload':'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5m5-5v12"/>',
   'graduation-cap': '<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>',
   'landmark':       '<line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/>',
   'calendar':       '<path d="M8 2v4M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>',
@@ -316,6 +321,7 @@ function _syncSidebarA11y(){
   if(!sb) return;
   const mobile = window.matchMedia('(max-width: 900px)').matches;
   const open = sb.dataset.open === 'true';
+  const main=document.querySelector('.main-col');if(main)main.inert=mobile&&open;
   if(mobile && !open) {
     sb.inert = true;
     sb.setAttribute('aria-hidden','true');
@@ -328,6 +334,7 @@ function _syncSidebarA11y(){
 function toggleSidebar(open){
   const sb = document.getElementById('sidebar'), sc = document.getElementById('sidebar-scrim');
   if(!sb) return;
+  const hadSidebarFocus=sb.contains(document.activeElement);
   const v = open === undefined ? sb.dataset.open !== 'true' : open;
   sb.dataset.open = v ? 'true' : 'false';
   if(sc) sc.dataset.open = v ? 'true' : 'false';
@@ -336,30 +343,14 @@ function toggleSidebar(open){
   _syncSidebarA11y();
   if(v && window.matchMedia('(max-width: 900px)').matches) {
     setTimeout(()=>sb.querySelector('.nav__item[data-tab]')?.focus(), 0);
-  } else if(!v && sb.contains(document.activeElement) && mb) {
+  } else if(!v && hadSidebarFocus && mb) {
     mb.focus();
   }
 }
 
-// ── Theme toggle (claro/oscuro) ──────────────────────────────────────────────
-function applyTheme(theme) {
-  document.documentElement.setAttribute('data-theme', theme);
-  const ico = document.getElementById('theme-ico');
-  const lbl = document.getElementById('theme-label');
-  if(ico) ico.innerHTML = icon(theme === 'dark' ? 'sun' : 'moon');
-  if(lbl) lbl.textContent = theme === 'dark' ? 'Tema claro' : 'Tema oscuro';
-  try { localStorage.setItem('simulador_tema', theme); } catch(e){}
-  window.OFETheme?.charts();
-}
-function toggleTheme() {
-  const cur = document.documentElement.getAttribute('data-theme') || 'light';
-  applyTheme(cur === 'dark' ? 'light' : 'dark');
-}
-function initTheme(){
-  let saved = 'light';
-  try { saved = localStorage.getItem('simulador_tema') || 'light'; } catch(e){}
-  applyTheme(saved);
-}
+// ── Apariencia centralizada (claro/oscuro/sistema) ──────────────────────────────────────────────
+function applyTheme(theme) { window.OFETheme.setPreference(theme); }
+function initTheme(){ window.OFETheme.charts(); }
 
 const GARANTISA_CP = Object.freeze({valueOf:()=>SimuladorOFE.config.garantisaCP});
 const GARANTISA_LP = Object.freeze({valueOf:()=>SimuladorOFE.config.garantisaLP});
@@ -670,18 +661,18 @@ function _abrirPinModal(target){
 }
 
 const VIEW_META = Object.freeze({
-  1:{section:'SIMULAR', title:'Crédito a Corto Plazo', desc:'Simula las condiciones de financiación para este escenario.', status:'Lineamientos vigentes'},
-  2:{section:'SIMULAR', title:'Corto y Largo Plazo', desc:'Distribuye la financiación entre corto y largo plazo y revisa su impacto.', status:'Lineamientos vigentes'},
-  3:{section:'SIMULAR', title:'Crédito Banco Aliado', desc:'Evalúa un escenario de financiación con las condiciones del banco aliado.', status:'Lineamientos vigentes'},
-  5:{section:'SIMULAR', title:'Reestructuración de Crédito', desc:'Construye escenarios de reestructuración sobre un saldo existente.', status:'Control operativo'},
-  7:{section:'ANALIZAR', title:'Cálculo de Cuota Inicial', desc:'Calcula la cuota inicial requerida a partir de la capacidad de pago mensual.', status:'Herramienta de análisis'},
-  4:{section:'ANALIZAR', title:'Conversor de Tasas', desc:'Convierte tasas entre periodicidades para comparar condiciones equivalentes.', status:'Herramienta de análisis'},
-  8:{section:'ANALIZAR', title:'Comparar escenarios', desc:'Accede a las comparaciones disponibles dentro de cada modalidad de simulación.', status:'Escenarios guardados'},
-  9:{section:'HISTORIAL', title:'Mis simulaciones', desc:'Consulta las simulaciones recientes guardadas localmente en este navegador.', status:'Datos locales'},
-  10:{section:'ADMINISTRACIÓN',title:'Usuarios',desc:'Gestiona los accesos al simulador.',status:'Acceso autorizado'},
-  12:{section:'ADMINISTRACIÓN',title:'Configuración',desc:'Parámetros para nuevas simulaciones.',status:'Cambios auditados'},
-  11:{section:'ADMINISTRACIÓN',title:'Auditoría',desc:'Consulta la trazabilidad de los cambios.',status:'Registro del servidor'},
-  6:{section:'ADMINISTRACIÓN', title:'Actualizar Programas', desc:'Actualiza programas y valores publicados sin modificar el motor financiero.', status:'Acceso restringido'}
+  1:{section:'SIMULAR', title:'Crédito a Corto Plazo', desc:'Simula las condiciones de financiación para este escenario.'},
+  2:{section:'SIMULAR', title:'Corto y Largo Plazo', desc:'Distribuye la financiación entre corto y largo plazo y revisa su impacto.'},
+  3:{section:'SIMULAR', title:'Crédito Banco Aliado', desc:'Evalúa un escenario de financiación con las condiciones del banco aliado.'},
+  5:{section:'SIMULAR', title:'Reestructuración de Crédito', desc:'Construye escenarios de reestructuración sobre un saldo existente.'},
+  7:{section:'ANALIZAR', title:'Cálculo de Cuota Inicial', desc:'Calcula la cuota inicial requerida a partir de la capacidad de pago mensual.'},
+  4:{section:'ANALIZAR', title:'Conversor de Tasas', desc:'Convierte tasas entre periodicidades para comparar condiciones equivalentes.'},
+  8:{section:'ANALIZAR', title:'Comparar escenarios', desc:'Accede a las comparaciones disponibles dentro de cada modalidad de simulación.'},
+  9:{section:'HISTORIAL', title:'Mis simulaciones', desc:'Consulta las simulaciones recientes guardadas localmente en este navegador.'},
+  10:{section:'ADMINISTRACIÓN',title:'Usuarios',desc:'Gestiona los accesos al simulador.'},
+  12:{section:'ADMINISTRACIÓN',title:'Configuración',desc:'Parámetros para nuevas simulaciones.'},
+  11:{section:'ADMINISTRACIÓN',title:'Auditoría',desc:'Consulta la trazabilidad de los cambios.'},
+  6:{section:'ADMINISTRACIÓN', title:'Actualizar Programas', desc:'Actualiza programas y valores publicados sin modificar el motor financiero.'}
 });
 
 function switchTab(n) {
@@ -699,11 +690,9 @@ function switchTab(n) {
     const ht = document.getElementById('header-title');
     const hd = document.getElementById('header-desc');
     const hs = document.getElementById('header-section');
-    const hst = document.getElementById('header-status');
     if(ht) ht.textContent = meta.title;
     if(hd) hd.textContent = meta.desc;
     if(hs) hs.textContent = meta.section;
-    if(hst) hst.textContent = meta.status;
     document.title = meta.title + ' · Simulador OFE';
   }
   toggleSidebar(false);
