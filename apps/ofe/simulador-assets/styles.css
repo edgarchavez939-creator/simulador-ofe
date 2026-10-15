@@ -3181,3 +3181,34 @@ table.tbl tfoot td { background: color-mix(in srgb, var(--uninorte-red) 6%, var(
 [data-theme="dark"] .input[type="number"]::placeholder {
   color: color-mix(in srgb, var(--text-muted) 68%, transparent);
 }
+
+/* Integridad de matrícula y búsqueda: mismos tokens y controles del sistema. */
+.input[readonly] { background: var(--surface-2); color: var(--text-2); cursor: default; }
+.input-affix:has(.input[readonly]) { background: var(--surface-2); }
+.program-picker [hidden] { display: none !important; }
+.program-picker { position: relative; min-width: 0; }
+.program-picker__control .btn--icon { flex: 0 0 36px; }
+.program-picker__options { position: absolute; inset-inline: 0; top: 40px; z-index: 40; max-height: min(18rem, 50dvh); overflow-y: auto; list-style: none; padding: var(--sp-1); border: 1px solid var(--border-strong); border-radius: var(--r-md); background: var(--surface); box-shadow: var(--shadow-lg); }
+.program-picker__options [role=option] { padding: var(--sp-3); border-radius: var(--r-sm); color: var(--text); cursor: pointer; overflow-wrap: anywhere; }
+.program-picker__options [role=option]:hover, .program-picker__options .is-active { background: var(--accent-soft); color: var(--accent); }
+.program-picker__options [aria-selected=true] { font-weight: 650; }
+.btn { min-width: 0; max-width: 100%; white-space: normal; line-height: 1.35; text-align: center; }
+.btn .icon, .nav__item .icon { flex-shrink: 0; }
+.idiomas-btn { min-width: 0; }
+.idiomas-btn .idiomas-icon { min-width: 0; }
+.idiomas-btn .idiomas-text { min-width: 0; overflow-wrap: anywhere; }
+.idiomas-btn .idiomas-cta { min-width: 0; flex-shrink: 0; }
+.idiomas-btn .idiomas-cta .icon { flex-shrink: 0; }
+#modal-idiomas { --success: var(--accent); --state-success: var(--accent); --success-soft: var(--accent-soft); }
+.initial-payment-total { border-color: var(--accent); background: var(--accent-soft); }
+@media (max-width: 430px) { .btn { height: auto; min-height: 36px; padding-block: var(--sp-2); } .btn--icon { padding-block: 0; } .program-picker__control { height: auto; min-height: 42px; } }
+
+/* La regla institucional tardía no debe reactivar dos columnas en móvil. */
+.split > div { min-width: 0; }
+@media (max-width: 1024px) { .split { grid-template-columns: minmax(0, 1fr); gap: 20px; } }
+
+.idiomas-btn:not([data-idiomas]), [data-requires-permission][hidden] { display: none !important; }
+
+/* Iconos con espacio propio y acciones de resultado en una fila coherente. */
+.btn.btn--icon { padding-inline: 0; }
+.result-actions__label { flex-basis: 100%; margin-right: 0; }

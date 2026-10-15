@@ -2,6 +2,14 @@
 
 Arquitectura modular sin framework ni build system.
 
+## Estado actual — iteración funcional v1E
+
+Las aplicaciones activas están en `apps/public` y `apps/ofe`. Incluyen búsqueda de programas, matrícula readonly desde catálogo, capacidad efectiva y totales iniciales explícitos. Informe y contrato pendiente de DTIC: [FUNCTIONAL_V1E](docs/FUNCTIONAL_V1E.md).
+
+Autenticación, sesiones, autorización servidor y auditoría están pendientes de DTIC por decisión del usuario. El actualizador conserva la validación y vista previa; acceso administrativo y publicación permanecen cerrados hasta la integración institucional. El PIN local no es autenticación.
+
+Las secciones P3.x siguientes describen la arquitectura y evolución histórica; la entrega v1E prevalece sobre el flujo anterior de reemplazo de HTML.
+
 ## Estructura
 
 - `index.html`: estructura, vistas y bloques actualizables `PROGRAMAS` / `POSGRADOS`.
@@ -41,7 +49,7 @@ Los módulos pueden conservar referencias locales a su dominio, pero esas refere
 
 ## Regla del actualizador
 
-Los marcadores `PROGRAMAS_START/END` y `POSGRADOS_START/END` deben permanecer dentro de `index.html`. El actualizador reemplaza únicamente esos bloques.
+Los marcadores `PROGRAMAS_START/END` y `POSGRADOS_START/END` deben permanecer dentro de `index.html`. En la arquitectura actual separada, el actualizador solo prepara propuestas. La exportación de un catálogo modificado está deshabilitada hasta contar con la escritura y auditoría transaccional de DTIC.
 
 ## Despliegue
 

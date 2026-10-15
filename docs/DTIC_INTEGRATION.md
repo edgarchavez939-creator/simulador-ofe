@@ -17,3 +17,7 @@
 
 ## Principio
 La aplicación OFE debe asumir que autenticación/autorización se resuelve en infraestructura o en el adaptador definido por DTIC. No se deben incluir secretos en frontend.
+
+## Iteración funcional v1E — decisión del usuario
+
+Integración exclusiva con DTIC; se avanza con funcionalidades mientras la conexión institucional queda pendiente. Ver [informe y contratos](FUNCTIONAL_V1E.md) para matriz de permisos, sesiones, auditoría por campo, transacción, concurrencia y pruebas de aceptación institucionales. El cliente no habilita publicación ni sustituye el control de acceso del servidor.

@@ -382,12 +382,12 @@ window.expPDF7 = async function(){
   const d=SimuladorOFE.state.results.initialPayment;if(!d)return toast('Primero realiza el cálculo','warning');
   const tEA=PDFV5.tea(d.tm),meta=PDFV5.meta('CI');
   await PDFV5.report({prefix:'CI',meta,type:'Cálculo de Cuota Inicial',program:d.progNombre||'Programa',level:pdfV5Level(7),
-    hero:{label:'Cuota inicial requerida',value:PDFV5.formatMoney(d.cuotaInicial),meta:`${d.n} cuotas · ${PDFV5.formatPct(d.tm*100)} M.V. · ${PDFV5.formatPct(tEA)} E.A.`,side:[
-      {label:'Monto financiable',value:PDFV5.formatMoney(d.fin)},{label:'Total intereses',value:PDFV5.formatMoney(d.totInt)},{label:'Costo total estimado',value:PDFV5.formatMoney(d.costoTotal),highlight:true}]},
-    summary:[{label:'Capacidad mensual',value:PDFV5.formatMoney(d.cap)},{label:'Plazo',value:`${d.n} meses`},{label:'Tasa de interés (E.A.)',value:PDFV5.formatPct(tEA)},{label:'Aporte Garantisa',value:PDFV5.formatMoney(d.gar),hint:'4,17% del financiado'}],
+    hero:{label:'Total inicial a pagar',value:PDFV5.formatMoney(d.desembolso),meta:`${d.n} cuotas · ${PDFV5.formatPct(d.tm*100)} M.V. · ${PDFV5.formatPct(tEA)} E.A.`,side:[
+      {label:'Cuota inicial requerida',value:PDFV5.formatMoney(d.cuotaInicial)},{label:'Aporte al fondo',value:PDFV5.formatMoney(d.gar)},{label:'Costo total estimado',value:PDFV5.formatMoney(d.costoTotal),highlight:true}]},
+    summary:[{label:'Capacidad mensual',value:PDFV5.formatMoney(d.cap)},{label:'Plazo',value:`${d.n} meses`},{label:'Tasa de interés (E.A.)',value:PDFV5.formatPct(tEA)},{label:'Aporte Garantisa',value:PDFV5.formatMoney(d.gar),hint:PDFV5.formatPct((d.fundRate ?? GARANTISA_CP)*100)+' del financiado'}],
     conditionsLeft:[['Tipo de cálculo','Cuota inicial requerida'],['Tasa M.V.',PDFV5.formatPct(d.tm*100)],['Tasa E.A.',PDFV5.formatPct(tEA)],['Plazo',`${d.n} meses`]],
-    conditionsRight:[['Capacidad mensual',PDFV5.formatMoney(d.cap)],['Monto financiable',PDFV5.formatMoney(d.fin)],['Cuota resultante',PDFV5.formatMoney(d.cuota)],['Aporte Garantisa',`${PDFV5.formatMoney(d.gar)} · 4,17%`]],
-    rows:d.rows,totCap:d.totCap,totInt:d.totInt,note:'La cuota inicial se calcula para que la cuota mensual resultante se ajuste a la capacidad de pago declarada.'
+    conditionsRight:[['Capacidad mensual',PDFV5.formatMoney(d.cap)],['Monto financiable',PDFV5.formatMoney(d.fin)],['Cuota resultante',PDFV5.formatMoney(d.cuota)],['Aporte Garantisa',`${PDFV5.formatMoney(d.gar)} · ${PDFV5.formatPct((d.fundRate ?? GARANTISA_CP)*100)}`]],
+    rows:d.rows,totCap:d.totCap,totInt:d.totInt,note:'La cuota inicial requerida no incluye el aporte al fondo. Total inicial a pagar = cuota inicial requerida + aporte al fondo. La capacidad efectiva limita la cuota mensual.'
   },pdfV5FileName(`Calculo Cuota Inicial - ${d.progNombre||'Simulacion'}`));
 };
 

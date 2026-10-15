@@ -87,9 +87,9 @@ function handleUIInput(event) {
   const tab = Number(el.dataset.tab);
   const id = Number(el.dataset.id);
   switch(action) {
-    case 'mat-recalc': fmtLbl('mat'+tab); return recalcAll(tab);
-    case 'mat7-recalc': fmtLbl('mat7'); return recalc7();
-    case 'cap7-recalc': fmtLbl('cap7'); return recalc7();
+    case 'mat-recalc': sincronizarMatriculaCatalogo(tab); fmtLbl('mat'+tab); return recalcAll(tab);
+    case 'mat7-recalc': sincronizarMatriculaCatalogo(7); fmtLbl('mat7'); return recalc7();
+    case 'cap7-recalc': SimuladorOFE.state.ui.initialPaymentCapacity = null; fmtLbl('cap7'); return recalc7();
     case 'contado-pct': return syncContadoFromPct(tab);
     case 'contado-val': return syncContadoFromVal(tab);
     case 'fin-pct-val': return syncFinPctToVal(tab);
@@ -123,31 +123,43 @@ function calcTa7() {
 
 function recalc7() {
   calcTa7();
-  const mat   = getMat(7);
-  const benef = getTotalBeneficios(7);
-  const cap   = Math.max(0, parseFloat(document.getElementById('cap7')?.value)||0);
-  const n     = parseInt(document.getElementById('plazo7')?.value)||0;
-  const tm    = parseFloat(document.getElementById('tasa7')?.value)/100;
-
-  const finMax = (isNaN(tm) || !n || !cap) ? 0 : maxFinanciado(cap, tm, n);
-  const neto   = Math.max(0, mat - benef);
-  const fin    = Math.min(finMax, neto);
-  const gar    = fin * GARANTISA_CP;
-
+  sincronizarMatriculaCatalogo(7);
+  const mat = getMat(7), benef = getTotalBeneficios(7);
+  const field = document.getElementById('cap7');
+  const raw = Math.max(0, parseFloat(field?.value) || 0);
+  const previous = SimuladorOFE.state.ui.initialPaymentCapacity;
+  const requested = previous && previous.lastValue === field?.value ? previous.requested : raw;
+  const n = parseInt(document.getElementById('plazo7')?.value) || 0;
+  const tm = parseFloat(document.getElementById('tasa7')?.value) / 100;
+  const neto = Math.max(0, mat - benef);
+  const valid = mat > 0 && n > 0 && Number.isFinite(tm) && tm >= 0;
+  const required = valid ? cuotaMes(neto, tm, n) : requested;
+  const cap = valid ? Math.min(requested, required) : requested;
+  // La precisión completa se conserva en memoria; el campo muestra pesos COP.
+  if (field) field.value = cap > 0 ? Math.round(cap) : '';
+  SimuladorOFE.state.ui.initialPaymentCapacity = { requested, lastValue: field?.value };
+  const finMax = valid && cap > 0 ? maxFinanciado(cap, tm, n) : 0;
+  const fin = valid && requested >= required ? neto : Math.min(finMax, neto);
+  const fundRate = SimuladorOFE.config.garantisaCP;
+  const gar = fin * fundRate;
+  const rate = document.getElementById('gar7-rate');
+  if (rate) rate.textContent = (fundRate * 100).toFixed(2) + '%';
   const gEl = document.getElementById('gar7-val');
-  if(gEl) gEl.textContent = fin > 0
-    ? cop(gar) + ' sobre ' + cop(fin) + ' financiado'
-    : '—';
-  return {mat, benef, neto, cap, n, tm, finMax, fin, gar};
+  if (gEl) gEl.textContent = fin > 0 ? cop(gar) + ' sobre ' + cop(fin) + ' financiado' : '—';
+  const hint = document.getElementById('cap7-lbl');
+  if (hint) hint.textContent = valid && requested > cap
+    ? 'La capacidad efectiva se ajustó a la cuota necesaria. No necesitas financiar un valor mayor.'
+    : 'La capacidad es tu límite mensual; la cuota puede ser menor.';
+  return { mat, benef, neto, cap, capIngresada: requested, n, tm, finMax, fin, gar, fundRate };
 }
 
 function calcular7() {
   const d = recalc7();
   if(!(d.mat > 0))  return showAlert(7, 'Ingresa el valor de la matrícula.');
   if(d.benef > d.mat) return showAlert(7, 'Las becas superan el valor de la matrícula.');
-  if(!(d.cap > 0))  return showAlert(7, 'Ingresa la capacidad de pago mensual.');
+  if(!(d.cap > 0) && d.neto > 0) return showAlert(7, 'Ingresa la capacidad de pago mensual.');
   if(!(d.n > 0))    return showAlert(7, 'Ingresa el número de cuotas.');
-  if(isNaN(d.tm))   return showAlert(7, 'Ingresa la tasa de interés.');
+  if(!Number.isFinite(d.tm) || d.tm < 0) return showAlert(7, 'Ingresa la tasa de interés.');
 
   const cuotaInicial = Math.max(0, d.neto - d.fin);
   const desembolso   = cuotaInicial + d.gar;
@@ -159,7 +171,6 @@ function calcular7() {
   const pctBenef     = d.mat > 0 ? (d.benef / d.mat) * 100 : 0;
   // ¿La capacidad alcanza para financiar todo el saldo?
   const cubreTodo    = d.finMax >= d.neto - 1;
-  const holgura      = cubreTodo ? d.finMax - d.neto : 0;
 
   const benefRows = SimuladorOFE.state.financing.benefits[7].filter(b => (b.val||0) > 0);
 
@@ -175,15 +186,15 @@ function calcular7() {
     <div class="card__title">Resultado del cálculo</div>
     ${resultHero({
       eyebrow:'Cálculo de Cuota Inicial',
-      label:'Cuota inicial requerida', value:cop(cuotaInicial),
+      label:'Total inicial a pagar', value:cop(desembolso),
       meta:`Capacidad mensual ${cop(d.cap)} | ${d.n} cuotas | ${(d.tm*100).toFixed(2)}% M.V.`, tone:cubreTodo?'success':'info',
       metrics:[
-        {label:'Monto financiable',value:cop(d.fin)},
+        {label:'Cuota inicial requerida',value:cop(cuotaInicial)},
+        {label:'Aporte al fondo',value:cop(d.gar)},
         {label:'Cuota mensual',value:cop(A.cuota)},
-        {label:'Total intereses',value:cop(A.totInt)},
-        {label:'Total al desembolso',value:cop(desembolso)}
+        {label:'Monto financiable',value:cop(d.fin)}
       ],
-      note:cubreTodo?'La capacidad de pago permite financiar todo el saldo neto de matrícula.':'La cuota inicial cubre la diferencia entre la matrícula neta y el monto financiable con la capacidad declarada.'
+      note:'La cuota inicial requerida no incluye el aporte al fondo. Total inicial a pagar = cuota inicial requerida + aporte al fondo.'
     })}
     ${resultActions(7,{canCompare:false,primaryLabel:'Ver en Mis simulaciones',primaryAction:'switch-tab',primaryTab:9})}
     <div class="financial-details">
@@ -192,24 +203,24 @@ function calcular7() {
       <div class="note note--success u-mb-4">
         <span class="note__icon">${icon('check-circle')}</span>
         <div>Con esa capacidad de pago <strong>no se requiere cuota inicial</strong>: el crédito cubre la totalidad del saldo.
-        ${holgura > 0 ? `Incluso queda un margen de <strong>${cop(holgura)}</strong> de capacidad no utilizada.` : ''}</div>
+        El aporte al fondo se paga al inicio y aparece separado abajo.</div>
       </div>` : ''}
 
     <div class="kpi-grid u-mb-4">
       <div class="kpi kpi--accent">
-        <div class="kpi__label">Cuota inicial a cubrir</div>
+        <div class="kpi__label">Cuota inicial requerida</div>
         <div class="kpi__value">${cop(cuotaInicial)}</div>
-        <div class="kpi__foot">${pctInicial.toFixed(1)}% de la matrícula</div>
+        <div class="kpi__foot">No incluye el aporte al fondo. ${pctInicial.toFixed(1)}% de la matrícula.</div>
       </div>
       <div class="kpi kpi--warning">
-        <div class="kpi__label">${icon('shield')} Aporte Garantisa (4.17%)</div>
+        <div class="kpi__label">${icon('shield')} Aporte al fondo (${(d.fundRate*100).toFixed(2)}%)</div>
         <div class="kpi__value kpi__value--md">${cop(d.gar)}</div>
         <div class="kpi__foot">Sobre el monto financiado</div>
       </div>
-      <div class="kpi kpi--info u-col-span-all">
-        <div class="kpi__label">Total a pagar al momento del desembolso</div>
+      <div class="kpi kpi--accent initial-payment-total u-col-span-all">
+        <div class="kpi__label">Total inicial a pagar</div>
         <div class="kpi__value">${cop(desembolso)}</div>
-        <div class="kpi__foot">Cuota inicial + Garantisa</div>
+        <div class="kpi__foot">Cuota inicial requerida + aporte al fondo</div>
       </div>
     </div>
 
@@ -225,7 +236,7 @@ function calcular7() {
     </div>
 
     <div class="total-banner">
-      <div><div class="tl">Desembolso inicial</div><div class="tv">${cop(desembolso)}</div><div class="ts">Cuota inicial + Garantisa</div></div>
+      <div><div class="tl">Desembolso inicial</div><div class="tv">${cop(desembolso)}</div><div class="ts">Cuota inicial requerida + aporte al fondo</div></div>
       <div class="total-banner__op" aria-hidden="true">+</div>
       <div><div class="tl">Total crédito</div><div class="tv">${cop(totalCredito)}</div><div class="ts">${d.n} cuotas de ${cop(A.cuota)}</div></div>
       <div class="total-banner__op" aria-hidden="true">=</div>
@@ -256,7 +267,11 @@ function limpiar7() {
   ['mat7-lbl','cap7-lbl'].forEach(id => { const e=document.getElementById(id); if(e) e.textContent=''; });
   document.getElementById('plazo7').value = 6;
   document.getElementById('tasa7').value  = 1.53;
-  document.getElementById('prog7').value  = '';
+  document.getElementById('prog7').value = '';
+  SimuladorOFE.state.ui.initialPaymentCapacity = null;
+  SimuladorOFE.state.results.initialPaymentProgramName = '';
+  sincronizarMatriculaCatalogo(7);
+  window.ProgramPicker?.sync(7);
   SimuladorOFE.state.financing.benefits[7] = [];
   renderBeneficios(7);
   SimuladorOFE.state.results.initialPayment = null;
@@ -278,26 +293,26 @@ function expPDF7(){
   const level=SimuladorOFE.state.ui.levelByTab[7]==='posgrado'?'Posgrado':'Pregrado';
   pdfPremiumCreditReport(doc,{
     type:'Calculo de Cuota Inicial',program:d.progNombre||'Programa',level,
-    heroLabel:'Cuota inicial requerida',heroValue:cop(d.cuotaInicial),heroMeta:`${d.n} cuotas | ${(d.tm*100).toFixed(2)}% M.V. | ${tea} E.A.`,
+    heroLabel:'Total inicial a pagar',heroValue:cop(d.desembolso),heroMeta:`${d.n} cuotas | ${(d.tm*100).toFixed(2)}% M.V. | ${tea} E.A.`,
     heroSide:[
-      {label:'Monto financiable',value:cop(d.fin)},
-      {label:'Total intereses',value:cop(d.totInt)},
+      {label:'Cuota inicial requerida',value:cop(d.cuotaInicial)},
+      {label:'Aporte al fondo',value:cop(d.gar)},
       {label:'Costo total estimado',value:cop(d.costoTotal),highlight:true}
     ],
     summary:[
       {label:'Capacidad mensual',value:cop(d.cap)},
       {label:'Plazo del credito',value:`${d.n} meses`},
       {label:'Tasa de interes (EA)',value:tea},
-      {label:'Aporte a Garantisa',value:cop(d.gar),hint:'4.17% del financiado'}
+      {label:'Aporte a Garantisa',value:cop(d.gar),hint:((d.fundRate ?? GARANTISA_CP)*100).toFixed(2)+'% del financiado'}
     ],
     conditionsLeft:[
       ['Tipo de calculo','Cuota inicial requerida'],['Tasa de interes (EA)',tea],['Plazo',`${d.n} meses`],['Capacidad mensual',cop(d.cap)]
     ],
     conditionsRight:[
-      ['Monto financiable',cop(d.fin)],['Total intereses',cop(d.totInt)],['Cuota mensual resultante',cop(d.cuota)],['Aporte a Garantisa',`${cop(d.gar)} (4.17%)`]
+      ['Monto financiable',cop(d.fin)],['Total intereses',cop(d.totInt)],['Cuota mensual resultante',cop(d.cuota)],['Aporte a Garantisa',`${cop(d.gar)} (${((d.fundRate ?? GARANTISA_CP)*100).toFixed(2)}%)`]
     ],
     rows:d.rows,totCap:d.totCap,totInt:d.totInt,firstPageRows:5,
-    note:'El valor de entrada se calcula para que la cuota mensual resultante se ajuste a la capacidad de pago declarada. La simulacion es informativa.'
+    note:'La cuota inicial requerida no incluye el aporte al fondo. El total inicial a pagar es la suma de ambos. La capacidad efectiva es un limite, no una cuota obligatoria. La simulacion es informativa.'
   });
   pdfPie(doc);doc.save(safePDF('Calculo Cuota Inicial - '+(d.progNombre||'Simulacion'))+'.pdf');toast('PDF descargado','success');
 }
@@ -319,9 +334,9 @@ function expXLS7() {
     ['Tasa efectiva anual (%)', +((Math.pow(1+d.tm,12)-1)*100).toFixed(2)], [''],
     ['--- RESULTADO ---'],
     ['Monto financiable', Math.round(d.fin)],
-    ['CUOTA INICIAL A CUBRIR', Math.round(d.cuotaInicial)],
-    ['Aporte Garantisa (4.17%)', Math.round(d.gar)],
-    ['Total al desembolso', Math.round(d.desembolso)],
+    ['CUOTA INICIAL REQUERIDA (sin aporte al fondo)', Math.round(d.cuotaInicial)],
+    ['Aporte al fondo ('+((d.fundRate ?? GARANTISA_CP)*100).toFixed(2)+'%)', Math.round(d.gar)],
+    ['TOTAL INICIAL A PAGAR', Math.round(d.desembolso)],
     ['Cuota mensual', Math.round(d.cuota)],
     ['Total intereses', Math.round(d.totInt)],
     ['COSTO TOTAL MATRÍCULA', Math.round(d.costoTotal)], [''],
@@ -498,6 +513,7 @@ function renderHistorial() {
         <div class="history-card__metric"><span>Monto</span><strong>${cop(m.financiado)}</strong></div>
         <div class="history-card__metric"><span>Cuota</span><strong>${cop(e.cuota)}</strong></div>
         <div class="history-card__metric"><span>Plazo</span><strong>${escHTML(m.plazo)}</strong></div>
+        ${e.tabId===7 ? `<div class="history-card__metric"><span>Total inicial a pagar</span><strong>${cop(e.snap.desembolso)}</strong></div>` : ''}
       </div>
       <div class="history-card__actions">
         <button class="btn btn--tertiary btn--sm" data-action="hist-ver" data-id="${e.id}">${icon('eye')} Ver</button>
@@ -526,7 +542,12 @@ function verHistorial(id) {
     ['Plazo', meta.plazo],
     ['Tasa mensual', Number.isFinite(d.tm)?(d.tm*100).toFixed(2)+'%':'—'],
     ['Intereses', cop(d.totInt ?? (d.CP?.totInt||0)+(d.LP?.totInt||0))],
-    ['Total', cop(e.total)]
+    ...(e.tabId===7 ? [
+      ['Cuota inicial requerida (sin fondo)',cop(d.cuotaInicial)],
+      ['Aporte al fondo',cop(d.gar)],
+      ['Total inicial a pagar',cop(d.desembolso)]
+    ] : []),
+    [e.tabId===7 ? 'Costo total de la matrícula' : 'Total', cop(e.total)]
   ];
   document.getElementById('detail-body').innerHTML = `<div class="detail-list">${rows.map(([k,v])=>`<div class="detail-row"><span>${escHTML(k)}</span><strong>${escHTML(v)}</strong></div>`).join('')}</div>`;
   abrirModalAccesible(modal,'[data-action="detail-close"]');
@@ -544,7 +565,7 @@ function duplicarHistorial(id) {
       const select = document.getElementById('prog'+tab);
       if (select) { select.value = program.id; setMat(tab); }
     }
-    const mat=document.getElementById('mat'+tab); if(mat) mat.value=(d.mat>0?Math.round(d.mat):'');
+    const mat=document.getElementById('mat'+tab); if(mat && !program) mat.value=(d.mat>0?Math.round(d.mat):'');
     if(SimuladorOFE.state.financing.benefits[tab] && Array.isArray(d.beneficios)) {
       SimuladorOFE.state.financing.benefits[tab]=d.beneficios.map((b,i)=>({id:Date.now()+i,nombre:b.nombre||'Descuento',val:b.val||0,pct:b.pct||0,modo:'valor'})); renderBeneficios(tab);
     }
@@ -553,7 +574,7 @@ function duplicarHistorial(id) {
   if(tab===2){ document.getElementById('cont2-val').value=(d.cuotaInicial>0?Math.round(d.cuotaInicial):''); document.getElementById('pctCP').value=(d.pCP>0?d.pCP:''); document.getElementById('pctLP').value=(d.pLP>0?d.pLP:''); document.getElementById('plazoCP').value=d.nCP||6; document.getElementById('plazoLP').value=d.nLP||8; document.getElementById('tasa2').value=((d.tm||.0153)*100).toFixed(2); recalcAll(2); }
   if(tab===3){ document.getElementById('cont3-val').value=(d.cuotaInicial>0?Math.round(d.cuotaInicial):''); document.getElementById('plazo3').value=d.n||12; document.getElementById('tasa3').value=((d.tm||.0153)*100).toFixed(2); document.getElementById('cargos3').value=(d.cargos>0?Math.round(d.cargos):''); recalcAll(3); }
   if(tab===5){ document.getElementById('refi-capital').value=(d.capital>0?Math.round(d.capital):''); document.getElementById('refi-intcorr').value=(d.intCorr>0?Math.round(d.intCorr):''); document.getElementById('refi-mora').value=(d.mora>0?Math.round(d.mora):''); document.getElementById('refi-costos').value=(d.costos>0?Math.round(d.costos):''); document.getElementById('refi-ingreso').value=(d.ingreso>0?Math.round(d.ingreso):''); document.getElementById('refi-cuotas-nva').value=d.n||24; document.getElementById('refi-tasa-nva').value=((d.tm||.0153)*100).toFixed(2); sumarSaldoRefi(); calcTaRefi(); }
-  if(tab===7){ document.getElementById('cap7').value=(d.cap>0?Math.round(d.cap):''); document.getElementById('plazo7').value=d.n||6; document.getElementById('tasa7').value=((d.tm||.0153)*100).toFixed(2); recalc7(); }
+  if(tab===7){ SimuladorOFE.state.ui.initialPaymentCapacity=null; document.getElementById('cap7').value=((d.capIngresada||d.cap)>0?Math.round(d.capIngresada||d.cap):''); document.getElementById('plazo7').value=d.n||6; document.getElementById('tasa7').value=((Number.isFinite(d.tm)?d.tm:.0153)*100).toFixed(2); recalc7(); }
   toast('Simulación duplicada. Puedes ajustar los datos y volver a calcular.','success');
 }
 

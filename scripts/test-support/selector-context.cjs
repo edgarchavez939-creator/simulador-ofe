@@ -12,7 +12,7 @@ function selectorContext(app, options = {}) {
       Object.entries(attrs).filter(([key]) => key.startsWith('data-')).forEach(([key, value]) => {
         this.dataset[key.slice(5).replace(/-([a-z])/g, (_, char) => char.toUpperCase())] = value;
       });
-      this.style = {}; this.hidden = 'hidden' in attrs; this.disabled = false;
+      this.events = {}; this.style = {}; this.hidden = 'hidden' in attrs; this.disabled = false;
       this.textContent = ''; this._value = attrs.value || ''; this.children = []; this.childNodes = [{ nodeValue: '' }]; this.parts = new Map();
       const classes = new Set((attrs.class || '').split(/\s+/));
       this.classList = {
@@ -45,7 +45,10 @@ function selectorContext(app, options = {}) {
     remove() {
       if (this.parentElement) this.parentElement.children = this.parentElement.children.filter(child => child !== this);
     }
-    addEventListener() {}
+    addEventListener(name, handler) { (this.events[name] ||= []).push(handler); }
+    fire(name, details = {}) { const event = { target:this, preventDefault(){}, stopPropagation(){}, ...details }; (this.events[name] || []).forEach(handler => handler(event)); }
+    replaceChildren(...children) { this.children = []; this.append(...children); }
+    select() {}
     querySelector(selector) {
       if (selector === '.idiomas-val' || selector === '.modal') {
         if (!this.parts.has(selector)) this.parts.set(selector, new Element());

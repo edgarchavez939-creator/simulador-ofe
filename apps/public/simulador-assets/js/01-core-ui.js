@@ -194,6 +194,7 @@ function runCalculation(button, tabId, task, loadingTitle) {
   const before=calculationResultForTab(tabId);
   setResultLoading(tabId, loadingTitle);
   return runButtonTask(button, () => {
+    if ([1,2,3,7].includes(tabId)) sincronizarMatriculaCatalogo(tabId);
     const result = task();
     const after=calculationResultForTab(tabId);
     if(after && after !== before) {
@@ -421,11 +422,28 @@ function poblarProgramas(tabId) {
         : '');
       sel.appendChild(option);
     });
+  window.ProgramPicker?.sync(tabId);
+}
+
+function sincronizarMatriculaCatalogo(tabId) {
+  const program = programaSeleccionado(tabId);
+  const input = document.getElementById('mat'+tabId);
+  if (!input) return program;
+  input.readOnly = !!program;
+  input.setAttribute('aria-readonly', String(!!program));
+  if (program) input.value = program.valorMatricula;
+  const hint = document.getElementById('mat'+tabId+'-source');
+  if (hint) hint.textContent = program
+    ? 'Valor registrado del programa. Elimina la selección para ingresar una matrícula manual.'
+    : 'Sin programa seleccionado. Puedes ingresar la matrícula manualmente.';
+  return program;
 }
 
 function limpiarSeleccionPrograma(tabId) {
   const mat = document.getElementById('mat'+tabId);
   if (mat) { mat.value = ''; fmtLbl('mat'+tabId); }
+  sincronizarMatriculaCatalogo(tabId);
+  window.ProgramPicker?.sync(tabId);
   const idiomas = document.getElementById('btn-idiomas-'+tabId);
   if (idiomas) {
     idiomas.style.display = 'none';
@@ -656,7 +674,7 @@ const VIEW_META = Object.freeze({
 });
 
 function switchTab(n) {
-  if(n === 6 && !SimuladorOFE.state.access.updaterUnlocked)  { _abrirPinModal(6); return; }
+  if(n === 6 && !window.OFEPermissions?.allowed('programs.update')) { toast('La administración requiere la conexión institucional de DTIC.', 'warning'); return; }
   if(n === 5 && !SimuladorOFE.state.access.restructuringUnlocked) { _abrirPinModal(5); return; }
   document.querySelectorAll('.nav__item[data-tab]').forEach(b => {
     const on = Number(b.dataset.tab) === n;
@@ -770,9 +788,10 @@ function handleGlobalKeyboard(e) {
 
 
 SimuladorOFE.register('core-ui', {
-  init(app){
+  async init(app){
     initTheme();
-    [1,2,3,7].forEach(id => { poblarSubniveles(id); poblarProgramas(id); });
+    await window.OFEPermissions?.refresh();
+    [1,2,3,7].forEach(id => { poblarSubniveles(id); poblarProgramas(id); sincronizarMatriculaCatalogo(id); window.ProgramPicker?.init(id); });
     _syncSidebarA11y();
     window.addEventListener('resize', _syncSidebarA11y, {passive:true});
     document.addEventListener('keydown', handleGlobalKeyboard);
@@ -801,11 +820,12 @@ calcTA(1); calcTA(2); calcTA(3);
 
 function setMat(id) {
   if (!document.getElementById('prog'+id)) return;
-  const program = programaSeleccionado(id);
+  const program = sincronizarMatriculaCatalogo(id);
   if (!program) return limpiarSeleccionPrograma(id);
   const { valorMatricula: valor, valorIdiomas: idiomas, nivel, semestres, nombre } = program;
   document.getElementById('mat'+id).value = valor;
   fmtLbl('mat'+id);
+  window.ProgramPicker?.sync(id);
   if (id === 2 && nivel === 'pregrado') {
     const plazo = document.getElementById('plazoLP');
     if (plazo) {
@@ -822,7 +842,7 @@ function setMat(id) {
   const button = document.getElementById('btn-idiomas-'+id);
   if (button) {
     if (nivel === 'pregrado' && idiomas > 0) {
-      button.style.display = 'flex';
+      button.style.display = 'grid';
       button.dataset.idiomas = idiomas;
       button.dataset.prog = nombre;
       button.querySelector('.idiomas-val').textContent = cop(idiomas);

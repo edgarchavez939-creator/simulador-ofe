@@ -37,7 +37,7 @@ for (const app of ['public', 'ofe']) for (const provider of ['embedded', 'mock',
         if (tab === 2 && program.nivel === 'pregrado') assert.equal(Number(elements.plazoLP.value), program.semestres || 8);
         const button = elements['btn-idiomas-'+tab];
         if (button && program.nivel === 'pregrado' && program.valorIdiomas > 0) {
-          assert.equal(button.style.display, 'flex'); assert.equal(Number(button.dataset.idiomas), program.valorIdiomas);
+          assert.equal(button.style.display, 'grid'); assert.equal(Number(button.dataset.idiomas), program.valorIdiomas);
           assert.equal(button.dataset.prog, program.nombre);
         } else if (button) {
           assert.equal(button.style.display, 'none'); assert.equal(button.dataset.idiomas, undefined);

@@ -40,8 +40,8 @@
 <button class="nav__item" data-action="switch-tab" data-tab="8"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="M16 3h5v5"></path><path d="M8 3H3v5"></path><path d="M21 3l-7 7"></path><path d="M3 3l7 7"></path><path d="M12 14v7"></path><path d="M8 17l4 4 4-4"></path></svg><span class="nav__item-text">Comparar escenarios</span></button>
 <div class="nav__label">HISTORIAL</div>
 <button class="nav__item" data-action="switch-tab" data-tab="9"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5"></path><path d="M12 7v5l3 2"></path></svg><span class="nav__item-text">Mis simulaciones</span></button>
-<div class="nav__label">ADMINISTRACIÓN</div>
-<button class="nav__item" data-action="switch-tab" data-tab="6"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg><span class="nav__item-text">Actualizar Programas</span></button>
+<div class="nav__label" data-requires-permission="programs.update" hidden="">ADMINISTRACIÓN</div>
+<button class="nav__item" data-action="switch-tab" data-tab="6" data-requires-permission="programs.update" hidden=""><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg><span class="nav__item-text">Actualizar Programas</span></button>
 </nav>
 <div class="nav__foot">
 <button aria-label="Cambiar tema" class="nav__item" data-action="theme-toggle" id="theme-toggle">
@@ -88,14 +88,24 @@
 </div>
 <div class="field">
 <label class="field__label">Programa Académico</label>
-<select aria-label="Programa académico" class="select" data-change-action="set-mat" data-tab="1" id="prog1">
+<select hidden="" aria-hidden="true" tabindex="-1" aria-label="Programa académico" class="select" data-change-action="set-mat" data-tab="1" id="prog1">
 <option value="">— Seleccionar programa —</option>
 </select>
+<div class="program-picker" id="program-picker1">
+<div class="input-affix program-picker__control">
+<input aria-label="Buscar programa académico" aria-autocomplete="list" aria-controls="program-options1" aria-describedby="program-results1" aria-expanded="false" autocomplete="off" class="input" id="program-search1" placeholder="Escribe para buscar un programa" role="combobox" type="text"/>
+<button aria-label="Eliminar selección de programa" class="btn btn--ghost btn--icon" hidden="" id="program-clear1" type="button"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></svg></button>
+<button aria-label="Mostrar programas" class="btn btn--ghost btn--icon" id="program-toggle1" tabindex="-1" type="button"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+</div>
+<ul aria-label="Programas académicos" class="program-picker__options" hidden="" id="program-options1" role="listbox"></ul>
+<div aria-live="polite" class="field__hint" id="program-results1" role="status"></div>
+</div>
 </div>
 <div class="field">
 <label class="field__label">Valor Matrícula</label>
-<div class="input-affix"><span class="input-affix__tag">$</span><input aria-label="Valor de matrícula" class="input" data-input-action="mat-recalc" data-money-field="" data-tab="1" id="mat1" min="0" placeholder="0" step="100" type="number"/></div>
+<div class="input-affix"><span class="input-affix__tag">$</span><input aria-label="Valor de matrícula" class="input" data-input-action="mat-recalc" data-money-field="" data-tab="1" id="mat1" aria-describedby="mat1-source" min="0" placeholder="0" step="100" type="number"/></div>
 <div class="field__hint" id="mat1-lbl"></div>
+<div class="field__hint" id="mat1-source">Sin programa seleccionado. Puedes ingresar la matrícula manualmente.</div>
 </div>
 <div class="group group--success">
 <div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><rect height="4" rx="1" width="18" x="3" y="8"></rect><path d="M12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"></path></svg> Beneficios / Descuentos <span aria-label="Ayuda: Becas, descuentos por convenio, caja de compensación u otros apoyos que reducen el valor a pagar. Se descuentan antes de calcular el financiamiento." class="tip" data-tip="Becas, descuentos por convenio, caja de compensación u otros apoyos que reducen el valor a pagar. Se descuentan antes de calcular el financiamiento." tabindex="0">?</span></div>
@@ -203,14 +213,24 @@
 </div>
 <div class="field">
 <label class="field__label">Programa Académico</label>
-<select aria-label="Programa académico" class="select" data-change-action="set-mat" data-tab="2" id="prog2">
+<select hidden="" aria-hidden="true" tabindex="-1" aria-label="Programa académico" class="select" data-change-action="set-mat" data-tab="2" id="prog2">
 <option value="">— Seleccionar programa —</option>
 </select>
+<div class="program-picker" id="program-picker2">
+<div class="input-affix program-picker__control">
+<input aria-label="Buscar programa académico" aria-autocomplete="list" aria-controls="program-options2" aria-describedby="program-results2" aria-expanded="false" autocomplete="off" class="input" id="program-search2" placeholder="Escribe para buscar un programa" role="combobox" type="text"/>
+<button aria-label="Eliminar selección de programa" class="btn btn--ghost btn--icon" hidden="" id="program-clear2" type="button"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></svg></button>
+<button aria-label="Mostrar programas" class="btn btn--ghost btn--icon" id="program-toggle2" tabindex="-1" type="button"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+</div>
+<ul aria-label="Programas académicos" class="program-picker__options" hidden="" id="program-options2" role="listbox"></ul>
+<div aria-live="polite" class="field__hint" id="program-results2" role="status"></div>
+</div>
 </div>
 <div class="field">
 <label class="field__label">Valor Matrícula</label>
-<div class="input-affix"><span class="input-affix__tag">$</span><input aria-label="Valor de matrícula" class="input" data-input-action="mat-recalc" data-money-field="" data-tab="2" id="mat2" min="0" placeholder="0" step="100" type="number"/></div>
+<div class="input-affix"><span class="input-affix__tag">$</span><input aria-label="Valor de matrícula" class="input" data-input-action="mat-recalc" data-money-field="" data-tab="2" id="mat2" aria-describedby="mat2-source" min="0" placeholder="0" step="100" type="number"/></div>
 <div class="field__hint" id="mat2-lbl"></div>
+<div class="field__hint" id="mat2-source">Sin programa seleccionado. Puedes ingresar la matrícula manualmente.</div>
 </div>
 <div class="group group--success">
 <div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><rect height="4" rx="1" width="18" x="3" y="8"></rect><path d="M12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"></path></svg> Beneficios / Descuentos <span aria-label="Ayuda: Becas, descuentos por convenio, caja de compensación u otros apoyos que reducen el valor a pagar. Se descuentan antes de calcular el financiamiento." class="tip" data-tip="Becas, descuentos por convenio, caja de compensación u otros apoyos que reducen el valor a pagar. Se descuentan antes de calcular el financiamiento." tabindex="0">?</span></div>
@@ -390,14 +410,24 @@
 </div>
 <div class="field">
 <label class="field__label">Programa Académico</label>
-<select aria-label="Programa académico" class="select" data-change-action="set-mat" data-tab="3" id="prog3">
+<select hidden="" aria-hidden="true" tabindex="-1" aria-label="Programa académico" class="select" data-change-action="set-mat" data-tab="3" id="prog3">
 <option value="">— Seleccionar programa —</option>
 </select>
+<div class="program-picker" id="program-picker3">
+<div class="input-affix program-picker__control">
+<input aria-label="Buscar programa académico" aria-autocomplete="list" aria-controls="program-options3" aria-describedby="program-results3" aria-expanded="false" autocomplete="off" class="input" id="program-search3" placeholder="Escribe para buscar un programa" role="combobox" type="text"/>
+<button aria-label="Eliminar selección de programa" class="btn btn--ghost btn--icon" hidden="" id="program-clear3" type="button"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></svg></button>
+<button aria-label="Mostrar programas" class="btn btn--ghost btn--icon" id="program-toggle3" tabindex="-1" type="button"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+</div>
+<ul aria-label="Programas académicos" class="program-picker__options" hidden="" id="program-options3" role="listbox"></ul>
+<div aria-live="polite" class="field__hint" id="program-results3" role="status"></div>
+</div>
 </div>
 <div class="field">
 <label class="field__label">Valor Matrícula</label>
-<div class="input-affix"><span class="input-affix__tag">$</span><input aria-label="Valor de matrícula" class="input" data-input-action="mat-recalc" data-money-field="" data-tab="3" id="mat3" min="0" placeholder="0" step="100" type="number"/></div>
+<div class="input-affix"><span class="input-affix__tag">$</span><input aria-label="Valor de matrícula" class="input" data-input-action="mat-recalc" data-money-field="" data-tab="3" id="mat3" aria-describedby="mat3-source" min="0" placeholder="0" step="100" type="number"/></div>
 <div class="field__hint" id="mat3-lbl"></div>
+<div class="field__hint" id="mat3-source">Sin programa seleccionado. Puedes ingresar la matrícula manualmente.</div>
 </div>
 <div class="group group--success">
 <div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><rect height="4" rx="1" width="18" x="3" y="8"></rect><path d="M12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"></path></svg> Beneficios / Descuentos <span aria-label="Ayuda: Becas, descuentos por convenio, caja de compensación u otros apoyos que reducen el valor a pagar. Se descuentan antes de calcular el financiamiento." class="tip" data-tip="Becas, descuentos por convenio, caja de compensación u otros apoyos que reducen el valor a pagar. Se descuentan antes de calcular el financiamiento." tabindex="0">?</span></div>
@@ -715,8 +745,8 @@
 <div class="step__head">
 <div class="step-num">3</div>
 <div>
-<h2>Generar nuevo index.html</h2>
-<p>Se descargará automáticamente — luego súbelo a GitHub para reemplazar el actual</p>
+<h2>Revisar propuesta de actualización</h2>
+<p>Valida los datos antes de conectarlos al servicio institucional</p>
 </div>
 </div>
 <div id="resumen-cambios" class="u-hide u-mb-20">
@@ -739,16 +769,16 @@
 </span>
 <div>
 <strong>Publicación directa deshabilitada por seguridad.</strong><br/>
-          Este archivo ya no solicita ni procesa tokens de GitHub en el navegador. Genera el <strong>index.html</strong> actualizado y publícalo mediante GitHub web, GitHub Desktop o un flujo autenticado externo.
+          La actualización del catálogo requiere una sesión institucional, el permiso de administración y un registro de cada cambio dentro de la misma transacción en DTIC.
         </div>
 </div>
 <!-- ── Descarga manual (respaldo) ── -->
 <div class="u-panel-divider">
 <p class="u-fs-12-muted u-mb-10">
-          Genera el archivo actualizado. Luego súbelo al repositorio mediante un canal autenticado fuera de esta página.
+          Conexión institucional pendiente. Los archivos cargados se usan únicamente para validación y vista previa.
         </p>
 <button class="btn btn--primary btn--lg btn--block u-bg-muted" data-action="generar-html" disabled="" id="btn-gen">
-<svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg> Descargar index.html para publicar
+<svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg> Publicación pendiente de DTIC
         </button>
 </div>
 <div aria-live="polite" class="feedback" id="msg-gen"></div>
@@ -758,28 +788,12 @@
 <div class="step__head">
 <div class="step-num">4</div>
 <div>
-<h2>Publicar en GitHub Pages</h2>
-<p>Pasos para reemplazar el simulador en línea</p>
-</div>
-</div>
+<h2>Conexión institucional pendiente</h2>
+<p>La propuesta no modifica el catálogo vigente</p>
+</div></div>
 <div class="guide guide--accent u-mt-3">
-<h3>Método recomendado — Upload directo (más fácil)</h3>
-<ol>
-<li>Ve a tu repositorio en <strong>github.com</strong></li>
-<li>Haz clic en <strong>Add file → Upload files</strong></li>
-<li>Arrastra el nuevo <code>index.html</code> descargado — GitHub reemplaza automáticamente el existente</li>
-<li>Escribe un mensaje como <code>Actualizar programas semestre vigente</code></li>
-<li>Haz clic en <strong>Commit changes</strong></li>
-<li>Espera 1–2 minutos y recarga tu sitio <svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M21.8 10A10 10 0 1 1 17 3.34"></path><path d="m9 11 3 3L22 4"></path></svg></li>
-</ol>
-</div>
-<div class="guide guide--accent u-mt-3 surface-warning-soft u-mt-12">
-<h3 class="u-text-warning"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" x2="12" y1="9" y2="13"></line><line x1="12" x2="12.01" y1="17" y2="17"></line></svg> Notas importantes</h3>
-<ol>
-<li>El archivo generado es una <strong>copia completa de este simulador</strong> con los programas actualizados — conserva todas las pestañas, el actualizador y las funcionalidades.</li>
-<li>La auto-lectura funciona cuando el simulador corre en GitHub Pages. Si lo abres localmente (file://), sube el <code>index.html</code> manualmente.</li>
-<li>Los beneficios, descuentos y el pago de contado los configura el asesor en cada simulación — no van en el Excel de programas.</li>
-</ol>
+<p>DTIC debe conectar la autenticación, los permisos y la persistencia del catálogo. Cada actualización deberá guardar el valor anterior, el valor nuevo, el usuario y la fecha dentro de la misma transacción.</p>
+<p>Los programas con el mismo nombre requieren una identidad institucional confirmada antes de aplicar cambios. La vista previa conserva todos los registros.</p>
 </div>
 </div>
 </div>
@@ -800,12 +814,22 @@
 </div>
 <div class="field">
 <label class="field__label" for="prog7">Programa Académico</label>
-<select class="select" data-change-action="set-mat" data-tab="7" id="prog7"></select>
+<select hidden="" aria-hidden="true" tabindex="-1" class="select" data-change-action="set-mat" data-tab="7" id="prog7"></select>
+<div class="program-picker" id="program-picker7">
+<div class="input-affix program-picker__control">
+<input aria-label="Buscar programa académico" aria-autocomplete="list" aria-controls="program-options7" aria-describedby="program-results7" aria-expanded="false" autocomplete="off" class="input" id="program-search7" placeholder="Escribe para buscar un programa" role="combobox" type="text"/>
+<button aria-label="Eliminar selección de programa" class="btn btn--ghost btn--icon" hidden="" id="program-clear7" type="button"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></svg></button>
+<button aria-label="Mostrar programas" class="btn btn--ghost btn--icon" id="program-toggle7" tabindex="-1" type="button"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+</div>
+<ul aria-label="Programas académicos" class="program-picker__options" hidden="" id="program-options7" role="listbox"></ul>
+<div aria-live="polite" class="field__hint" id="program-results7" role="status"></div>
+</div>
 </div>
 <div class="field">
 <label class="field__label" for="mat7">Valor Matrícula</label>
-<div class="input-affix"><span class="input-affix__tag">$</span><input class="input" data-input-action="mat7-recalc" data-money-field="" id="mat7" min="0" placeholder="0" step="1000" type="number"/></div>
+<div class="input-affix"><span class="input-affix__tag">$</span><input class="input" data-input-action="mat7-recalc" data-money-field="" id="mat7" aria-describedby="mat7-source" min="0" placeholder="0" step="1000" type="number"/></div>
 <div class="field__hint" id="mat7-lbl"></div>
+<div class="field__hint" id="mat7-source">Sin programa seleccionado. Puedes ingresar la matrícula manualmente.</div>
 </div>
 <div class="group group--success">
 <div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><rect height="4" rx="1" width="18" x="3" y="8"></rect><path d="M12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"></path></svg> Becas y Descuentos
@@ -840,7 +864,7 @@
 </div>
 <div class="note guarantee-info u-mb-4" id="gar7-note">
 <span class="guarantee-info__icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg></span>
-<div class="guarantee-info__body"><strong>Aporte Garantisa (4.17%) <span aria-label="Ayuda: Aporte obligatorio al fondo de garantía, calculado sobre el monto financiado. Se paga junto con la cuota inicial." class="tip" data-tip="Aporte obligatorio al fondo de garantía, calculado sobre el monto financiado. Se paga junto con la cuota inicial." tabindex="0">?</span></strong><span class="guarantee-info__value u-muted" id="gar7-val">—</span></div>
+<div class="guarantee-info__body"><strong>Aporte Garantisa (<span id="gar7-rate">4.17%</span>) <span aria-label="Ayuda: Aporte obligatorio al fondo de garantía, calculado sobre el monto financiado. Se paga junto con la cuota inicial." class="tip" data-tip="Aporte obligatorio al fondo de garantía, calculado sobre el monto financiado. Se paga junto con la cuota inicial." tabindex="0">?</span></strong><span class="guarantee-info__value u-muted" id="gar7-val">—</span></div>
 </div>
 <button class="btn btn--primary btn--lg btn--block" data-action="calcular" data-tab="7"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><rect height="20" rx="2" width="16" x="4" y="2"></rect><line x1="8" x2="16" y1="6" y2="6"></line><line x1="16" x2="16" y1="14" y2="18"></line><path d="M16 10h.01M12 10h.01M8 10h.01M12 14h.01M8 14h.01M12 18h.01M8 18h.01"></path></svg> Calcular Cuota Inicial</button>
 <button class="btn btn--block u-mt-2" data-action="limpiar-tab" data-tab="7"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" x2="10" y1="11" y2="17"></line><line x1="14" x2="14" y1="11" y2="17"></line></svg> Limpiar / Nueva simulación</button>
@@ -1790,7 +1814,10 @@
 <script src="../../shared/program-catalog/adapters/embedded-adapter.js"></script>
 <script src="../../shared/program-catalog/adapters/mock-adapter.js"></script>
 <script src="../../shared/program-catalog/adapters/api-adapter.js"></script>
+<script src="../../shared/auth/auth-adapter.js"></script>
+<script src="../../shared/auth/permissions.js"></script>
 <script src="./simulador-assets/js/00-runtime.js?v=uninorte-ui-3-12-pdf-aptos"></script>
+<script src="../../shared/program-catalog/program-picker.js"></script>
 <script src="./simulador-assets/js/01-core-ui.js?v=uninorte-ui-3-12-pdf-aptos"></script>
 <script src="./simulador-assets/js/02-reestructuracion.js?v=uninorte-ui-3-12-pdf-aptos"></script>
 <script src="./simulador-assets/js/03-finance-core.js?v=uninorte-ui-3-12-pdf-aptos"></script>
@@ -1798,6 +1825,7 @@
 <script src="./simulador-assets/js/05-idiomas-herramientas.js?v=uninorte-ui-3-12-pdf-aptos"></script>
 <script src="./simulador-assets/js/06-actions-history.js?v=uninorte-ui-3-12-pdf-aptos"></script>
 <script src="./simulador-assets/js/07-financing-engine.js?v=uninorte-ui-3-12-pdf-aptos"></script>
+<script src="../../shared/program-catalog/catalog-import.js"></script>
 <script src="./simulador-assets/js/08-updater.js?v=uninorte-ui-3-12-pdf-aptos"></script>
 <script src="./simulador-assets/js/09-bootstrap.js?v=uninorte-ui-3-12-pdf-aptos"></script>
 <script src="./simulador-assets/js/10-pdf-aptos.js?v=uninorte-ui-3-12-pdf-aptos"></script>

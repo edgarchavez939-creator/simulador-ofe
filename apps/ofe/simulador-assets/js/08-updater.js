@@ -61,6 +61,10 @@ function dzDrop(e, type) {
 function cargarHTML(e) { processHTML(e.target.files[0]); }
 
 function processHTML(file) {
+  updaterState.htmlContent = null;
+  updaterState.currentUndergrad = null;
+  updaterState.currentPostgrad = null;
+  checkReady();
   if(!file || !file.name?.toLowerCase().endsWith('.html')) return showMsg('msg-html','El archivo debe ser un .html','err');
   setDropzoneBusy('dz-html', true);
   showMsg('msg-html','Leyendo el archivo HTML…','info');
@@ -71,6 +75,8 @@ function processHTML(file) {
       showMsg('msg-html','Este HTML no contiene los marcadores de actualización (bloques de datos de programas). Debe ser el index.html descargado directamente de tu repositorio GitHub, no una copia editada manualmente.','err');
       return;
     }
+    const sync = extraerProgramasDelHTML(content);
+    if(!sync) return showMsg('msg-html','Los bloques del catálogo contienen datos inválidos. No se usará este archivo.','err');
     updaterState.htmlContent = content;
     const dz = document.getElementById('dz-html');
     dz.innerHTML = `<div class="dropzone__icon">${icon('check-circle')}</div><p><strong>${escHTML(file.name)}</strong> cargado correctamente</p>`;
@@ -78,7 +84,6 @@ function processHTML(file) {
     const sizeKB = Math.round(content.length / 1024);
     const sizeNote = sizeKB < 80 ? ' ' + icon('alert-triangle') + ' El archivo parece pequeño ('+sizeKB+'KB). Verifica que sea la versión más reciente.' : ' ('+sizeKB+'KB)';
     // Sincronización automática: leer los programas vigentes del propio HTML
-    const sync = extraerProgramasDelHTML(content);
     let syncNote = '';
     if(sync) {
       updaterState.currentUndergrad = sync.pregrado;
@@ -101,12 +106,16 @@ function cargarExcel(e) { processExcel(e.target.files[0]); }
 
 function processExcel(file) {
   if(!file) return;
+  updaterState.parsedData = {};
+  updaterState.workbook = null;
+  checkReady();
   setDropzoneBusy('dz-xls', true);
   showMsg('msg-xls','Leyendo el archivo Excel…','info');
   const reader = new FileReader();
   reader.onload = ev => {
     try {
       updaterState.workbook = XLSX.read(ev.target.result, {type:'array'});
+      updaterState.parsedData = Object.fromEntries(updaterState.workbook.SheetNames.map(name=>[name,{valid:false,rows:[],errors:['Hoja pendiente de revisión.']} ]));
       const dz = document.getElementById('dz-xls');
       dz.innerHTML = `<div class="dropzone__icon">${icon('check-circle')}</div><p><strong>${escHTML(file.name)}</strong> — ${updaterState.workbook.SheetNames.length} hoja(s) encontrada(s)</p>`;
       dz.style.background = 'var(--success-soft)'; dz.style.borderColor = 'var(--success)';
@@ -155,7 +164,7 @@ function setTipo(tipo) {
 function renderMapper(sheetName) {
   const ws = updaterState.workbook.Sheets[sheetName];
   const rawData = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
-  if(rawData.length < 2) { showMsg('parsed-status','La hoja está vacía','err'); return; }
+  if(rawData.length < 2) { updaterState.parsedData[sheetName] = {valid:false, rows:[]}; checkReady(); showMsg('parsed-status','La hoja está vacía','err'); return; }
 
   const headers = rawData[0].map(String);
   const tipo = updaterState.sheetType[sheetName] || 'pregrado';
@@ -231,35 +240,14 @@ function previewSheet(sheetName) {
     else { if(f !== 'idiomas' && f !== 'semestres') allMapped = false; }
   });
 
-  if(!allMapped) { document.getElementById('preview-area').innerHTML = ''; return; }
-
-  // Parse rows (skip header)
-  const rows = [];
-  const errors = [];
-  rawData.slice(1).forEach((row, ri) => {
-    if(!row[mapping.nombre]) return;
-    const nombre = String(row[mapping.nombre]).trim();
-    const valorRaw = row[mapping.valor];
-    const valor = typeof valorRaw === 'number' ? valorRaw : parseFloat(String(valorRaw).replace(/[^0-9.]/g,''));
-
-    if(!nombre) return;
-    if(isNaN(valor) || valor <= 0) { errors.push(`Fila ${ri+2}: valor inválido "${valorRaw}"`); return; }
-
-    if(tipo === 'pregrado') {
-      const idiomasRaw = mapping.idiomas !== undefined ? row[mapping.idiomas] : 0;
-      const idiomas = typeof idiomasRaw === 'number' ? idiomasRaw : parseFloat(String(idiomasRaw||'0').replace(/[^0-9.]/g,'')) || 0;
-      const semestresRaw = mapping.semestres !== undefined ? row[mapping.semestres] : 8;
-      const semestres = typeof semestresRaw === 'number' ? Math.round(semestresRaw) : parseInt(String(semestresRaw||'8').replace(/[^0-9]/g,'')) || 8;
-      rows.push([nombre, valor, idiomas, semestres]);
-    } else {
-      const subnivel = String(row[mapping.subnivel]||'').trim();
-      const validos = ['Doctorado','Maestría','Especialización'];
-      if(!validos.includes(subnivel)) { errors.push(`Fila ${ri+2}: subnivel "${subnivel}" inválido`); return; }
-      rows.push([nombre, subnivel, valor]);
-    }
-  });
-
-  updaterState.parsedData[sheetName] = {tipo, rows};
+  const result = ProgramCatalogImport.parse(rawData, tipo, mapping);
+  updaterState.parsedData[sheetName] = result;
+  const {rows, errors} = result;
+  if(!allMapped) {
+    document.getElementById('preview-area').innerHTML = '';
+    showMsg('parsed-status', errors.join(' | '), 'err');
+    checkReady(); return;
+  }
 
   // Render preview
   const cop = v => new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0}).format(v);
@@ -281,7 +269,7 @@ function previewSheet(sheetName) {
   if(errors.length > 0) {
     showMsg('parsed-status', errors.slice(0,3).join(' | ') + (errors.length>3?` (+${errors.length-3} más)`:''), 'err');
   } else {
-    showMsg('parsed-status', `${rows.length} programas listos para importar`, 'ok');
+    showMsg('parsed-status', `${rows.length} programas válidos para revisión`, 'ok');
   }
 
   checkReady();
@@ -291,71 +279,39 @@ function previewSheet(sheetName) {
 // Check if ready to generate
 // ══════════════════════════════════════════════════
 function checkReady() {
+  // El cliente nunca habilita escrituras sin el servicio transaccional de DTIC.
+  document.getElementById('btn-gen').disabled = true;
   const bp = document.getElementById('btn-publicar');
-  const hasPre = Object.values(updaterState.parsedData).some(d=>d.tipo==='pregrado' && d.rows.length > 0);
-  const hasPos = Object.values(updaterState.parsedData).some(d=>d.tipo==='posgrado' && d.rows.length > 0);
-  const ready = updaterState.htmlContent && (hasPre || hasPos);
-  document.getElementById('btn-gen').disabled = !ready;
-  if(bp) bp.disabled = !ready;
-
-  if(hasPre || hasPos) {
-    const preRows = Object.values(updaterState.parsedData).find(d=>d.tipo==='pregrado');
-    const posRows = Object.values(updaterState.parsedData).find(d=>d.tipo==='posgrado');
-    document.getElementById('cnt-pre').textContent = preRows ? preRows.rows.length : '—';
-    document.getElementById('cnt-pos').textContent = posRows ? posRows.rows.length : '—';
-    document.getElementById('resumen-cambios').style.display = 'block';
+  if(bp) bp.disabled = true;
+  const entries = Object.values(updaterState.parsedData);
+  for(const [tipo, id] of [['pregrado','cnt-pre'],['posgrado','cnt-pos']]) {
+    const rows = entries.filter(entry=>entry.tipo===tipo).flatMap(entry=>entry.rows);
+    document.getElementById(id).textContent = rows.length || '—';
   }
+  document.getElementById('resumen-cambios').style.display = entries.length ? 'block' : 'none';
+  let message = 'La publicación requiere autenticación, permisos y auditoría transaccional de DTIC.';
+  if(entries.length) {
+    try {
+      const candidate = ProgramCatalogImport.prepare(updaterState.parsedData, {
+        programas: updaterState.currentUndergrad || PROGRAMAS,
+        posgrados: updaterState.currentPostgrad || POSGRADOS
+      });
+      message = `${candidate.total} programas; ${candidate.uniqueIds} IDs únicos; ${candidate.duplicateGroups} grupos con nombres repetidos que requieren conciliación de identidad institucional. ` + message;
+    } catch(error) { message = error.message + ' ' + message; }
+  }
+  showMsg('msg-gen', message, 'info');
 }
 
 // ══════════════════════════════════════════════════
-// STEP 3 — Generate new index.html
+// STEP 3 — Validación; escritura pendiente de DTIC
 // ══════════════════════════════════════════════════
-// ── Construye el HTML actualizado (sin descargar ni publicar) ───────────────
+// La vía de reemplazo offline queda cerrada hasta contar con auditoría institucional.
 function construirHTMLActualizado() {
-  if(!updaterState.htmlContent) return {error:'Primero carga el index.html'};
-
-  let newHtml = updaterState.htmlContent;
-  let cambios = [];
-
-  const preData = Object.values(updaterState.parsedData).find(d=>d.tipo==='pregrado');
-  const posData = Object.values(updaterState.parsedData).find(d=>d.tipo==='posgrado');
-
-  if(preData && preData.rows.length > 0) {
-    const normalized = preData.rows.map(([n,v,i,s]) => [String(n), Number(v), Number(i)||0, Number(s)||8]);
-    const jsonData = safeEmbeddedJSON(normalized);
-    if(!RE_PRE.test(newHtml)) return {error:'No se encontró el marcador de PROGRAMAS en el HTML'};
-    newHtml = newHtml.replace(RE_PRE, MK_PRE_S + jsonData + MK_PRE_E);
-    cambios.push(`${preData.rows.length} programas de pregrado`);
-  }
-
-  if(posData && posData.rows.length > 0) {
-    const normalized = posData.rows.map(([n,s,v]) => [String(n), String(s), Number(v)]);
-    const jsonData = safeEmbeddedJSON(normalized);
-    if(!RE_POS.test(newHtml)) return {error:'No se encontró el marcador de POSGRADOS en el HTML'};
-    newHtml = newHtml.replace(RE_POS, MK_POS_S + jsonData + MK_POS_E);
-    cambios.push(`${posData.rows.length} programas de posgrado`);
-  }
-
-  if(cambios.length === 0) return {error:'No hay datos para actualizar'};
-  return {html:newHtml, cambios};
+  return {error:'La escritura del catálogo requiere el servicio autenticado de DTIC y su auditoría en la misma transacción.'};
 }
 
-// ── Descarga manual (respaldo) ──────────────────────────────────────────────
 function generarHTML() {
-  const r = construirHTMLActualizado();
-  if(r.error) return showMsg('msg-gen', r.error, 'err');
-
-  const blob = new Blob([r.html], {type:'text/html;charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'index.html'; a.click();
-  URL.revokeObjectURL(url);
-
-  const okMsg = document.getElementById('msg-gen-ok');
-  okMsg.textContent = ' Descargado con ' + r.cambios.join(' y ') + '. Súbelo a GitHub para actualizar el simulador.';
-  okMsg.hidden = false;
-  showMsg('msg-gen','','');
-  toast('index.html generado y descargado', 'success');
+  return showMsg('msg-gen', construirHTMLActualizado().error, 'err');
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -391,13 +347,11 @@ function extraerProgramasDelHTML(html) {
 
     const preRaw = parseBlock(MK_PRE_S, MK_PRE_E, 'PROGRAMAS');
     const posRaw = parseBlock(MK_POS_S, MK_POS_E, 'POSGRADOS');
-    const pregrado = Array.isArray(preRaw)
-      ? preRaw.map(r => [String(r[0] ?? ''), Number(r[1])||0, Number(r[2])||0, Number(r[3])||8])
-      : [];
-    const posgrado = Array.isArray(posRaw)
-      ? posRaw.map(r => [String(r[0] ?? ''), String(r[1] ?? ''), Number(r[2])||0])
-      : [];
-    if(pregrado.length === 0 && posgrado.length === 0) return null;
+    if(!Array.isArray(preRaw) || !Array.isArray(posRaw)) return null;
+    const pre = ProgramCatalogImport.parse([[], ...preRaw], 'pregrado', {nombre:0,valor:1,idiomas:2,semestres:3});
+    const pos = ProgramCatalogImport.parse([[], ...posRaw], 'posgrado', {nombre:0,subnivel:1,valor:2});
+    if(!pre.valid || !pos.valid) return null;
+    const pregrado = pre.rows, posgrado = pos.rows;
     return {pregrado, posgrado};
   } catch(e) { return null; }
 }
