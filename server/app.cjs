@@ -127,7 +127,7 @@ async function createApplication(options={}){
    if(route==='/api/simulation-settings'&&method==='GET'){requireSession(s,'simulator.use');return json(res,200,readSettings(db));}
    if(route==='/api/admin/settings'){
     requireSession(s,method==='GET'?'settings.read':'settings.update');
-    if(method==='GET')return json(res,200,{...readSettings(db),definitions:DEFINITIONS});
+    if(method==='GET')return json(res,200,{...readSettings(db),definitions:DEFINITIONS,fieldUpdates:Object.fromEntries(db.prepare("SELECT field_name,MAX(timestamp) AS timestamp FROM audit_log WHERE module='settings' AND action='CONFIG_UPDATE' AND result='SUCCESS' GROUP BY field_name").all().map(row=>[row.field_name,row.timestamp]))});
     if(method==='PUT'){
      const data=await body(req);validateSettings(data.changes);s=live(req,'settings.update');
      const settings=transaction(()=>{
@@ -203,12 +203,16 @@ async function createApplication(options={}){
    }
    if(route==='/api/admin/audit'&&method==='GET'){
     requireSession(s,'audit.read');const conditions=[],args=[];
+    const administrative=url.searchParams.get('category')==='administrative';
+    if(administrative)conditions.push("module IN ('users','programs','settings') AND action IN ('ADMIN_BOOTSTRAP','USER_CREATE','USER_UPDATE','USER_ROLE_CHANGE','USER_ACTIVATE','USER_DEACTIVATE','PROGRAM_UPDATE','CONFIG_UPDATE')");
+    const localDates=url.searchParams.get('timeZone')==='America/Bogota';
+    if(url.searchParams.has('timeZone')&&!localDates)throw fail(422,'Zona de fechas no admitida.');
     if(s.user.role==='program_admin')conditions.push("module='programs'");
     if(url.searchParams.get('actor')){conditions.push("(actor_user_id=? OR instr(lower(coalesce(actor_email,'')),lower(?))>0 OR instr(lower(coalesce(actor_name,'')),lower(?))>0)");args.push(url.searchParams.get('actor'),url.searchParams.get('actor'),url.searchParams.get('actor'));}
     for(const [key,column] of [['action','action'],['module','module'],['result','result']])if(url.searchParams.get(key)){conditions.push(column+'=?');args.push(url.searchParams.get(key));}
     if(url.searchParams.get('entity')){conditions.push("(instr(lower(coalesce(entity_name,'')),lower(?))>0 OR entity_id=?)");args.push(url.searchParams.get('entity'),url.searchParams.get('entity'));}
     for(const [key,operator] of [['from','>='],['to','<=']])if(url.searchParams.get(key)){
-     const value=url.searchParams.get(key);if(!/^\d{4}-\d{2}-\d{2}$/.test(value)||!Number.isFinite(Date.parse(value))||new Date(value).toISOString().slice(0,10)!==value)throw fail(422,'Fecha inválida.');conditions.push('timestamp'+operator+'?');args.push(value+(key==='from'?'T00:00:00.000Z':'T23:59:59.999Z'));
+     const value=url.searchParams.get(key);if(!/^\d{4}-\d{2}-\d{2}$/.test(value)||!Number.isFinite(Date.parse(value))||new Date(value).toISOString().slice(0,10)!==value)throw fail(422,'Fecha inválida.');conditions.push('timestamp'+operator+'?');args.push(new Date(value+(key==='from'?'T00:00:00.000':'T23:59:59.999')+(localDates?'-05:00':'Z')).toISOString());
     }
     if(url.searchParams.get('from')&&url.searchParams.get('to')&&url.searchParams.get('from')>url.searchParams.get('to'))throw fail(422,'La fecha inicial debe ser anterior o igual a la final.');
     const offset=Number(url.searchParams.get('offset')||0);if(!Number.isSafeInteger(offset)||offset<0)throw fail(422,'Página inválida.');
@@ -221,7 +225,7 @@ async function createApplication(options={}){
   if(route==='/')return redirect(res,'/apps/ofe/');
   if(route==='/apps/public/'||route==='/index.html')return redirect(res,'/apps/ofe/');
   if(route==='/login'||route==='/login/')return serve(res,path.join(root,'shared/auth/login.html'),method);
-  const assets={'/auth-assets/styles.css':'apps/ofe/simulador-assets/styles.css','/auth-assets/login.js':'shared/auth/login.js','/auth-assets/theme.js':'shared/theme.js'};
+  const assets={'/auth-assets/styles.css':'apps/ofe/simulador-assets/styles.css','/auth-assets/login.js':'shared/auth/login.js','/auth-assets/theme.js':'shared/theme.js','/auth-assets/icons.js':'shared/ui/icons.js'};
   if(assets[route])return serve(res,path.join(root,assets[route]),method);
   requireSession(s);
   if(route==='/apps/ofe/config.js')return serve(res,path.join(root,'apps/ofe/config.js'),method);

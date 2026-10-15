@@ -92,12 +92,12 @@ const PDFV5 = (() => {
   function tea(tm){ return (Math.pow(1+(Number(tm)||0),12)-1)*100; }
 
   function dateLong(date=new Date()){
-    try{return new Intl.DateTimeFormat('es-CO',{day:'numeric',month:'long',year:'numeric'}).format(date);}
+    try{return new Intl.DateTimeFormat('es-CO',{timeZone:'America/Bogota',day:'numeric',month:'long',year:'numeric'}).format(date);}
     catch(_e){return date.toLocaleDateString('es-CO');}
   }
   function timeShort(date=new Date()){
-    try{return new Intl.DateTimeFormat('es-CO',{hour:'2-digit',minute:'2-digit'}).format(date);}
-    catch(_e){return date.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});}
+    try{return new Intl.DateTimeFormat('es-CO',{timeZone:'America/Bogota',hour:'2-digit',minute:'2-digit'}).format(date);}
+    catch(_e){return date.toLocaleTimeString('es-CO',{timeZone:'America/Bogota',hour:'2-digit',minute:'2-digit'});}
   }
   function code(prefix='SIM'){
     const d=new Date(), pad=n=>String(n).padStart(2,'0');

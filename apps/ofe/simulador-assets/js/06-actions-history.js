@@ -425,7 +425,7 @@ function saveHistorial(list) {
 
 function registrarHistorial(tabId) {
   let entry = null;
-  const fecha = new Date().toLocaleString('es-CO',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const fecha = window.OFEDates.dateTime(new Date());
   const tabNames = {1:'Corto Plazo', 2:'Mixto CP/LP', 3:'Banco Aliado', 5:'Reestructuración', 7:'Cuota Inicial'};
 
   if(tabId===1 && SimuladorOFE.state.results.shortTerm) {
@@ -699,7 +699,7 @@ function expXLSComparativa(tabId) {
   const aoa = [];
   const tabNames = {1:'Crédito Corto Plazo', 2:'Crédito Mixto CP/LP', 3:'Crédito Banco Aliado'};
   aoa.push(['Comparativa de Escenarios — '+tabNames[tabId]]);
-  aoa.push(['Generado', new Date().toLocaleString('es-CO')]);
+  aoa.push(['Generado', window.OFEDates.dateTime(new Date())]);
   aoa.push([]);
 
   // Header row

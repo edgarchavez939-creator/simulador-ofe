@@ -681,7 +681,7 @@ function convertirTasas() {
     const highlight = r.isOrigen ? 'background:var(--info-soft);font-weight:700;' : '';
     const badge = r.isOrigen ? ' <span class="badge-inline badge-inline--info">ORIGEN</span>' : '';
     html += `<tr style="${highlight}">
-      <td style="text-align:left;font-family:'Montserrat',sans-serif;font-weight:${r.isOrigen?'700':'500'};color:${r.isOrigen?'var(--info)':'var(--text)'};">${r.label}${badge}</td>
+      <td style="text-align:left;font-family:var(--font-sans);font-weight:${r.isOrigen?'700':'500'};color:${r.isOrigen?'var(--info)':'var(--text)'};">${r.label}${badge}</td>
       <td class="u-text-center">${r.n}</td>
       <td style="color:${r.isOrigen?'var(--info)':'inherit'};">${fmt(r.i_ef)}</td>
       <td class="u-muted">${fmtN(r.nom_anual)}</td>
@@ -697,8 +697,8 @@ function convertirTasas() {
 // ── DATE HELPER ──────────────────────────────────────────────────────────────
 function fechaSimulacion() {
   const now = new Date();
-  return now.toLocaleDateString('es-CO', {day:'2-digit',month:'long',year:'numeric'}) +
-         ' ' + now.toLocaleTimeString('es-CO', {hour:'2-digit',minute:'2-digit'});
+  return now.toLocaleDateString('es-CO', {timeZone:'America/Bogota',day:'2-digit',month:'long',year:'numeric'}) +
+         ' ' + now.toLocaleTimeString('es-CO', {timeZone:'America/Bogota',hour:'2-digit',minute:'2-digit'});
 }
 function fechaBadgeHtml() {
   return `<div class="gen-date">${icon('calendar')} Simulación generada el ${fechaSimulacion()}</div>`;

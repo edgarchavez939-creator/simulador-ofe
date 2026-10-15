@@ -208,17 +208,13 @@ function pdfPremiumCreditReport(doc,cfg){
 }
 
 function pdfGeneratedMeta(){
-  const d = new Date();
-  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-  const dd = String(d.getDate()).padStart(2,'0');
-  const mm = String(d.getMonth()+1).padStart(2,'0');
-  const yyyy = d.getFullYear();
-  const hh = String(d.getHours()).padStart(2,'0');
-  const min = String(d.getMinutes()).padStart(2,'0');
+  const d = new Date(), timeZone = 'America/Bogota';
+  const parts = Object.fromEntries(new Intl.DateTimeFormat('es-CO',{timeZone,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(d).map(part=>[part.type,part.value]));
+  const {day:dd,month:mm,year:yyyy,hour:hh,minute:min} = parts;
   return {
     fecha: `${dd}/${mm}/${yyyy}`,
-    fechaLarga: `${d.getDate()} de ${meses[d.getMonth()]} de ${yyyy}`,
-    hora: d.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'}),
+    fechaLarga: d.toLocaleDateString('es-CO',{timeZone,day:'numeric',month:'long',year:'numeric'}),
+    hora: d.toLocaleTimeString('es-CO',{timeZone,hour:'2-digit',minute:'2-digit'}),
     stamp: `${yyyy}${mm}${dd}-${hh}${min}`
   };
 }

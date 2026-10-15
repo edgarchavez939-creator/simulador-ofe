@@ -32,6 +32,6 @@
   const scrim=document.getElementById(id);scrim.addEventListener('click',event=>{if(event.target===scrim||event.target.closest('[data-dialog-close]'))global.cerrarModalAccesible(scrim);});return scrim;
  }
  function openDialog(id,focus){close();global.abrirModalAccesible(document.getElementById(id),focus);}
- function enhanceSelects(root=document){root.querySelectorAll('.view--admin select, .admin-dialog select').forEach(select=>{if(select.parentElement.classList.contains('ui-select'))return;const wrapper=document.createElement('div');wrapper.className='ui-select';select.before(wrapper);wrapper.appendChild(select);wrapper.insertAdjacentHTML('beforeend',global.icon('chevron-down'));});}
+ function enhanceSelects(root=document){root.querySelectorAll('select.select').forEach(select=>{if(select.parentElement.classList.contains('ui-select'))return;const wrapper=document.createElement('div');wrapper.className='ui-select';select.before(wrapper);wrapper.appendChild(select);wrapper.insertAdjacentHTML('beforeend',global.icon('chevron-down'));});}
  global.OFEUI=Object.freeze({openPopover:open,closePopover:close,dialog,openDialog,enhanceSelects});
 })(window);
