@@ -1,5 +1,9 @@
 # Servicio autónomo OFE y alojamiento propuesto
 
+## Pruebas con presupuesto cero
+
+Para pruebas temporales y entrega a DTIC, usar [la guía Render Free](RENDER_FREE_DEMO.md). Este modo crea el primer administrador mediante variables privadas, ya que Free no ofrece Shell. El disco es efímero: al reiniciar, suspenderse o redesplegar pueden perderse usuarios, auditoría y cambios. La propuesta con persistencia de las secciones siguientes es opcional para una futura operación; no contratarla para esta demostración.
+
 ## Decisión de arquitectura
 
 Se propone **Render Web Service de pago, Docker y disco persistente de 1 GB**. La aplicación y su API se sirven desde el mismo origen HTTPS. Node 24 y SQLite permiten comenzar con un equipo pequeño sin contratar un proveedor de identidad ni Supabase. El paquete no usa servicios propietarios de Render para la lógica de negocio: también puede ejecutarse en un servidor Linux de DTIC.

@@ -18,3 +18,7 @@ El esquema de auditoría no puede modificarse desde la API ni desde el rol syste
 No se incluyen secretos de DTIC. La futura identidad institucional se vinculará al usuario interno sin sustituir la autorización. Véase [operación y traspaso](AUTONOMOUS_DEPLOYMENT.md) y [matriz, eventos y pruebas](PHASE_V2.md).
 
 El frontend conserva las versiones actuales de Chart.js, jsPDF y SheetJS desde CDN con integridad, y fuentes externas. La CSP permite esos orígenes concretos. Su empaquetado local sigue siendo una mejora de autonomía de distribución, distinta de la autenticación autónoma ya implementada; no se promete funcionamiento sin Internet.
+
+## Modo de demostración gratuito
+
+`server/start-demo.cjs` es una entrada opcional que exige `OFE_EPHEMERAL_DEMO=1` y credenciales privadas configuradas por el propietario. Solo inicializa la primera cuenta si no hay usuarios y utiliza el mismo bootstrap transaccional, hash, API, sesiones y permisos reales. No abre setup por HTTP ni incluye cuentas o contraseñas predeterminadas. La contraseña inicial se consume y elimina del entorno del proceso; Render conserva la variable privada para reconstruir la demo después de perder el disco efímero. Por eso se usan credenciales exclusivas de prueba y no se activa esta entrada en el entorno persistente o institucional. Véase [guía gratuita](RENDER_FREE_DEMO.md).

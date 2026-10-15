@@ -8,7 +8,7 @@ Se incorporan reinicio central de simulaciones al cambiar programa, calibración
 
 Para usar OFE con seguridad real: Node >=24, `npm run bootstrap-admin`, `npm start` y entrar en `http://127.0.0.1:8787`. No hay cuentas predeterminadas. El administrador crea los usuarios desde la aplicación. Pruebas: `npm test`.
 
-[Informe técnico](docs/PHASE_V2.md) · [Inicio, Render y traslado a DTIC](docs/AUTONOMOUS_DEPLOYMENT.md) · [Seguridad](docs/SECURITY.md).
+[Pruebas gratis en Render](docs/RENDER_FREE_DEMO.md) · [Informe técnico](docs/PHASE_V2.md) · [Inicio, Render y traslado a DTIC](docs/AUTONOMOUS_DEPLOYMENT.md) · [Seguridad](docs/SECURITY.md).
 
 GitHub Pages sigue sirviendo la app pública desde `apps/public/`. El servidor autónomo se publica por separado: un push a Pages no ejecuta login, usuarios ni auditoría. La propuesta Render está preparada y pendiente de cuenta, aceptación del costo y prueba del despliegue. Las secciones históricas siguientes describen la evolución P3.x; la entrega v2 prevalece sobre los flujos anteriores de PIN y reemplazo de HTML.
 

@@ -2,10 +2,13 @@
   "name": "simulador-ofe",
   "private": true,
   "version": "2.0.0",
-  "engines": {"node": ">=24.0.0"},
+  "engines": {
+    "node": ">=24.0.0"
+  },
   "scripts": {
     "start": "node server/start.cjs",
     "bootstrap-admin": "node server/bootstrap.cjs",
-    "test": "node --test scripts/verify-program-catalog.cjs scripts/verify-program-catalog-v1c.cjs scripts/verify-program-catalog-v1d.cjs scripts/verify-functional-v1e.cjs scripts/verify-phase-v2.cjs scripts/verify-server.cjs"
+    "test": "node --test scripts/verify-program-catalog.cjs scripts/verify-program-catalog-v1c.cjs scripts/verify-program-catalog-v1d.cjs scripts/verify-functional-v1e.cjs scripts/verify-phase-v2.cjs scripts/verify-server.cjs scripts/verify-demo.cjs",
+    "start:demo": "node server/start-demo.cjs"
   }
 }
