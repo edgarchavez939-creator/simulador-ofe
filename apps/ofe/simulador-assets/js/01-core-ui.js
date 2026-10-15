@@ -219,6 +219,7 @@ function showFieldError(controlId, message, fallbackAlertId) {
 }
 
 function clearControlValidationFromEvent(target) {
+  if(target?.dataset?.validationOwner==='rate') return;
   if(target?.matches?.('input, select, textarea')) clearFieldError(target);
 }
 
@@ -622,7 +623,7 @@ function switchTab(n) {
     const ht = document.getElementById('header-title');
     const hd = document.getElementById('header-desc');
     const hs = document.getElementById('header-section');
-    if(ht) ht.textContent = meta.title;
+    if(ht) ht.innerHTML = ({6:'book-open',10:'users',11:'clipboard',12:'settings'}[n] ? icon({6:'book-open',10:'users',11:'clipboard',12:'settings'}[n]) : '') + escHTML(meta.title);
     if(hd) hd.textContent = meta.desc;
     if(hs) hs.textContent = meta.section;
     document.title = meta.title + ' · Simulador OFE';

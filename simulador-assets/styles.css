@@ -3,8 +3,8 @@
    Ningún componente define colores propios.
    ═══════════════════════════════════════════════════════════════ */
 :root {
-  --font-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  --font-sans: "Public Sans", sans-serif;
+  --font-mono: "Public Sans", sans-serif;
 
   --fs-xs: 11px;  --fs-sm: 12px;  --fs-md: 13px;  --fs-base: 14px;
   --fs-lg: 16px;  --fs-xl: 20px;  --fs-2xl: 26px; --fs-3xl: 34px;
@@ -616,7 +616,7 @@ table.tbl tfoot td:first-child { text-align: left; }
 /* ── Utilidades ── */
 .u-hidden { display: none !important; }
 .sr-only { position:absolute !important; width:1px !important; height:1px !important; padding:0 !important; margin:-1px !important; overflow:hidden !important; clip:rect(0,0,0,0) !important; white-space:nowrap !important; border:0 !important; }
-.u-mono { font-family: var(--font-mono); }
+.u-mono { font-family: var(--font-sans); }
 .u-num { font-variant-numeric: tabular-nums; }
 .u-truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .u-muted { color: var(--text-3); }
@@ -994,7 +994,7 @@ table.tbl tfoot td:first-child { text-align: left; }
 .guide li:last-child { margin-bottom: 0; }
 .guide li::marker { color: var(--text-3); font-variant-numeric: tabular-nums; }
 .guide code {
-  font-family: var(--font-mono); font-size: var(--fs-sm);
+  font-family: var(--font-sans); font-size: var(--fs-sm);
   background: var(--surface-3); color: var(--text);
   padding: 1px var(--sp-1); border-radius: 4px;
 }

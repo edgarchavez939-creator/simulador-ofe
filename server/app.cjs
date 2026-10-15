@@ -5,7 +5,7 @@ const {openStore,publicUser,ROLES}=require('./store.cjs');
 const {DEFINITIONS,validate:validateSettings,readSettings}=require('./settings.cjs');
 const {digest,token,hashPassword,verifyPassword,passwordPolicy}=require('./security.cjs');
 const fail=(status,message,field)=>Object.assign(new Error(message),{status,field});
-const TYPES={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.png':'image/png'};
+const TYPES={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.ttf':'font/ttf'};
 const SESSION_MS=8*3600000,IDLE_MS=30*60000;
 function validatedUser(body){
  if(typeof body.name!=='string'||body.name.trim().length<2||body.name.length>120)throw fail(422,'Escribe un nombre de 2 a 120 caracteres.','name');
@@ -225,7 +225,7 @@ async function createApplication(options={}){
   if(route==='/')return redirect(res,'/apps/ofe/');
   if(route==='/apps/public/'||route==='/index.html')return redirect(res,'/apps/ofe/');
   if(route==='/login'||route==='/login/')return serve(res,path.join(root,'shared/auth/login.html'),method);
-  const assets={'/auth-assets/styles.css':'apps/ofe/simulador-assets/styles.css','/auth-assets/login.js':'shared/auth/login.js','/auth-assets/theme.js':'shared/theme.js','/auth-assets/icons.js':'shared/ui/icons.js'};
+  const assets={'/auth-assets/fonts.css':'shared/fonts/public-sans.css','/auth-assets/density.css':'shared/ui/density.css','/auth-assets/PublicSans-Variable.ttf':'shared/fonts/PublicSans-Variable.ttf','/auth-assets/styles.css':'apps/ofe/simulador-assets/styles.css','/auth-assets/login.js':'shared/auth/login.js','/auth-assets/theme.js':'shared/theme.js','/auth-assets/icons.js':'shared/ui/icons.js'};
   if(assets[route])return serve(res,path.join(root,assets[route]),method);
   requireSession(s);
   if(route==='/apps/ofe/config.js')return serve(res,path.join(root,'apps/ofe/config.js'),method);

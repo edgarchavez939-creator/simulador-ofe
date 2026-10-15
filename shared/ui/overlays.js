@@ -13,13 +13,13 @@
   active={element,anchor};element.hidden=false;anchor.setAttribute('aria-expanded','true');
   if(element.showPopover)element.showPopover();else element.dataset.open='true';
   place(element,anchor);
-  if(focus)(element.querySelector('input:checked')||element.querySelector('[role="menuitem"], button, input')||element).focus();
+  if(focus)(element.querySelector('[aria-pressed="true"]')||element.querySelector('input:checked')||element.querySelector('[role="menuitem"], button, input')||element).focus();
   element.ontoggle=event=>{if(event.newState==='closed'&&!element.matches(':popover-open')&&active?.element===element){active=null;element.hidden=true;anchor.setAttribute('aria-expanded','false');}};
  }
  document.addEventListener('keydown',event=>{
   if(!active)return;const {element,anchor}=active;
   if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();close(true);return;}
-  if(event.key==='Tab'&&element.contains(document.activeElement)){close();anchor.focus();return;}
+  if(event.key==='Tab'&&element.contains(document.activeElement)){const items=Array.from(element.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), [role="menuitem"]')).filter(item=>!item.hidden&&item.getClientRects().length);const boundary=event.shiftKey?document.activeElement===items[0]:document.activeElement===items.at(-1);if(element.getAttribute('role')==='menu'||boundary){close();anchor.focus();}return;}
   if(element.getAttribute('role')!=='menu'||!['ArrowDown','ArrowUp','Home','End'].includes(event.key))return;
   const items=Array.from(element.querySelectorAll('[role="menuitem"]:not([disabled])'));if(!items.length)return;event.preventDefault();
   const index=items.indexOf(document.activeElement);items[event.key==='Home'?0:event.key==='End'?items.length-1:(index+(event.key==='ArrowDown'?1:items.length-1))%items.length].focus();

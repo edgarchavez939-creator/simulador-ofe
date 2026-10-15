@@ -49,15 +49,15 @@ for (const app of ['public','ofe']) {
     c.jspdf={jsPDF:class {save(){}}};c.pdfPremiumCreditReport=(_doc,cfg)=>report=cfg;c.pdfPie=()=>{};
     c.expPDF7();assert.equal(report.heroValue,vm.runInContext('cop(SimuladorOFE.state.results.initialPayment.desembolso)',c));assert.equal(report.heroSide.length,3);
     assert.equal(report.heroSide[0].value,vm.runInContext('cop(SimuladorOFE.state.results.initialPayment.cuotaInicial)',c));assert.equal(report.heroSide[1].value,vm.runInContext('cop(SimuladorOFE.state.results.initialPayment.gar)',c));
-    c.XLSX={utils:{aoa_to_sheet:rows=>(workbook=rows,{}),book_new:()=>({}),book_append_sheet(){}},writeFile(){}};
-    c.expXLS7();assert.equal(workbook.find(row=>row[0]==='TOTAL INICIAL A PAGAR')[1],Math.round(d.desembolso));
+    c.OFEExcel.download=async model=>(workbook=model);
+    await c.expXLS7();assert.equal(workbook.sections.flatMap(section=>section.fields).find(row=>row.label==='Total inicial').value,d.desembolso);
     // El último script sustituye los exportadores legacy en el navegador.
     vm.runInContext(read(`apps/${app}/simulador-assets/js/10-pdf-aptos.js`),c);
     c.captureReport=cfg=>report=cfg;vm.runInContext('PDFV5.report = cfg => captureReport(cfg)',c);
     await c.expPDF7();assert.equal(report.hero.label,'Total inicial a pagar');
     assert.equal(report.hero.value,'$ 1.925.100');assert.equal(report.hero.side[0].value,'$ 1.800.000');
     assert.equal(report.hero.side[1].value,'$ 125.100');assert.match(report.note,/no incluye el aporte/);
-    assert.equal(workbook.find(row=>row[0]==='CUOTA INICIAL REQUERIDA (sin aporte al fondo)')[1],Math.round(d.cuotaInicial));
+    assert.equal(workbook.sections.flatMap(section=>section.fields).find(row=>row.label==='Cuota inicial requerida (sin Garantisa)').value,d.cuotaInicial);
   });
 }
 

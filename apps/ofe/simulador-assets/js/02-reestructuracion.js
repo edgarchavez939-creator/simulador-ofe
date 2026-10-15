@@ -87,7 +87,7 @@ function calcularRefi() {
     <div class="result-actions" aria-label="Acciones del escenario">
       <span class="result-actions__label">Guarda este escenario para compararlo con otra alternativa.</span>
       <button class="btn btn--primary btn--sm" data-action="guardar-esc-refi">${icon('save')} Guardar escenario</button>
-      <button class="btn btn--secondary btn--sm" data-action="pdf-refi">${icon('file-text')} PDF</button>
+      <button class="btn btn--secondary btn--sm" data-action="pdf-refi">${icon('file-text')} PDF</button><button class="btn btn--secondary btn--sm" data-action="xls-refi">${icon('table')} Excel</button>
       ${reestructState.scenarios.length>=2?`<button class="btn btn--ghost btn--sm" data-action="comparar-esc-refi">${icon('scale')} Comparar</button>`:''}
     </div>
     <div class="financial-details">

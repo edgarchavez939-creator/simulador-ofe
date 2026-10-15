@@ -702,34 +702,7 @@ function expPDF1(){
   pdfPie(doc); doc.save(safePDF('Credito Corto Plazo - '+(d.progNombre||'Simulacion'))+'.pdf'); toast('PDF descargado','success');
 }
 
-function expXLS1(){
-  const d=SimuladorOFE.state.results.shortTerm; if(!d)return;
-  const wb=XLSX.utils.book_new();
-  const benefRows1 = (d.beneficios||[]).filter(b=>b.val>0).map(b=>['  - '+(b.nombre||'Descuento')+' ('+b.pct.toFixed(1)+'%)',-Math.round(b.val)]);
-  const ws=XLSX.utils.aoa_to_sheet([
-    ['Crédito a Corto Plazo'],[''],
-    ['--- MATRÍCULA ---'],
-    ['Valor Matrícula Bruta',Math.round(d.mat)],
-    ...(benefRows1.length>0?[['--- BENEFICIOS / DESCUENTOS ---'],...benefRows1,['Total Descuentos',-Math.round(d.benefTotal||0)],['Matrícula Neta',Math.round(d.matNeta||d.mat)],['']]:
-      [['']]),
-    ['--- PAGO INICIAL ---'],
-    ['Pago de Contado',Math.round(d.cuotaInicial)],
-    ['Garantisa ('+garantisaLabel(d)+'% s/financiado)',Math.round(d.garantisa)],
-    ['Total Pago Inicial',Math.round(d.pagoInicial)],[''],
-    ['--- CRÉDITO ---'],
-    ['Monto Financiado ('+d.pct+'% de matrícula)',Math.round(d.financiado)],
-    ['Cuota Mensual',Math.round(d.cuota)],
-    ['Total Intereses',Math.round(d.totInt)],
-    ['Total Crédito',Math.round(d.totCap+d.totInt)],
-    ['COSTO TOTAL MATRÍCULA',Math.round(d.totalGeneral)],[''],
-    ['Cuota','Cuota Mensual','Capital','Interés','Saldo'],
-    ...d.rows.map(r=>[r.i,Math.round(r.cuota),Math.round(r.capital),Math.round(r.interes),Math.round(r.saldo)])
-  ]);
-  XLSX.utils.book_append_sheet(wb,ws,'Corto Plazo');
-  const fn1x = (d.progNombre+' - '+d.pct+'%').replace(/[^a-zA-Z0-9\-_ áéíóúÁÉÍÓÚñÑ]/g,'').trim();
-  XLSX.writeFile(wb,fn1x+'.xlsx');
-  toast('Excel descargado', 'success');
-}
+function expXLS1(){return window.OFEExcel.exportResult(1);}
 
 function expPDF2(){
   const d=SimuladorOFE.state.results.mixed;
@@ -768,55 +741,7 @@ function expPDF2(){
   pdfPie(doc); doc.save(safePDF('Credito Mixto - '+(d.progNombre||'Simulacion'))+'.pdf'); toast('PDF descargado','success');
 }
 
-function expXLS2(){
-  const d=SimuladorOFE.state.results.mixed; if(!d)return;
-  const wb=XLSX.utils.book_new();
-  const benefRows2 = (d.beneficios||[]).filter(b=>b.val>0).map(b=>['  - '+(b.nombre||'Descuento')+' ('+b.pct.toFixed(1)+'%)',-Math.round(b.val)]);
-  const resumen=[
-    ['Crédito Mixto — Resumen'],[''],
-    ['Valor Matrícula Bruta',Math.round(d.mat)],
-    ...(benefRows2.length>0?[['--- BENEFICIOS / DESCUENTOS ---'],...benefRows2,
-      ['Total Descuentos',-Math.round(d.benefTotal||0)],
-      ['Matrícula Neta',Math.round(d.matNeta||d.mat)],['']]:
-      [['']]),
-    ['--- PAGO INICIAL ---'],
-    ['Pago de Contado',Math.round(d.cuotaInicial)],
-    ['Garantisa CP ('+garantisaLabel(d)+'%)',Math.round(d.garCP)],
-    ['Garantisa LP ('+garantisaLabel(d,'lp')+'%)',Math.round(d.garLP)],
-    ['Total Pago Inicial',Math.round(d.pagoInicial)],[''],
-    ['Total Crédito CP',d.CP?Math.round(d.CP.totCap+d.CP.totInt):0],
-    ['Total Crédito LP',d.LP?Math.round(d.LP.totCap+d.LP.totInt):0],
-    ['COSTO TOTAL MATRÍCULA',Math.round(d.pagoInicial+(d.CP?(d.CP.totCap+d.CP.totInt):0)+(d.LP?(d.LP.totCap+d.LP.totInt):0))]
-  ];
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(resumen),'Resumen');
-  if(d.CP){
-    const ws=XLSX.utils.aoa_to_sheet([
-      ['Corto Plazo'],['Valor Matrícula',Math.round(d.mat)],['Monto Financiado CP',Math.round(d.finCP)],
-      ['Garantisa (pago inicial)',Math.round(d.garCP)],
-      ['Cuota Mensual',Math.round(d.CP.cuota)],
-      ['Total Intereses',Math.round(d.CP.totInt)],
-      ['Total Crédito',Math.round(d.CP.totCap+d.CP.totInt)],[],
-      ['Cuota','Cuota Mensual','Capital','Interés','Saldo'],
-      ...d.CP.rows.map(r=>[r.i,Math.round(r.cuota),Math.round(r.capital),Math.round(r.interes),Math.round(r.saldo)])
-    ]);
-    XLSX.utils.book_append_sheet(wb,ws,'Corto Plazo');
-  }
-  if(d.LP){
-    const ws=XLSX.utils.aoa_to_sheet([
-      ['Largo Plazo'],['Valor Matrícula',Math.round(d.mat)],['Monto Financiado LP',Math.round(d.finLP)],
-      ['Garantisa (pago inicial)',Math.round(d.garLP)],
-      ['Cuota Mensual',Math.round(d.LP.cuota)],
-      ['Total Intereses',Math.round(d.LP.totInt)],
-      ['Total Crédito',Math.round(d.LP.totCap+d.LP.totInt)],[],
-      ['Cuota','Cuota Mensual','Capital','Interés','Saldo'],
-      ...d.LP.rows.map(r=>[r.i,Math.round(r.cuota),Math.round(r.capital),Math.round(r.interes),Math.round(r.saldo)])
-    ]);
-    XLSX.utils.book_append_sheet(wb,ws,'Largo Plazo');
-  }
-  const fn2x = (d.progNombre+' - CP'+d.pCP+'% LP'+d.pLP+'%').replace(/[^a-zA-Z0-9\-_ áéíóúÁÉÍÓÚñÑ]/g,'').trim();
-  XLSX.writeFile(wb,fn2x+'.xlsx');
-  toast('Excel descargado', 'success');
-}
+function expXLS2(){return window.OFEExcel.exportResult(2);}
 
 
 function calcular3(){
@@ -927,33 +852,7 @@ function expPDF3(){
   pdfPie(doc); doc.save(safePDF('Credito Banco Aliado - '+(d.progNombre||'Simulacion'))+'.pdf'); toast('PDF descargado','success');
 }
 
-function expXLS3(){
-  const d=SimuladorOFE.state.results.bank; if(!d)return;
-  const wb=XLSX.utils.book_new();
-  const ws=XLSX.utils.aoa_to_sheet([
-    ['Crédito Banco Aliado'],[''],
-    ['Valor Matrícula Bruta',Math.round(d.mat)],
-    ...((d.beneficios||[]).filter(b=>b.val>0).length>0?
-      [['--- BENEFICIOS / DESCUENTOS ---'],...(d.beneficios||[]).filter(b=>b.val>0).map(b=>['  - '+(b.nombre||'Descuento')+' ('+b.pct.toFixed(1)+'%)',-Math.round(b.val)]),
-       ['Total Descuentos',-Math.round(d.benefTotal||0)],['Matrícula Neta',Math.round(d.matNeta||d.mat)],['']]:[['']]),
-    ['--- PAGO INICIAL ---'],
-    ['Cuota Inicial Contado',Math.round(d.cuotaInicial)],
-    ['Otros Cargos',Math.round(d.cargos)],
-    ['Total Pago Inicial',Math.round(d.pagoInicial)],[''],
-    ['--- CRÉDITO ---'],
-    ['Monto Financiado',Math.round(d.financiado)],
-    ['Cuota Mensual',Math.round(d.cuota)],
-    ['Total Intereses',Math.round(d.totInt)],
-    ['Total Crédito',Math.round(d.totCap+d.totInt)],
-    ['COSTO TOTAL MATRÍCULA',Math.round(d.totalGeneral)],[''],
-    ['Cuota','Cuota Mensual','Capital','Interés','Saldo'],
-    ...d.rows.map(r=>[r.i,Math.round(r.cuota),Math.round(r.capital),Math.round(r.interes),Math.round(r.saldo)])
-  ]);
-  XLSX.utils.book_append_sheet(wb,ws,'Banco Aliado');
-  const fn3x = (d.progNombre+' - '+d.pct+'%').replace(/[^a-zA-Z0-9\-_ áéíóúÁÉÍÓÚñÑ]/g,'').trim();
-  XLSX.writeFile(wb,fn3x+'.xlsx');
-  toast('Excel descargado', 'success');
-}
+function expXLS3(){return window.OFEExcel.exportResult(3);}
 
 
 

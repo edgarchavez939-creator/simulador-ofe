@@ -567,132 +567,17 @@ function expPDFIdiomas(){
   pdfPie(doc);doc.save(safePDF((d.progNombre||'Programa')+' - Idiomas')+'.pdf');toast('PDF descargado','success');
 }
 
-function expXLSIdiomas(){
-  const d=SimuladorOFE.state.results.languages; if(!d)return;
-  const pctLabel = Math.round((d.financiado/d.mat)*100)+'%';
-  const filename = (d.progNombre+' - Idiomas '+pctLabel).replace(/[^a-zA-Z0-9\-_ áéíóúÁÉÍÓÚñÑ]/g,'').trim();
-  const wb=XLSX.utils.book_new();
-  const ws=XLSX.utils.aoa_to_sheet([
-    ['Crédito de Idiomas — '+d.progNombre],[''],
-    ['Valor Idiomas',Math.round(d.mat)],[''],
-    ['--- PAGO INICIAL ---'],
-    ['Cuota Inicial Contado',Math.round(d.cuotaInicial)],
-    ['Garantisa (4.17% s/financiado)',Math.round(d.garantisa)],
-    ['Total Pago Inicial',Math.round(d.pagoInicial)],[''],
-    ['--- CRÉDITO ---'],
-    ['Monto Financiado',Math.round(d.financiado)],
-    ['Cuota Mensual',Math.round(d.cuota)],
-    ['Total Intereses',Math.round(d.totInt)],
-    ['Total Crédito',Math.round(d.totalCredito)],
-    ['COSTO TOTAL IDIOMAS',Math.round(d.totalGeneral)],[''],
-    ['Cuota','Cuota Mensual','Capital','Interés','Saldo'],
-    ...d.rows.map(r=>[r.i,Math.round(r.cuota),Math.round(r.capital),Math.round(r.interes),Math.round(r.saldo)])
-  ]);
-  XLSX.utils.book_append_sheet(wb,ws,'Idiomas');
-  XLSX.writeFile(wb,filename+'.xlsx');
-  toast('Excel descargado', 'success');
-}
+function expXLSIdiomas(){return window.OFEExcel.exportResult('languages');}
 
 // El clic sobre el backdrop se resuelve mediante delegación centralizada de data-action.
 
 
 // ── CONVERSOR DE TASAS ───────────────────────────────────────────────────────
-const TC_PERIODOS = {
-  d:  {label:'Diaria',      n:365},
-  s:  {label:'Semanal',     n:52},
-  q:  {label:'Quincenal',   n:24},
-  m:  {label:'Mensual',     n:12},
-  b:  {label:'Bimestral',   n:6},
-  t:  {label:'Trimestral',  n:4},
-  c:  {label:'Cuatrimestral',n:3},
-  sm: {label:'Semestral',   n:2},
-  a:  {label:'Anual',       n:1},
-};
 
 
 
-function setTipoEq(tipo) {
-  languagesState.equivalentRateType = tipo;
-  _pressed(document.getElementById('tc-ev'), tipo==='efectiva');
-  _pressed(document.getElementById('tc-nom'), tipo==='nominal');
-  document.getElementById('tc-nom-per-wrap').style.display = tipo==='nominal' ? 'block' : 'none';
-  convertirTasas();
-}
-
-function convertirTasas() {
-  const valorInput = parseFloat(document.getElementById('tc-valor').value);
-  const periodoOrigen = document.getElementById('tc-periodo').value;
-  if(isNaN(valorInput) || valorInput < 0) {
-    document.getElementById('tc-tabla').innerHTML = '<p class="empty-state empty-state--compact">Ingresa una tasa válida.</p>';
-    return;
-  }
-
-  const i_input = valorInput / 100;
-  const n_origen = TC_PERIODOS[periodoOrigen].n; // períodos por año del origen
-
-  // Convert input rate to Effective Annual Rate (EAR) first
-  let ear;
-  if(languagesState.equivalentRateType === 'efectiva') {
-    // Effective rate of period → EAR
-    ear = Math.pow(1 + i_input, n_origen) - 1;
-  } else {
-    // Nominal rate with capitalization
-    const capPer = document.getElementById('tc-nom-per').value;
-    const m = TC_PERIODOS[capPer].n; // capitalizations per year
-    const i_per_cap = i_input / (n_origen / m); // rate per capitalization period... 
-    // Actually: nominal rate j with m caps/year → EAR = (1 + j/m)^m - 1
-    // Here j is the nominal rate given in the origin period, so annual nominal = i_input * n_origen
-    const j_annual = i_input * n_origen;
-    ear = Math.pow(1 + j_annual / m, m) - 1;
-  }
-
-  // Now compute all equivalences from EAR
-  const results = [];
-  Object.entries(TC_PERIODOS).forEach(([key, {label, n}]) => {
-    // Effective rate for this period
-    const i_ef = Math.pow(1 + ear, 1/n) - 1;
-    // Nominal rate for this period (compounded monthly as reference)
-    // j = n * [(1+ear)^(1/n) - 1]  → that's just n * i_ef
-    const i_nom = n * i_ef; // nominal annual converted to this period = i_nom/n... 
-    // More useful: show nominal annual rate that corresponds
-    const nom_anual = n * i_ef * 100; // nominal annual %
-    results.push({key, label, n, i_ef, nom_anual, isOrigen: key === periodoOrigen});
-  });
-
-  // Build table
-  const fmt = v => (v * 100).toFixed(6).replace(/\.?0+$/, '') + '%';
-  const fmtN = v => v.toFixed(4).replace(/\.?0+$/, '') + '%';
-
-  let html = `<div class="rate-result" role="status" aria-live="polite">
-    <div class="rate-result__block"><span>Tasa de entrada</span><strong>${valorInput.toFixed(4)}% ${TC_PERIODOS[periodoOrigen].label}</strong></div>
-    <div class="rate-result__arrow">${icon('arrow-right')}</div>
-    <div class="rate-result__block"><span>Tasa efectiva anual equivalente</span><strong>${(ear*100).toFixed(4)}%</strong></div>
-  </div>
-  <div class="rate-explainer">Esta equivalencia permite comparar tasas expresadas en períodos distintos sobre una misma base. La tabla muestra las demás periodicidades relacionadas.</div>
-  <div class="table-wrap u-mt-4"><table class="tbl">
-    <thead><tr>
-      <th class="u-text-left">Período</th>
-      <th>Períodos/Año</th>
-      <th>Tasa Efectiva</th>
-      <th>Nominal Anual</th>
-    </tr></thead><tbody>`;
-
-  results.forEach(r => {
-    const highlight = r.isOrigen ? 'background:var(--info-soft);font-weight:700;' : '';
-    const badge = r.isOrigen ? ' <span class="badge-inline badge-inline--info">ORIGEN</span>' : '';
-    html += `<tr style="${highlight}">
-      <td style="text-align:left;font-family:'Montserrat',sans-serif;font-weight:${r.isOrigen?'700':'500'};color:${r.isOrigen?'var(--info)':'var(--text)'};">${r.label}${badge}</td>
-      <td class="u-text-center">${r.n}</td>
-      <td style="color:${r.isOrigen?'var(--info)':'inherit'};">${fmt(r.i_ef)}</td>
-      <td class="u-muted">${fmtN(r.nom_anual)}</td>
-    </tr>`;
-  });
-
-  html += `</tbody></table></div>`;
-
-  document.getElementById('tc-tabla').innerHTML = html;
-}
-
+function setTipoEq(tipo) { languagesState.equivalentRateType=tipo;const field=document.getElementById('tc-source-type');if(field)field.value=tipo;return convertirTasas(); }
+function convertirTasas() {return window.OFERateUI?.render();}
 
 // ── DATE HELPER ──────────────────────────────────────────────────────────────
 function fechaSimulacion() {

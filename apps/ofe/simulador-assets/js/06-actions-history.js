@@ -45,6 +45,7 @@ function handleUIAction(event) {
       return;
     case 'guardar-escenario': return guardarEscenario(tab);
     case 'pdf-idiomas': return runButtonTask(el, () => expPDFIdiomas());
+    case 'xls-refi': return runButtonTask(el, () => window.OFEExcel.exportResult(5));
     case 'xls-idiomas': return runButtonTask(el, () => expXLSIdiomas());
     case 'pdf-combinado': return runButtonTask(el, () => expPDFCombinado());
     case 'del-benef-idiomas': return delBenefId(id);
@@ -313,38 +314,7 @@ function expPDF7(){
   pdfPie(doc);doc.save(safePDF('Calculo Cuota Inicial - '+(d.progNombre||'Simulacion'))+'.pdf');toast('PDF descargado','success');
 }
 
-function expXLS7() {
-  const d = SimuladorOFE.state.results.initialPayment;
-  if(!d) return toast('Primero realiza el cálculo', 'warning');
-  const benefRows = (d.beneficios||[]).filter(b=>b.val>0).map(b=>['  - '+(b.nombre||'Descuento')+' ('+(b.pct||0).toFixed(1)+'%)', -Math.round(b.val)]);
-  const ws = XLSX.utils.aoa_to_sheet([
-    ['Cálculo de Cuota Inicial'], [''],
-    ['Programa', d.progNombre||''],
-    ['Valor matrícula', Math.round(d.mat)],
-    ...(benefRows.length ? [['--- BECAS Y DESCUENTOS ---'], ...benefRows,
-        ['Total descuentos', -Math.round(d.benefTotal||0)], ['Matrícula neta', Math.round(d.matNeta)], ['']] : [['']]),
-    ['--- CAPACIDAD DE PAGO ---'],
-    ['Capacidad mensual', Math.round(d.cap)],
-    ['Número de cuotas', d.n],
-    ['Tasa mensual (%)', +(d.tm*100).toFixed(2)],
-    ['Tasa efectiva anual (%)', +((Math.pow(1+d.tm,12)-1)*100).toFixed(2)], [''],
-    ['--- RESULTADO ---'],
-    ['Monto financiable', Math.round(d.fin)],
-    ['CUOTA INICIAL REQUERIDA (sin aporte al fondo)', Math.round(d.cuotaInicial)],
-    ['Aporte al fondo ('+((d.fundRate ?? GARANTISA_CP)*100).toFixed(2)+'%)', Math.round(d.gar)],
-    ['TOTAL INICIAL A PAGAR', Math.round(d.desembolso)],
-    ['Cuota mensual', Math.round(d.cuota)],
-    ['Total intereses', Math.round(d.totInt)],
-    ['COSTO TOTAL MATRÍCULA', Math.round(d.costoTotal)], [''],
-    ['Cuota','Cuota Mensual','Capital','Interés','Saldo'],
-    ...d.rows.map(r=>[r.i,Math.round(r.cuota),Math.round(r.capital),Math.round(r.interes),Math.round(r.saldo)])
-  ]);
-  ws['!cols'] = [{wch:38},{wch:18},{wch:16},{wch:16},{wch:16}];
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Cuota Inicial');
-  XLSX.writeFile(wb, 'Cuota Inicial - ' + (d.progNombre||'Simulacion') + '.xlsx');
-  toast('Excel descargado', 'success');
-}
+function expXLS7(){return window.OFEExcel.exportResult(7);}
 
 async function limpiarTab(tabId, confirmed = false) {
   if(!confirmed) return confirmAction({
@@ -691,58 +661,7 @@ function renderEscenarios(tabId) {
 
 
 // ── Exportar comparativa de escenarios a Excel ───────────────────────────────
-function expXLSComparativa(tabId) {
-  const list = SimuladorOFE.state.comparison.scenarios[tabId];
-  if(!list || list.length < 2) return toast('Guarda al menos 2 escenarios para comparar.', 'warning');
-  const isMixto = tabId === 2 && list.every(e => e.isMixto);
-
-  const aoa = [];
-  const tabNames = {1:'Crédito Corto Plazo', 2:'Crédito Mixto CP/LP', 3:'Crédito Banco Aliado'};
-  aoa.push(['Comparativa de Escenarios — '+tabNames[tabId]]);
-  aoa.push(['Generado', window.OFEDates.dateTime(new Date())]);
-  aoa.push([]);
-
-  // Header row
-  const header = ['Concepto', ...list.map((e,i)=>'Escenario '+(i+1))];
-  aoa.push(header);
-  aoa.push(['Programa', ...list.map(e=>e.label)]);
-  aoa.push(['Detalle', ...list.map(e=>e.sub)]);
-  aoa.push([]);
-
-  if(isMixto) {
-    aoa.push(['Monto Financiado Total', ...list.map(e=>Math.round(e.financiado))]);
-    aoa.push(['  Monto CP', ...list.map(e=>Math.round(e.finCP))]);
-    aoa.push(['  Monto LP', ...list.map(e=>Math.round(e.finLP))]);
-    aoa.push(['Pago Inicial', ...list.map(e=>Math.round(e.pagoInicial))]);
-    aoa.push(['Cuota Mensual CP (mientras estudia)', ...list.map(e=>Math.round(e.cuotaCP))]);
-    aoa.push(['Intereses CP', ...list.map(e=>Math.round(e.intCP))]);
-    aoa.push(['Total Crédito CP', ...list.map(e=>Math.round(e.totCP))]);
-    aoa.push(['Capital LP (al graduarse, sin intereses)', ...list.map(e=>Math.round(e.finLP))]);
-    aoa.push(['Plazo estimado pago LP (meses)', ...list.map(e=>e.lpGrace||'')]);
-    aoa.push(['Total Crédito (CP+LP)', ...list.map(e=>Math.round(e.totalCredito))]);
-    aoa.push(['COSTO TOTAL', ...list.map(e=>Math.round(e.totalGeneral))]);
-  } else {
-    aoa.push(['Monto Financiado', ...list.map(e=>Math.round(e.financiado))]);
-    aoa.push(['Pago Inicial', ...list.map(e=>Math.round(e.pagoInicial))]);
-    aoa.push(['Cuota Mensual', ...list.map(e=>Math.round(e.cuota))]);
-    aoa.push(['Total Intereses', ...list.map(e=>Math.round(e.intereses))]);
-    aoa.push(['Total Crédito', ...list.map(e=>Math.round(e.totalCredito))]);
-    aoa.push(['COSTO TOTAL', ...list.map(e=>Math.round(e.totalGeneral))]);
-  }
-
-  aoa.push([]);
-  // Difference vs Esc.1
-  const diffRow = ['Diferencia vs Esc.1', ''];
-  for(let i=1;i<list.length;i++) diffRow.push(Math.round(list[i].totalGeneral - list[0].totalGeneral));
-  aoa.push(diffRow);
-
-  const ws = XLSX.utils.aoa_to_sheet(aoa);
-  ws['!cols'] = [{wch:42}, ...list.map(()=>({wch:20}))];
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Comparativa');
-  XLSX.writeFile(wb, 'Comparativa Escenarios - '+tabNames[tabId]+'.xlsx');
-  toast('Excel descargado', 'success');
-}
+function expXLSComparativa(tabId){return window.OFEExcel.comparison(tabId);}
 
 function compararEscenarios(tabId) {
   const list = SimuladorOFE.state.comparison.scenarios[tabId];

@@ -39,6 +39,6 @@ test('authenticated shell has no sidebar appearance/profile controls or active f
 });
 test('operational Excel template preserves all 173 canonical identities, amounts and versions',async()=>{
  const {loadApp}=require('./test-support/catalog-context.cjs'),{context:c}=loadApp('ofe');await c.SimuladorOFE.init();const programs=Array.from(c.SimuladorOFE.catalog.programs,p=>({...p,version:7})),sheets={};c.SimuladorOFE={catalog:{programs}};c.toast=()=>{};
- c.XLSX={utils:{book_new:()=>({}),aoa_to_sheet:rows=>({rows}),book_append_sheet:(book,sheet,name)=>sheets[name]=sheet},writeFile:()=>{}};vm.runInContext(read('shared/admin/program-template.js'),c);c.descargarPlantilla();
+ c.ExcelJS=require('../shared/vendor/exceljs-4.4.0.min.js');c.OFEExcel={formats:{money:'$#,##0'},saveWorkbook:async book=>{for(const sheet of book.worksheets)sheets[sheet.name]={rows:sheet.getSheetValues().slice(1).map(row=>row.slice(1))};}};vm.runInContext(read('shared/admin/program-template.js'),c);await c.descargarPlantilla();
  assert.equal(sheets.Pregrado.rows.length,30);assert.equal(sheets.Posgrado.rows.length,145);const ids=[];for(const p of programs){const row=(p.nivel==='pregrado'?sheets.Pregrado:sheets.Posgrado).rows.find(row=>row[p.nivel==='pregrado'?4:3]===p.id);assert.ok(row);assert.equal(row[p.nivel==='pregrado'?1:2],p.valorMatricula);assert.equal(row.at(-1),7);ids.push(p.id);}assert.equal(new Set(ids).size,173);
 });

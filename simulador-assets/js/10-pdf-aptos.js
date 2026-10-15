@@ -1,9 +1,7 @@
 /*
  * PDF v5 — renderer visual unificado
- * - Tipografía solicitada: Aptos Narrow y sus variables mediante la fuente instalada
- *   en el sistema del usuario. Fallbacks estrechos: Arial Narrow, Roboto Condensed,
- *   Liberation Sans Narrow.
- * - No incorpora ni redistribuye archivos de fuente.
+ * - Public Sans es la única familia de la exportación.
+ * - Usa la fuente Public Sans servida localmente por el proyecto.
  * - No utiliza logotipos institucionales.
  * - Renderiza cada página sobre canvas para mantener alineación, jerarquía y
  *   consistencia tipográfica en todas las modalidades.
@@ -14,7 +12,7 @@ const PDFV5 = (() => {
   const H = 1754;
   const M = 68;
   const CONTENT = W - M * 2;
-  const FONT = '"Aptos Narrow", "Arial Narrow", "Roboto Condensed", "Liberation Sans Narrow", sans-serif';
+  const FONT = '"Public Sans", sans-serif';
   const C = {
     red: '#960A11',
     redDark: '#72070D',
@@ -301,8 +299,8 @@ const PDFV5 = (() => {
     if(!pages?.length) return;
     try{if(document.fonts?.ready) await document.fonts.ready;}catch(_e){}
     try{
-      const aptos = !!document.fonts?.check?.('16px "Aptos Narrow"');
-      console.info(`[PDF] Aptos Narrow ${aptos?'disponible':'no disponible; usando fallback estrecho'}.`);
+      const aptos = !!document.fonts?.check?.('16px "Public Sans"');
+      console.info(`[PDF] Public Sans ${aptos?'disponible':'no disponible; no disponible'}.`);
     }catch(_e){}
     const meta=pages.__meta||{date:dateLong(),time:timeShort()};
     pages.forEach((p,i)=>footer(p.getContext('2d'),i+1,pages.length,meta));
@@ -314,6 +312,8 @@ const PDFV5 = (() => {
   function meta(prefix){const now=new Date();return{date:dateLong(now),time:timeShort(now),code:code(prefix)};}
 
   async function report(cfg,filename){
+    if(document.fonts?.load)await document.fonts.load('400 16px "Public Sans"');
+    if(document.fonts?.load)await document.fonts.load('700 16px "Public Sans"');
     const pages=[executivePage(cfg)];
     if((cfg.rows||[]).length>8) pages.push(...schedulePages({rows:cfg.rows,totCap:cfg.totCap,totInt:cfg.totInt,title:cfg.planTitle||'Plan de pagos completo',program:cfg.program,level:cfg.level}));
     (cfg.projections||[]).forEach(p=>pages.push(...projectionPage(p.data,p.label,cfg.program,cfg.level)));

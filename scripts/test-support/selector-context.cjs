@@ -119,6 +119,7 @@ function selectorContext(app, options = {}) {
   for (const filename of ['01-core-ui.js', ...(app === 'ofe' ? ['02-reestructuracion.js'] : []), '03-finance-core.js', '04-exports-pdf-excel.js', '05-idiomas-herramientas.js', '06-actions-history.js', '07-financing-engine.js']) {
     vm.runInContext(read(`apps/${app}/simulador-assets/js/${filename}`), context, { filename });
   }
+  vm.runInContext(read('shared/exports/simulation-report.js'),context);vm.runInContext(read('shared/exports/excel-report.js'),context);
   return { context, elements, snapshot, messages, scheduled, button: () => new Element('button') };
 }
 module.exports = { selectorContext };

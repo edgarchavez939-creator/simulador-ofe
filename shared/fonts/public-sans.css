@@ -1,0 +1,2 @@
+@font-face { font-family: "Public Sans"; src: url("./PublicSans-Variable.ttf") format("truetype"); font-style: normal; font-weight: 100 900; font-display: block; }
+:root { --font-sans: "Public Sans", sans-serif; --font-mono: "Public Sans", sans-serif; }
