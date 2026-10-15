@@ -533,19 +533,17 @@ function verHistorial(id) {
 }
 function cerrarDetalleHistorial(){ cerrarModalAccesible(document.getElementById('detail-modal')); }
 
-function selectProgramByName(tabId, name) {
-  const sel = document.getElementById('prog'+tabId); if(!sel || !name) return;
-  const option = Array.from(sel.options).find(o => (o.textContent||'').replace(/ \(.*\)$/,'').trim() === String(name).trim());
-  if(option) sel.value = option.value;
-}
-
 function duplicarHistorial(id) {
   const e=getHistoryEntry(id); if(!e) return;
   const d=e.snap||{}; const tab=e.tabId;
   switchTab(tab);
   if([1,2,3,7].includes(tab)) {
-    setNivel(tab,'pregrado');
-    selectProgramByName(tab,d.progNombre);
+    const program = programaDeHistorial(d);
+    setNivel(tab, program?.nivel || (d.nivel === 'posgrado' ? 'posgrado' : 'pregrado'));
+    if (program) {
+      const select = document.getElementById('prog'+tab);
+      if (select) { select.value = program.id; setMat(tab); }
+    }
     const mat=document.getElementById('mat'+tab); if(mat) mat.value=(d.mat>0?Math.round(d.mat):'');
     if(SimuladorOFE.state.financing.benefits[tab] && Array.isArray(d.beneficios)) {
       SimuladorOFE.state.financing.benefits[tab]=d.beneficios.map((b,i)=>({id:Date.now()+i,nombre:b.nombre||'Descuento',val:b.val||0,pct:b.pct||0,modo:'valor'})); renderBeneficios(tab);

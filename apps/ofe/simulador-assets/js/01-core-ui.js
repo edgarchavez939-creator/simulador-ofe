@@ -196,7 +196,17 @@ function runCalculation(button, tabId, task, loadingTitle) {
   return runButtonTask(button, () => {
     const result = task();
     const after=calculationResultForTab(tabId);
-    if(after && after !== before) requestAnimationFrame(()=>markViewHasResult(tabId, true));
+    if(after && after !== before) {
+      if ([1,2,3,7].includes(tabId)) {
+        const program = programaSeleccionado(tabId);
+        after.progId = program?.id || null;
+        after.catalogSource = SimuladorOFE.catalog.source;
+        after.nivel = nivelState[tabId];
+        after.subnivel = program?.subnivel || null;
+        if (program) after.progNombre = program.nombre;
+      }
+      requestAnimationFrame(()=>markViewHasResult(tabId, true));
+    }
     else if(target) { target.innerHTML=previousHTML; markViewHasResult(tabId, !!before); }
     return result;
   });
@@ -348,60 +358,119 @@ const GARANTISA_LP = SimuladorOFE.config.garantisaLP;
 
 const cop = v => new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0,maximumFractionDigits:0}).format(Math.round(v));
 
-// Populate selects
-// nivel state per tab
+// Los selectores usan el catálogo validado del arranque, sin nuevas peticiones.
 const nivelState = SimuladorOFE.state.ui.levelByTab;
+
+function programasDelCatalogo() {
+  const programs = SimuladorOFE.catalog.programs;
+  if (!Array.isArray(programs)) throw new Error('[ProgramCatalog] El catálogo aún no está listo');
+  return programs;
+}
+
+function programaSeleccionado(tabId) {
+  const sel = document.getElementById('prog'+tabId);
+  if (!sel || !sel.value) return null;
+  const subnivel = document.getElementById('subnivel'+tabId)?.value || '';
+  return programasDelCatalogo().find(program =>
+    program.id === sel.value && program.activo && program.nivel === nivelState[tabId] &&
+    (program.nivel !== 'posgrado' || !subnivel || program.subnivel === subnivel)
+  ) || null;
+}
+
+function poblarSubniveles(tabId) {
+  const sel = document.getElementById('subnivel'+tabId);
+  if (!sel) return;
+  const actual = sel.value;
+  const subniveles = Array.from(new Set(programasDelCatalogo()
+    .filter(program => program.activo && program.nivel === 'posgrado')
+    .map(program => program.subnivel)));
+  // Conservar el orden conocido y añadir únicamente subniveles presentes en la fuente.
+  const orden = ['Doctorado', 'Maestría', 'Especialización'];
+  subniveles.sort((a, b) => {
+    const rank = value => orden.includes(value) ? orden.indexOf(value) : orden.length;
+    return rank(a) - rank(b) || a.localeCompare(b, 'es');
+  });
+  sel.innerHTML = '<option value="">— Todos los subniveles —</option>';
+  subniveles.forEach(subnivel => {
+    const option = document.createElement('option');
+    option.value = subnivel;
+    option.textContent = subnivel;
+    sel.appendChild(option);
+  });
+  if (subniveles.includes(actual)) sel.value = actual;
+}
 
 function poblarProgramas(tabId) {
   const sel = document.getElementById('prog'+tabId);
-  if(!sel) return;
+  if (!sel) return;
   const nivel = nivelState[tabId];
-  const subnivel = (document.getElementById('subnivel'+tabId)||{}).value || '';
+  const subnivel = document.getElementById('subnivel'+tabId)?.value || '';
+  const programs = programasDelCatalogo().filter(program => program.activo && program.nivel === nivel);
+  const key = program => JSON.stringify([program.subnivel, program.nombre]);
+  const counts = new Map();
+  programs.forEach(program => counts.set(key(program), (counts.get(key(program)) || 0) + 1));
   sel.innerHTML = '<option value="">— Seleccionar programa —</option>';
-  if(nivel === 'pregrado') {
-    PROGRAMAS.forEach(([n, v, idiomas, sem]) => {
-      const o = document.createElement('option');
-      o.value = JSON.stringify({v, idiomas: idiomas||0, semestres: sem||8, nivel:'pregrado'});
-      o.textContent = n;
-      sel.appendChild(o);
+  programs.filter(program => nivel !== 'posgrado' || !subnivel || program.subnivel === subnivel)
+    .forEach(program => {
+      const option = document.createElement('option');
+      option.value = program.id;
+      // Los consumidores financieros legacy leen textContent para el nombre.
+      option.textContent = program.nombre + (nivel === 'posgrado' && !subnivel ? ' ('+program.subnivel+')' : '');
+      option.label = option.textContent + (counts.get(key(program)) > 1
+        ? ' — Matrícula ' + cop(program.valorMatricula)
+        : '');
+      sel.appendChild(option);
     });
+}
+
+function limpiarSeleccionPrograma(tabId) {
+  const mat = document.getElementById('mat'+tabId);
+  if (mat) { mat.value = ''; fmtLbl('mat'+tabId); }
+  const idiomas = document.getElementById('btn-idiomas-'+tabId);
+  if (idiomas) {
+    idiomas.style.display = 'none';
+    delete idiomas.dataset.idiomas;
+    delete idiomas.dataset.prog;
+  }
+  if (tabId === 7) {
+    SimuladorOFE.state.results.initialPaymentProgramName = '';
+    recalc7();
   } else {
-    const filtrados = subnivel ? POSGRADOS.filter(p=>p[1]===subnivel) : POSGRADOS;
-    filtrados.forEach(([n,s,v]) => {
-      const o = document.createElement('option');
-      o.value = JSON.stringify({v, idiomas:0, nivel:'posgrado', subnivel:s});
-      o.textContent = n + (subnivel ? '' : ' ('+s+')');
-      sel.appendChild(o);
-    });
+    recalcAll(tabId);
   }
 }
 
 function setNivel(tabId, nivel) {
   nivelState[tabId] = nivel;
-  _pressed(document.getElementById('nbtn-'+tabId+'-pre'), nivel==='pregrado');
-  _pressed(document.getElementById('nbtn-'+tabId+'-pos'), nivel==='posgrado');
-  const sfg = document.getElementById('subnivel-fg-'+tabId);
-  if(sfg) sfg.style.display = nivel==='posgrado' ? 'block' : 'none';
-  // reset subnivel select
-  const snSel = document.getElementById('subnivel'+tabId);
-  if(snSel) snSel.value = '';
-  // reset idiomas btn
-  const ib = document.getElementById('btn-idiomas-'+tabId);
-  if(ib) ib.style.display = 'none';
+  _pressed(document.getElementById('nbtn-'+tabId+'-pre'), nivel === 'pregrado');
+  _pressed(document.getElementById('nbtn-'+tabId+'-pos'), nivel === 'posgrado');
+  const group = document.getElementById('subnivel-fg-'+tabId);
+  if (group) group.style.display = nivel === 'posgrado' ? 'block' : 'none';
+  const subnivel = document.getElementById('subnivel'+tabId);
+  if (subnivel) subnivel.value = '';
   poblarProgramas(tabId);
-  // clear mat
-  const matEl = document.getElementById('mat'+tabId);
-  if(matEl){ matEl.value=''; fmtLbl('mat'+tabId); }
+  limpiarSeleccionPrograma(tabId);
 }
 
 function filtrarProgramas(tabId) {
   poblarProgramas(tabId);
-  const matEl = document.getElementById('mat'+tabId);
-  if(matEl){ matEl.value=''; fmtLbl('mat'+tabId); }
-  const ib = document.getElementById('btn-idiomas-'+tabId);
-  if(ib) ib.style.display = 'none';
+  limpiarSeleccionPrograma(tabId);
 }
 
+// Los historiales nuevos conservan ID y origen; los antiguos se resuelven
+// solo cuando nombre/matrícula identifican un registro sin ambigüedad.
+function programaDeHistorial(snapshot) {
+  const programs = programasDelCatalogo().filter(program => program.activo);
+  const sameName = program => program.nombre.trim() === String(snapshot.progNombre || '').trim();
+  if (snapshot.progId) {
+    if (snapshot.catalogSource && snapshot.catalogSource !== SimuladorOFE.catalog.source) return null;
+    return programs.find(program => program.id === snapshot.progId && sameName(program) &&
+      (!snapshot.nivel || program.nivel === snapshot.nivel)) || null;
+  }
+  const candidates = programs.filter(sameName);
+  const sameTuition = candidates.filter(program => program.valorMatricula === snapshot.mat);
+  return sameTuition.length === 1 ? sameTuition[0] : candidates.length === 1 ? candidates[0] : null;
+}
 
 // Unidad state
 const unidades = SimuladorOFE.state.ui.termUnits;
@@ -703,7 +772,7 @@ function handleGlobalKeyboard(e) {
 SimuladorOFE.register('core-ui', {
   init(app){
     initTheme();
-    [1,2,3,7].forEach(id => poblarProgramas(id));
+    [1,2,3,7].forEach(id => { poblarSubniveles(id); poblarProgramas(id); });
     _syncSidebarA11y();
     window.addEventListener('resize', _syncSidebarA11y, {passive:true});
     document.addEventListener('keydown', handleGlobalKeyboard);
@@ -715,7 +784,8 @@ SimuladorOFE.register('core-ui', {
       enhanceTables: enhanceTableAccessibility,
       confirmAction,
       showFieldError,
-      clearFieldError
+      clearFieldError,
+      selectedProgram: programaSeleccionado
     });
   }
 });
@@ -730,39 +800,36 @@ function calcTA(id) {
 calcTA(1); calcTA(2); calcTA(3);
 
 function setMat(id) {
-  const sel = document.getElementById('prog'+id);
-  if(!sel || !sel.value) return;
-  let data;
-  try { data = JSON.parse(sel.value); } catch(e) { return; }
-  const {v: valor, idiomas, nivel, semestres, subnivel} = data;
-  const progNombre = sel.options[sel.selectedIndex].textContent.replace(/ \(.*\)$/,'');
-  // Set matrícula
+  if (!document.getElementById('prog'+id)) return;
+  const program = programaSeleccionado(id);
+  if (!program) return limpiarSeleccionPrograma(id);
+  const { valorMatricula: valor, valorIdiomas: idiomas, nivel, semestres, nombre } = program;
   document.getElementById('mat'+id).value = valor;
   fmtLbl('mat'+id);
-  // Set plazoLP — always look up directly from PROGRAMAS array (most reliable)
-  if(id === 2 && nivel === 'pregrado') {
-    // First try to get from option value (new format), fall back to PROGRAMAS lookup
-    const semFromOption = semestres;
-    const semFromArray  = (PROGRAMAS.find(p => p[0] === progNombre) || [])[3];
-    const sem = semFromArray || semFromOption || 8;
-    const plazoEl = document.getElementById('plazoLP');
-    if(plazoEl) {
-      plazoEl.value = sem;
+  if (id === 2 && nivel === 'pregrado') {
+    const plazo = document.getElementById('plazoLP');
+    if (plazo) {
+      plazo.value = semestres || 8;
       calcPlazoLPAuto();
     }
   }
-  if(id < 3) recalcAll(id);
-  if(id === 7) { SimuladorOFE.state.results.initialPaymentProgramName = progNombre; recalc7(); }
-  // idiomas only for pregrado
-  const btnEl = document.getElementById('btn-idiomas-'+id);
-  if(btnEl){
-    if(nivel==='pregrado' && idiomas > 0){
-      btnEl.style.display = 'flex';
-      btnEl.dataset.idiomas = idiomas;
-      btnEl.dataset.prog = progNombre;
-      btnEl.querySelector('.idiomas-val').textContent = cop(idiomas);
+  if (id === 7) {
+    SimuladorOFE.state.results.initialPaymentProgramName = nombre;
+    recalc7();
+  } else {
+    recalcAll(id);
+  }
+  const button = document.getElementById('btn-idiomas-'+id);
+  if (button) {
+    if (nivel === 'pregrado' && idiomas > 0) {
+      button.style.display = 'flex';
+      button.dataset.idiomas = idiomas;
+      button.dataset.prog = nombre;
+      button.querySelector('.idiomas-val').textContent = cop(idiomas);
     } else {
-      btnEl.style.display = 'none';
+      button.style.display = 'none';
+      delete button.dataset.idiomas;
+      delete button.dataset.prog;
     }
   }
 }
