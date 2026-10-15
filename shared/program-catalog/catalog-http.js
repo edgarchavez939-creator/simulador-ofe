@@ -6,6 +6,7 @@
     if (!Number.isInteger(timeoutMs) || timeoutMs <= 0) {
       throw new TypeError('[ProgramCatalog] Tiempo de espera inválido');
     }
+    const operation=global.OFELoading?.begin('Cargando catálogo',{message:'Consultando los programas disponibles…'});
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     try {
@@ -37,7 +38,7 @@
         throw new Error(message, { cause: error });
       }
     } finally {
-      clearTimeout(timer);
+      clearTimeout(timer);operation?.end();
     }
   }
 

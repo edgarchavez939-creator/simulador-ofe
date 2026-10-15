@@ -63,7 +63,7 @@ function handleUIAction(event) {
     case 'scrim-idiomas': if(event.target===el) return cerrarIdiomas(); return;
     case 'cerrar-idiomas': return cerrarIdiomas();
     case 'add-benef-idiomas': return addBenefId();
-    case 'calcular-idiomas': return calcularIdiomas();
+    case 'calcular-idiomas': return runButtonTask(el,()=>calcularIdiomas(),'Calculando crédito de idiomas');
     case 'scrim-pin': if(event.target===el) return cancelarRefiPin(); return;
     case 'verificar-pin': return verificarRefiPin();
     case 'cancelar-pin': return cancelarRefiPin();

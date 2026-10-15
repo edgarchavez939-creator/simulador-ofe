@@ -1,13 +1,16 @@
 (function(){
  'use strict';
+ const loading=typeof window==='undefined'?null:window.OFELoading;
  // Authentication providers return the same server-owned user and session contract.
  // Internal roles/permissions are never assigned from browser-side provider data.
  const localProvider=Object.freeze({
   id:'local',
-  async session(){const response=await fetch('/api/auth/session',{credentials:'same-origin'});return response.ok?response.json():null;},
+  async session(){const operation=loading?.begin('Comprobando acceso');try{const response=await fetch('/api/auth/session',{credentials:'same-origin'});return response.ok?await response.json():null;}finally{operation?.end();}},
   async submit(activation,data,session){
+   const operation=loading?.begin(activation?'Activando acceso':'Iniciando sesión',{message:'Validando tu acceso…'});try{
    const response=await fetch(activation?'/api/auth/password':'/api/auth/login',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json',...(activation?{'X-CSRF-Token':session.csrfToken}:{})},body:JSON.stringify(data)});
    const result=await response.json();if(!response.ok)throw Error(result.error||'No fue posible iniciar sesión.');return result;
+   }finally{operation?.end();}
   }
  });
  const provider=localProvider,$=id=>document.getElementById(id);let session=null,activation=false;

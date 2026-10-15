@@ -135,18 +135,19 @@
   };
 
   let initialization = null;
-  app.init = function init(){
+  app.init = function init(onProgress){
     if (app.state.initialized) return Promise.resolve();
     if (initialization) return initialization;
     initialization = (async () => {
       app.state.initializing = true;
       try {
-        await loadCatalog();
+        let completed=0;const total=registry.size+1;onProgress?.(completed,total);
+        await loadCatalog();onProgress?.(++completed,total);
         for (const [name, mod] of registry) {
-          if (mod.initialized) continue;
+          if (mod.initialized) { onProgress?.(++completed,total);continue; }
           try {
             await mod.init(app);
-            mod.initialized = true;
+            mod.initialized = true;onProgress?.(++completed,total);
           } catch (error) {
             console.error('[SimuladorOFE] Error inicializando ' + name, error);
             throw error;

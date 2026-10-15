@@ -225,7 +225,7 @@ async function createApplication(options={}){
   if(route==='/')return redirect(res,'/apps/ofe/');
   if(route==='/apps/public/'||route==='/index.html')return redirect(res,'/apps/ofe/');
   if(route==='/login'||route==='/login/')return serve(res,path.join(root,'shared/auth/login.html'),method);
-  const assets={'/auth-assets/access.css':'shared/auth/access.css','/auth-assets/fonts.css':'shared/fonts/public-sans.css','/auth-assets/density.css':'shared/ui/density.css','/auth-assets/PublicSans-Variable.ttf':'shared/fonts/PublicSans-Variable.ttf','/auth-assets/styles.css':'apps/ofe/simulador-assets/styles.css','/auth-assets/login.js':'shared/auth/login.js','/auth-assets/theme.js':'shared/theme.js','/auth-assets/icons.js':'shared/ui/icons.js'};
+  const assets={'/auth-assets/loading.js':'shared/ui/loading.js','/auth-assets/loading.css':'shared/ui/loading.css','/auth-assets/access.css':'shared/auth/access.css','/auth-assets/fonts.css':'shared/fonts/public-sans.css','/auth-assets/density.css':'shared/ui/density.css','/auth-assets/PublicSans-Variable.ttf':'shared/fonts/PublicSans-Variable.ttf','/auth-assets/styles.css':'apps/ofe/simulador-assets/styles.css','/auth-assets/login.js':'shared/auth/login.js','/auth-assets/theme.js':'shared/theme.js','/auth-assets/icons.js':'shared/ui/icons.js'};
   if(assets[route])return serve(res,path.join(root,assets[route]),method);
   requireSession(s);
   if(route==='/apps/ofe/config.js')return serve(res,path.join(root,'apps/ofe/config.js'),method);

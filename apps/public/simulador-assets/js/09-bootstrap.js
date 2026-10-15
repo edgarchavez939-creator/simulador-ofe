@@ -2,6 +2,7 @@
 (function(global){
   'use strict';
   async function start() {
+    const operation=global.OFELoading?.begin('Iniciando el simulador');
     const main = document.getElementById('main-content');
     const status = document.getElementById('app-startup-status');
     if (main) {
@@ -13,7 +14,7 @@
       status.textContent = 'Cargando programas…';
     }
     try {
-      await global.SimuladorOFE.init();
+      await global.SimuladorOFE.init((completed,total)=>operation?.update({completed,total,message:completed?'Preparando los módulos del simulador…':'Cargando programas…'}));
       if (main) {
         main.inert = false;
         main.removeAttribute('aria-busy');
@@ -27,7 +28,7 @@
         status.setAttribute('role', 'alert');
         status.textContent = 'No fue posible iniciar el simulador. Recarga la página para intentarlo de nuevo.';
       }
-    }
+    } finally { operation?.end(); }
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', start, { once: true });

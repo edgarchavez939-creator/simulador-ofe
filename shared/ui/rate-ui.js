@@ -10,11 +10,13 @@
   try{
    const data=global.OFERateConverter.equivalent(options);
    $('tc-selected-result').textContent=pct(data.result);$('tc-result-description').textContent='Tasa '+options.targetType+' '+periods[options.targetPeriod].label.toLocaleLowerCase('es-CO')+(options.targetType==='nominal'?', capitalización '+periods[options.targetCapitalization].label.toLocaleLowerCase('es-CO'):'');
+   $('tc-source-summary').textContent='Origen: '+pct(options.value/100)+' · '+options.sourceType+' '+periods[options.sourcePeriod].label.toLocaleLowerCase('es-CO');
+   $('tc-formula-example').textContent='Con tus datos: '+periods[options.sourcePeriod].n+' períodos de origen y '+periods[options.targetPeriod].n+' de destino por año. Tasa efectiva anual de referencia: '+pct(data.annual)+'.';
    const same=options.sourceType===options.targetType&&options.sourcePeriod===options.targetPeriod&&(options.sourceType!=='nominal'||options.sourceCapitalization===options.targetCapitalization);
    $('tc-result-note').textContent=same?'Origen y destino son iguales; la tasa conserva su valor.':'';
    $('tc-tabla').innerHTML='<div class="table-wrap"><table class="tbl"><thead><tr><th>Período</th><th>Períodos por año</th><th>Tasa efectiva</th><th>Nominal anual</th></tr></thead><tbody>'+data.rows.map(row=>'<tr><td>'+row.label+'</td><td>'+row.n+'</td><td>'+pct(row.effective)+'</td><td>'+pct(row.nominalAnnual)+'</td></tr>').join('')+'</tbody></table></div>';
    global.enhanceTableAccessibility?.($('tc-tabla'));return data;
-  }catch(error){$('tc-error').textContent=error.message;$('tc-error').hidden=false;$('tc-valor').setAttribute('aria-invalid','true');$('tc-selected-result').textContent='Revisa la tasa de origen';$('tc-result-description').textContent='';$('tc-result-note').textContent='';$('tc-tabla').innerHTML='';return null;}
+  }catch(error){$('tc-error').textContent=error.message;$('tc-error').hidden=false;$('tc-valor').setAttribute('aria-invalid','true');$('tc-selected-result').textContent='Revisa la tasa de origen';$('tc-result-description').textContent='';$('tc-source-summary').textContent='';$('tc-formula-example').textContent='Ingresa una tasa válida para ver la referencia anual de este caso.';$('tc-result-note').textContent='';$('tc-tabla').innerHTML='';return null;}
  }
  global.OFERateUI=Object.freeze({render});
  global.SimuladorOFE.register('rate-converter-ui',{init(){

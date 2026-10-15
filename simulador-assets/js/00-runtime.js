@@ -92,7 +92,7 @@
       for(const [name, mod] of registry) {
         try {
           await mod.init(app);
-          mod.initialized = true;
+          mod.initialized = true;onProgress?.(++completed,total);
         } catch(error) {
           console.error('[SimuladorOFE] Error inicializando ' + name, error);
           throw error;

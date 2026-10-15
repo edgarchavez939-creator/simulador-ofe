@@ -21,10 +21,12 @@ function _pressed(el, on){ if(el) el.setAttribute('aria-pressed', on ? 'true' : 
 
 // ── Toasts ──
 // ── Estado ocupado accesible para acciones que generan/leen archivos ──
-function runButtonTask(button, task) {
+function runButtonTask(button, task, loadingLabel) {
   if(typeof task !== 'function') return;
   if(!button) return task();
   if(button.getAttribute('aria-busy') === 'true') return;
+  const actionLabel=String(button.textContent||'').trim().replace(/\s+/g,' ');
+  const operation=window.OFELoading?.begin(loadingLabel||actionLabel||'Procesando solicitud',{message:'Procesando la operación…'});
   const wasDisabled = button.disabled;
   button.disabled = true;
   button.setAttribute('aria-busy', 'true');
@@ -41,6 +43,7 @@ function runButtonTask(button, task) {
         button.classList.remove('is-busy');
         button.removeAttribute('aria-busy');
         button.disabled = wasDisabled;
+        operation?.end();
       }
     }, 0));
   });

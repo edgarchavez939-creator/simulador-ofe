@@ -21,10 +21,12 @@ function _pressed(el, on){ if(el) el.setAttribute('aria-pressed', on ? 'true' : 
 
 // ── Toasts ──
 // ── Estado ocupado accesible para acciones que generan/leen archivos ──
-function runButtonTask(button, task) {
+function runButtonTask(button, task, loadingLabel) {
   if(typeof task !== 'function') return;
   if(!button) return task();
   if(button.getAttribute('aria-busy') === 'true') return;
+  const actionLabel=String(button.textContent||'').trim().replace(/\s+/g,' ');
+  const operation=window.OFELoading?.begin(loadingLabel||actionLabel||'Procesando solicitud',{message:'Procesando la operación…'});
   const wasDisabled = button.disabled;
   button.disabled = true;
   button.setAttribute('aria-busy', 'true');
@@ -41,6 +43,7 @@ function runButtonTask(button, task) {
         button.classList.remove('is-busy');
         button.removeAttribute('aria-busy');
         button.disabled = wasDisabled;
+        operation?.end();
       }
     }, 0));
   });
@@ -152,7 +155,7 @@ function runCalculation(button, tabId, task, loadingTitle) {
     }
     else if(target) { target.innerHTML=previousHTML; markViewHasResult(tabId, !!before); }
     return result;
-  })).finally(()=>window.SimulationLifecycle?.end(tabId,epoch));
+  },loadingTitle)).finally(()=>window.SimulationLifecycle?.end(tabId,epoch));
 }
 
 function toast(mensaje, tipo){
@@ -605,7 +608,7 @@ const VIEW_META = Object.freeze({
   10:{section:'ADMINISTRACIÓN',title:'Usuarios',desc:'Gestiona los accesos al simulador.'},
   12:{section:'ADMINISTRACIÓN',title:'Configuración',desc:'Parámetros para nuevas simulaciones.'},
   11:{section:'ADMINISTRACIÓN',title:'Auditoría',desc:'Consulta la trazabilidad de los cambios.'},
-  6:{section:'ADMINISTRACIÓN', title:'Actualizar Programas', desc:'Actualiza programas y valores publicados sin modificar el motor financiero.'}
+  6:{section:'ADMINISTRACIÓN', title:'Actualizar Programas', desc:'Gestiona los programas y valores disponibles para nuevas simulaciones.'}
 });
 
 function switchTab(n) {
