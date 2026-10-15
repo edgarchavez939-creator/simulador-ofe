@@ -106,7 +106,7 @@ test('updater cannot export changes without institutional persistence and audit'
   const {context:c}=selectorContext('ofe');await c.SimuladorOFE.init();
   vm.runInContext(read('shared/program-catalog/catalog-import.js'),c);
   vm.runInContext(read('apps/ofe/simulador-assets/js/08-updater.js'),c);
-  assert.match(c.construirHTMLActualizado().error,/DTIC/);
+  assert.match(c.construirHTMLActualizado().error,/API autenticada/);
 });
 test('every rendered delegated button action has a handler',()=>{
   for(const app of ['public','ofe']) {

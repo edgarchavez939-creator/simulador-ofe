@@ -192,10 +192,13 @@ function runCalculation(button, tabId, task, loadingTitle) {
   const target=document.getElementById(targetId);
   const previousHTML=target?.innerHTML || '';
   const before=calculationResultForTab(tabId);
+  const epoch=window.SimulationLifecycle?.begin(tabId);
   setResultLoading(tabId, loadingTitle);
-  return runButtonTask(button, () => {
+  return Promise.resolve(runButtonTask(button, () => {
+    if(window.SimulationLifecycle && !window.SimulationLifecycle.current(tabId,epoch)) return;
     if ([1,2,3,7].includes(tabId)) sincronizarMatriculaCatalogo(tabId);
-    const result = task();
+    let result;
+    try { SimuladorOFE.state.ui.calculationTab=tabId; result=task(); } finally { delete SimuladorOFE.state.ui.calculationTab; }
     const after=calculationResultForTab(tabId);
     if(after && after !== before) {
       if ([1,2,3,7].includes(tabId)) {
@@ -206,11 +209,11 @@ function runCalculation(button, tabId, task, loadingTitle) {
         after.subnivel = program?.subnivel || null;
         if (program) after.progNombre = program.nombre;
       }
-      requestAnimationFrame(()=>markViewHasResult(tabId, true));
+      requestAnimationFrame(()=>{if(!window.SimulationLifecycle || window.SimulationLifecycle.current(tabId,epoch)) markViewHasResult(tabId,true);});
     }
     else if(target) { target.innerHTML=previousHTML; markViewHasResult(tabId, !!before); }
     return result;
-  });
+  })).finally(()=>window.SimulationLifecycle?.end(tabId,epoch));
 }
 
 function toast(mensaje, tipo){
@@ -219,6 +222,7 @@ function toast(mensaje, tipo){
   const ic = {success:'check-circle', error:'x-circle', warning:'alert-triangle', info:'info'}[tipo] || 'info';
   const el = document.createElement('div');
   el.className = 'toast' + (tipo ? ' toast--'+tipo : '');
+  if(SimuladorOFE.state.ui.calculationTab)el.dataset.simulationTab=String(SimuladorOFE.state.ui.calculationTab);
   el.setAttribute('role', tipo === 'error' ? 'alert' : 'status');
   const ico = document.createElement('span');
   ico.className = 'toast__icon';
@@ -343,6 +347,7 @@ function applyTheme(theme) {
   if(ico) ico.innerHTML = icon(theme === 'dark' ? 'sun' : 'moon');
   if(lbl) lbl.textContent = theme === 'dark' ? 'Tema claro' : 'Tema oscuro';
   try { localStorage.setItem('simulador_tema', theme); } catch(e){}
+  window.OFETheme?.charts();
 }
 function toggleTheme() {
   const cur = document.documentElement.getAttribute('data-theme') || 'light';
@@ -440,6 +445,7 @@ function sincronizarMatriculaCatalogo(tabId) {
 }
 
 function limpiarSeleccionPrograma(tabId) {
+  window.SimulationLifecycle?.beforeProgramChange(tabId,'');
   const mat = document.getElementById('mat'+tabId);
   if (mat) { mat.value = ''; fmtLbl('mat'+tabId); }
   sincronizarMatriculaCatalogo(tabId);
@@ -482,7 +488,7 @@ function programaDeHistorial(snapshot) {
   const sameName = program => program.nombre.trim() === String(snapshot.progNombre || '').trim();
   if (snapshot.progId) {
     if (snapshot.catalogSource && snapshot.catalogSource !== SimuladorOFE.catalog.source) return null;
-    return programs.find(program => program.id === snapshot.progId && sameName(program) &&
+    return programs.find(program => program.id === snapshot.progId &&
       (!snapshot.nivel || program.nivel === snapshot.nivel)) || null;
   }
   const candidates = programs.filter(sameName);
@@ -670,12 +676,15 @@ const VIEW_META = Object.freeze({
   4:{section:'ANALIZAR', title:'Conversor de Tasas', desc:'Convierte tasas entre periodicidades para comparar condiciones equivalentes.', status:'Herramienta de análisis'},
   8:{section:'ANALIZAR', title:'Comparar escenarios', desc:'Accede a las comparaciones disponibles dentro de cada modalidad de simulación.', status:'Escenarios guardados'},
   9:{section:'HISTORIAL', title:'Mis simulaciones', desc:'Consulta las simulaciones recientes guardadas localmente en este navegador.', status:'Datos locales'},
+  10:{section:'ADMINISTRACIÓN',title:'Usuarios',desc:'Gestiona los accesos al simulador.',status:'Acceso autorizado'},
+  11:{section:'ADMINISTRACIÓN',title:'Auditoría',desc:'Consulta la trazabilidad de los cambios.',status:'Registro del servidor'},
   6:{section:'ADMINISTRACIÓN', title:'Actualizar Programas', desc:'Actualiza programas y valores publicados sin modificar el motor financiero.', status:'Acceso restringido'}
 });
 
 function switchTab(n) {
-  if(n === 6 && !window.OFEPermissions?.allowed('programs.update')) { toast('La administración requiere la conexión institucional de DTIC.', 'warning'); return; }
-  if(n === 5 && !SimuladorOFE.state.access.restructuringUnlocked) { _abrirPinModal(5); return; }
+  if([10,11].includes(n) && !window.OFEPermissions?.allowed(n===10?'users.read':'audit.read')) return;
+  if(n === 6 && !window.OFEPermissions?.allowed('programs.update')) { toast('Inicia sesión con permiso para administrar programas.', 'warning'); return; }
+  if(n === 5 && window.OFE_SERVER && !window.OFEPermissions?.allowed('simulator.use')) return;
   document.querySelectorAll('.nav__item[data-tab]').forEach(b => {
     const on = Number(b.dataset.tab) === n;
     if(on) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current');
@@ -820,6 +829,7 @@ calcTA(1); calcTA(2); calcTA(3);
 
 function setMat(id) {
   if (!document.getElementById('prog'+id)) return;
+  window.SimulationLifecycle?.beforeProgramChange(id, document.getElementById('prog'+id).value);
   const program = sincronizarMatriculaCatalogo(id);
   if (!program) return limpiarSeleccionPrograma(id);
   const { valorMatricula: valor, valorIdiomas: idiomas, nivel, semestres, nombre } = program;

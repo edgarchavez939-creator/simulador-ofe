@@ -71,7 +71,13 @@
     source: catalogFacade.source,
     provider: catalogFacade,
     get programs() { return catalogPrograms; },
-    ready: loadCatalog
+    ready: loadCatalog,
+    async refresh() {
+      const programs = await catalogFacade.list();
+      if(!programs.length) throw new Error('El catálogo está vacío');
+      catalogPrograms = programs;
+      return programs;
+    }
   });
 
   app.version = 'UNINORTE-V3.12-PDF-APTOS';
@@ -114,7 +120,7 @@
     redistributing: false
   };
   app.state.comparison = app.state.comparison || { scenarios: {1:[], 2:[], 3:[]} };
-  app.state.history = app.state.history || { key:'simulador_credito_historial_v1', max:10 };
+  app.state.history = app.state.history || { key: global.OFE_SERVER?.userId ? 'simulador_credito_historial_v1:'+global.OFE_SERVER.userId : 'simulador_credito_historial_v1', max:10 };
   app.state.updater = app.state.updater || {
     htmlContent: null,
     workbook: null,

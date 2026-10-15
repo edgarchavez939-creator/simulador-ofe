@@ -1,0 +1,7 @@
+.git
+node_modules
+var
+*.sqlite*
+.env*
+artifacts
+sources

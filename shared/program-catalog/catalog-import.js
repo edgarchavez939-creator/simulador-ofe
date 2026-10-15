@@ -65,5 +65,30 @@
       duplicateGroups: [...counts.values()].filter(count => count > 1).length,
       changedLevels: ['programas', 'posgrados'].filter(key => JSON.stringify(snapshot[key]) !== JSON.stringify(baseline[key])) });
   }
-  global.ProgramCatalogImport = Object.freeze({ amount, parse, prepare });
+  function identified(raw, tipo, programs) {
+    const updates=[],errors=[];
+    if(!Array.isArray(raw)||!Array.isArray(raw[0]))return {updates,errors:['La hoja no tiene encabezados.']};
+    const headers=raw[0].map(value=>String(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase());
+    const column=name=>headers.indexOf(name);
+    const mapping={nombre:column('programa'),valor:column(tipo==='pregrado'?'valor pregrado':'valor')};
+    if(tipo==='pregrado'){mapping.idiomas=column('valor idiomas');mapping.semestres=column('semestres');}else mapping.subnivel=column('subnivel');
+    const idColumn=column('id'),versionColumn=column('version');
+    if(idColumn<0||versionColumn<0||Object.values(mapping).some(value=>value<0))return {updates,errors:['Descarga la plantilla actual: se necesitan las columnas de datos, ID y Versión.']};
+    const byId=new Map(programs.map(program=>[program.id,program]));
+    raw.slice(1).forEach((row,index)=>{
+      if(!Array.isArray(row)||row.every(value=>value===''||value==null))return;
+      const program=byId.get(String(row[idColumn]||'')),version=Number(row[versionColumn]);
+      if(!program||program.nivel!==tipo){errors.push('Fila '+(index+2)+': el ID no corresponde a un programa de esta hoja.');return;}
+      if(!Number.isInteger(version)||version!==program.version){errors.push('Fila '+(index+2)+': el programa cambió; descarga una plantilla nueva.');return;}
+      const result=parse([raw[0],row],tipo,mapping);
+      if(!result.valid){errors.push('Fila '+(index+2)+': '+result.errors.join(' '));return;}
+      const data=result.rows[0];
+      if(tipo==='posgrado'&&data[1]!==program.subnivel){errors.push('Fila '+(index+2)+': conserva el subnivel del programa.');return;}
+      const proposed=tipo==='pregrado'?{nombre:data[0],valorMatricula:data[1],valorIdiomas:data[2],semestres:data[3]}:{nombre:data[0],valorMatricula:data[2]};
+      const changes=Object.fromEntries(Object.entries(proposed).filter(([key,value])=>program[key]!==value));
+      updates.push({id:program.id,version,changes});
+    });
+    return {updates,errors};
+  }
+  global.ProgramCatalogImport = Object.freeze({ amount, parse, prepare, identified });
 })(window);

@@ -113,7 +113,8 @@ function selectorContext(app, options = {}) {
     setTimeout: (callback, delay = 0) => delay >= 50 ? scheduled.push(callback) : setTimeout(callback, delay),
     console: Object.fromEntries(['info', 'log', 'warn', 'error'].map(level => [level, (...args) => messages.push({ level, args })]))
   });
-  for (const filename of ['01-core-ui.js', '03-finance-core.js', '04-exports-pdf-excel.js', '05-idiomas-herramientas.js', '06-actions-history.js', '07-financing-engine.js']) {
+  if(app==='ofe')vm.runInContext(read('shared/program-catalog/catalog-import.js'),context);
+  for (const filename of ['01-core-ui.js', ...(app === 'ofe' ? ['02-reestructuracion.js'] : []), '03-finance-core.js', '04-exports-pdf-excel.js', '05-idiomas-herramientas.js', '06-actions-history.js', '07-financing-engine.js']) {
     vm.runInContext(read(`apps/${app}/simulador-assets/js/${filename}`), context, { filename });
   }
   return { context, elements, snapshot, messages, scheduled, button: () => new Element('button') };

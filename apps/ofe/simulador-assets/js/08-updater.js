@@ -279,7 +279,7 @@ function previewSheet(sheetName) {
 // Check if ready to generate
 // ══════════════════════════════════════════════════
 function checkReady() {
-  // El cliente nunca habilita escrituras sin el servicio transaccional de DTIC.
+  // El reemplazo de HTML no es una vía de escritura; usa la API auditada.
   document.getElementById('btn-gen').disabled = true;
   const bp = document.getElementById('btn-publicar');
   if(bp) bp.disabled = true;
@@ -289,7 +289,7 @@ function checkReady() {
     document.getElementById(id).textContent = rows.length || '—';
   }
   document.getElementById('resumen-cambios').style.display = entries.length ? 'block' : 'none';
-  let message = 'La publicación requiere autenticación, permisos y auditoría transaccional de DTIC.';
+  let message = 'Guarda los cambios desde la propuesta identificada del módulo Programas. La publicación se valida y audita en el servidor.';
   if(entries.length) {
     try {
       const candidate = ProgramCatalogImport.prepare(updaterState.parsedData, {
@@ -303,11 +303,11 @@ function checkReady() {
 }
 
 // ══════════════════════════════════════════════════
-// STEP 3 — Validación; escritura pendiente de DTIC
+// STEP 3 — Validación de archivos anteriores
 // ══════════════════════════════════════════════════
 // La vía de reemplazo offline queda cerrada hasta contar con auditoría institucional.
 function construirHTMLActualizado() {
-  return {error:'La escritura del catálogo requiere el servicio autenticado de DTIC y su auditoría en la misma transacción.'};
+  return {error:'La escritura del catálogo requiere la API autenticada y su auditoría en la misma transacción.'};
 }
 
 function generarHTML() {
@@ -552,23 +552,24 @@ function descargarPlantilla() {
 
   // Usa los programas del simulador cargado si están disponibles (auto-sync),
   // de lo contrario cae al respaldo interno.
-  const fuentePre = (updaterState.currentUndergrad && updaterState.currentUndergrad.length) ? updaterState.currentUndergrad : _PRE_ACTUAL;
-  const fuentePos = (updaterState.currentPostgrad && updaterState.currentPostgrad.length) ? updaterState.currentPostgrad : _POS_ACTUAL;
+  const live=window.OFE_SERVER ? SimuladorOFE.catalog.programs : null;
+  const fuentePre = live ? live.filter(p=>p.nivel==='pregrado').map(p=>[p.nombre,p.valorMatricula,p.valorIdiomas,p.semestres,p.id,p.version]) : (updaterState.currentUndergrad && updaterState.currentUndergrad.length) ? updaterState.currentUndergrad : _PRE_ACTUAL;
+  const fuentePos = live ? live.filter(p=>p.nivel==='posgrado').map(p=>[p.nombre,p.subnivel,p.valorMatricula,p.id,p.version]) : (updaterState.currentPostgrad && updaterState.currentPostgrad.length) ? updaterState.currentPostgrad : _POS_ACTUAL;
 
   // Hoja 1 — Pregrado (4 columnas)
   const wsPre = XLSX.utils.aoa_to_sheet([
-    ['Programa','Valor Pregrado','Valor Idiomas','Semestres'],
+    ['Programa','Valor Pregrado','Valor Idiomas','Semestres',...(live?['ID','Version']:[])],
     ...fuentePre
   ]);
-  wsPre['!cols'] = [{wch:42},{wch:16},{wch:16},{wch:12}];
+  wsPre['!cols'] = [{wch:42},{wch:16},{wch:16},{wch:12},{wch:65},{wch:10}];
   XLSX.utils.book_append_sheet(wb, wsPre, 'Pregrado');
 
   // Hoja 2 — Posgrado (3 columnas) con todos los programas actuales
   const wsPos = XLSX.utils.aoa_to_sheet([
-    ['Programa','Subnivel','Valor'],
+    ['Programa','Subnivel','Valor',...(live?['ID','Version']:[])],
     ...fuentePos
   ]);
-  wsPos['!cols'] = [{wch:60},{wch:18},{wch:16}];
+  wsPos['!cols'] = [{wch:60},{wch:18},{wch:16},{wch:65},{wch:10}];
   XLSX.utils.book_append_sheet(wb, wsPos, 'Posgrado');
 
   XLSX.writeFile(wb, 'plantilla-programas.xlsx');

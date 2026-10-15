@@ -125,7 +125,7 @@ const PDFV5 = (() => {
 
     const y=190, h=100;
     line(ctx,M,y-14,W-M,y-14,C.line,2);
-    const cols=[.34,.16,.27,.23], labels=['Programa académico','Nivel','Fecha de simulación','Código de simulación'];
+    const cols=[.34,.16,.27,.23], labels=[cfg.prefix==='RC'?'Escenario':'Programa académico','Nivel','Fecha de simulación','Código de simulación'];
     const vals=[cfg.program||'Programa',cfg.level||'Pregrado',cfg.meta?.date||dateLong(),cfg.meta?.code||code(cfg.prefix)];
     let x=M;
     cols.forEach((p,i)=>{
@@ -417,8 +417,8 @@ window.expPDFRefi = async function(){
       {label:'Monto reestructurado',value:PDFV5.formatMoney(d.principal)},{label:'Total intereses',value:PDFV5.formatMoney(d.totInt)},{label:'Total a pagar',value:PDFV5.formatMoney(d.totalGeneral),highlight:true}]},
     summary:[{label:'Saldo actual',value:PDFV5.formatMoney(d.saldo)},{label:'Nuevo plazo',value:`${d.n} meses`},{label:'Tasa de interés (E.A.)',value:PDFV5.formatPct(tEA)},{label:'Costos aplicables',value:PDFV5.formatMoney(d.costos||0)}],
     conditionsLeft:[['Tipo de operación','Reestructuración'],['Tasa M.V.',PDFV5.formatPct(d.tm*100)],['Tasa E.A.',PDFV5.formatPct(tEA)],['Nuevo plazo',`${d.n} meses`]],
-    conditionsRight:[['Saldo actual',PDFV5.formatMoney(d.saldo)],['Monto reestructurado',PDFV5.formatMoney(d.principal)],['Total intereses',PDFV5.formatMoney(d.totInt)],['Costos aplicables',PDFV5.formatMoney(d.costos||0)]],
-    rows:d.rows,totCap:d.totCap,totInt:d.totInt,note:'El resultado parte del saldo y de los conceptos ingresados. La simulación es informativa.'
+    conditionsRight:[['Saldo actual',PDFV5.formatMoney(d.saldo)],['Monto reestructurado',PDFV5.formatMoney(d.principal)],['Total intereses',PDFV5.formatMoney(d.totInt)],['Costos aplicables',PDFV5.formatMoney(d.costos||0)],...(d.capacidad>0?[['Capacidad mensual',PDFV5.formatMoney(d.capacidad)]]:[])],
+    rows:d.rows,totCap:d.totCap,totInt:d.totInt,note:'Los costos adicionales se financian junto con el saldo. La cuota y el plazo actuales no están registrados; no se estima ahorro frente al crédito anterior. La simulación es informativa.'
   },pdfV5FileName(`Reestructuracion de Credito - ${d.label||'Escenario'}`));
 };
 

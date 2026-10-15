@@ -7,7 +7,7 @@ window.SIMULADOR_CONFIG = {
     tuitionOverride: true
   },
   catalog: {
-    provider: "embedded",
+    provider: window.OFE_SERVER ? "api" : "embedded",
     apiBaseUrl: "/api",
     mockUrl: "../../data/mock-program-catalog.json",
     requestTimeoutMs: 15000,

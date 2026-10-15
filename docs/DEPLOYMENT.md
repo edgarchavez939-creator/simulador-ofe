@@ -4,7 +4,7 @@
 - Fuente de Pages: rama `main`, carpeta raíz `/`.
 - `index.html` redirige a `./apps/public/`; el enlace habitual abre la aplicación pública actualizada.
 - Publicar toda la estructura: `apps/public`, sus recursos y `shared/program-catalog`. No publicar un HTML aislado.
-- La aplicación OFE permanece preparada para DTIC, con escritura administrativa cerrada hasta contar con autenticación y auditoría institucionales.
+- La publicación OFE con usuarios y auditoría reales usa el nuevo servidor autónomo. Seguir [AUTONOMOUS_DEPLOYMENT](AUTONOMOUS_DEPLOYMENT.md); Pages conserva la variante estática y no ejecuta el backend.
 - Enviar cambios a otra rama no actualiza Pages; la revisión validada debe llegar a `main` mediante avance directo o el flujo de revisión del repositorio.
 
 ## Despliegue institucional previsto

@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: simulador-ofe
+    runtime: docker
+    branch: feat/dtic-readiness
+    plan: 0.5c-512mb
+    region: virginia
+    healthCheckPath: /api/health
+    autoDeployTrigger: "off"
+    disk:
+      name: ofe-data
+      mountPath: /app/var
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: OFE_DATABASE
+        value: /app/var/ofe.sqlite

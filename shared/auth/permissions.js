@@ -1,7 +1,7 @@
 (function initOFEPermissions(global){
   'use strict';
   const permissions = new Set();
-  const supported = ['simulator.use', 'programs.view', 'programs.update', 'audit.view'];
+  const supported = ['simulator.use', 'programs.view', 'programs.update', 'audit.view', 'audit.read', 'users.read', 'users.create', 'users.update', 'users.disable'];
   async function refresh() {
     permissions.clear();
     try {
@@ -10,7 +10,7 @@
       }
     } catch (_) {
       permissions.clear();
-      // Sin proveedor institucional configurado, la administración permanece cerrada.
+      // Sin sesión válida, la administración permanece cerrada.
     }
     document.querySelectorAll('[data-requires-permission]').forEach(element => {
       element.hidden = !permissions.has(element.dataset.requiresPermission);

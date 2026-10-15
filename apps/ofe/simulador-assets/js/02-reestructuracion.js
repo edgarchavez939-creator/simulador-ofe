@@ -1,3 +1,14 @@
+// Reutiliza el parser COP estricto; conserva decimales y rechaza negativos.
+function initRefiMoney(){
+ const descriptor=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value');
+ for(const id of ['refi-capital','refi-intcorr','refi-mora','refi-costos','refi-ingreso','refi-capacidad']){
+  const field=document.getElementById(id);if(!field||field.dataset.refiMoney)return;
+  field.dataset.refiMoney='1';
+  Object.defineProperty(field,'value',{configurable:true,get(){const text=descriptor.get.call(this);if(text==='')return '';try{return String(ProgramCatalogImport.amount(text));}catch(_){return 'NaN';}},set(value){descriptor.set.call(this,String(value??''));}});
+  field.addEventListener('blur',()=>{const number=Number(field.value);if(field.value!==''&&Number.isFinite(number))descriptor.set.call(field,new Intl.NumberFormat('es-CO',{maximumFractionDigits:2}).format(number));});
+ }
+}
+
 // ── REFINANCIACIÓN — cálculo ─────────────────────────────────────────────────
 function sumarSaldoRefi() {
   const cap  = parseFloat(document.getElementById('refi-capital').value)||0;
@@ -18,18 +29,26 @@ function calcTaRefi(which) {
 const reestructState = SimuladorOFE.state.restructuring;
 
 function calcularRefi() {
-  const capital = parseFloat(document.getElementById('refi-capital').value)||0;
-  const intCorr = parseFloat(document.getElementById('refi-intcorr').value)||0;
-  const mora    = parseFloat(document.getElementById('refi-mora').value)||0;
-  const saldo   = capital + intCorr + mora;
-  const nNva    = parseInt(document.getElementById('refi-cuotas-nva').value)||0;
-  const tmNva   = parseFloat(document.getElementById('refi-tasa-nva').value)/100;
-  const costos  = parseFloat(document.getElementById('refi-costos').value)||0;
-  const ingreso = parseFloat(document.getElementById('refi-ingreso').value)||0;
-
-  if(!capital||capital<=0) return showFieldError('refi-capital','Ingresa al menos el capital pendiente.');
-  if(!nNva||nNva<=0)   return showFieldError('refi-cuotas-nva','Ingresa el plazo de la reestructuración.');
-  if(isNaN(tmNva))     return showFieldError('refi-tasa-nva','Ingresa la tasa de reestructuración.');
+  const definitions=[
+    ['refi-capital','Capital pendiente',true,1e12],['refi-intcorr','Intereses corrientes',false,1e12],
+    ['refi-mora','Intereses de mora',false,1e12],['refi-costos','Costos adicionales',false,1e12],
+    ['refi-ingreso','Ingreso mensual',false,1e12],['refi-capacidad','Capacidad mensual',false,1e12],
+    ['refi-cuotas-nva','Plazo',true,600],['refi-tasa-nva','Tasa mensual',true,100]
+  ];
+  const values={};
+  for(const [id,label,required,max] of definitions){
+    clearFieldError(id);
+    const raw=document.getElementById(id)?.value??'',number=raw===''&&!required?0:Number(raw);
+    if((required&&raw==='')||!Number.isFinite(number)||number<0||number>max||
+      ((id==='refi-capital'||id==='refi-cuotas-nva')&&number<=0)||
+      (id==='refi-cuotas-nva'&&!Number.isInteger(number))) {
+      return showFieldError(id,label+': ingresa un valor válido'+(id==='refi-cuotas-nva'?' de 1 a 600 meses.':'.'));
+    }
+    values[id]=number;
+  }
+  const capital=values['refi-capital'],intCorr=values['refi-intcorr'],mora=values['refi-mora'];
+  const saldo=capital+intCorr+mora,nNva=values['refi-cuotas-nva'],tmNva=values['refi-tasa-nva']/100;
+  const costos=values['refi-costos'],ingreso=values['refi-ingreso'],capacidad=values['refi-capacidad'];
 
   const principal = saldo + costos;
   const B = amortizacion(principal, tmNva, nNva);
@@ -40,7 +59,7 @@ function calcularRefi() {
     saldo, capital, intCorr, mora, costos, principal,
     n: nNva, tm: tmNva, cuota: B.cuota, totInt: B.totInt, totCap: B.totCap,
     totalGeneral: totalB, rows: B.rows,
-    ingreso,
+    ingreso, capacidad,
     label: nNva+' meses @ '+(tmNva*100).toFixed(2)+'%',
     sub: 'Saldo '+cop(saldo)+(costos>0?' + costos '+cop(costos):'')
   };
@@ -58,14 +77,13 @@ function calcularRefi() {
         {label:'Total intereses',value:cop(B.totInt)},
         {label:'Total a pagar',value:cop(totalB)}
       ],
-      note:'La comparación se construye sobre el saldo registrado y las nuevas condiciones. La aplicación actual no almacena cuota ni plazo vigentes del crédito original.'
+      note:'Los intereses corrientes y de mora ya causados forman parte del saldo. Los costos adicionales se financian junto con ese saldo. La tasa y el plazo indicados se aplican a la nueva propuesta.'
     })}
-    <div class="restruct-flow" aria-label="Flujo de reestructuración">
-      <div class="restruct-step"><span>1 | Saldo actual</span><strong>${cop(saldo)}</strong></div>
-      <div class="restruct-step"><span>2 | Nuevas condiciones</span><strong>${nNva} meses | ${(tmNva*100).toFixed(2)}% M.V.</strong></div>
-      <div class="restruct-step"><span>3 | Nueva cuota</span><strong>${cop(B.cuota)}</strong></div>
-      <div class="restruct-step"><span>4 | Impacto</span><strong>${cop(B.totInt)} en intereses</strong></div>
-    </div>
+    <section class="restruct-comparison" aria-label="Saldo actual y nueva propuesta">
+      <div class="card"><span class="eyebrow">Situación actual</span><h3>Saldo a la fecha</h3><strong>${cop(saldo)}</strong><p>Capital ${cop(capital)} + intereses causados ${cop(intCorr+mora)}.</p><p class="field__hint">Cuota vigente y plazo restante: no registrados. No se calcula un ahorro sin esos datos.</p></div>
+      <div class="card"><span class="eyebrow">Nueva propuesta</span><h3>Monto a reestructurar</h3><strong>${cop(principal)}</strong><p>Saldo ${cop(saldo)} + costos financiados ${cop(costos)}.</p><p class="field__hint">${nNva} cuotas de ${cop(B.cuota)}. Total de intereses nuevos: ${cop(B.totInt)}.</p></div>
+    </section>
+    ${capacidad>0?`<div class="note note--${B.cuota>capacidad?'warning':'success'}" role="status">${B.cuota>capacidad?'La nueva cuota supera':'La nueva cuota está dentro de'} tu capacidad declarada de ${cop(capacidad)} por mes. Diferencia: ${cop(Math.abs(capacidad-B.cuota))}. Ajusta la propuesta si lo necesitas.</div>`:''}
     <div class="result-actions" aria-label="Acciones del escenario">
       <span class="result-actions__label">Guarda este escenario para compararlo con otra alternativa.</span>
       <button class="btn btn--primary btn--sm" data-action="guardar-esc-refi">${icon('save')} Guardar escenario</button>
@@ -89,34 +107,7 @@ function calcularRefi() {
       <div class="kpi kpi--accent u-col-span-all"><span class="kpi__label">Total a Pagar</span><div class="kpi__value kpi__value--md">${cop(totalB)}</div></div>
     </div>
 
-    ${ingreso>0 ? (()=>{
-      const pct = (B.cuota/ingreso)*100;
-      let nivel, color, bg, msg;
-      if(pct <= 30) { nivel='Sostenible'; color='var(--success)'; bg='var(--success-soft)';
-        msg='La cuota representa el '+pct.toFixed(1)+'% del ingreso mensual. Está dentro del rango recomendado (≤30%), lo que sugiere una carga financiera manejable.'; }
-      else if(pct <= 40) { nivel='Ajustada'; color='var(--warning)'; bg='var(--warning-soft)';
-        msg='La cuota representa el '+pct.toFixed(1)+'% del ingreso mensual. Está en un rango de atención (30%-40%). Es viable pero deja poco margen ante imprevistos.'; }
-      else { nivel='Riesgo de sobreendeudamiento'; color='var(--danger)'; bg='var(--danger-soft)';
-        msg='La cuota representa el '+pct.toFixed(1)+'% del ingreso mensual, superando el 40% recomendado. Existe un riesgo elevado de incumplimiento; conviene evaluar un plazo más largo o un saldo menor.'; }
-      return `<div class="section__title u-mt-5"> Capacidad de Pago</div>
-      <div style="background:${bg};border-left:5px solid ${color};border-radius:0 var(--r-md) var(--r-md) 0;padding:14px 18px;margin-bottom:16px;">
-        <div class="u-row-between u-mb-10">
-          <div>
-            <div class="eyebrow">Cuota vs Ingreso</div>
-            <div style="font-size:22px;font-weight:700;color:${color};">${pct.toFixed(1)}%</div>
-          </div>
-          <div class="u-text-right">
-            <div class="u-fs-11-muted">Diagnóstico</div>
-            <div style="font-size:15px;font-weight:700;color:${color};">${nivel}</div>
-          </div>
-        </div>
-        <div class="meter-track u-mb-10">
-          <div style="height:100%;width:${Math.min(100,pct)}%;background:${color};border-radius:20px;transition:width .4s;"></div>
-        </div>
-        <div class="text-sm-readable">${msg}</div>
-        <div class="text-muted-xs u-mt-8">Cuota ${cop(B.cuota)} sobre ingreso ${cop(ingreso)} | Disponible tras cuota: ${cop(ingreso-B.cuota)}</div>
-      </div>`;
-    })() : ''}
+    ${ingreso>0 ? `<div class="card"><h3>Cuota e ingreso declarado</h3><p>La nueva cuota representa el <strong>${((B.cuota/ingreso)*100).toFixed(1)}%</strong> del ingreso mensual registrado (${cop(ingreso)}).</p><p>Disponible después de la cuota: <strong>${cop(ingreso-B.cuota)}</strong>.</p><p class="field__hint">Es una comparación informativa; no constituye aprobación de crédito.</p></div>` : ''}
 
     <div class="section__title u-mt-5">Plan de Pagos (${nNva} cuotas)</div>
     ${renderTabla(B.rows, B.cuota, B.totInt, B.totCap)}
@@ -195,6 +186,8 @@ function limpiarRefi() {
   document.getElementById('refi-tasa-nva').value = 1.53;
   document.getElementById('refi-costos').value = '';
   document.getElementById('refi-ingreso').value = '';
+  document.getElementById('refi-capacidad').value = '';
+  ['refi-capital','refi-intcorr','refi-mora','refi-costos','refi-ingreso','refi-capacidad','refi-cuotas-nva','refi-tasa-nva'].forEach(clearFieldError);
   calcTaRefi('nva');
   reestructState.scenarios.splice(0, reestructState.scenarios.length);
   SimuladorOFE.state.restructuring.current = null;
@@ -202,7 +195,7 @@ function limpiarRefi() {
   renderEscRefi();
   document.getElementById('res-refi').innerHTML = `
     <div class="card empty-state">
-      <div class="empty-state__icon">${icon('rotate-ccw')}</div>
+      <div class="empty-state__icon">${icon('refresh')}</div>
       <p class="u-fs-base">Ingresa el saldo a la fecha y los datos de un escenario de reestructuración, luego presiona <strong>Calcular Escenario</strong></p>
     </div>`;
 }
@@ -210,8 +203,33 @@ function limpiarRefi() {
 
 
 
+// Escenarios: reutilizan la comparación común y conservan snapshots independientes.
+function guardarEscRefi(replaceOldest=false){
+  if(!reestructState.current)return toast('Primero calcula una propuesta.','warning');
+  if(reestructState.scenarios.length>=3&&!replaceOldest)return confirmAction({title:'Reemplazar escenario',message:'Ya hay tres alternativas. Se reemplazará la más antigua.',confirmLabel:'Reemplazar',onConfirm:()=>guardarEscRefi(true)});
+  if(reestructState.scenarios.length>=3)reestructState.scenarios.shift();
+  reestructState.scenarios.push(JSON.parse(JSON.stringify(reestructState.current)));renderEscRefi();renderComparisonHub();toast('Propuesta guardada.','success');
+}
+function eliminarEscRefi(index){if(!Number.isInteger(index)||index<0||index>=reestructState.scenarios.length)return;reestructState.scenarios.splice(index,1);renderEscRefi();renderComparisonHub();}
+function renderEscRefi(){
+  const panel=document.getElementById('esc-panel-refi');if(!panel)return;
+  panel.hidden=!reestructState.scenarios.length;if(panel.hidden){panel.innerHTML='';return;}
+  const mapped=reestructState.scenarios.map(d=>({label:d.label,cuota:d.cuota,totalGeneral:d.totalGeneral,financiado:d.principal,intereses:d.totInt,n:d.n,tm:d.tm,data:d}));
+  panel.innerHTML=compareGroupHTML(5,mapped,'Propuestas guardadas','Cada alternativa conserva el saldo y las condiciones con que se calculó.',{export:false})+
+    reestructState.scenarios.map((d,index)=>`<button class="btn btn--ghost btn--sm" data-action="eliminar-esc-refi" data-index="${index}">Eliminar propuesta ${index+1}</button>`).join('')+
+    (mapped.length>=2?'<button class="btn btn--sm" data-action="pdf-refi-comp">PDF de propuestas</button>':'');
+}
+function compararEscRefi(){if(reestructState.scenarios.length<2)return toast('Guarda dos propuestas para comparar.','warning');switchTab(8);renderComparisonHub();}
+function invalidarRefi(){
+  if(!reestructState.current)return;reestructState.current=null;markViewHasResult(5,false);
+  document.getElementById('res-refi').innerHTML='<div class="card"><div class="empty"><div class="empty__title">Condiciones modificadas</div><div class="empty__desc">Vuelve a simular para obtener una propuesta con los nuevos datos.</div></div></div>';
+}
+
 SimuladorOFE.register('reestructuracion', {
   init(app){
+    initRefiMoney();
+    document.getElementById('tab5')?.addEventListener('input',event=>{if(event.target.matches?.('input'))invalidarRefi();});
+    calcTaRefi();
     app.services['reestructuracion'] = {
       calcularRefi: typeof calcularRefi === 'function' ? calcularRefi : undefined,
       limpiarRefi: typeof limpiarRefi === 'function' ? limpiarRefi : undefined,

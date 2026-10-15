@@ -2,13 +2,15 @@
 
 Arquitectura modular sin framework ni build system.
 
-## Estado actual — iteración funcional v1E
+## Estado actual — fase v2 autónoma
 
-La entrada raíz de GitHub Pages redirige a `apps/public/`, conservando el enlace habitual. Las aplicaciones activas están en `apps/public` y `apps/ofe`. Incluyen búsqueda de programas, matrícula readonly desde catálogo, capacidad efectiva y totales iniciales explícitos. Informe y contrato pendiente de DTIC: [FUNCTIONAL_V1E](docs/FUNCTIONAL_V1E.md).
+Se incorporan reinicio central de simulaciones al cambiar programa, calibración de temas, Reestructuración v2 y un servicio real de usuarios, permisos y auditoría. Se conservan los 29 pregrados, 144 posgrados, matrículas originales e IDs, y los archivos del motor financiero común.
 
-Autenticación, sesiones, autorización servidor y auditoría están pendientes de DTIC por decisión del usuario. El actualizador conserva la validación y vista previa; acceso administrativo y publicación permanecen cerrados hasta la integración institucional. El PIN local no es autenticación.
+Para usar OFE con seguridad real: Node >=24, `npm run bootstrap-admin`, `npm start` y entrar en `http://127.0.0.1:8787`. No hay cuentas predeterminadas. El administrador crea los usuarios desde la aplicación. Pruebas: `npm test`.
 
-Las secciones P3.x siguientes describen la arquitectura y evolución histórica; la entrega v1E prevalece sobre el flujo anterior de reemplazo de HTML.
+[Informe técnico](docs/PHASE_V2.md) · [Inicio, Render y traslado a DTIC](docs/AUTONOMOUS_DEPLOYMENT.md) · [Seguridad](docs/SECURITY.md).
+
+GitHub Pages sigue sirviendo la app pública desde `apps/public/`. El servidor autónomo se publica por separado: un push a Pages no ejecuta login, usuarios ni auditoría. La propuesta Render está preparada y pendiente de cuenta, aceptación del costo y prueba del despliegue. Las secciones históricas siguientes describen la evolución P3.x; la entrega v2 prevalece sobre los flujos anteriores de PIN y reemplazo de HTML.
 
 ## Estructura
 

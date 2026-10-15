@@ -1,12 +1,20 @@
-# Seguridad
+# Seguridad del servicio autónomo
 
-- No almacenar secretos en frontend.
-- El build público no debe incluir módulos administrativos.
-- El build OFE debe quedar preparado para protección con Microsoft Entra por DTIC.
-- Dependencias de producción deben servirse localmente.
-- CSP, HSTS, `nosniff`, `frame-ancestors` y demás headers deben configurarse en servidor.
-- No publicar source maps salvo decisión expresa de DTIC.
+La entrega v2 sustituye la decisión histórica v1E de esperar a DTIC: existe autenticación local real en `server/`, con autorización y auditoría en el servidor. GitHub Pages continúa siendo estático y no puede activar estas capacidades por sí solo.
 
-## Estado v1E
+- Contraseñas con scrypt, sal aleatoria por usuario, `N=131072`, `r=8`, `p=1`, comparación de tiempo constante. Política de 12 a 128 caracteres. No se devuelven contraseñas ni hashes al cliente ni a auditoría.
+- Sesiones opacas de 256 bits; solo SHA-256 del token en SQLite. Cookie HttpOnly, SameSite=Strict, Path=/ y, en HTTPS, Secure y prefijo `__Host-`. Vencimiento absoluto de 8 horas e inactividad de 30 minutos. El chequeo periódico de sesión no renueva la inactividad.
+- Validación del origen exacto y token CSRF en mutaciones autenticadas. Sin CORS. Login genérico, límite persistente por cuenta (10/15 minutos) y dirección directa (60/15 minutos), con un máximo de dos verificaciones costosas simultáneas. Detrás de un proxy, el límite por dirección es compartido; no se confía en encabezados de cliente falsificables.
+- La sesión se vuelve a validar después de operaciones asíncronas. Desactivación, cambio de rol o restablecimiento de contraseña revocan sesiones del usuario. No puede desactivarse ni degradarse el último administrador activo.
+- Roles y permisos centrales, comprobados en cada API; 401 sin sesión y 403 sin permiso. Ocultar una opción de navegación solo mejora la interfaz y nunca reemplaza esa comprobación.
+- Mutaciones de usuarios y programas con auditoría en la misma transacción. Un error al auditar revierte la escritura. Actualizaciones con versión optimista y conflicto 409; lotes completos o ninguno.
+- Rutas y recursos OFE protegidos por sesión; base, migraciones y código del servidor fuera de la lista estática permitida. CSP, nosniff, X-Frame-Options, no-store y HSTS en HTTPS. Se sirven exclusivamente los recursos necesarios.
+- Base y respaldos fuera de Git, con permisos restringidos. No hay alta pública, cuenta predeterminada, setup por HTTP ni recuperación que omita la autenticación.
 
-El adaptador institucional sigue sin configurar. `OFEPermissions` centraliza únicamente la visibilidad y navegación de interfaz; no equivale a autorización servidor. El actualizador está cerrado por defecto y su exportación de cambios está deshabilitada. No hay login ni auditoría reales hasta integrar DTIC. No se activa el mock de autenticación. Los PIN históricos no deben presentarse como protección de acceso. Ver [dependencias y contrato de auditoría](FUNCTIONAL_V1E.md).
+El historial de simulaciones conserva su almacenamiento local y se separa por ID de usuario en el servidor autónomo. No es un repositorio central de expedientes ni una auditoría de cada cálculo. No se reasigna automáticamente el historial previo sin dueño a una nueva cuenta.
+
+El esquema de auditoría no puede modificarse desde la API ni desde el rol system_admin. Un operador con acceso al sistema de archivos sí puede alterar SQLite: no se afirma inmutabilidad criptográfica. Los respaldos contienen datos de acceso y trazabilidad y deben conservarse con acceso restringido.
+
+No se incluyen secretos de DTIC. La futura identidad institucional se vinculará al usuario interno sin sustituir la autorización. Véase [operación y traspaso](AUTONOMOUS_DEPLOYMENT.md) y [matriz, eventos y pruebas](PHASE_V2.md).
+
+El frontend conserva las versiones actuales de Chart.js, jsPDF y SheetJS desde CDN con integridad, y fuentes externas. La CSP permite esos orígenes concretos. Su empaquetado local sigue siendo una mejora de autonomía de distribución, distinta de la autenticación autónoma ya implementada; no se promete funcionamiento sin Internet.

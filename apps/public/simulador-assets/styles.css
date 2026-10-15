@@ -3212,3 +3212,83 @@ table.tbl tfoot td { background: color-mix(in srgb, var(--uninorte-red) 6%, var(
 /* Iconos con espacio propio y acciones de resultado en una fila coherente. */
 .btn.btn--icon { padding-inline: 0; }
 .result-actions__label { flex-basis: 100%; margin-right: 0; }
+
+/* Fase v2: superficies y estados del mismo Design System. */
+:root {
+  --chart-capital: var(--uninorte-red);
+  --chart-interest: var(--uninorte-gold);
+}
+[data-theme='dark'] {
+  --surface-page: #171b21;
+  --surface-panel: #20262e;
+  --surface-elevated: #29313c;
+  --surface-featured: #35272f;
+  --surface-result: #232a33;
+  --bg: var(--surface-page); --bg-elev: var(--surface-elevated);
+  --surface: var(--surface-panel); --surface-2: #29313b; --surface-3: #343e4a;
+  --text-heading: #f1ede8; --text-body: #ddd6d0; --text-muted: #b4b4b8;
+  --text-label: #d1c8c1; --text-metric: var(--text-heading);
+  --text: var(--text-heading); --text-2: var(--text-body); --text-3: var(--text-muted); --text-inv: #fff7f4;
+  --uninorte-red: #ed8790; --uninorte-red-dark: #be3545;
+  --uninorte-gold: #c5ab73; --uninorte-yellow: #bca36a;
+  --accent: #ed8790; --accent-hover: #f2a1a8; --accent-soft: #412c36;
+  --accent-ring: rgba(237,135,144,.35); --focus-ring: var(--accent-ring);
+  --action-primary: #a92a37; --action-primary-hover: #be3545;
+  --action-secondary: var(--surface-elevated); --action-secondary-hover: #343e4a;
+  --success: #85c9b7; --success-soft: #273f3e;
+  --warning: #d8bd84; --warning-soft: #443c2e;
+  --danger: #f29aa6; --danger-soft: #452b35;
+  --info: #c6c0be; --info-soft: #343942;
+  --state-success: var(--success); --state-warning: var(--warning);
+  --state-error: var(--danger); --state-info: var(--info);
+  --border-default: #58616d; --border-subtle: #414a57; --border-strong: #7b8795; --border: var(--border-default);
+  --grid-line: #43505f; --row-hover: #2d3743; --row-selected: #49313b; --scroll-thumb: #6f7d8d;
+  --overlay: rgba(10,14,20,.76); --glass: rgba(32,38,46,.94);
+  --result-accent: var(--accent-soft);
+  --shadow-xs: 0 1px 3px rgba(0,0,0,.18); --shadow-sm: 0 2px 7px rgba(0,0,0,.22);
+  --shadow-md: 0 8px 22px rgba(0,0,0,.25); --shadow-lg: 0 18px 44px rgba(0,0,0,.32);
+  --metric-shadow: var(--shadow-md); --chart-capital: var(--accent); --chart-interest: var(--uninorte-gold);
+  color-scheme: dark;
+}
+[data-theme='dark'] .btn--primary { color: var(--text-inv); background: var(--action-primary); border-color: var(--action-primary); }
+[data-theme='dark'] .btn--primary:hover { background: var(--action-primary-hover); border-color: var(--action-primary-hover); }
+[data-theme='dark'] .input:focus, [data-theme='dark'] .select:focus, [data-theme='dark'] .input-affix:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--focus-ring); }
+[data-theme='dark'] .tbl tbody tr:nth-child(even) { background: var(--surface-2); }
+[data-theme='dark'] .tbl tbody tr:hover { background: var(--row-hover); }
+[data-theme='dark'] .tbl th { color: var(--text-heading); background: var(--surface-elevated); }
+[data-theme='dark'] .card, [data-theme='dark'] .modal { box-shadow: var(--shadow-md); }
+[data-theme='dark'] .btn:disabled { opacity: .65; }
+[data-theme='dark'] .input::placeholder, [data-theme='dark'] .textarea::placeholder { color: var(--text-muted); opacity: .85; }
+[data-theme='dark'] .idiomas-btn { color: var(--text-body); border-color: var(--border-default); background: var(--surface-panel); }
+[data-theme='dark'] .note, [data-theme='dark'] .summary-panel { color: var(--text-body); }
+.auth-page { min-height: 100dvh; display: grid; place-items: center; padding: 24px; }
+.auth-card { width: min(100%,460px); padding: 32px; border-top: 4px solid var(--accent); }
+.auth-card h1 { color: var(--text-heading); font-size: 28px; margin: 16px 0 8px; }
+.auth-card h2 { margin: 24px 0 18px; font-size: 20px; }
+.auth-brand { color: var(--accent); font-size: 11px; font-weight: 750; letter-spacing: .08em; }
+.auth-intro { color: var(--text-muted); }
+.auth-card .input-affix .btn { flex: 0 0 auto; padding-inline: 10px; }
+.auth-card [hidden], .admin-form[hidden], #legacy-import[hidden], .view[hidden] { display: none !important; }
+.account-panel { display: grid; gap: 8px; color: var(--text-heading); padding: 12px; border: 1px solid var(--border-default); border-radius: var(--r-md); background: var(--surface-panel); }
+.account-panel small { color: var(--text-muted); }
+.admin-heading { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
+.admin-form { margin-block: 20px; }
+.admin-form .btn { margin: 8px 8px 0 0; }
+.admin-filter { display: grid; grid-template-columns: repeat(auto-fit,minmax(150px,1fr)); gap: 16px; margin-block: 20px; align-items: end; }
+.admin-filter .field { margin-bottom: 0; }
+.admin-program-list { max-height: 400px; overflow: auto; }
+.view--admin td { overflow-wrap: anywhere; max-width: 320px; }
+.view--admin td small { display: block; color: var(--text-muted); margin-top: 4px; }
+.view--admin textarea { width: 100%; color: var(--text-body); background: var(--surface-panel); border: 1px solid var(--border-default); border-radius: var(--r-md); padding: 12px; }
+.restruct-comparison { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; margin-block: 18px; }
+.restruct-comparison .card { margin: 0; padding: 18px; }
+.restruct-comparison strong { display: block; color: var(--text-heading); font-size: 24px; margin-block: 10px; }
+.restruct-comparison p { color: var(--text-body); margin-block: 8px; }
+@media(max-width:640px){.auth-card{padding:24px;}.restruct-comparison{grid-template-columns:minmax(0,1fr);}.view--admin .table-wrap{overflow-x:auto;}.view--admin table{min-width:650px;}}
+
+[data-theme='dark'] .sidebar { background: var(--surface-page); }
+[data-theme='dark'] .header { background: var(--glass); border-bottom-color: var(--border-default); }
+[data-theme='dark'] table.tbl thead th { background: var(--surface-elevated); color: var(--text-heading); }
+
+/* El estado oculto también se respeta en botones y contenedores flex/grid. */
+[hidden] { display: none !important; }
