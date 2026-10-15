@@ -138,7 +138,7 @@ function abrirIdiomas(tabId) {
 
   if(tabId === 1) {
     // Inherit tasa, meses, contado, beneficios from Tab1
-    const tasa1 = parseFloat(document.getElementById('tasa1').value)||1.53;
+    const tasa1 = (Number.isFinite(parseFloat(document.getElementById('tasa1').value))?parseFloat(document.getElementById('tasa1').value):1.53);
     const meses1 = parseInt(document.getElementById('plazo1').value)||6;
     document.getElementById('id-tasa').value = tasa1.toFixed(2);
     document.getElementById('id-meses').value = meses1;
@@ -154,7 +154,7 @@ function abrirIdiomas(tabId) {
 
   } else if(tabId === 2) {
     // Tab2 Mixto: inherit tasa, CP meses, contado, beneficios
-    const tasa2 = parseFloat(document.getElementById('tasa2').value)||1.53;
+    const tasa2 = (Number.isFinite(parseFloat(document.getElementById('tasa2').value))?parseFloat(document.getElementById('tasa2').value):1.53);
     const mesesCP = parseInt(document.getElementById('plazoCP').value)||6;
     document.getElementById('id-tasa').value  = tasa2.toFixed(2);
     document.getElementById('id-meses').value = mesesCP;
@@ -175,7 +175,7 @@ function abrirIdiomas(tabId) {
     SimuladorOFE.state.languages.context.mesesLP = Math.round(SimuladorOFE.state.languages.context.semLP * 6 * 1.5);  // auto-calculated payoff months
 
   } else if(tabId === 3) {
-    const tasa3 = parseFloat(document.getElementById('tasa3').value)||1.53;
+    const tasa3 = (Number.isFinite(parseFloat(document.getElementById('tasa3').value))?parseFloat(document.getElementById('tasa3').value):1.53);
     const meses3 = parseInt(document.getElementById('plazo3').value)||12;
     document.getElementById('id-tasa').value  = tasa3.toFixed(2);
     document.getElementById('id-meses').value = meses3;
@@ -538,10 +538,10 @@ function expPDFIdiomas(){
         {label:'Cuota inicial',value:cop(d.cuotaInicial)},
         {label:'Plazo del credito',value:`${d.n} meses`},
         {label:'Tasa de interes (EA)',value:tea},
-        {label:'Aporte a Garantisa',value:cop(d.garantisa),hint:'4.17% del financiado'}
+        {label:'Aporte a Garantisa',value:cop(d.garantisa),hint:garantisaLabel(d)+'% del financiado'}
       ],
       conditionsLeft:[['Tipo de credito','Credito de idiomas'],['Tasa de interes (EA)',tea],['Plazo',`${d.n} meses`],['Cuota inicial',cop(d.cuotaInicial)]],
-      conditionsRight:[['Monto financiado',cop(d.financiado)],['Total intereses',cop(d.totInt)],['Total del credito',cop(d.totalCredito)],['Aporte a Garantisa',`${cop(d.garantisa)} (4.17%)`]],
+      conditionsRight:[['Monto financiado',cop(d.financiado)],['Total intereses',cop(d.totInt)],['Total del credito',cop(d.totalCredito)],['Aporte a Garantisa',`${cop(d.garantisa)} (${garantisaLabel(d)}%)`]],
       rows,totCap:tc,totInt:ti,firstPageRows:5,
       note:'Esta simulacion corresponde al credito de idiomas y es informativa. Los valores pueden variar segun las condiciones vigentes.'
     });
@@ -577,7 +577,7 @@ function expXLSIdiomas(){
     ['Valor Idiomas',Math.round(d.mat)],[''],
     ['--- PAGO INICIAL ---'],
     ['Cuota Inicial Contado',Math.round(d.cuotaInicial)],
-    ['Garantisa (4.17% s/financiado)',Math.round(d.garantisa)],
+    ...(d.isMixto?[['Garantisa CP ('+garantisaLabel(d)+'%)',Math.round(d.garCP)],['Garantisa LP ('+garantisaLabel(d,'lp')+'%)',Math.round(d.garLP)]]:[['Garantisa ('+garantisaLabel(d)+'% s/financiado)',Math.round(d.garantisa)]]),
     ['Total Pago Inicial',Math.round(d.pagoInicial)],[''],
     ['--- CRÉDITO ---'],
     ['Monto Financiado',Math.round(d.financiado)],

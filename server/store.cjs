@@ -6,7 +6,7 @@ const {hashPassword}=require('./security.cjs');
 const ROLES={
  simulator_user:['simulator.use','programs.view'],
  program_admin:['simulator.use','programs.view','programs.update','audit.read'],
- system_admin:['simulator.use','programs.view','programs.update','audit.read','users.read','users.create','users.update','users.disable']
+ system_admin:['simulator.use','programs.view','programs.update','audit.read','users.read','users.create','users.update','users.disable','settings.read','settings.update']
 };
 const publicUser=u=>u?Object.fromEntries(['id','name','email','auth_provider','role','status','must_change_password','version','created_at','updated_at'].map(key=>[key,u[key]])):null;
 function catalogFromRepository(root) {

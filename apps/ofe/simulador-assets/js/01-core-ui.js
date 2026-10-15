@@ -194,7 +194,9 @@ function runCalculation(button, tabId, task, loadingTitle) {
   const before=calculationResultForTab(tabId);
   const epoch=window.SimulationLifecycle?.begin(tabId);
   setResultLoading(tabId, loadingTitle);
-  return Promise.resolve(runButtonTask(button, () => {
+  return Promise.resolve(runButtonTask(button, async () => {
+    if(window.OFE_SERVER)try{await window.OFEGlobalSettings?.prepare(tabId,()=>!window.SimulationLifecycle||window.SimulationLifecycle.current(tabId,epoch));}
+    catch(error){if(!window.SimulationLifecycle||window.SimulationLifecycle.current(tabId,epoch)){if(target)target.innerHTML=previousHTML;markViewHasResult(tabId,!!before);toast(error.message,'error');}return;}
     if(window.SimulationLifecycle && !window.SimulationLifecycle.current(tabId,epoch)) return;
     if ([1,2,3,7].includes(tabId)) sincronizarMatriculaCatalogo(tabId);
     let result;
@@ -359,8 +361,8 @@ function initTheme(){
   applyTheme(saved);
 }
 
-const GARANTISA_CP = SimuladorOFE.config.garantisaCP;
-const GARANTISA_LP = SimuladorOFE.config.garantisaLP;
+const GARANTISA_CP = Object.freeze({valueOf:()=>SimuladorOFE.config.garantisaCP});
+const GARANTISA_LP = Object.freeze({valueOf:()=>SimuladorOFE.config.garantisaLP});
 
 const cop = v => new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0,maximumFractionDigits:0}).format(Math.round(v));
 
@@ -677,11 +679,13 @@ const VIEW_META = Object.freeze({
   8:{section:'ANALIZAR', title:'Comparar escenarios', desc:'Accede a las comparaciones disponibles dentro de cada modalidad de simulación.', status:'Escenarios guardados'},
   9:{section:'HISTORIAL', title:'Mis simulaciones', desc:'Consulta las simulaciones recientes guardadas localmente en este navegador.', status:'Datos locales'},
   10:{section:'ADMINISTRACIÓN',title:'Usuarios',desc:'Gestiona los accesos al simulador.',status:'Acceso autorizado'},
+  12:{section:'ADMINISTRACIÓN',title:'Configuración',desc:'Parámetros para nuevas simulaciones.',status:'Cambios auditados'},
   11:{section:'ADMINISTRACIÓN',title:'Auditoría',desc:'Consulta la trazabilidad de los cambios.',status:'Registro del servidor'},
   6:{section:'ADMINISTRACIÓN', title:'Actualizar Programas', desc:'Actualiza programas y valores publicados sin modificar el motor financiero.', status:'Acceso restringido'}
 });
 
 function switchTab(n) {
+  if(n===12 && !window.OFEPermissions?.allowed('settings.read')) return;
   if([10,11].includes(n) && !window.OFEPermissions?.allowed(n===10?'users.read':'audit.read')) return;
   if(n === 6 && !window.OFEPermissions?.allowed('programs.update')) { toast('Inicia sesión con permiso para administrar programas.', 'warning'); return; }
   if(n === 5 && window.OFE_SERVER && !window.OFEPermissions?.allowed('simulator.use')) return;
@@ -862,4 +866,12 @@ function setMat(id) {
       delete button.dataset.prog;
     }
   }
+}
+
+function garantisaLabel(result,kind='cp'){
+ const percent=result?.settingsSnapshot?.values?.[kind==='lp'?'garantisa_lp_percent':'garantisa_cp_percent'];
+ // Older saved results predate configuration: recover their effective rate from their own amounts.
+ const amount=kind==='lp'?result?.garLP:(result?.garCP??result?.garantisa??result?.gar);
+ const base=kind==='lp'?result?.finLP:(result?.finCP??result?.financiado??result?.fin);
+ return (percent??(base>0&&Number.isFinite(amount)?amount/base*100:kind==='lp'?2.86:4.17)).toLocaleString('es-CO',{maximumFractionDigits:2,minimumFractionDigits:2});
 }

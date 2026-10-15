@@ -82,8 +82,8 @@
 
   app.version = 'UNINORTE-V3.12-PDF-APTOS';
   app.config = Object.freeze({
-    garantisaCP: 0.0417,
-    garantisaLP: 0.0286,
+    get garantisaCP(){return global.OFEGlobalSettings ? global.OFEGlobalSettings.current().values.garantisa_cp_percent/100 : 0.0417;},
+    get garantisaLP(){return global.OFEGlobalSettings ? global.OFEGlobalSettings.current().values.garantisa_lp_percent/100 : 0.0286;},
     locale: 'es-CO',
     currency: 'COP'
   });

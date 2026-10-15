@@ -177,13 +177,15 @@ function expPDFRefiComp(){
   pdfPie(doc);doc.save('Comparativa Reestructuracion.pdf');toast('PDF comparativo descargado','success');
 }
 
-function limpiarRefi() {
+async function limpiarRefi() {
+  if(window.OFE_SERVER)try{await window.OFEGlobalSettings?.renew(5);}catch(error){toast(error.message,'error');return;}
   document.getElementById('refi-capital').value = '';
   document.getElementById('refi-intcorr').value = '';
   document.getElementById('refi-mora').value = '';
   document.getElementById('refi-saldo-total').textContent = '$ 0';
   document.getElementById('refi-cuotas-nva').value = 24;
   document.getElementById('refi-tasa-nva').value = 1.53;
+  window.OFEGlobalSettings?.applyDefaults(5);
   document.getElementById('refi-costos').value = '';
   document.getElementById('refi-ingreso').value = '';
   document.getElementById('refi-capacidad').value = '';

@@ -2,6 +2,7 @@
 const http=require('node:http'),fs=require('node:fs'),path=require('node:path');
 const {randomUUID}=require('node:crypto');
 const {openStore,publicUser,ROLES}=require('./store.cjs');
+const {DEFINITIONS,validate:validateSettings,readSettings}=require('./settings.cjs');
 const {digest,token,hashPassword,verifyPassword,passwordPolicy}=require('./security.cjs');
 const fail=(status,message,field)=>Object.assign(new Error(message),{status,field});
 const TYPES={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.png':'image/png'};
@@ -68,7 +69,7 @@ async function createApplication(options={}){
   if(old.activo&&!next.activo&&db.prepare("SELECT count(*) AS n FROM programs WHERE json_extract(data,'$.activo')=1").get().n<=1)throw fail(409,'Debe quedar al menos un programa activo para iniciar el simulador.');
   let changed=false;
   for(const key of allowed)if(old[key]!==next[key]){changed=true;audit(actor,'PROGRAM_UPDATE','programs',{type:'program',id,name:old.nombre},key,old[key],next[key],requestId);}
-  if(changed)db.prepare('UPDATE programs SET data=?,version=version+1 WHERE id=?').run(JSON.stringify(next),id);
+  if(changed)db.prepare('UPDATE programs SET data=?,version=version+1,updated_at=?,updated_by=? WHERE id=?').run(JSON.stringify(next),new Date().toISOString(),actor.id,id);
   return {...next,version:row.version+(changed?1:0)};
  }
  async function route(req,res){
@@ -122,7 +123,22 @@ async function createApplication(options={}){
      audit(s.user,'PASSWORD_CHANGE','users',entity(s.user),null,undefined,undefined,requestId);
     });cookie(res,'',0);return json(res,200,{ok:true,loginRequired:true});
    }
-   if(route==='/api/programs'&&method==='GET'){requireSession(s,'programs.view');return json(res,200,{programs:db.prepare('SELECT * FROM programs ORDER BY rowid').all().map(row=>({...JSON.parse(row.data),version:row.version}))});}
+   if(route==='/api/programs'&&method==='GET'){requireSession(s,'programs.view');return json(res,200,{programs:db.prepare('SELECT * FROM programs ORDER BY rowid').all().map(row=>({...JSON.parse(row.data),version:row.version,updated_at:row.updated_at}))});}
+   if(route==='/api/simulation-settings'&&method==='GET'){requireSession(s,'simulator.use');return json(res,200,readSettings(db));}
+   if(route==='/api/admin/settings'){
+    requireSession(s,method==='GET'?'settings.read':'settings.update');
+    if(method==='GET')return json(res,200,{...readSettings(db),definitions:DEFINITIONS});
+    if(method==='PUT'){
+     const data=await body(req);validateSettings(data.changes);s=live(req,'settings.update');
+     const settings=transaction(()=>{
+      const old=readSettings(db);if(data.version!==old.version)throw fail(409,'La configuración cambió. Recarga antes de guardar.','version');
+      const next={...old.values,...data.changes},changes=Object.keys(data.changes).filter(key=>old.values[key]!==next[key]);
+      for(const key of changes)audit(s.user,'CONFIG_UPDATE','settings',{type:'setting',id:key,name:DEFINITIONS[key].label},key,old.values[key],next[key],requestId);
+      if(changes.length)db.prepare('UPDATE global_settings SET data=?,version=version+1,updated_at=?,updated_by=? WHERE id=1').run(JSON.stringify(next),new Date().toISOString(),s.user.id);
+      return readSettings(db);
+     });return json(res,200,settings);
+    }
+   }
    if(route.startsWith('/api/admin/users')){
     const needed=method==='GET'?'users.read':method==='POST'&&route==='/api/admin/users'?'users.create':'users.update';requireSession(s,needed);
     if(route==='/api/admin/users'&&method==='GET')return json(res,200,{users:db.prepare('SELECT * FROM users ORDER BY created_at DESC').all().map(publicUser)});
@@ -188,11 +204,13 @@ async function createApplication(options={}){
    if(route==='/api/admin/audit'&&method==='GET'){
     requireSession(s,'audit.read');const conditions=[],args=[];
     if(s.user.role==='program_admin')conditions.push("module='programs'");
-    if(url.searchParams.get('actor')){conditions.push('(actor_user_id=? OR actor_email=?)');args.push(url.searchParams.get('actor'),url.searchParams.get('actor'));}
-    for(const [key,column] of [['action','action'],['module','module']])if(url.searchParams.get(key)){conditions.push(column+'=?');args.push(url.searchParams.get(key));}
+    if(url.searchParams.get('actor')){conditions.push("(actor_user_id=? OR instr(lower(coalesce(actor_email,'')),lower(?))>0 OR instr(lower(coalesce(actor_name,'')),lower(?))>0)");args.push(url.searchParams.get('actor'),url.searchParams.get('actor'),url.searchParams.get('actor'));}
+    for(const [key,column] of [['action','action'],['module','module'],['result','result']])if(url.searchParams.get(key)){conditions.push(column+'=?');args.push(url.searchParams.get(key));}
+    if(url.searchParams.get('entity')){conditions.push("(instr(lower(coalesce(entity_name,'')),lower(?))>0 OR entity_id=?)");args.push(url.searchParams.get('entity'),url.searchParams.get('entity'));}
     for(const [key,operator] of [['from','>='],['to','<=']])if(url.searchParams.get(key)){
-     const value=url.searchParams.get(key);if(!/^\d{4}-\d{2}-\d{2}$/.test(value))throw fail(422,'Fecha inválida.');conditions.push('timestamp'+operator+'?');args.push(value+(key==='from'?'T00:00:00.000Z':'T23:59:59.999Z'));
+     const value=url.searchParams.get(key);if(!/^\d{4}-\d{2}-\d{2}$/.test(value)||!Number.isFinite(Date.parse(value))||new Date(value).toISOString().slice(0,10)!==value)throw fail(422,'Fecha inválida.');conditions.push('timestamp'+operator+'?');args.push(value+(key==='from'?'T00:00:00.000Z':'T23:59:59.999Z'));
     }
+    if(url.searchParams.get('from')&&url.searchParams.get('to')&&url.searchParams.get('from')>url.searchParams.get('to'))throw fail(422,'La fecha inicial debe ser anterior o igual a la final.');
     const offset=Number(url.searchParams.get('offset')||0);if(!Number.isSafeInteger(offset)||offset<0)throw fail(422,'Página inválida.');
     const records=db.prepare('SELECT * FROM audit_log'+(conditions.length?' WHERE '+conditions.join(' AND '):'')+' ORDER BY timestamp DESC,id DESC LIMIT 100 OFFSET ?').all(...args,offset);
     return json(res,200,{records,nextOffset:records.length===100?offset+100:null});
@@ -209,7 +227,7 @@ async function createApplication(options={}){
   if(route==='/apps/ofe/config.js')return serve(res,path.join(root,'apps/ofe/config.js'),method);
   if(route==='/runtime-config.js'){res.setHeader('Content-Type',TYPES['.js']);return res.end('window.OFE_SERVER = Object.freeze('+JSON.stringify({authProvider:'local',apiBaseUrl:'/api',userId:s.user.id})+');');}
   if(route.startsWith('/admin')){
-   const permissions={'/admin':'audit.read','/admin/users':'users.read','/admin/programs':'programs.update','/admin/audit':'audit.read'};
+   const permissions={'/admin':'audit.read','/admin/users':'users.read','/admin/programs':'programs.update','/admin/audit':'audit.read','/admin/settings':'settings.read'};
    if(!permissions[route])throw fail(404,'Ruta no encontrada.');requireSession(s,permissions[route]);
   }
   if(route==='/apps/ofe/'||route==='/apps/ofe/index.html'||route.startsWith('/admin')){
@@ -233,7 +251,7 @@ async function createApplication(options={}){
   if(res.headersSent){res.destroy();return;}
   const status=error.status||500;
   if(req.url.startsWith('/api/admin/')){
-   try { const actor=session(req)?.user;const module=req.url.includes('/programs')?'programs':req.url.includes('/users')?'users':'audit';audit(actor,'ADMIN_REQUEST_FAILURE',module,{type:'request'},null,undefined,undefined,res.getHeader('X-Request-Id'),status===401||status===403?'DENIED':'ERROR'); } catch(_){}
+   try { const actor=session(req)?.user;const module=req.url.includes('/programs')?'programs':req.url.includes('/users')?'users':req.url.includes('/settings')?'settings':'audit';audit(actor,'ADMIN_REQUEST_FAILURE',module,{type:'request'},null,undefined,undefined,res.getHeader('X-Request-Id'),status===401||status===403?'DENIED':'ERROR'); } catch(_){}
   }
   if(status===401&&!req.url.startsWith('/api/'))return redirect(res,'/login');
   json(res,status,{error:status===500?'No fue posible completar la operación.':error.message,...(error.field?{field:error.field}:{})});

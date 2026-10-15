@@ -262,11 +262,13 @@ function calcular7() {
   setTimeout(()=>registrarHistorial(7), 100);
 }
 
-function limpiar7() {
+async function limpiar7() {
+  if(window.OFE_SERVER)try{await window.OFEGlobalSettings?.renew(7);}catch(error){toast(error.message,'error');return;}
   ['mat7','cap7'].forEach(id => { const e=document.getElementById(id); if(e) e.value=''; });
   ['mat7-lbl','cap7-lbl'].forEach(id => { const e=document.getElementById(id); if(e) e.textContent=''; });
   document.getElementById('plazo7').value = 6;
   document.getElementById('tasa7').value  = 1.53;
+  window.OFEGlobalSettings?.applyDefaults(7);
   document.getElementById('prog7').value = '';
   SimuladorOFE.state.ui.initialPaymentCapacity = null;
   SimuladorOFE.state.results.initialPaymentProgramName = '';
@@ -350,7 +352,7 @@ function expXLS7() {
   toast('Excel descargado', 'success');
 }
 
-function limpiarTab(tabId, confirmed = false) {
+async function limpiarTab(tabId, confirmed = false) {
   if(!confirmed) return confirmAction({
     title:'Iniciar una nueva simulación',
     message:'Se limpiarán los campos, resultados y escenarios guardados de esta modalidad.',
@@ -358,6 +360,7 @@ function limpiarTab(tabId, confirmed = false) {
     tone:'danger',
     onConfirm:()=>limpiarTab(tabId, true)
   });
+  if(window.OFE_SERVER)try{await window.OFEGlobalSettings?.renew(tabId);}catch(error){toast(error.message,'error');return;}
   // Reset nivel
   setNivel(tabId, 'pregrado');
   // Reset selects
@@ -378,6 +381,7 @@ function limpiarTab(tabId, confirmed = false) {
     const el = document.getElementById(id);
     if(el) el.value = val;
   });
+  window.OFEGlobalSettings?.applyDefaults(tabId);
   calcTA(tabId);
   // Clear results
   const resPlaceholders = {

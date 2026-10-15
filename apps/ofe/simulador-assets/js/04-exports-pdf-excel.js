@@ -692,13 +692,13 @@ function expPDF1(){
       {label:'Cuota inicial',value:cop(d.cuotaInicial),hint:`${Math.round((d.cuotaInicial/(d.matNeta||d.mat||1))*100)}% del valor del programa`},
       {label:'Plazo del credito',value:`${d.n} meses`},
       {label:'Tasa de interes (EA)',value:tea},
-      {label:'Aporte a Garantisa',value:cop(d.garantisa),hint:'4.17% del monto financiado'}
+      {label:'Aporte a Garantisa',value:cop(d.garantisa),hint:garantisaLabel(d)+'% del monto financiado'}
     ],
     conditionsLeft:[
       ['Tipo de credito','Credito a corto plazo'],['Tasa de interes (EA)',tea],['Plazo',`${d.n} meses`],['Cuota inicial',`${cop(d.cuotaInicial)} (${Math.round((d.cuotaInicial/(d.matNeta||d.mat||1))*100)}%)`]
     ],
     conditionsRight:[
-      ['Monto financiado',cop(d.financiado)],['Total intereses',cop(d.totInt)],['Total del credito',cop(d.totCap+d.totInt)],['Aporte a Garantisa',`${cop(d.garantisa)} (4.17%)`]
+      ['Monto financiado',cop(d.financiado)],['Total intereses',cop(d.totInt)],['Total del credito',cop(d.totCap+d.totInt)],['Aporte a Garantisa',`${cop(d.garantisa)} (${garantisaLabel(d)}%)`]
     ],
     rows:d.rows,totCap:d.totCap,totInt:d.totInt,firstPageRows:5,
     note:'Esta simulacion es informativa y puede variar segun las condiciones vigentes al momento de la formalizacion del credito.'
@@ -718,7 +718,7 @@ function expXLS1(){
       [['']]),
     ['--- PAGO INICIAL ---'],
     ['Pago de Contado',Math.round(d.cuotaInicial)],
-    ['Garantisa (4.17% s/financiado)',Math.round(d.garantisa)],
+    ['Garantisa ('+garantisaLabel(d)+'% s/financiado)',Math.round(d.garantisa)],
     ['Total Pago Inicial',Math.round(d.pagoInicial)],[''],
     ['--- CRÉDITO ---'],
     ['Monto Financiado ('+d.pct+'% de matrícula)',Math.round(d.financiado)],
@@ -785,8 +785,8 @@ function expXLS2(){
       [['']]),
     ['--- PAGO INICIAL ---'],
     ['Pago de Contado',Math.round(d.cuotaInicial)],
-    ['Garantisa CP (4.17%)',Math.round(d.garCP)],
-    ['Garantisa LP (2.86%)',Math.round(d.garLP)],
+    ['Garantisa CP ('+garantisaLabel(d)+'%)',Math.round(d.garCP)],
+    ['Garantisa LP ('+garantisaLabel(d,'lp')+'%)',Math.round(d.garLP)],
     ['Total Pago Inicial',Math.round(d.pagoInicial)],[''],
     ['Total Crédito CP',d.CP?Math.round(d.CP.totCap+d.CP.totInt):0],
     ['Total Crédito LP',d.LP?Math.round(d.LP.totCap+d.LP.totInt):0],

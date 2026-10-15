@@ -1,7 +1,7 @@
 (function initOFEPermissions(global){
   'use strict';
   const permissions = new Set();
-  const supported = ['simulator.use', 'programs.view', 'programs.update', 'audit.view', 'audit.read', 'users.read', 'users.create', 'users.update', 'users.disable'];
+  const supported = ['simulator.use', 'programs.view', 'programs.update', 'audit.view', 'audit.read', 'users.read', 'users.create', 'users.update', 'users.disable', 'settings.read', 'settings.update'];
   async function refresh() {
     permissions.clear();
     try {
