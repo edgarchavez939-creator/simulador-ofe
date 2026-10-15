@@ -4,7 +4,7 @@ Arquitectura modular sin framework ni build system.
 
 ## Estado actual — iteración funcional v1E
 
-Las aplicaciones activas están en `apps/public` y `apps/ofe`. Incluyen búsqueda de programas, matrícula readonly desde catálogo, capacidad efectiva y totales iniciales explícitos. Informe y contrato pendiente de DTIC: [FUNCTIONAL_V1E](docs/FUNCTIONAL_V1E.md).
+La entrada raíz de GitHub Pages redirige a `apps/public/`, conservando el enlace habitual. Las aplicaciones activas están en `apps/public` y `apps/ofe`. Incluyen búsqueda de programas, matrícula readonly desde catálogo, capacidad efectiva y totales iniciales explícitos. Informe y contrato pendiente de DTIC: [FUNCTIONAL_V1E](docs/FUNCTIONAL_V1E.md).
 
 Autenticación, sesiones, autorización servidor y auditoría están pendientes de DTIC por decisión del usuario. El actualizador conserva la validación y vista previa; acceso administrativo y publicación permanecen cerrados hasta la integración institucional. El PIN local no es autenticación.
 
