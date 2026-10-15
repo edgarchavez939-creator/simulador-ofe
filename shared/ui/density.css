@@ -75,3 +75,58 @@ body { font-size: var(--type-body); }
 .result-hero { container-type:inline-size; }
 .result-hero__metric-value { text-overflow:clip; }
 @container(max-width:560px) { .result-hero__metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+
+/* v7: subtítulos con la misma escala que Situación actual / Nueva propuesta. */
+:root { --type-form-section:var(--fs-xs); }
+.form-section-label, .group__title {
+ font-size:var(--type-form-section); font-weight:700; letter-spacing:.5px;
+ line-height:1.45; text-transform:uppercase;
+}
+.form-section-label .icon, .group__title > :is(.icon,.icon-host) { width:16px; height:16px; }
+
+/* Los datos y los campos se apoyan en superficies, con separaciones consistentes. */
+.admin-dialog { width:min(680px,calc(100vw - 32px)); }
+.admin-dialog .modal__head { padding:20px 24px; background:var(--surface-panel); border-bottom:1px solid var(--border-default); }
+.admin-dialog .modal__title { line-height:1.35; }
+.admin-dialog .modal__desc { max-width:58ch; margin-top:6px; font-size:var(--type-small); line-height:1.5; }
+.admin-dialog .modal-close-btn { width:36px; height:36px; min-height:36px; border-radius:8px; }
+.admin-dialog .modal-close-btn .icon { width:18px; height:18px; }
+.admin-dialog .modal__body { padding:20px 24px; background:var(--surface-2); }
+.admin-dialog .admin-form .btn { margin:0; }
+.admin-dialog .parameter-section, .admin-dialog .program-review {
+ padding:16px; border:1px solid var(--border-default); border-radius:10px; background:var(--surface-panel); margin-bottom:16px;
+}
+.admin-dialog .parameter-section > h3, .admin-dialog .program-review > h3 {
+ margin:0 0 14px; padding-bottom:10px; border-bottom:1px solid var(--border-subtle); font-size:13px; font-weight:600;
+}
+.program-context { padding:14px 16px; margin-bottom:16px; border:1px solid var(--border-default); border-left:3px solid var(--accent); border-radius:10px; background:var(--surface-panel); }
+.program-context h3 { font-size:14px; font-weight:600; }
+.program-context .admin-eyebrow { font-size:11px; letter-spacing:.5px; margin-bottom:4px; }
+.program-value-pair { align-items:stretch; gap:14px; }
+.program-value-pair > div:first-child { display:flex; flex-direction:column; justify-content:center; padding:12px; border:1px solid var(--border-subtle); border-radius:8px; background:var(--surface-2); }
+.program-value-pair strong { font-size:16px; font-weight:600; }
+.admin-dialog .field > label { display:block; margin-bottom:6px; font-size:12px; font-weight:500; }
+.admin-dialog .field__hint { margin-top:5px; font-size:11px; }
+.admin-dialog .tool-grid-2 { gap:14px; }
+.program-editor .inline-control-label { display:flex; align-items:center; gap:8px; padding:10px 12px; border:1px solid var(--border-subtle); border-radius:8px; background:var(--surface-2); font-size:12px; }
+.admin-dialog .dialog-actions { padding-top:16px; margin-top:4px; border-top:1px solid var(--border-default); gap:10px; }
+.audit-facts { gap:10px; margin:0; }
+.audit-facts > div { padding:12px 14px; border:1px solid var(--border-default); border-radius:8px; background:var(--surface-panel); }
+.audit-facts dt { font-size:11px; margin-bottom:5px; }
+.audit-facts dd { font-size:13px; line-height:1.5; font-weight:600; }
+.audit-facts dd small { font-size:11px; margin-top:2px; }
+.audit-change-title { margin-top:20px; font-size:13px; }
+.audit-change { gap:10px; margin-block:10px 14px; }
+.audit-change > section { padding:14px; border-radius:8px; }
+.audit-change > section:last-child { border-color:color-mix(in srgb,var(--accent) 35%,var(--border-default)); }
+.audit-change h4 { font-size:11px; margin-bottom:8px; }
+.audit-change strong { font-size:15px; line-height:1.5; }
+.audit-object { margin:0; }.audit-object dt { font-size:11px; }.audit-object dd { font-size:13px; }
+.audit-outcome { justify-content:space-between; margin:0; padding:10px 14px; border:1px solid var(--border-default); border-radius:8px; background:var(--surface-panel); font-size:12px; }
+.audit-technical { padding:12px 14px; margin-top:12px; border:1px solid var(--border-default); border-radius:8px; background:var(--surface-panel); }
+@media(max-width:640px) {
+ .admin-dialog { width:calc(100vw - 24px); }
+ .admin-dialog .modal__head, .admin-dialog .modal__body { padding:16px; }
+ .admin-dialog .parameter-section, .admin-dialog .program-review { padding:14px; }
+ .audit-facts { grid-template-columns:1fr; }
+}

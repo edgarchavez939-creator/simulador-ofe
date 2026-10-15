@@ -1,0 +1,41 @@
+/* Acceso v7: una introducción sobria y un formulario claramente contenido. */
+.access-page { background:var(--surface-page); color:var(--text-body); }
+.access-header { display:flex; align-items:center; justify-content:space-between; gap:20px; width:min(1160px,100%); margin-inline:auto; padding:28px 40px; }
+.access-brand { display:flex; align-items:center; gap:12px; }
+.access-brand__mark { display:grid; place-items:center; width:42px; height:42px; border-radius:10px; background:#960a11; color:#fff; font-size:12px; font-weight:700; letter-spacing:.04em; border-bottom:3px solid var(--uninorte-gold); }
+.access-brand strong { display:block; font-size:12px; letter-spacing:.05em; font-weight:700; color:var(--text-heading); }
+.access-brand small { display:block; margin-top:4px; font-size:11px; color:var(--text-muted); }
+.access-header > p { color:var(--text-muted); font-size:11px; }
+.access-layout { flex:1; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,400px); align-items:center; gap:80px; width:min(1060px,100%); margin:auto; padding:48px 40px 64px; }
+.access-intro { padding:8px 0; }
+.access-kicker { display:flex; align-items:center; gap:9px; color:var(--accent); font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; margin-bottom:20px; }
+.access-kicker::before { content:''; width:24px; height:2px; background:var(--uninorte-gold); }
+.access-intro h1 { max-width:12ch; margin:0 0 20px; color:var(--text-heading); font-size:34px; line-height:1.12; letter-spacing:-.035em; font-weight:650; }
+.access-intro__copy { max-width:34ch; font-size:16px; line-height:1.65; color:var(--text-muted); }
+.access-features { list-style:none; padding:0; margin:32px 0 0; max-width:340px; }
+.access-features li { display:flex; gap:12px; align-items:center; padding:14px 0; border-top:1px solid var(--border-default); font-size:12px; }
+.access-features .icon { width:17px; height:17px; color:var(--accent); flex-shrink:0; }
+.access-features span { color:var(--text-body); }
+.access-card { padding:32px; border:1px solid var(--border-default); border-top:3px solid #960a11; border-radius:14px; background:var(--surface-panel); box-shadow:0 12px 36px rgba(30,20,15,.06); }
+.access-card__icon { display:grid; place-items:center; width:40px; height:40px; margin-bottom:20px; border:1px solid var(--border-default); border-radius:10px; background:var(--surface-2); color:var(--accent); }
+.access-card__icon .icon { width:20px; height:20px; }
+.access-card h2 { font-size:22px; font-weight:600; letter-spacing:-.025em; line-height:1.35; color:var(--text-heading); }
+.access-card > p { margin-top:8px; color:var(--text-muted); font-size:12px; line-height:1.65; }
+.access-card #login-form { margin-top:24px; }
+.access-card #login-form .field { margin-bottom:18px; }
+.access-card #login-form .field__label { font-size:12px; font-weight:500; }
+.access-card #login-form :is(.input,.input-affix) { height:44px; min-height:44px; background:var(--surface-panel); }
+.access-card #login-form .auth-password .input { height:42px !important; min-height:42px !important; background:transparent; }
+.access-card #login-form .auth-password .btn { height:36px; width:38px; margin-right:3px; }
+.access-card #login-submit { height:44px; min-height:44px; margin-top:24px; }
+.access-card .access-card__note { display:flex; align-items:flex-start; gap:7px; margin-top:20px; padding-top:16px; border-top:1px solid var(--border-subtle); font-size:11px; }
+.access-card__note .icon { width:14px; height:14px; flex-shrink:0; margin-top:2px; }
+.access-footer { display:flex; justify-content:space-between; gap:16px; padding:20px 40px; border-top:1px solid var(--border-default); width:min(1160px,100%); margin-inline:auto; color:var(--text-muted); font-size:11px; }
+@media(max-width:900px) { .access-layout { gap:36px; grid-template-columns:minmax(0,1fr) minmax(0,360px); }.access-intro h1 { font-size:34px; }.access-card { padding:26px; } }
+@media(max-width:640px) {
+ .access-header { padding:20px 24px; }.access-header > p { display:none; }.access-brand strong { font-size:11px; }.access-brand small { font-size:10px; }
+ .access-layout { display:block; padding:20px 24px 32px; max-width:440px; }
+ .access-intro { padding:0; margin-bottom:24px; }.access-kicker { margin-bottom:10px; font-size:10px; }.access-intro h1 { max-width:none; font-size:28px; margin-bottom:10px; }.access-intro__copy { font-size:13px; line-height:1.55; }.access-features { display:none; }
+ .access-card { padding:24px; border-radius:12px; }.access-card__icon { width:34px; height:34px; margin-bottom:14px; }.access-card h2 { font-size:20px; }
+ .access-footer { padding:18px 24px; flex-direction:column; gap:6px; text-align:center; }
+}
