@@ -57,3 +57,14 @@ Los catálogos embebidos, 29 pregrados/144 posgrados, matrículas y los seis arc
 hash. No se cambian API, autenticación ni almacenamiento. La configuración de
 Render tiene despliegue automático desactivado: es necesario desplegar el nuevo
 commit para que los cambios aparezcan en línea.
+
+## Excepción de marca para Banco Aliado
+
+El resumen, el plan de pagos y la comparación de escenarios bancarios usan
+acentos grises, encabezado neutro y pie «Banco Aliado», sin logo ni nombre
+Uninorte. La autoría del archivo es «Simulador de crédito»; la nota de validación
+remite a la entidad financiera. La descarga bancaria no carga la identidad
+institucional y omite el logo incluso si se proporciona al constructor.
+Se conserva Aptos Narrow y el mismo snapshot de importes y cuotas.
+Se actualizan las expectativas existentes sin ejecutar pruebas, por indicación
+del usuario.

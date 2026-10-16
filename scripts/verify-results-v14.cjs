@@ -20,7 +20,7 @@ test('compact Excel retains exact totals and every schedule entry, including sep
  for(const key of [1,2,3,7,5,'languages']){
   const report=JSON.parse(JSON.stringify(c.OFEReport.normalize(key,c.OFEReport.result(key)))),before=JSON.stringify(report),wb=host.OFEExcel.build(report,logo),opened=new ExcelJS.Workbook();await opened.xlsx.load(await wb.xlsx.writeBuffer());
   assert.equal(JSON.stringify(report),before);
-  const summary=opened.getWorksheet('Resumen');assert.ok(summary.rowCount<=42);assert.equal(summary.getImages()[0].range.ext.width,324);
+  const summary=opened.getWorksheet('Resumen');assert.ok(summary.rowCount<=42);if(key===3){assert.equal(summary.getImages().length,0);assert.equal(opened.creator,'Simulador de crédito');assert.ok(!summary.headerFooter.oddFooter.includes('Universidad del Norte'));}else assert.equal(summary.getImages()[0].range.ext.width,324);
   const values=[];summary.eachRow(row=>row.eachCell(cell=>{if(cell.type!==ExcelJS.ValueType.Merge)values.push(cell.value);}));
   const total=report.sections.find(s=>/^Totales/.test(s.title)).fields.find(f=>/^Costo total/.test(f.label)).value;assert.ok(values.includes(total));
   assert.equal(values.filter(v=>v==='Monto financiado').length,report.sections.filter(s=>/^(Financiación|Componente)/.test(s.title)).flatMap(s=>s.fields).filter(f=>f.label==='Monto financiado').length);
