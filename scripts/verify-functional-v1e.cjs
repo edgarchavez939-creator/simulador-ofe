@@ -53,10 +53,13 @@ for (const app of ['public','ofe']) {
     await c.expXLS7();assert.equal(workbook.sections.flatMap(section=>section.fields).find(row=>row.label==='Total inicial').value,d.desembolso);
     // El último script sustituye los exportadores legacy en el navegador.
     vm.runInContext(read(`apps/${app}/simulador-assets/js/10-pdf-aptos.js`),c);
-    c.captureReport=cfg=>report=cfg;vm.runInContext('PDFV5.report = cfg => captureReport(cfg)',c);
-    await c.expPDF7();assert.equal(report.hero.label,'Total inicial a pagar');
-    assert.equal(report.hero.value,'$ 1.925.100');assert.equal(report.hero.side[0].value,'$ 1.800.000');
-    assert.equal(report.hero.side[1].value,'$ 125.100');assert.match(report.note,/no incluye el aporte/);
+    c.OFEPdf={download:async reports=>(report=reports[0])};
+    await c.expPDF7();
+    const fields=report.sections.flatMap(section=>section.fields);
+    assert.equal(fields.find(f=>f.label==='Total inicial').value,1925100);
+    assert.equal(fields.find(f=>f.label==='Cuota inicial requerida (sin Garantisa)').value,1800000);
+    assert.equal(fields.find(f=>f.label==='Aporte Garantisa').value,125100);
+    assert.match(report.sections.find(s=>s.title==='Aporte inicial').note,/no incluye Garantisa/);
     assert.equal(workbook.sections.flatMap(section=>section.fields).find(row=>row.label==='Cuota inicial requerida (sin Garantisa)').value,d.cuotaInicial);
   });
 }

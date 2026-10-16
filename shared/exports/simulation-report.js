@@ -45,12 +45,26 @@
   const program=Object.hasOwn(metadata,'program')?metadata.program:!(/^(Programa|Sin programa.*|.*Ingresar matrícula manualmente)$/i.test(fallbackName))?fallbackName:null;
   return {modality,program:key===5?null:program,level:metadata.level||d.nivel||null,occurredAt:metadata.occurredAt||null,generatedBy:metadata.generatedBy||null,sections,plans,pending,disclaimer};
  }
- global.OFEReport=Object.freeze({normalize,result,disclaimer});
+ const pdfModels=new WeakMap();let sessionSignature='Usuario Público';
+ const copy=value=>JSON.parse(JSON.stringify(value));
+ function capturePdf(key,d){
+  const model=normalize(key,d);model.signature=sessionSignature;model.projections=[];
+  const projectionKey=key===2?'projectionLP':key==='languages'?'projectionLanguagesLP':null;
+  const projection=projectionKey&&global.SimuladorOFE.state.results[projectionKey];
+  if(projection)model.projections.push({label:key==='languages'?'Idiomas':'Matrícula',data:copy(projection)});
+  pdfModels.set(d,copy(model));return model;
+ }
+ function pdf(key,d=result(key)){
+  if(!d)throw Error('Primero realiza la simulación.');
+  return copy(pdfModels.get(d)||capturePdf(key,d));
+ }
+ global.OFEReport=Object.freeze({normalize,result,disclaimer,pdf});
  if(global.SimuladorOFE)global.SimuladorOFE.register('report-snapshots',{async init(app){
-  const user=global.OFE_SERVER?await global.OFEAuth.getUser():null;
+  const user=global.OFE_SERVER&&!global.OFE_PUBLIC?await global.OFEAuth.getUser():null;
+  const email=user?.email;sessionSignature=typeof email==='string'&&email.includes('@')?email.slice(0,email.indexOf('@')):'Usuario Público';
   for(const [name,key] of [['calcular1',1],['calcular2',2],['calcular3',3],['calcular7',7],['calcularRefi',5],['calcularIdiomas','languages']]){
    const original=global[name];if(typeof original!=='function')continue;
-   global[name]=function(...args){const before=result(key),value=original.apply(this,args),after=result(key);if(after&&after!==before){const tab=key==='languages'?app.state.languages.context.tabId:key;const selected=(tab===5?null:global.programaSeleccionado?.(tab));after.reportSnapshot=Object.freeze({occurredAt:new Date().toISOString(),program:selected?.nombre||null,level:selected?.nivel||null,generatedBy:user?.name||null});}return value;};
+   global[name]=function(...args){const before=result(key),value=original.apply(this,args),after=result(key);if(after&&after!==before){const tab=key==='languages'?app.state.languages.context.tabId:key;const selected=(tab===5?null:global.programaSeleccionado?.(tab));after.reportSnapshot=Object.freeze({occurredAt:new Date().toISOString(),program:selected?.nombre||null,level:selected?.nivel||null,generatedBy:user?.name||null});capturePdf(key,after);}return value;};
   }
  }});
 })(window);
