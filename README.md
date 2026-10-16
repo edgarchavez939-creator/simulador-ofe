@@ -1,152 +1,71 @@
-# Simulador de Crédito Educativo OFE — P3.10 RC
+# Simulador de Crédito — Oficina de Financiamiento Estudiantil
 
-Arquitectura modular sin framework ni build system.
+Aplicación de apoyo a la simulación de crédito educativo de la Universidad del Norte, con una pantalla pública y un área interna para usuarios autorizados.
 
-## Estado actual — fase v2 autónoma
+## Estado actual
 
-Se incorporan reinicio central de simulaciones al cambiar programa, calibración de temas, Reestructuración v2 y un servicio real de usuarios, permisos y auditoría. Se conservan los 29 pregrados, 144 posgrados, matrículas originales e IDs, y los archivos del motor financiero común.
+Actualizado al **16 de octubre de 2026**, conforme a la confirmación del responsable del proyecto:
 
-Para usar OFE con seguridad real: Node >=24, `npm run bootstrap-admin`, `npm start` y entrar en `http://127.0.0.1:8787`. No hay cuentas predeterminadas. El administrador crea los usuarios desde la aplicación. Pruebas: `npm test`.
+- La versión en línea de Render está actualizada con los últimos cambios.
+- La revisión funcional de la versión actual fue realizada y su funcionamiento fue confirmado por el responsable.
+- Los textos de los exportables ya fueron enviados a Jurídica. Está pendiente su concepto y, si corresponde, aplicar sus observaciones.
+- La información para el traslado e integración institucional está resumida en [Entrega a DTIC](docs/DTIC_INTEGRATION.md).
 
-[Pruebas gratis en Render](docs/RENDER_FREE_DEMO.md) · [Informe técnico](docs/PHASE_V2.md) · [Inicio, Render y traslado a DTIC](docs/AUTONOMOUS_DEPLOYMENT.md) · [Seguridad](docs/SECURITY.md).
+## Funcionalidades disponibles
 
-GitHub Pages sigue sirviendo la app pública desde `apps/public/`. El servidor autónomo se publica por separado: un push a Pages no ejecuta login, usuarios ni auditoría. La propuesta Render está preparada y pendiente de cuenta, aceptación del costo y prueba del despliegue. Las secciones históricas siguientes describen la evolución P3.x; la entrega v2 prevalece sobre los flujos anteriores de PIN y reemplazo de HTML.
+- Simulación de corto plazo, corto y largo plazo, banco aliado, cuota inicial, idiomas y reestructuración de crédito.
+- Beneficios y descuentos, comparación de escenarios, historial de simulaciones y conversor de tasas.
+- Exportación a PDF y Excel. Los documentos de Banco Aliado tienen presentación neutra, sin marca institucional. Excel utiliza Aptos Narrow; la aplicación y el PDF utilizan Public Sans.
+- Administración de programas, matrículas e idiomas, con edición individual e importación desde Excel. Catálogo base: **29 pregrados y 144 posgrados**, con identificadores únicos.
+- Usuarios, permisos por rol y registro de los cambios administrativos en el servidor.
+- Configuración de parámetros, colores de marca y acceso público, con enlace, código de iframe y vista previa.
 
-## Estructura
+El inicio de sesión actual utiliza cuentas locales del aplicativo. La conexión con las cuentas institucionales mediante Microsoft Entra ID está pendiente de coordinación e implementación con DTIC.
 
-- `index.html`: estructura, vistas y bloques actualizables `PROGRAMAS` / `POSGRADOS`.
-- `simulador-assets/styles.css`: Design System y composiciones visuales.
-- `simulador-assets/js/00-runtime.js`: runtime compartido, configuración, estado, registro de módulos y ciclo de vida.
-- `simulador-assets/js/01-core-ui.js`: navegación, tema, programas y control local de acceso.
-- `simulador-assets/js/02-reestructuracion.js`: Reestructuración de Crédito.
-- `simulador-assets/js/03-finance-core.js`: motor financiero común.
-- `simulador-assets/js/04-exports-pdf-excel.js`: PDF/Excel de simulaciones.
-- `simulador-assets/js/05-idiomas-herramientas.js`: Idiomas, Conversor de Tasas y herramientas financieras.
-- `simulador-assets/js/06-actions-history.js`: delegación de eventos, historial y escenarios.
-- `simulador-assets/js/07-financing-engine.js`: beneficios, distribución y sincronización de financiación.
-- `simulador-assets/js/08-updater.js`: importación Excel y actualización de programas.
-- `simulador-assets/js/09-bootstrap.js`: único punto de arranque.
+## Ambientes y publicación
 
-## Ciclo de vida
+| Ambiente | Acceso | Alcance |
+| --- | --- | --- |
+| Render | [Simulador público](https://simulador-ofe-pruebas.onrender.com/apps/public/) · [Acceso interno](https://simulador-ofe-pruebas.onrender.com/login) | Aplicación con servicio de datos, autenticación, administración y auditoría. |
+| GitHub Pages | [Simulador público estático](https://edgarchavez939-creator.github.io/simulador-ofe/) | Versión pública con catálogo embebido; no ejecuta el servicio de usuarios ni la administración. |
 
-Los módulos se registran mediante `SimuladorOFE.register(nombre, { init() })`. Ningún módulo funcional debe depender de ejecutar inicialización al momento de descargarse. `09-bootstrap.js` llama una sola vez a `SimuladorOFE.init()` cuando el DOM está disponible.
+GitHub Pages se publica desde `main`; Render utiliza `feat/dtic-readiness`. Las actualizaciones guardadas en la administración de Render se consultan mediante su servicio de datos y no se sincronizan automáticamente con el catálogo estático de GitHub Pages.
 
-Las APIs de dominio que necesitan ser visibles para diagnóstico o integración se publican en `SimuladorOFE.services`. La configuración institucional compartida está en `SimuladorOFE.config`.
+El enlace y el iframe del servicio público están preparados para incorporarse a la página de [Crédito Uninorte](https://www.uninorte.edu.co/web/apoyo-financiero/credito-uninorte). La publicación dentro del portal y las autorizaciones correspondientes se coordinan con DTIC y el responsable de la web.
 
-## Estado por dominio
+## Ejecución local
 
-El estado mutable de la aplicación vive únicamente bajo `SimuladorOFE.state`; no se usan propiedades privadas `window._*` ni declaraciones `let`/`var` mutables en el scope superior.
+Requisito: **Node.js 24 o posterior**. La aplicación utiliza SQLite para guardar usuarios, catálogo, configuración y auditoría.
 
-- `state.access`: desbloqueo local y flujo del PIN.
-- `state.ui`: nivel académico por pestaña y unidades de plazo.
-- `state.results`: resultados CP, mixto, banco, cálculo de cuota inicial, idiomas y proyecciones.
-- `state.restructuring`: resultado actual y escenarios de Reestructuración de Crédito.
-- `state.languages`: contexto, beneficios y configuración del Conversor de Tasas.
-- `state.financing`: beneficios por simulación y bloqueo de redistribución.
-- `state.comparison`: escenarios comparativos de simulaciones.
-- `state.history`: configuración de persistencia del historial.
-- `state.updater`: HTML fuente, workbook, hoja activa, mapeos y programas vigentes.
+```bash
+npm run bootstrap-admin
+npm start
+```
 
-Los módulos pueden conservar referencias locales a su dominio, pero esas referencias no son fuentes de verdad independientes.
+El primer comando crea el administrador inicial si la base está vacía. No existen cuentas predeterminadas. Abrir `http://127.0.0.1:8787`; el administrador gestiona las demás cuentas desde el aplicativo.
 
-## Regla del actualizador
+La base local se guarda por defecto en `var/ofe.sqlite`, fuera del repositorio. El historial de simulaciones se conserva en el navegador; no es un archivo central de expedientes.
 
-Los marcadores `PROGRAMAS_START/END` y `POSGRADOS_START/END` deben permanecer dentro de `index.html`. En la arquitectura actual separada, el actualizador solo prepara propuestas. La exportación de un catálogo modificado está deshabilitada hasta contar con la escritura y auditoría transaccional de DTIC.
+## Estructura principal
 
-## Despliegue
+- `apps/public/`: pantalla pública de simulación.
+- `apps/ofe/`: aplicación interna y administración.
+- `server/`: autenticación, permisos, servicio de datos, migraciones y auditoría.
+- `shared/`: catálogo, configuración, componentes visuales y exportables compartidos.
+- `scripts/`: controles automatizados y utilidades de verificación.
+- `docs/`: documentación de uso, operación e integración.
 
-Publicar el contenido del paquete conservando rutas relativas. No publicar `index.html` aislado: necesita `simulador-assets/`.
+La entrada raíz de GitHub Pages conduce a `apps/public/`. La publicación debe conservar los recursos y las rutas del proyecto; un archivo HTML aislado no contiene toda la aplicación.
 
+Los programas se actualizan en el área administrativa del servicio, con validación, control de permisos y registro de cambios. Los antiguos flujos de PIN y reemplazo manual del HTML se conservan únicamente como antecedentes.
 
-## P3.1 — Accesibilidad e interacción
+## Documentación de entrega
 
-- Modales fuera del árbol accesible cuando están cerrados (`hidden` + `aria-hidden`).
-- Trampa de foco y retorno al control de origen al cerrar un modal.
-- `Escape` cierra la capa superior y `Enter` no interfiere con botones del PIN.
-- Modales con `aria-labelledby` y `aria-describedby`.
-- Todos los `input`, `select`, `textarea` y botones estáticos tienen nombre accesible.
-- Los accesos a Financiación de Idiomas son botones nativos.
-- En móvil, el sidebar cerrado usa `inert`/`aria-hidden` para evitar foco fuera de pantalla.
-- Enlace de salto directo al contenido principal.
-- Ajustes responsive para modales y entradas PIN en pantallas pequeñas.
-- Se conserva `prefers-reduced-motion`.
+- [Resumen para DTIC: lo entregado y lo pendiente](docs/DTIC_INTEGRATION.md).
+- [Instalación, respaldo, restauración y traslado](docs/AUTONOMOUS_DEPLOYMENT.md).
+- [Acceso público e integración en la web institucional](docs/PUBLIC_INTEGRATION_PLAN.md).
+- [Seguridad, sesiones y permisos](docs/SECURITY.md).
+- [Configuración de parámetros, colores y vista previa](docs/CONFIGURACION_PUBLICA_COLORES_V11.md).
+- [Estado de la revisión de textos por Jurídica](docs/PDF_TEXTS_FOR_LEGAL_REVIEW.md).
 
-
-## P3.2 — Pulido visual y feedback
-
-- Feedback del actualizador normalizado con `.feedback` y variantes semánticas.
-- Mensajes dinámicos anuncian cambios mediante `aria-live="polite"`.
-- Se eliminaron estilos inline repetidos y se sustituyeron por utilidades y componentes del Design System.
-- Resúmenes del actualizador usan `summary-tile` y grids responsive reutilizables.
-- Se validó que no existan atributos `class` duplicados tras la migración.
-- La lógica financiera y los contratos de servicios permanecen sin cambios.
-
-
-## P3.3 — Convergencia final al Design System
-
-- Los estilos inline bajaron de 142 a 27.
-- Los 27 estilos inline restantes dependen de valores calculados en runtime (porcentajes, colores de escenarios o filas dinámicas); no quedan estilos inline estáticos.
-- Se consolidaron utilidades de espaciado, tipografía, grids, callouts, paneles, banners, estados vacíos y micro-notas.
-- Se eliminaron dos atributos `class` duplicados detectados en templates dinámicos del motor financiero.
-- Las composiciones estáticas ya consumen clases/tokens del Design System en lugar de declaraciones `style` locales.
-
-## P3.4 — Responsive hardening
-
-- Breakpoints revisados para escritorio, tablet, móvil y móvil estrecho: 1024, 768, 640, 430 y 360 px.
-- Grids dobles, pares sincronizados, mapeadores y filas de tasa colapsan a una columna cuando el ancho lo requiere.
-- Banners de totales se apilan en móvil y ocultan operadores decorativos que consumen ancho.
-- Tablas mantienen desplazamiento horizontal controlado y muestran una indicación de deslizamiento en móviles.
-- Botoneras, herramientas de vista, pies de modal y resultados se convierten a distribución vertical en pantallas estrechas.
-- Cards, KPIs, modales y navegación reducen padding/tipografía progresivamente sin modificar el contenido.
-- Sidebar móvil, modales y controles PIN conservan las mejoras de accesibilidad introducidas en P3.1.
-
-La lógica financiera y los contratos de servicios permanecen sin cambios en P3.3/P3.4.
-
-
-## P3.5 + P3.6 — Estados UX y accesibilidad final
-
-- Lectura de HTML/Excel anuncia estado de procesamiento, error y finalización mediante `aria-live` y `aria-busy`.
-- Acciones de generación/exportación utilizan estado ocupado accesible sin duplicar ejecuciones.
-- Exportaciones PDF/Excel muestran confirmación de descarga.
-- Resultados principales (`CP`, mixto, banco, reestructuración, cuota inicial e idiomas) son regiones vivas `polite`.
-- Tooltips de ayuda son alcanzables por teclado y anuncian su contenido mediante nombre accesible.
-- Tablas generadas y estáticas reciben `scope=col` y sus contenedores desplazables son regiones enfocables con nombre accesible.
-- El título de vista es el `h1` principal dinámico de la aplicación.
-- Alertas temporales usan `hidden` en lugar de estilos de visibilidad directos.
-- En tema claro se reforzaron los tonos semánticos `success`, `warning` y `danger` para cumplir contraste AA como texto normal sobre fondos suaves.
-- Los estados de feedback incluyen símbolo además de color, y `prefers-reduced-motion` desactiva animaciones de carga.
-
-La lógica financiera y los contratos de P2 permanecen sin cambios.
-
-
-## P3.7 + P3.8 — Limpieza técnica y QA funcional
-
-- Se eliminaron funciones obsoletas, duplicadas y shims heredados de etapas anteriores.
-- Se corrigieron dos fallos de foco al agregar beneficios: simulaciones generales e Idiomas ahora enfocan el nuevo campo de nombre correctamente.
-- Se retiró una implementación antigua de aportes que todavía dependía de IDs eliminados (`pct1` / `cont1`) y podía quedar enmascarada por el orden de carga.
-- Se limpiaron estilos específicos sin uso de funcionalidades retiradas (publicación GitHub antigua, gauge, subcomponentes antiguos de Idiomas y variantes visuales reemplazadas).
-- Se normalizó terminología visible restante de Refinanciación a Reestructuración de Crédito.
-- La auditoría estática queda sin funciones declaradas huérfanas ni declaraciones de función duplicadas entre módulos.
-- Matriz funcional automatizada con DOM simulado: 15/15 rutas superadas, incluyendo CP, Mixto, Banco, Cálculo de Cuota Inicial, Idiomas, Conversor, Reestructuración, escenarios/historial, PDF/Excel y reemplazo del Actualizador.
-- Las 10 pruebas internas del motor financiero continúan en estado OK.
-
-Nota de alcance: Chromium headless del entorno no produjo una sesión utilizable, por lo que la validación visual/navegador real continúa reservada para P3.9. El QA de P3.8 valida lógica y flujos con un DOM simulado y mocks de dependencias de descarga; no sustituye la prueba final en navegador.
-
-
-## P3.9 + P3.10 — Cierre de seguridad y aceptación
-
-- `PROGRAMAS` y `POSGRADOS` se almacenan como JSON embebido no ejecutable dentro de `index.html`.
-- La CSP no permite JavaScript inline; `script-src` queda limitado al propio origen y cdnjs para dependencias versionadas.
-- Chart.js 4.4.1, jsPDF 2.5.1 y SheetJS 0.18.5 permanecen fijados por versión y protegidos mediante Subresource Integrity (SRI).
-- No existe publicación directa a GitHub ni manejo de tokens en el cliente.
-- Se mantienen `connect-src 'self'`, `object-src 'none'`, `base-uri 'none'` y `form-action 'self'`.
-- El paquete conserva el actualizador mediante los marcadores `PROGRAMAS_START/END` y `POSGRADOS_START/END`.
-- Estado de aceptación: Release Candidate. La validación funcional automatizada previa es 15/15 rutas y 10/10 pruebas financieras; la prueba visual manual en navegadores objetivo sigue siendo una validación operativa recomendada antes del despliegue institucional definitivo.
-
-## Acceso público e iframe
-
-El servicio puede habilitar una pantalla sin cuenta y una API pública de consulta, manteniendo privada la administración. Ver [activación en Render y entrega a DTIC](docs/PUBLIC_INTEGRATION_PLAN.md), [ejemplo para la web institucional](examples/uninorte-embed.html) y [validación v10](docs/PUBLIC_VALIDATION_V10.md).
-
-## Configuración visual e integración desde la aplicación
-
-Configuración incluye Parámetros, Colores de la interfaz y Acceso público e integración. Ver [uso, permisos y validación v11](docs/CONFIGURACION_PUBLICA_COLORES_V11.md).
+Los informes por fase conservan sus resultados y verificaciones de entonces. El [historial P3.1–P3.10](docs/HISTORIAL_P3.md) se mantiene como antecedente; el estado vigente es el descrito en este README y en la entrega a DTIC. Los controles automatizados se ejecutan con `npm test`.

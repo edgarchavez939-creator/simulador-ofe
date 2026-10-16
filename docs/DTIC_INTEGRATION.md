@@ -1,32 +1,28 @@
-# Integración DTIC
+# Simulador de Crédito — Información para DTIC
 
-## Estado de la pantalla pública — v10
+**Estado al 16 de octubre de 2026**, confirmado por el responsable del proyecto.
 
-El servicio puede habilitar acceso anónimo con `OFE_PUBLIC_ENABLED=1`, una API de consulta de datos publicados y permisos de iframe configurables por origen. La administración mantiene su autenticación. Consultar el [plan de activación, código de integración y contrato público](PUBLIC_INTEGRATION_PLAN.md). La activación remota y la edición del portal institucional no se confirman con una prueba local.
+## Lo que quedó listo
 
-## Actualización v2
+El aplicativo está desarrollado, actualizado en Render y revisado funcionalmente. Cuenta con:
 
-La nueva instrucción del usuario habilita operación autónoma desde esta fase. Existe autenticación local, autorización servidor y auditoría transaccional sin esperar a DTIC. La decisión v1E al final de este documento queda como antecedente histórico. Consultar [servicio y traspaso a DTIC](AUTONOMOUS_DEPLOYMENT.md) y [esquema, permisos y pruebas](PHASE_V2.md). El proveedor local puede complementarse mediante un vínculo institucional al mismo usuario interno.
+- Simulaciones de crédito, comparación de escenarios, conversor de tasas y exportación a PDF y Excel.
+- Pantalla pública sin inicio de sesión y área interna con usuarios, permisos y registro de cambios administrativos.
+- Actualización de programas, matrículas e idiomas, además de configuración de parámetros y colores.
+- Servicio de consulta y almacenamiento de datos, código fuente y documentación de instalación y operación.
+- Enlace público, código de iframe y vista previa preparados para su incorporación a la web de Uninorte.
 
+## Pendiente por parte de DTIC
 
-## Alcance preparado por el proyecto
-- Aplicación pública separada de la aplicación OFE.
-- Contrato de catálogo dinámico de programas.
-- Adaptador API desacoplado con validación de lectura, tiempo de espera y arranque asíncrono (Program Catalog v1C).
-- Proveedor embedded activo: 29 pregrados y 144 posgrados; API/mock probados con transporte simulado.
-- Adaptador de autenticación desacoplado.
-- Plantillas de headers de seguridad.
+1. **Alojamiento institucional:** definir dónde operará el aplicativo, su dirección web y la conservación de los datos y respaldos.
+2. **Acceso institucional:** coordinar e implementar la conexión con Microsoft Entra ID y confirmar los usuarios y roles autorizados. Actualmente funciona con cuentas locales del aplicativo.
+3. **Portal de Uninorte:** coordinar con el responsable de la web la incorporación del enlace o iframe y las autorizaciones para mostrarlo.
+4. **Operación y mantenimiento:** acordar el repositorio institucional, la publicación de futuras versiones y los responsables de soporte.
 
-## Pendiente de DTIC
-- Microsoft Entra ID.
-- API y base de datos institucional.
-- Repositorio institucional y CI/CD.
-- DNS, TLS/HTTPS y headers definitivos del servidor.
-- Restricciones de red y grupos/roles.
+La solución ya incluye el servicio de datos y la administración. DTIC debe evaluar su adopción o indicar los ajustes necesarios para integrarlos a su infraestructura.
 
-## Principio
-La aplicación OFE debe asumir que autenticación/autorización se resuelve en infraestructura o en el adaptador definido por DTIC. No se deben incluir secretos en frontend.
+## Pendiente de Jurídica
 
-## Iteración funcional v1E — decisión del usuario
+Los textos de los documentos ya fueron enviados. Está pendiente recibir el concepto y aplicar las observaciones que correspondan. Este pendiente es independiente de la coordinación técnica con DTIC.
 
-Integración exclusiva con DTIC; se avanza con funcionalidades mientras la conexión institucional queda pendiente. Ver [informe y contratos](FUNCTIONAL_V1E.md) para matriz de permisos, sesiones, auditoría por campo, transacción, concurrencia y pruebas de aceptación institucionales. El cliente no habilita publicación ni sustituye el control de acceso del servidor.
+**Para consultar:** [simulador público](https://simulador-ofe-pruebas.onrender.com/apps/public/) · [documentación de operación y traslado](AUTONOMOUS_DEPLOYMENT.md) · [integración del enlace o iframe](PUBLIC_INTEGRATION_PLAN.md).

@@ -1,5 +1,13 @@
-# Textos PDF para revisión Jurídica
+# Textos de exportables — Revisión de Jurídica
 
-Este archivo debe centralizar todos los textos potencialmente vinculantes o interpretables como oferta, aprobación, garantía de tasa, condiciones definitivas o compromiso institucional.
+## Estado al 16 de octubre de 2026
 
-Pendiente: extraer el texto real de todos los exportables y someterlo a aprobación de Jurídica.
+El responsable del proyecto confirma que los textos de los exportables **ya fueron enviados a Jurídica**. El concepto está pendiente; el envío no se registra como una aprobación.
+
+## Cierre pendiente
+
+- Recibir el concepto de Jurídica.
+- Aplicar las observaciones que correspondan en los documentos afectados.
+- Registrar la versión de los textos aprobados y la referencia de la respuesta recibida.
+
+La versión en línea está actualizada y su revisión funcional fue confirmada por el responsable del proyecto. Al recibir el concepto, se actualizará este registro con la fecha y la referencia de la respuesta.
