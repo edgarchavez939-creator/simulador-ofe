@@ -1,5 +1,9 @@
 # Excel institucional y calibración visual v6
 
+> Documento histórico. La tipografía y composición de Excel se actualizan en
+> [Resultados y Excel compacto v14](RESULTADOS_EXCEL_V14.md): Aptos Narrow
+> exclusivamente para Excel; Public Sans permanece en la app y el PDF.
+
 Implementación sobre `feat/dtic-readiness`, a partir de `7ff8f7a`. Verificación: 15 de octubre de 2026. Los datos de prueba son ficticios y se ejecutan en una base temporal.
 
 ## Resultado y fuente de verdad

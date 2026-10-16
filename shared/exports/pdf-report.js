@@ -32,7 +32,7 @@
   paragraph(text,{x=X,width=R-X,size=8.5,gap=7}={}){const lines=this.wrap(text,width,size);for(const line of lines){this.ensure(size*1.4);this.text(line,x,this.y+size,size,false,C.muted);this.y+=size*1.4;}this.y+=gap;}
   newPage(report,continuation=false){
    if(this.pages.length)this.doc.addPage();this.report=report;this.pages.push({report,number:this.doc.getNumberOfPages()});
-   this.doc.addImage(this.identity.logo,'PNG',L,28,270,270*59/304,'ofe-logo');
+   this.doc.addImage(this.identity.logo,'PNG',L,28,243,243*59/304,'ofe-logo');
    this.rule(87,L,R,C.red);this.rule(87,R-54,R,C.gold);
    this.text('Simulación de Crédito Uninorte',L,108,15,true);
    this.text(report.modality+(continuation?' · Continuación':''),L,128,10,true,C.red);

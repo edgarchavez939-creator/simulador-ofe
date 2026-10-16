@@ -5,67 +5,94 @@
  // Excel formats use invariant separators. The spreadsheet locale controls their visual representation.
   function localDate(value){const date=new Date(value);if(!Number.isFinite(date.getTime()))return null;const parts=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'America/Bogota',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(date).map(p=>[p.type,p.value]));return new Date(Date.UTC(+parts.year,+parts.month-1,+parts.day,+parts.hour,+parts.minute,+parts.second));}
  function filename(report){const date=localDate(report.occurredAt||new Date()).toISOString().slice(0,10);const name=('Simulacion_'+report.modality+'_'+(report.program||'')).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9_-]+/g,'_').replace(/_+/g,'_').slice(0,120).replace(/_+$/,'');return name+'_'+date+'.xlsx';}
- function font(size=10,bold=false,color=C.text){return {name:'Public Sans',size,bold,color:{argb:'FF'+color}};}
+ function font(size=10,bold=false,color=C.text){return {name:'Aptos Narrow',size,bold,color:{argb:'FF'+color}};}
  function fill(color){return {type:'pattern',pattern:'solid',fgColor:{argb:'FF'+color}};}
  function base(wb,name,landscape=false){
   const ws=wb.addWorksheet(name,{properties:{defaultRowHeight:20,tabColor:{argb:'FF'+C.red}},views:[{showGridLines:false}],pageSetup:{paperSize:9,orientation:landscape?'landscape':'portrait',fitToPage:true,fitToWidth:1,fitToHeight:0,margins:{left:.3,right:.3,top:.4,bottom:.4,header:.15,footer:.15}}});
-  ws.headerFooter={oddFooter:'&L&"Public Sans,Regular"&9Universidad del Norte&C&"Public Sans,Regular"&9Simulación informativa&R&"Public Sans,Regular"&9&P de &N'};
+  ws.headerFooter={oddFooter:'&L&"Aptos Narrow,Regular"&9Universidad del Norte&C&"Aptos Narrow,Regular"&9Simulación informativa&R&"Aptos Narrow,Regular"&9&P de &N'};
   return ws;
  }
  function mergeText(ws,row,left,right,value,{size=10,bold=false,color=C.text,background,align='left',height=22}={}){
   ws.mergeCells(row,left,row,right);const cell=ws.getCell(row,left);cell.value=value;cell.font=font(size,bold,color);cell.alignment={vertical:'middle',horizontal:align,wrapText:true};if(background)cell.fill=fill(background);ws.getRow(row).height=height;return cell;
  }
- function header(ws,report){
-  mergeText(ws,2,2,8,'SIMULADOR DE CRÉDITO',{size:16,bold:true});mergeText(ws,3,2,8,'Universidad del Norte · Resumen financiero',{color:C.muted,height:20});
-  for(let col=2;col<=8;col++)ws.getCell(4,col).border={bottom:{style:'thin',color:{argb:'FF'+C.gold}}};
-  mergeText(ws,6,2,8,report.modality,{size:12,bold:true,color:C.red});let row=7;
-  if(report.program){mergeText(ws,row++,2,8,report.program,{bold:true,height:Math.max(25,Math.ceil(report.program.length/82)*16)});}
-  if(report.level)mergeText(ws,row++,2,8,report.level==='pregrado'?'Pregrado':report.level==='posgrado'?'Posgrado':report.level,{color:C.muted});
-  const date=localDate(report.occurredAt||new Date()),cell=mergeText(ws,row++,2,8,date);cell.numFmt=formats.dateTime;cell.font=font(10,false,C.muted);
-  mergeText(ws,row++,2,8,report.occurredAt?'Fecha de simulación':'Fecha de exportación · Fecha original no registrada',{size:10,color:C.muted,height:18});
-  if(report.generatedBy)mergeText(ws,row++,2,8,'Generado por '+report.generatedBy,{size:10,color:C.muted});
+ function header(ws,report,logo){
+  if(logo){const id=ws.workbook.addImage({buffer:logo,extension:'png'});ws.addImage(id,{tl:{col:1,row:1},ext:{width:324,height:324*59/304},editAs:'oneCell'});}
+  else mergeText(ws,2,2,5,'Universidad del Norte',{size:13,bold:true});
+  mergeText(ws,3,6,9,'Simulación de Crédito Uninorte',{size:12,bold:true,align:'right',height:27});
+  for(let col=2;col<=9;col++)ws.getCell(5,col).border={bottom:{style:'thin',color:{argb:'FF'+C.gold}}};
+  mergeText(ws,7,2,9,report.modality,{size:12,bold:true,color:C.red,height:25});let row=8;
+  if(report.program)mergeText(ws,row++,2,9,report.program,{bold:true,height:Math.max(23,Math.ceil(report.program.length/92)*14)});
+  const level=report.level==='pregrado'?'Pregrado':report.level==='posgrado'?'Posgrado':report.level;
+  mergeText(ws,row,2,6,[level,report.occurredAt?'Fecha de simulación':'Fecha de exportación'].filter(Boolean).join(' · '),{color:C.muted,size:10});
+  const date=mergeText(ws,row++,7,9,localDate(report.occurredAt||new Date()),{align:'right',size:10,color:C.muted});date.numFmt=formats.dateTime;
+  if(report.generatedBy)mergeText(ws,row++,2,9,'Generado por '+report.generatedBy,{size:10,color:C.muted});
   return row+1;
  }
- function legend(ws,row,text){mergeText(ws,row++,2,8,'SIMULACIÓN SUJETA A VALIDACIÓN Y APROBACIÓN',{bold:true,size:10,background:C.panel,height:25});mergeText(ws,row,2,8,text,{size:10,color:C.muted,background:C.panel,height:Math.max(58,Math.ceil(text.length/95)*13+10)});return row+2;}
- function summary(wb,report){
-  const ws=base(wb,'Resumen');ws.columns=[{width:3},{width:20},{width:12},{width:9},{width:3},{width:20},{width:12},{width:9},{width:3}];let row=header(ws,report),hasLegend=false;
-  for(const section of report.sections){
-   mergeText(ws,row++,2,8,section.title,{size:10,bold:true,color:C.red,height:24});
-   for(let index=0;index<section.fields.length;index+=2){
-    for(let side=0;side<2;side++){
-     const item=section.fields[index+side];if(!item)continue;const left=side?6:2,right=side?8:4;
-     mergeText(ws,row,left,right,item.label,{size:10,color:C.muted,height:Math.max(26,Math.ceil(item.label.length/38)*13)});
-     const cell=mergeText(ws,row+1,left,right,item.value,{size:12,bold:true,align:typeof item.value==='number'?'right':'left',height:25});if(formats[item.format])cell.numFmt=formats[item.format];
-    }row+=2;
+ // Select existing snapshot fields. No amounts or payment schedules are recalculated here.
+ function compactSections(report){
+  return report.sections.filter(s=>!/^Garantisa(?: |$)/.test(s.title)).map(section=>{
+   let fields=section.fields.slice();
+   if(section.title==='Aporte inicial'){
+    const total=fields.find(f=>f.label==='Total inicial');
+    fields=[...(total?[{...total,label:'Pago total de contado'}]:[]),...fields.filter(f=>f!==total)];
+    fields=fields.filter(f=>f.value!==0||!/^Otros cargos/.test(f.label));
    }
-   if(section.note)mergeText(ws,row++,2,8,section.note,{size:10,color:C.muted,height:Math.max(27,Math.ceil(section.note.length/94)*13+4)});
+   if(section.title==='Nueva condición')fields=fields.filter(f=>f.label!=='Monto reestructurado'&&f.value!==0);
+   if(/^(Financiación|Componente)/.test(section.title)){
+    fields=fields.filter(f=>!['Tipo de tasa','Periodicidad'].includes(f.label));
+    const term=fields.find(f=>f.label==='Plazo (meses)'),count=fields.find(f=>f.label==='Número de cuotas');
+    fields=fields.filter(f=>!(f===count&&term?.value===count.value)).map(f=>f.label==='Tasa'?{...f,label:'Tasa efectiva mensual vencida'}:f===term&&count?.value===term.value?{...f,label:'Plazo (meses) / número de cuotas'}:f);
+   }
+   if(/^Totales/.test(section.title))fields=fields.filter(f=>!['Monto financiado','Total de cuotas proyectadas','Crédito conocido (CP + capital LP)','Capital LP sin intereses futuros'].includes(f.label));
+   if(section.title==='Capacidad de pago')fields=fields.filter(f=>!['Cuota mensual calculada','Nueva cuota mensual'].includes(f.label));
+   return {...section,fields};
+  }).filter(s=>s.fields.length);
+ }
+ function legend(ws,row,text){
+  mergeText(ws,row++,2,9,'SIMULACIÓN SUJETA A VALIDACIÓN Y APROBACIÓN',{bold:true,size:9,background:C.panel,height:23});
+  mergeText(ws,row,2,9,text,{size:9,color:C.muted,background:C.panel,height:Math.max(58,Math.ceil(text.length/112)*12+10)});return row;
+ }
+ function summary(wb,report,logo){
+  const ws=base(wb,'Resumen');ws.columns=[{width:3},...Array.from({length:8},()=>({width:12})),{width:3}];let row=header(ws,report,logo);
+  for(const section of compactSections(report)){
+   mergeText(ws,row++,2,9,section.title==='Aporte inicial'?'Pago inicial al desembolso':section.title,{size:10,bold:true,color:C.red,background:C.panel,height:23});
+   for(const item of section.fields){
+    const strong=/^Pago total|^Costo total|^Cuota mensual estimada/.test(item.label);
+    const height=Math.max(21,Math.ceil(item.label.length/55)*13+5);
+    mergeText(ws,row,2,6,item.label,{size:10,bold:strong,height});
+    const cell=mergeText(ws,row,7,9,item.value,{size:strong?11:10,bold:strong,align:typeof item.value==='number'?'right':'left',height});if(formats[item.format])cell.numFmt=formats[item.format];row++;
+    if(section.title==='Aporte inicial'&&/Garantisa/.test(item.label)){
+     const metadata=report.sections.find(s=>s.title===(item.label==='Aporte Garantisa'?'Garantisa':item.label));
+     const rate=metadata?.fields.find(f=>f.label==='Porcentaje aplicado'),base=metadata?.fields.find(f=>f.label==='Base de cálculo');
+     if(rate&&base){mergeText(ws,row,2,6,'Porcentaje sobre $ '+Math.round(base.value).toLocaleString('es-CO')+' financiados',{size:9,color:C.muted});const cell=mergeText(ws,row++,7,9,rate.value,{size:9,color:C.muted,align:'right'});cell.numFmt=formats.percent;}
+    }
+   }
+   if(section.note&&(/pendiente|no representa|no se estima|costo total/i.test(section.note)))mergeText(ws,row++,2,9,section.note,{size:9,color:C.muted,height:Math.max(28,Math.ceil(section.note.length/108)*12+6)});
    row++;
-   if(/Totales/.test(section.title)){row=legend(ws,row,report.disclaimer);hasLegend=true;}
   }
-  if(!hasLegend)row=legend(ws,row,report.disclaimer);
-  ws.pageSetup.printArea='A1:I'+row;return ws;
+  row=legend(ws,row,report.disclaimer);ws.pageSetup.printArea='A1:J'+row;return ws;
  }
  function plans(wb,report){
   if(!report.plans.length)return;
   const multi=report.plans.length>1,ws=base(wb,'Plan de pagos',true),offset=multi?1:0;
-  ws.columns=[...(multi?[{width:24}]:[]),{width:12},{width:21},{width:21},{width:21},{width:21},{width:21}];
-  ws.mergeCells(1,1,1,6+offset);ws.getCell(1,1).value='PLAN DE PAGOS · '+report.modality;ws.getCell(1,1).font=font(12,true);ws.getRow(1).height=30;
-  ws.mergeCells(2,1,2,6+offset);ws.getCell(2,1).value='Cuotas numeradas. No se registraron fechas de vencimiento.';ws.getCell(2,1).font=font(10,false,C.muted);ws.getRow(2).height=23;
-  const heads=[...(multi?['Componente']:[]),'Cuota','Saldo inicial','Capital','Interés','Pago','Saldo final'];ws.addRow([]);const heading=ws.addRow(heads);heading.height=25;
+  ws.columns=[...(multi?[{width:24}]:[]),{width:12},{width:23},{width:23},{width:23},{width:23}];
+  ws.mergeCells(1,1,1,5+offset);ws.getCell(1,1).value='PLAN DE PAGOS · '+report.modality;ws.getCell(1,1).font=font(12,true);ws.getRow(1).height=30;
+  ws.mergeCells(2,1,2,5+offset);ws.getCell(2,1).value='Cuotas numeradas. No se registraron fechas de vencimiento.';ws.getCell(2,1).font=font(10,false,C.muted);ws.getRow(2).height=23;
+  const heads=[...(multi?['Componente']:[]),'Cuota','Pago mensual','Capital','Intereses','Saldo'];ws.addRow([]);const heading=ws.addRow(heads);heading.height=25;
   heading.eachCell(cell=>{cell.font=font(10,true,C.white);cell.fill=fill(C.red);cell.alignment={vertical:'middle',horizontal:'center'};});
   let start=5,totalCapital=0,totalInterest=0,totalPayments=0;
-  for(const plan of report.plans){let opening=plan.principal;for(const item of plan.rows){const row=ws.addRow([...(multi?[plan.name]:[]),item.installment,opening,item.capital,item.interest,item.payment,item.balance]);row.height=20;row.eachCell((cell,index)=>{cell.font=font();cell.alignment={vertical:'middle',horizontal:index>1+offset?'right':multi&&index===1?'left':'center'};if(index>1+offset)cell.numFmt=formats.money;if(row.number%2)cell.fill=fill(C.panel);});opening=item.balance;}totalCapital+=plan.totalCapital;totalInterest+=plan.totalInterest;totalPayments+=plan.rows.reduce((sum,item)=>sum+item.payment,0);}
+  for(const plan of report.plans){for(const item of plan.rows){const row=ws.addRow([...(multi?[plan.name]:[]),item.installment,item.payment,item.capital,item.interest,item.balance]);row.height=20;row.eachCell((cell,index)=>{cell.font=font();cell.alignment={vertical:'middle',horizontal:index>1+offset?'right':multi&&index===1?'left':'center'};if(index>1+offset)cell.numFmt=formats.money;if(row.number%2)cell.fill=fill(C.panel);});}totalCapital+=plan.totalCapital;totalInterest+=plan.totalInterest;totalPayments+=plan.rows.reduce((sum,item)=>sum+item.payment,0);}
   const end=ws.lastRow.number,totals=ws.addRow([]);totals.getCell(1).value='Totales';
-  for(const [index,value] of [[3+offset,totalCapital],[4+offset,totalInterest],[5+offset,totalPayments]]){const letter=ws.getColumn(index).letter;const cell=totals.getCell(index);cell.value={formula:`SUM(${letter}${start}:${letter}${end})`,result:value};cell.numFmt=formats.money;}
-  for(let col=1;col<=6+offset;col++){const cell=totals.getCell(col);cell.font=font(10,true);cell.alignment={horizontal:col>1?'right':'left',vertical:'middle'};cell.border={top:{style:'thin',color:{argb:'FF'+C.gold}}};}totals.height=25;
-  ws.views=[{state:'frozen',ySplit:4,showGridLines:false}];ws.autoFilter={from:{row:4,column:1},to:{row:end,column:6+offset}};ws.pageSetup.printTitlesRow='1:4';ws.pageSetup.printArea='A1:'+ws.getColumn(6+offset).letter+totals.number;
+  for(const [index,value] of [[3+offset,totalCapital],[4+offset,totalInterest],[2+offset,totalPayments]]){const letter=ws.getColumn(index).letter;const cell=totals.getCell(index);cell.value={formula:`SUM(${letter}${start}:${letter}${end})`,result:value};cell.numFmt=formats.money;}
+  for(let col=1;col<=5+offset;col++){const cell=totals.getCell(col);cell.font=font(10,true);cell.alignment={horizontal:col>1?'right':'left',vertical:'middle'};cell.border={top:{style:'thin',color:{argb:'FF'+C.gold}}};}totals.height=25;
+  ws.views=[{state:'frozen',ySplit:4,showGridLines:false}];ws.autoFilter={from:{row:4,column:1},to:{row:end,column:5+offset}};ws.pageSetup.printTitlesRow='1:4';ws.pageSetup.printArea='A1:'+ws.getColumn(5+offset).letter+totals.number;
  }
- function build(report){
+ function build(report,logo){
   if(!global.ExcelJS)throw Error('No fue posible cargar el generador de Excel. Recarga la página e inténtalo nuevamente.');
-  const wb=new global.ExcelJS.Workbook();wb.creator='Universidad del Norte';wb.subject='Simulación informativa de crédito';wb.created=new Date();wb.modified=new Date();wb.views=[{activeTab:0,firstSheet:0}];wb.calcProperties.fullCalcOnLoad=true;summary(wb,report);plans(wb,report);return wb;
+  const wb=new global.ExcelJS.Workbook();wb.creator='Universidad del Norte';wb.subject='Simulación informativa de crédito';wb.created=new Date();wb.modified=new Date();wb.views=[{activeTab:0,firstSheet:0}];wb.calcProperties.fullCalcOnLoad=true;summary(wb,report,logo);plans(wb,report);return wb;
  }
  async function saveWorkbook(wb,name){const buffer=await wb.xlsx.writeBuffer();const url=URL.createObjectURL(new Blob([buffer],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));const anchor=document.createElement('a');anchor.href=url;anchor.download=name;document.body.appendChild(anchor);anchor.click();anchor.remove();global.setTimeout(()=>URL.revokeObjectURL(url),1000);return wb;}
- async function download(report){const wb=build(report);await saveWorkbook(wb,filename(report));global.toast?.('Excel descargado','success');return wb;}
+ async function download(report){const identity=await global.OFEPdf?.assets();const wb=build(report,identity?.logo);await saveWorkbook(wb,filename(report));global.toast?.('Excel descargado','success');return wb;}
  async function exportResult(key){try{const report=global.OFEReport.normalize(key,global.OFEReport.result(key));return await global.OFEExcel.download(report);}catch(error){global.toast?.(error.message,'error');throw error;}}
  async function comparison(tab){
   const rows=global.SimuladorOFE.state.comparison.scenarios[tab];if(!rows||rows.length<2){global.toast?.('Guarda al menos 2 escenarios para comparar.','warning');return;}

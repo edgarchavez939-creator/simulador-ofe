@@ -27,14 +27,14 @@ test('normalized snapshots retain real amounts, optional identity and future LP 
  e.prog1.value='';c.setMat(1);e.mat1.value=1000000;c.calcular1();assert.equal(c.OFEReport.normalize(1,c.OFEReport.result(1)).program,null);
  const long={...old,reportSnapshot:{...old.reportSnapshot,program:'Especialización '+('Programa académico con nombre extenso '.repeat(8))}};assert.ok(c.OFEReport.normalize(1,long).program.length>250);
 });
-test('real XLSX reopens with Public Sans, typed amounts/date/percent, frozen plan, filters, totals and print legend',async()=>{
+test('real XLSX reopens with Aptos Narrow, typed amounts/date/percent, frozen plan, filters, totals and print legend',async()=>{
  const {context:c}=await fixture();c.ExcelJS=ExcelJS;c.Date=Date;c.Intl=Intl;
  for(const key of [1,2,3,7,5,'languages']){
   const r=c.OFEReport.normalize(key,c.OFEReport.result(key)),wb=build(r),buffer=await wb.xlsx.writeBuffer(),opened=new ExcelJS.Workbook();await opened.xlsx.load(buffer);
   assert.equal(opened.worksheets[0].name,'Resumen');const summary=opened.getWorksheet('Resumen'),plan=opened.getWorksheet('Plan de pagos');let hasDate=false,hasPercent=false,hasMoney=false,hasLegend=false;
-  for(const sheet of opened.worksheets)sheet.eachRow(row=>row.eachCell(cell=>{if(cell.type===ExcelJS.ValueType.Merge)return;if(cell.value!==null){assert.equal(cell.font.name,'Public Sans');if(String(cell.value)===c.OFEReport.disclaimer)hasLegend=true;if(cell.value instanceof Date)hasDate=true;if(cell.numFmt==='0.00%'){hasPercent=true;assert.equal(typeof cell.value,'number');}if(cell.numFmt?.includes('es-CO')){hasMoney=true;assert.equal(typeof (cell.value?.formula?cell.value.result:cell.value),'number');}}}));
+  for(const sheet of opened.worksheets)sheet.eachRow(row=>row.eachCell(cell=>{if(cell.type===ExcelJS.ValueType.Merge)return;if(cell.value!==null){assert.equal(cell.font.name,'Aptos Narrow');if(String(cell.value)===c.OFEReport.disclaimer)hasLegend=true;if(cell.value instanceof Date)hasDate=true;if(cell.numFmt==='0.00%'){hasPercent=true;assert.equal(typeof cell.value,'number');}if(cell.numFmt?.includes('es-CO')){hasMoney=true;assert.equal(typeof (cell.value?.formula?cell.value.result:cell.value),'number');}}}));
   assert.ok(hasDate&&hasPercent&&hasMoney&&hasLegend);assert.ok(summary.pageSetup.printArea);assert.equal(summary.autoFilter,undefined);assert.equal(plan.views[0].ySplit,4);assert.ok(plan.autoFilter);assert.equal(plan.pageSetup.printTitlesRow,'1:4');assert.match(plan.getCell(plan.rowCount,3).value.formula,/SUM/);
-  assert.equal(plan.getCell(5,3).value,r.plans[0].rows[0].capital);assert.equal(plan.getCell(5,5).value,r.plans[0].rows[0].payment);
+  assert.equal(plan.getCell(5,3).value,r.plans[0].rows[0].capital);assert.equal(plan.getCell(5,2).value,r.plans[0].rows[0].payment);
   const d=c.OFEReport.result(key);assert.ok(Math.abs(plan.getCell(plan.rowCount,3).value.result-(key===2?d.CP.totCap:d.totCap))<1e-6);
  }
 });
