@@ -19,6 +19,17 @@
    return {regular:base64(regular),bold:base64(bold),logo:new Uint8Array(logo)};
   })().catch(error=>{cached=null;throw error;});return cached;
  }
+ function modalityTitle(report){
+  const level=report.level==='posgrado'?'Posgrado':'Pregrado';
+  const titles={
+   'Crédito corto plazo':'Crédito '+level+' - Corto Plazo',
+   'Crédito mixto':'Crédito '+level+' - Mixto',
+   'Crédito largo plazo':'Crédito '+level+' - Largo Plazo',
+   'Crédito de idiomas':'Crédito Idiomas - Corto Plazo',
+   'Idiomas · Crédito mixto':'Crédito Idiomas - Mixto'
+  };
+  return titles[report.modality]||report.modality;
+ }
  function dateLabel(report){
   if(!report.occurredAt)return 'Fecha original de simulación no registrada';
   return 'Simulación del '+new Intl.DateTimeFormat('es-CO',{timeZone:'America/Bogota',day:'numeric',month:'long',year:'numeric'}).format(new Date(report.occurredAt));
@@ -35,7 +46,7 @@
    this.doc.addImage(this.identity.logo,'PNG',L,28,243,243*59/304,'ofe-logo');
    this.rule(87,L,R,C.red);this.rule(87,R-54,R,C.gold);
    this.text('Simulación de Crédito Uninorte',L,108,15,true);
-   this.text(report.modality+(continuation?' · Continuación':''),L,128,10,true,C.red);
+   this.text(modalityTitle(report)+(continuation?' · Continuación':''),L,128,10,true,C.red);
    this.y=148;
    if(report.program){const lines=this.wrap(report.program,R-L,12,true);for(const line of lines){this.text(line,L,this.y,12,true);this.y+=15;}}
    const level=report.level==='pregrado'?'Pregrado':report.level==='posgrado'?'Posgrado':report.level;
