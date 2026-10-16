@@ -30,21 +30,21 @@
    global.setMat(tab);
   }
  }
- function selectProgram(id,field='tuition'){
+ function selectProgram(id){
   program=programs.find(item=>item.id===id);if(!program)return;
   $('program-name').value=program.nombre;$('program-tuition').value=program.valorMatricula;
   $('program-languages').value=program.valorIdiomas;$('program-semesters').value=program.semestres??'';
   $('program-languages').disabled=program.nivel!=='pregrado';$('program-semesters').disabled=program.nivel!=='pregrado';
   $('program-active').checked=program.activo;$('program-identity').textContent=(program.nivel==='pregrado'?'Pregrado':'Posgrado')+(program.subnivel?' · '+program.subnivel:'')+(program.codigo?' · Código '+program.codigo:'');
   $('program-current').textContent=program.nombre;$('program-current-tuition').textContent=cop(program.valorMatricula);$('program-current-languages').textContent=cop(program.valorIdiomas||0);$('program-current-semesters').textContent=program.semestres??'Sin definir';$('program-pregrado-fields').hidden=program.nivel!=='pregrado';$('program-languages-section').hidden=program.nivel!=='pregrado';
-  $('program-form').hidden=false;resetProgramReview();notice('program-feedback','');global.OFEUI.openDialog('program-dialog',field==='languages'?'#program-languages':'#program-tuition');
+  $('program-form').hidden=false;resetProgramReview();notice('program-feedback','');global.OFEUI.openDialog('program-dialog','#program-tuition');
  }
  function resetProgramReview(){programReview=null;$('program-review').hidden=true;$('program-edit-fields').hidden=false;$('program-back').hidden=true;$('program-save').textContent='Revisar cambios';$('program-form').querySelectorAll('[aria-invalid]').forEach(el=>el.removeAttribute('aria-invalid'));}
  function renderPrograms(){
   for(const [id,value] of [['programs-total',programs.length],['programs-active',programs.filter(p=>p.activo).length],['programs-inactive',programs.filter(p=>!p.activo).length]])if($(id))$(id).textContent=value;
   const levels=Array.from(document.querySelectorAll('[name="program-level"]:checked')).map(el=>el.value);
   const found=global.OFEAdminFilters.programs(programs,{query:$('program-query').value,levels,status:$('program-status').value});
-  $('program-list').innerHTML=paginate(found,'programs').map(p=>`<tr><td class="admin-name">${e(p.nombre)}${p.codigo?'<small>'+e(p.codigo)+'</small>':''}</td><td>${p.nivel==='pregrado'?'Pregrado':'Posgrado'}<small>${e(p.subnivel||'')}</small></td><td class="admin-money">${e(cop(p.valorMatricula))}</td><td class="admin-money">${p.nivel==='pregrado'?e(cop(p.valorIdiomas||0)):'No aplica'}</td><td>${badge(p.activo)}</td><td>${e(shortDate(p.updated_at))}</td><td><div class="program-row-actions">${p.nivel==='pregrado'?`<button type="button" class="btn btn--sm admin-row-action" data-edit-languages="${e(p.id)}" aria-label="Editar idiomas de ${e(p.nombre)}">${global.icon('book-open')}<span>Idiomas</span></button>`:''}<button type="button" class="btn btn--sm admin-row-action" title="Editar programa" data-tooltip="Editar programa" data-edit-program="${e(p.id)}" aria-label="Editar ${e(p.nombre)}">${global.icon('pencil')}<span>Editar</span></button></div></td></tr>`).join('')||'<tr><td colspan="7" class="admin-empty">No se encontraron programas. Prueba otros filtros.</td></tr>';
+  $('program-list').innerHTML=paginate(found,'programs').map(p=>`<tr><td class="admin-name">${e(p.nombre)}${p.codigo?'<small>'+e(p.codigo)+'</small>':''}</td><td>${p.nivel==='pregrado'?'Pregrado':'Posgrado'}<small>${e(p.subnivel||'')}</small></td><td class="admin-money">${e(cop(p.valorMatricula))}</td><td class="admin-money">${p.nivel==='pregrado'?e(cop(p.valorIdiomas||0)):'No aplica'}</td><td>${badge(p.activo)}</td><td>${e(shortDate(p.updated_at))}</td><td><button type="button" class="btn btn--sm admin-row-action" title="Editar programa" data-tooltip="Editar programa" data-edit-program="${e(p.id)}" aria-label="Editar ${e(p.nombre)}">${global.icon('pencil')}<span>Editar</span></button></td></tr>`).join('')||'<tr><td colspan="7" class="admin-empty">No se encontraron programas. Prueba otros filtros.</td></tr>';
   $('program-count').textContent=found.length+(found.length===1?' programa encontrado':' programas encontrados');$('program-level-summary').textContent=levels.length===1?(levels[0]==='pregrado'?'Pregrado':'Posgrado'):'Todos los niveles';
  }
  async function loadUsers(){$('user-count').textContent='Cargando usuarios…';$('user-list').setAttribute('aria-busy','true');try{const data=await api('/admin/users');users=data.users;renderUsers();}finally{$('user-list').removeAttribute('aria-busy');}}
@@ -114,7 +114,7 @@
     $('program-query').addEventListener('input',programFilter);$('program-status').addEventListener('change',programFilter);document.querySelectorAll('[name="program-level"]').forEach(field=>field.addEventListener('change',programFilter));
     $('program-clear').addEventListener('click',()=>{$('program-query').value='';$('program-status').value='';document.querySelectorAll('[name="program-level"]').forEach(field=>field.checked=true);programFilter();});
     for(const [direction,delta] of [['prev',-1],['next',1]])$('programs-'+direction).addEventListener('click',()=>{pages.programs+=delta;renderPrograms();});
-    $('program-list').addEventListener('click',event=>{const languages=event.target.closest('[data-edit-languages]');if(languages){selectProgram(languages.dataset.editLanguages,'languages');return;}const button=event.target.closest('[data-edit-program]');if(button)selectProgram(button.dataset.editProgram);});
+    $('program-list').addEventListener('click',event=>{const button=event.target.closest('[data-edit-program]');if(button)selectProgram(button.dataset.editProgram);});
     $('program-cancel').addEventListener('click',()=>global.cerrarModalAccesible($('program-dialog')));
     $('program-back').addEventListener('click',()=>{resetProgramReview();$('program-tuition').focus();});
     $('program-form').addEventListener('submit',event=>{event.preventDefault();

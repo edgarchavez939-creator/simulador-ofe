@@ -118,7 +118,6 @@
 @media(max-width:640px) { .rate-equivalences .table-wrap > table.tbl { min-width:430px; } }
 
 /* Valores y acciones de Idiomas visibles en el catálogo. */
-.program-row-actions { display:flex; justify-content:flex-end; gap:8px; }
 #program-languages-section .field__hint { margin:10px 0 0; line-height:1.6; }
 .guarantee-info__body strong { flex-wrap:wrap; line-height:1.45; }
 .guarantee-info__value { color:var(--text-muted); }
