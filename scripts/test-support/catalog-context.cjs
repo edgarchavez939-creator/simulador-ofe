@@ -30,6 +30,7 @@ function loadApp(app, options = {}) {
   const elements = { ...embeddedElements(html), ...options.elements };
   const events = [];
   const context = vm.createContext({
+    ...(options.publicApi?{OFE_PUBLIC:{apiBaseUrl:'/api/public'}}:{}),
     document: {
       readyState: 'loading',
       getElementById: id => elements[id] || null,

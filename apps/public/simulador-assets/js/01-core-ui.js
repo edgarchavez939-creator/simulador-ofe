@@ -134,7 +134,9 @@ function runCalculation(button, tabId, task, loadingTitle) {
   const before=calculationResultForTab(tabId);
   const epoch=window.SimulationLifecycle?.begin(tabId);
   setResultLoading(tabId, loadingTitle);
-  return Promise.resolve(runButtonTask(button, () => {
+  return Promise.resolve(runButtonTask(button, async () => {
+    if(window.OFE_PUBLIC)try{await window.OFEGlobalSettings?.prepare(tabId,()=>!window.SimulationLifecycle||window.SimulationLifecycle.current(tabId,epoch));}
+    catch(error){if(!window.SimulationLifecycle||window.SimulationLifecycle.current(tabId,epoch)){if(target)target.innerHTML=previousHTML;markViewHasResult(tabId,!!before);toast(error.message,'error');}return;}
     if(window.SimulationLifecycle && !window.SimulationLifecycle.current(tabId,epoch)) return;
     if ([1,2,3,7].includes(tabId)) sincronizarMatriculaCatalogo(tabId);
     let result;
@@ -285,8 +287,8 @@ function applyTheme(theme) { window.OFETheme.setPreference(theme); }
 function toggleTheme() { applyTheme(window.OFETheme.resolved()==='dark'?'light':'dark'); }
 function initTheme(){ window.OFETheme.charts(); }
 
-const GARANTISA_CP = SimuladorOFE.config.garantisaCP;
-const GARANTISA_LP = SimuladorOFE.config.garantisaLP;
+const GARANTISA_CP = Object.freeze({valueOf:()=>SimuladorOFE.config.garantisaCP});
+const GARANTISA_LP = Object.freeze({valueOf:()=>SimuladorOFE.config.garantisaLP});
 
 const cop = v => new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0,maximumFractionDigits:0}).format(Math.round(v));
 
@@ -362,7 +364,7 @@ function sincronizarMatriculaCatalogo(tabId) {
   if (!input) return program;
   input.readOnly = !!program;
   input.setAttribute('aria-readonly', String(!!program));
-  if (program) input.value = program.valorMatricula;
+  if (program) { input.value = program.valorMatricula; clearFieldError(input); }
   const hint = document.getElementById('mat'+tabId+'-source');
   if (hint) hint.textContent = program
     ? 'Valor registrado del programa. Elimina la selección para ingresar una matrícula manual.'

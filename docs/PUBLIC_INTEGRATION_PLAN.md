@@ -1,37 +1,90 @@
-# Pantalla pública e integración con Uninorte
+# Acceso público e integración con Uninorte — v10
 
-## Estado actual — revisión v9, octubre de 2026
+## Qué queda implementado
 
-Existe el código de la vista pública en `apps/public/`, con catálogo embebido. El servidor autónomo actual redirige `/apps/public/` a la aplicación interna y exige sesión para leer `/api/programs` y `/api/simulation-settings`. Por tanto, todavía no hay un servicio público conectado al catálogo administrado.
+El mismo servicio dispone de dos entradas independientes:
 
-La aplicación interna, los usuarios y la auditoría mantienen su autenticación. Esta revisión no publica nuevos servicios ni cambia permisos o restricciones de incrustación.
+- Pública: `/simulador/` conduce a `/apps/public/`. Permite calcular sin crear cuenta ni iniciar sesión.
+- Interna: `/apps/ofe/` y `/login`. Administración, usuarios y auditoría conservan sesión y permisos.
 
-## Cómo aparecerá en uninorte.edu.co
+El acceso público está desactivado por defecto. Se activa expresamente con `OFE_PUBLIC_ENABLED=1`. La activación no cambia permisos internos ni publica datos de usuarios o auditoría.
 
-La integración visual puede realizarse mediante un enlace a una dirección pública del simulador, una ruta alojada por DTIC dentro del sitio institucional o un iframe que muestre esa dirección dentro de una página de Uninorte. La API se utiliza para obtener los datos vigentes; no es el mecanismo que coloca la pantalla dentro de la página.
+La pantalla pública consulta el catálogo y los parámetros del servidor, sin depender de una copia manual de los programas. Al abrir o recargar se obtienen los programas activos, matrícula e Idiomas vigentes. Las nuevas simulaciones y el reinicio consultan los parámetros; los resultados existentes conservan los valores con que se calcularon. Los cálculos y exportaciones se ejecutan en el navegador usando los motores actuales.
 
-Se propone para el traspaso a DTIC una dirección pública con el simulador y una API de consulta bajo el mismo origen, usando un proxy institucional si los servicios se alojan por separado. Esto permite empezar con un enlace desde la web y, si el gestor de contenidos lo permite, incorporar después el simulador a la página.
+## Activar en el Render de pruebas existente
 
-## Separación propuesta
+Servicio indicado por el propietario: `https://simulador-ofe-pruebas.onrender.com`.
 
-| Parte | Acceso | Función |
+1. En Render, abrir el servicio existente y comprobar que su rama sea `feat/dtic-readiness`.
+2. En Environment, agregar estas variables sin modificar las credenciales existentes:
+
+   | Variable | Valor |
+   | --- | --- |
+   | `OFE_PUBLIC_ENABLED` | `1` |
+   | `OFE_PUBLIC_FRAME_ORIGINS` | `https://www.uninorte.edu.co https://uninorte.edu.co` |
+
+   La segunda variable contiene orígenes, separados por un espacio: no escribir la ruta completa de la página. Solo admite HTTPS y orígenes exactos, sin comodines.
+3. Guardar los cambios y usar **Manual Deploy → Deploy latest commit**. Si guardar las variables inicia un despliegue, comprobar que despliega la revisión más reciente y esperar a que termine. No basta con Restart service, porque puede reiniciar el código anterior.
+4. Esperar estado Live. Abrir una ventana privada con `https://simulador-ofe-pruebas.onrender.com/simulador/`: debe mostrar el simulador sin login y sin opciones administrativas.
+5. Comprobar que `https://simulador-ofe-pruebas.onrender.com/apps/ofe/` sigue pidiendo acceso en esa ventana privada.
+
+No se requiere otro alojamiento, una cuenta de pago ni una base adicional para habilitar esta prueba. Render Free suspende servicios inactivos y utiliza almacenamiento efímero; los cambios de la demo pueden perderse con un reinicio o despliegue. El enlace de prueba no sustituye el alojamiento institucional persistente. Ver [demostración gratuita](RENDER_FREE_DEMO.md).
+
+Para desactivar el acceso anónimo, cambiar `OFE_PUBLIC_ENABLED` a `0` y volver a desplegar. Para permitir únicamente el enlace y bloquear iframe desde otros sitios, dejar vacía `OFE_PUBLIC_FRAME_ORIGINS`.
+
+## Enlace listo para la página institucional
+
+Página de destino aportada: `https://www.uninorte.edu.co/web/apoyo-financiero/credito-uninorte`.
+
+```html
+<a href="https://simulador-ofe-pruebas.onrender.com/simulador/"
+   target="_blank" rel="noopener">
+  Simula tu crédito Uninorte
+</a>
+```
+
+## Iframe listo para incorporar a esa página
+
+```html
+<iframe
+  src="https://simulador-ofe-pruebas.onrender.com/apps/public/"
+  title="Simulador de crédito de la Universidad del Norte"
+  width="100%"
+  height="1100"
+  style="display:block;border:0;max-width:100%;"
+  loading="lazy"
+  referrerpolicy="strict-origin-when-cross-origin">
+</iframe>
+```
+
+El responsable de la web debe pegar este bloque en un componente que admita HTML/iframe y publicar la página. Si la política de seguridad del portal limita `frame-src`, debe autorizar el origen `https://simulador-ofe-pruebas.onrender.com`. No podemos aplicar esos cambios desde el repositorio del simulador.
+
+La política del simulador permite incrustación de su documento público desde los dos orígenes institucionales configurados y desde su propio origen. Login y área interna conservan `frame-ancestors 'none'` y `X-Frame-Options: DENY`. Las rutas públicas no necesitan cookies ni cuenta, por lo que el cálculo no depende de que el navegador acepte cookies de terceros.
+
+La [página de ejemplo completa](../examples/uninorte-embed.html) contiene el enlace y el iframe con la dirección actual de pruebas. La autorización del servidor se aplica por origen completo, no por la ruta de una página concreta.
+
+## Contrato de API pública
+
+Misma dirección que la pantalla, sin CORS ni configuración de origen adicional en el navegador:
+
+| Ruta | Respuesta | Métodos |
 | --- | --- | --- |
-| Simulador público | Sin cuenta | Elegir programa, introducir valores y calcular en el navegador |
-| API pública de lectura, por implementar | Sin cuenta | Entregar programas activos y parámetros publicados |
-| Aplicación interna OFE | Con cuenta y permisos | Gestionar programas, Idiomas, parámetros, usuarios y auditoría |
-| API administrativa existente | Sesión, permisos y protección de escritura | Validar cambios y registrar su autoría |
+| `/api/public/programs` | `{programs:[...]}`; solo activos | GET, HEAD |
+| `/api/public/programs/{id}` | Un programa activo; 404 si no existe o está inactivo | GET, HEAD |
+| `/api/public/simulation-settings` | `{values:{default_interest_rate,default_installments,garantisa_cp_percent,garantisa_lp_percent}}` | GET, HEAD |
 
-La API pública debe devolver una proyección explícita de los datos necesarios: identificador técnico, nombre, nivel/subnivel, matrícula, Idiomas y semestres cuando correspondan; tasas y porcentajes publicados. No debe devolver usuarios, auditoría, nombres de quien actualizó los valores, ni información de acceso. Los cambios administrativos deben reflejarse en nuevas consultas públicas; los resultados ya calculados deben conservar sus valores originales.
+Cada programa contiene exclusivamente `id`, `codigo` si existe, `nombre`, `nivel`, `subnivel`, `valorMatricula`, `valorIdiomas`, `semestres` y `activo`. No se inventan códigos institucionales. No se publican usuarios, autor de actualización, auditoría, sesiones, versiones de edición ni índices internos del catálogo. La API no permite escribir ni modificar programas. Las respuestas usan `Cache-Control: no-store`.
 
-No se debe quitar la autenticación de las rutas internas para conseguir acceso público. Se crearán rutas públicas específicas y pruebas de que sus respuestas contienen únicamente los campos permitidos. El cálculo seguirá utilizando el motor financiero existente.
+La pantalla utiliza un adaptador de catálogo de solo lectura. Ante un error al consultar, muestra el fallo y bloquea el inicio: no sustituye silenciosamente la API por valores embebidos antiguos. Los importes y parámetros de resultados ya calculados no cambian al actualizar la configuración.
 
-## Lo que DTIC debe concretar antes de conectarlo
+## Traspaso a DTIC
 
-1. Dominio o ruta pública definitiva, alojamiento y HTTPS.
-2. Modalidad inicial: enlace o incorporación a una página institucional.
-3. Dirección y contrato de la API de lectura; política de actualización y tratamiento de indisponibilidad.
-4. Si se utiliza iframe, orígenes institucionales autorizados en `Content-Security-Policy: frame-ancestors` para la ruta pública y permiso de incrustación en el gestor de contenidos. Actualmente el servidor bloquea la incrustación con `frame-ancestors 'none'` y `X-Frame-Options: DENY`; la aplicación interna debe conservar esa protección.
-5. Si la pantalla y la API se sirven desde orígenes diferentes, configurar CORS para los orígenes públicos acordados. Bajo el mismo origen no se necesita CORS.
-6. Validar acceso anónimo al simulador y a los datos públicos; rechazo del acceso anónimo a administración; sincronización de matrícula e Idiomas; navegación móvil; ausencia de datos internos en respuestas públicas.
+1. Desplegar el mismo código con Node 24, almacenamiento persistente y HTTPS, utilizando el arranque normal; no trasladar credenciales ni base descartable de pruebas.
+2. Establecer `APP_ORIGIN` con la dirección institucional del servicio y activar las dos variables públicas. Cambiar los orígenes de iframe si la página institucional utiliza otros dominios.
+3. Sustituir el dominio de Render por el institucional en el enlace/iframe. La pantalla y su API pueden permanecer bajo el mismo origen, sin cambiar el motor financiero ni el contrato de lectura.
+4. Incorporar Entra ID a la aplicación interna cuando DTIC disponga de su configuración. El acceso anónimo público funciona por separado y no necesita SSO.
+5. Validar acceso anónimo y PDF/Excel, consulta de programas y parámetros, exclusión de inactivos, edición administrativa auditada, acceso interno protegido y página institucional en escritorio/móvil.
 
-Referencias: [MDN — frame-ancestors](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/frame-ancestors) y [MDN — CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS).
+La publicación real en Render y la edición de la página de Uninorte requieren aplicar los pasos anteriores en sus respectivos paneles. La verificación local no demuestra que esos despliegues externos se hayan realizado.
+
+Fuentes oficiales consultadas el 16-10-2026: [despliegues de Render](https://render.com/docs/deploys), [limitaciones de Render Free](https://render.com/docs/free) y [MDN — frame-ancestors](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/frame-ancestors).

@@ -58,6 +58,10 @@ Si aparece un error:
 - Error de origen al guardar: entrar siempre por la URL HTTPS del servicio; eliminar un `APP_ORIGIN` manual equivocado.
 - Login rechazado después de una actualización: usar la cuenta inicial configurada; el almacenamiento temporal pudo reiniciarse.
 
+## Acceso público opcional — v10
+
+Para habilitar el enlace público en este mismo servicio, sin otra cuenta ni servidor, seguir el [procedimiento y código para Uninorte](PUBLIC_INTEGRATION_PLAN.md). El acceso público se activa expresamente; la aplicación interna continúa protegida.
+
 ## 5. Recorrido de aceptación
 
 Usar únicamente personas y datos ficticios.

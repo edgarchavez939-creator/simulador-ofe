@@ -9,6 +9,7 @@
  function current(){return context||latest;}
  async function refresh(){
   if(global.OFE_SERVER){const data=await global.OFEAuth.request('/api/simulation-settings');latest=immutable(data);}
+  else if(global.OFE_PUBLIC){const data=await global.ProgramCatalogHttp.request(global.OFE_PUBLIC.apiBaseUrl+'/simulation-settings');latest=immutable(data);}
   return latest;
  }
  async function renew(tab){const data=await refresh();snapshots.set(tab,data);return data;}
@@ -55,7 +56,7 @@
  global.OFEGlobalSettings=Object.freeze({current,snapshot,refresh,renew,prepare,applyDefaults,withSnapshot,adopt});
  global.SimuladorOFE.register('global-simulation-settings',{
   async init(){
-   if(!global.OFE_SERVER)return;
+   if(!global.OFE_SERVER&&!global.OFE_PUBLIC)return;
    await refresh();
    // The existing financial regression checks use the original reference percentages.
    // Run them in an isolated context, never against an administrator's live defaults.

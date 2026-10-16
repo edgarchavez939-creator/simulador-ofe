@@ -1,8 +1,8 @@
 # Integración DTIC
 
-## Estado de la pantalla pública — v9
+## Estado de la pantalla pública — v10
 
-El código público está separado, pero el servidor autónomo actual redirige su ruta al acceso interno. La lectura del catálogo y de parámetros requiere sesión. La publicación anónima y su conexión con la web institucional siguen pendientes; consultar [plan de integración pública](PUBLIC_INTEGRATION_PLAN.md).
+El servicio puede habilitar acceso anónimo con `OFE_PUBLIC_ENABLED=1`, una API de consulta de datos publicados y permisos de iframe configurables por origen. La administración mantiene su autenticación. Consultar el [plan de activación, código de integración y contrato público](PUBLIC_INTEGRATION_PLAN.md). La activación remota y la edición del portal institucional no se confirman con una prueba local.
 
 ## Actualización v2
 

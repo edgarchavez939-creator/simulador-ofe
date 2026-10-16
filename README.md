@@ -142,3 +142,7 @@ Nota de alcance: Chromium headless del entorno no produjo una sesión utilizable
 - Se mantienen `connect-src 'self'`, `object-src 'none'`, `base-uri 'none'` y `form-action 'self'`.
 - El paquete conserva el actualizador mediante los marcadores `PROGRAMAS_START/END` y `POSGRADOS_START/END`.
 - Estado de aceptación: Release Candidate. La validación funcional automatizada previa es 15/15 rutas y 10/10 pruebas financieras; la prueba visual manual en navegadores objetivo sigue siendo una validación operativa recomendada antes del despliegue institucional definitivo.
+
+## Acceso público e iframe
+
+El servicio puede habilitar una pantalla sin cuenta y una API pública de consulta, manteniendo privada la administración. Ver [activación en Render y entrega a DTIC](docs/PUBLIC_INTEGRATION_PLAN.md), [ejemplo para la web institucional](examples/uninorte-embed.html) y [validación v10](docs/PUBLIC_VALIDATION_V10.md).

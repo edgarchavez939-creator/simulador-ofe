@@ -2,6 +2,7 @@
 const http=require('node:http'),fs=require('node:fs'),path=require('node:path');
 const {randomUUID}=require('node:crypto');
 const {openStore,publicUser,ROLES}=require('./store.cjs');
+const {frameOrigins,publicAssets,publicProgram,publicSettings}=require('./public-access.cjs');
 const {DEFINITIONS,validate:validateSettings,readSettings}=require('./settings.cjs');
 const {digest,token,hashPassword,verifyPassword,passwordPolicy}=require('./security.cjs');
 const fail=(status,message,field)=>Object.assign(new Error(message),{status,field});
@@ -18,6 +19,8 @@ async function createApplication(options={}){
  const root=options.root||path.resolve(__dirname,'..'),origin=new URL(options.origin||'http://127.0.0.1:8787');
  if(!['http:','https:'].includes(origin.protocol)||origin.username||origin.password||origin.pathname!=='/'||origin.search||origin.hash)throw Error('APP_ORIGIN debe ser un origen HTTP o HTTPS sin ruta ni credenciales.');
  if(options.production && origin.protocol!=='https:')throw Error('La publicación requiere APP_ORIGIN con HTTPS.');
+ const publicEnabled=options.publicEnabled===true,parents=frameOrigins(options.publicFrameOrigins);
+ const anonymousAssets=publicEnabled?publicAssets(root):new Set();
  const secure=origin.protocol==='https:',cookieName=secure?'__Host-ofe_session':'ofe_session';
  const store=await openStore(options.database||path.join(root,'var/ofe.sqlite'),root),{db,audit,transaction}=store;
  const dummy=await hashPassword(token());
@@ -80,6 +83,18 @@ async function createApplication(options={}){
   if(mutating){
    if(req.headers.origin!==origin.origin)throw fail(403,'Origen de petición no permitido.');
    if(route!=='/api/auth/login'&&(!s||req.headers['x-csrf-token']!==s.csrf_token))throw fail(s?403:401,s?'La sesión de la página cambió. Recarga e inténtalo nuevamente.':'Inicia sesión para continuar.');
+  }
+  if(route.startsWith('/api/public/')){
+   if(!publicEnabled)throw fail(404,'Ruta no encontrada.');
+   if(!['GET','HEAD'].includes(method))throw fail(405,'La API pública solo permite consultas.');
+   if(route==='/api/public/programs'||route.startsWith('/api/public/programs/')){
+    const programs=db.prepare('SELECT data FROM programs ORDER BY rowid').all().map(row=>JSON.parse(row.data)).filter(p=>p.activo).map(publicProgram);
+    if(route==='/api/public/programs')return json(res,200,{programs});
+    let id;try{id=decodeURIComponent(route.slice('/api/public/programs/'.length));}catch{throw fail(400,'Identificador inválido.');}
+    const program=programs.find(p=>p.id===id);if(!program)throw fail(404,'Programa no encontrado.');return json(res,200,program);
+   }
+   if(route==='/api/public/simulation-settings')return json(res,200,publicSettings(readSettings(db)));
+   throw fail(404,'Ruta no encontrada.');
   }
   if(route==='/api/health'&&method==='GET')return json(res,200,{ok:true});
   if(route==='/api/auth/login'&&method==='POST'){
@@ -222,6 +237,18 @@ async function createApplication(options={}){
    throw fail(404,'Ruta no encontrada.');
   }
   if(!['GET','HEAD'].includes(method))throw fail(405,'Método no permitido.');
+  if(publicEnabled){
+   if(['/simulador','/simulador/','/apps/public'].includes(route))return redirect(res,'/apps/public/');
+   if(route==='/apps/public/'||route==='/apps/public/index.html'){
+    res.setHeader('Content-Security-Policy',res.getHeader('Content-Security-Policy').replace("frame-ancestors 'none'","frame-ancestors 'self'"+(parents.length?' '+parents.join(' '):'')));
+    if(parents.length)res.removeHeader('X-Frame-Options');else res.setHeader('X-Frame-Options','SAMEORIGIN');
+    return serve(res,path.join(root,'apps/public/index.html'),method);
+   }
+   if(route==='/apps/public/runtime-config.js'){
+    res.setHeader('Content-Type',TYPES['.js']);return res.end(method==='HEAD'?'':"window.OFE_PUBLIC = Object.freeze({apiBaseUrl:'/api/public'});");
+   }
+   if(anonymousAssets.has(route))return serve(res,path.join(root,'.'+route),method);
+  }
   if(route==='/')return redirect(res,'/apps/ofe/');
   if(route==='/apps/public/'||route==='/index.html')return redirect(res,'/apps/ofe/');
   if(route==='/login'||route==='/login/')return serve(res,path.join(root,'shared/auth/login.html'),method);
