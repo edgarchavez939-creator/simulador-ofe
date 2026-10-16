@@ -106,3 +106,16 @@ Los catálogos embebidos y los seis archivos 03-finance-core.js/07-financing-eng
 permanecen idénticos a su versión anterior. No hay cambios de API, migraciones,
 roles o autenticación. Render debe desplegar el commit para exponer esta versión
 en línea; la validación descrita corresponde a la copia local de la aplicación.
+
+## PDF de bancos aliados sin marca institucional
+
+El exportable de Banco Aliado utiliza encabezado y acentos neutros. Se omiten
+el logo UN/OFE, el título Uninorte, la autoría institucional en los metadatos y
+la leyenda lateral «Vigilado Mineducación», también en los anexos. La nota de
+validación remite a la entidad financiera. No se incorpora una marca bancaria
+sin un recurso y una identificación aportados por el usuario.
+
+Los datos académicos, importes y plan de pagos provienen del mismo snapshot.
+Esta excepción se aplica por reporte; los demás PDF mantienen su identidad.
+Se actualizan las expectativas existentes del control PDF para reflejar esta
+excepción. No se ejecutaron pruebas por indicación del usuario.

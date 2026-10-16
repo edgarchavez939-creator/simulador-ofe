@@ -9,6 +9,7 @@
  const value=f=>f.format==='money'?money(f.value):f.format==='percent'?percent(f.value):String(f.value);
  const field=(s,label)=>s?.fields.find(f=>f.label===label);
  const section=(r,title)=>r.sections.find(s=>s.title===title);
+ const isBankReport=report=>report.modality==='Crédito banco aliado';
  let cached;
  function base64(buffer){let out='';const bytes=new Uint8Array(buffer);for(let i=0;i<bytes.length;i+=8192)out+=String.fromCharCode(...bytes.subarray(i,i+8192));return global.btoa(out);}
  async function assets(){
@@ -43,11 +44,18 @@
   paragraph(text,{x=X,width=R-X,size=8.5,gap=7}={}){const lines=this.wrap(text,width,size);for(const line of lines){this.ensure(size*1.4);this.text(line,x,this.y+size,size,false,C.muted);this.y+=size*1.4;}this.y+=gap;}
   newPage(report,continuation=false){
    if(this.pages.length)this.doc.addPage();this.report=report;this.pages.push({report,number:this.doc.getNumberOfPages()});
-   this.doc.addImage(this.identity.logo,'PNG',L,28,243,243*59/304,'ofe-logo');
-   this.rule(87,L,R,C.red);this.rule(87,R-54,R,C.gold);
-   this.text('Simulación de Crédito Uninorte',L,108,15,true);
-   this.text(modalityTitle(report)+(continuation?' · Continuación':''),L,128,10,true,C.red);
-   this.y=148;
+   const bank=isBankReport(report);this.accent=bank?'#374151':C.red;this.trim=bank?'#9CA3AF':C.gold;this.panel=bank?'#F3F4F6':C.panel;
+   if(bank){
+    this.text('Simulación de crédito',L,49,15,true);
+    this.text('Crédito Banco Aliado'+(continuation?' · Continuación':''),L,69,10,true,this.accent);
+    this.rule(83,L,R);this.y=105;
+   }else{
+    this.doc.addImage(this.identity.logo,'PNG',L,28,243,243*59/304,'ofe-logo');
+    this.rule(87,L,R,this.accent);this.rule(87,R-54,R,this.trim);
+    this.text('Simulación de Crédito Uninorte',L,108,15,true);
+    this.text(modalityTitle(report)+(continuation?' · Continuación':''),L,128,10,true,this.accent);
+    this.y=148;
+   }
    if(report.program){const lines=this.wrap(report.program,R-L,12,true);for(const line of lines){this.text(line,L,this.y,12,true);this.y+=15;}}
    const level=report.level==='pregrado'?'Pregrado':report.level==='posgrado'?'Posgrado':report.level;
    const context=[level,dateLabel(report)].filter(Boolean).join(' / ');
@@ -56,7 +64,7 @@
   }
   ensure(height){if(this.y+height>BOTTOM)this.newPage(this.report,true);}
   stage(title,number){this.ensure(48);this.step=number??this.step+1;const top=this.y;
-   this.doc.setFillColor(C.panel);this.doc.rect(X-8,top,R-X+8,24,'F');this.doc.setFillColor(C.red);this.doc.rect(L,top,18,24,'F');
+   this.doc.setFillColor(this.panel);this.doc.rect(X-8,top,R-X+8,24,'F');this.doc.setFillColor(this.accent);this.doc.rect(L,top,18,24,'F');
    this.text(this.step,L+9,top+16,9,true,'#FFFFFF','center');this.text(title,X,top+16,10.5,true);this.y+=33;
   }
   row(label,display,{bold=false,size=11,color=C.ink,hint}={}){
@@ -70,13 +78,13 @@
   fields(fields,options={}){for(const f of fields)this.row(f.label,value(f),options);}
   component(s,x,width){
    const start=this.y,amount=field(s,'Monto financiado'),rate=field(s,'Tasa'),term=field(s,'Plazo (meses)')||field(s,'Plazo estimado de amortización (meses)'),count=field(s,'Número de cuotas'),payment=field(s,'Cuota mensual estimada');
-   this.text(s.title.replace('Componente ','').toUpperCase(),x,start+9,8.5,true,C.red);
+   this.text(s.title.replace('Componente ','').toUpperCase(),x,start+9,8.5,true,this.accent);
    if(amount)this.text(value(amount),x,start+36,18,true);
    let y=start+57;
    const detail=rate?percent(rate.value)+' efectiva mensual vencida':'Tasa y cuota por definir';
    for(const line of this.wrap(detail,width,8.1)){this.text(line,x,y,8.1,false,C.muted);y+=11;}
    if(term){this.text(term.value+' meses'+(count?' / '+count.value+' cuotas':' estimados'),x,y+6,8.5);y+=25;}
-   if(payment){this.text('Cuota mensual',x,y,8.5,false,C.muted);this.text(value(payment),x,y+20,14,true,C.red);y+=33;}
+   if(payment){this.text('Cuota mensual',x,y,8.5,false,C.muted);this.text(value(payment),x,y+20,14,true,this.accent);y+=33;}
    return y-start+8;
   }
   plan(plan,inline=false){
@@ -119,7 +127,7 @@
      if(amount)this.row('Monto financiado',value(amount),{bold:true,size:14});
      if(rate&&term&&count){this.ensure(24);this.text('Tasa efectiva mensual vencida: '+value(rate),X,this.y+10,8.4,false,C.muted);this.text(term.value+' meses / '+count.value+' cuotas',R,this.y+10,8.4,false,C.muted,'right');this.y+=22;}
      else{if(rate)this.row('Tasa efectiva mensual vencida',value(rate));if(term)this.row('Amortización estimada',term.value+' meses');}
-     if(payment)this.row('Cuota mensual estimada',value(payment),{bold:true,size:22,color:C.red});
+     if(payment)this.row('Cuota mensual estimada',value(payment),{bold:true,size:22,color:this.accent});
     }
     if(r.pending)this.paragraph('Largo plazo: tasa, cuota e intereses pendientes hasta iniciar la amortización.');
    }
@@ -145,13 +153,15 @@
  }
  // A separate footer implementation keeps the legally required side legend vertical and ascending.
  Layout.prototype.footer=function(){const total=this.doc.getNumberOfPages();for(const item of this.pages){this.doc.setPage(item.number);this.rule(714,L,R);this.text('ALCANCE DE LA SIMULACIÓN',L,732,8,true,C.muted);
-  const lines=this.wrap(item.report.disclaimer+' Este documento no constituye aprobación del crédito.',R-L,8.1);lines.forEach((line,i)=>this.text(line,L,748+i*10.8,8.1,false,C.muted));
-  this.text('Generado por',L,807,8,false,C.muted);this.text(item.report.signature||'Usuario Público',L+81,807,9,true);this.text('Pág. '+item.number+' de '+total,R,807,8,false,C.muted,'right');this.font(7.5,false,C.muted);this.doc.text('Vigilado Mineducación',34,650,{angle:90});
+  const disclaimer=isBankReport(item.report)?item.report.disclaimer.replace('la Universidad del Norte y/o las entidades que intervengan en el proceso de financiación','la entidad financiera'):item.report.disclaimer;
+  const lines=this.wrap(disclaimer+' Este documento no constituye aprobación del crédito.',R-L,8.1);lines.forEach((line,i)=>this.text(line,L,748+i*10.8,8.1,false,C.muted));
+  this.text('Generado por',L,807,8,false,C.muted);this.text(item.report.signature||'Usuario Público',L+81,807,9,true);this.text('Pág. '+item.number+' de '+total,R,807,8,false,C.muted,'right');if(!isBankReport(item.report)){this.font(7.5,false,C.muted);this.doc.text('Vigilado Mineducación',34,650,{angle:90});}
  }};
  function build(reports,identity){
   const Constructor=global.jspdf?.jsPDF;if(!Constructor)throw Error('No fue posible cargar el generador PDF. Recarga la página.');
   const doc=new Constructor({unit:'pt',format:'a4',compress:true,putOnlyUsedFonts:true});doc.addFileToVFS('PublicSans-Regular.ttf',identity.regular);doc.addFont('PublicSans-Regular.ttf','PublicSans','normal');doc.addFileToVFS('PublicSans-Bold.ttf',identity.bold);doc.addFont('PublicSans-Bold.ttf','PublicSans','bold');
-  doc.setProperties({title:'Simulación de Crédito Uninorte',author:'Universidad del Norte',subject:'Simulación informativa de crédito'});
+  const branded=reports.some(report=>!isBankReport(report));
+  doc.setProperties({title:branded?'Simulación de Crédito Uninorte':'Simulación de crédito - Banco Aliado',author:branded?'Universidad del Norte':'',subject:'Simulación informativa de crédito'});
   const layout=new Layout(doc,identity);for(const report of reports)layout.reportBody(report);layout.footer();return doc;
  }
  function filename(report){return ('Simulacion_'+report.modality+'_'+(report.program||'')).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9_-]+/g,'_').replace(/_+$/,'').slice(0,140)+'.pdf';}

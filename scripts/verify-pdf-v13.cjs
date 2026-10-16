@@ -15,8 +15,10 @@ test('PDF uses exact same normalized amounts as Excel for all modalities; real o
  for(const key of [1,2,3,7,5,'languages']){
   calls.length=0;const r=c.OFEReport.pdf(key),normalized=c.OFEReport.normalize(key,c.OFEReport.result(key));assert.equal(JSON.stringify(r.sections),JSON.stringify(normalized.sections));
   const d=c.OFEPdf.build([r],identity),texts=calls.map(x=>x.text),combined=texts.join('\n');
-  assert.ok(Buffer.from(d.output('arraybuffer')).length>20000);assert.ok(combined.includes('Simulación de Crédito Uninorte'));assert.ok(combined.includes('Usuario Público'));assert.ok(!combined.includes('@'));
-  assert.ok(calls.every(x=>x.font==='PublicSans'));assert.ok(calls.every(x=>x.x>=34&&x.x<=544&&x.y<818));assert.ok(calls.some(x=>x.text==='Vigilado Mineducación'&&x.options.angle===90));
+  const output=Buffer.from(d.output('arraybuffer'));assert.ok(output.length>20000);assert.ok(combined.includes('Usuario Público'));assert.ok(!combined.includes('@'));
+  if(key===3){assert.ok(combined.includes('Crédito Banco Aliado'));assert.ok(combined.includes('la entidad financiera'));assert.ok(!/Uninorte|Universidad del Norte|Vigilado Mineducación/.test(combined));assert.ok(!/\/Subtype\s*\/Image/.test(output.toString('latin1')));}
+  else{assert.ok(combined.includes('Simulación de Crédito Uninorte'));assert.ok(calls.some(x=>x.text==='Vigilado Mineducación'&&x.options.angle===90));}
+  assert.ok(calls.every(x=>x.font==='PublicSans'));assert.ok(calls.every(x=>x.x>=34&&x.x<=544&&x.y<818));
   assert.ok(combined.includes('no constituye aprobación del crédito.'));
   const financing=normalized.sections.find(s=>s.title==='Financiación'||s.title==='Financiación de la nueva condición'||s.title==='Financiación total');assert.ok(combined.includes(amount(financing.fields.find(f=>/Monto financiado/.test(f.label)).value)));
   const total=normalized.sections.find(s=>/^Totales/.test(s.title)).fields.find(f=>/Costo total/.test(f.label));assert.ok(texts.includes(amount(total.value)));
