@@ -1,5 +1,9 @@
 # Integración DTIC
 
+## Estado de la pantalla pública — v9
+
+El código público está separado, pero el servidor autónomo actual redirige su ruta al acceso interno. La lectura del catálogo y de parámetros requiere sesión. La publicación anónima y su conexión con la web institucional siguen pendientes; consultar [plan de integración pública](PUBLIC_INTEGRATION_PLAN.md).
+
 ## Actualización v2
 
 La nueva instrucción del usuario habilita operación autónoma desde esta fase. Existe autenticación local, autorización servidor y auditoría transaccional sin esperar a DTIC. La decisión v1E al final de este documento queda como antecedente histórico. Consultar [servicio y traspaso a DTIC](AUTONOMOUS_DEPLOYMENT.md) y [esquema, permisos y pruebas](PHASE_V2.md). El proveedor local puede complementarse mediante un vínculo institucional al mismo usuario interno.

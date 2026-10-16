@@ -8,7 +8,7 @@
   "scripts": {
     "start": "node server/start.cjs",
     "bootstrap-admin": "node server/bootstrap.cjs",
-    "test": "node --test scripts/verify-program-catalog.cjs scripts/verify-program-catalog-v1c.cjs scripts/verify-program-catalog-v1d.cjs scripts/verify-functional-v1e.cjs scripts/verify-phase-v2.cjs scripts/verify-server.cjs scripts/verify-demo.cjs scripts/verify-admin-v3.cjs scripts/verify-ux-v4.cjs scripts/verify-refinement-v5.cjs scripts/verify-excel-v6.cjs scripts/verify-interface-v8.cjs",
+    "test": "node --test scripts/verify-program-catalog.cjs scripts/verify-program-catalog-v1c.cjs scripts/verify-program-catalog-v1d.cjs scripts/verify-functional-v1e.cjs scripts/verify-phase-v2.cjs scripts/verify-server.cjs scripts/verify-demo.cjs scripts/verify-admin-v3.cjs scripts/verify-ux-v4.cjs scripts/verify-refinement-v5.cjs scripts/verify-excel-v6.cjs scripts/verify-interface-v8.cjs scripts/verify-interface-v9.cjs",
     "start:demo": "node server/start-demo.cjs"
   }
 }

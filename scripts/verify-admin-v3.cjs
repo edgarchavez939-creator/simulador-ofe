@@ -85,3 +85,15 @@ test('migration upgrades an existing v1 database without replacing users or 173 
  for(const row of programs)old.prepare('INSERT INTO programs(id,data,version) VALUES(?,?,?)').run(row.id,row.data,row.version);old.close();
  const store=await openStore(file,root);assert.equal(store.db.prepare('SELECT count(*) n FROM programs').get().n,173);assert.equal(JSON.stringify(store.db.prepare('SELECT id,data,version FROM programs ORDER BY rowid').all()),JSON.stringify(programs));assert.equal(store.db.prepare('SELECT password_hash FROM users WHERE id=?').get('existing-admin').password_hash,'fixture-hash');assert.ok(store.permissions('system_admin').includes('settings.update'));assert.equal(store.db.prepare('SELECT version FROM global_settings').get().version,1);store.close();
 });
+
+test('language-only program updates persist, retain tuition and produce a field audit',async t=>{
+ const f=await fixture(t),admin=await f.login();
+ const before=(await f.call('/api/programs','GET',undefined,admin)).body.programs.find(p=>p.nivel==='pregrado');
+ const changed=await f.call('/api/admin/programs/'+encodeURIComponent(before.id),'PUT',{version:before.version,changes:{valorIdiomas:175000}},admin);
+ assert.equal(changed.status,200,JSON.stringify(changed.body));
+ const after=(await f.call('/api/programs','GET',undefined,admin)).body.programs.find(p=>p.id===before.id);
+ assert.equal(after.valorIdiomas,175000);assert.equal(after.valorMatricula,before.valorMatricula);assert.equal(after.version,before.version+1);
+ const records=(await f.call('/api/admin/audit?module=programs&action=PROGRAM_UPDATE&result=SUCCESS','GET',undefined,admin)).body.records.filter(row=>row.entity_id===before.id);
+ assert.equal(records.length,1);assert.equal(records[0].field_name,'valorIdiomas');assert.equal(Number(JSON.parse(records[0].old_value)),before.valorIdiomas);assert.equal(JSON.parse(records[0].new_value),175000);
+ assert.equal((await f.call('/api/admin/programs/'+encodeURIComponent(before.id),'PUT',{version:before.version,changes:{valorIdiomas:200000}},admin)).status,409);
+});

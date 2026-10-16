@@ -58,7 +58,7 @@
 <span class="status-dot" aria-hidden="true"></span><span class="header__status" id="header-status">Lineamientos vigentes</span>
 </div>
 </header>
-<div aria-live="polite" class="note u-mb-4" id="app-startup-status" role="status">Cargando programas…</div>
+<div aria-live="polite" class="note u-mb-4" id="app-startup-status" role="status" hidden></div>
 <main class="main-area" id="main-content" aria-busy="true" inert="" tabindex="-1">
 <!-- TAB 1 -->
 <div class="view view--simulation" data-view="1" id="tab1">
@@ -165,7 +165,7 @@
 </div>
 <div class="note guarantee-info u-mt-3" id="garantisa1-info">
 <span class="guarantee-info__icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg></span>
-<div class="guarantee-info__body"><strong>Aporte Garantisa <span aria-label="Ayuda: Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." class="tip" data-tip="Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." tabindex="0">?</span></strong>
+<div class="guarantee-info__body"><strong><span id="garantisa1-label">Aporte Garantisa: —</span> <span aria-label="Ayuda: Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." class="tip" data-tip="Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." tabindex="0">?</span></strong>
 <span class="guarantee-info__value" id="garantisa1-val">—</span></div>
 </div>
 <button class="idiomas-btn u-hide" data-action="abrir-idiomas" data-tab="1" id="btn-idiomas-1" type="button">
@@ -308,7 +308,7 @@
 <label class="field__label">Número de Meses</label>
 <div class="input-affix u-border-accent"><input aria-label="Meses de corto plazo" class="input u-input-clean" data-input-action="upd-eq-cp" id="plazoCP" min="1" placeholder="6" type="number" value="6"/><span class="input-affix__tag input-affix__tag--end">meses</span></div>
 </div>
-<div class="note guarantee-info guarantee-info--compact u-mt-3 u-mb-0"><span class="guarantee-info__icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg></span><div class="guarantee-info__body"><strong>Garantisa CP (4.17%) <span aria-label="Ayuda: Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." class="tip" data-tip="Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." tabindex="0">?</span></strong><span class="guarantee-info__value" id="gCP-val">—</span></div></div>
+<div class="note guarantee-info guarantee-info--compact u-mt-3 u-mb-0"><span class="guarantee-info__icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg></span><div class="guarantee-info__body"><strong><span id="garantisa-cp-label">Aporte Garantisa CP: —</span> <span aria-label="Ayuda: Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." class="tip" data-tip="Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." tabindex="0">?</span></strong><span class="guarantee-info__value" id="gCP-val">—</span></div></div>
 </div>
 <div class="group group--success u-mt-12">
 <div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" fill="currentColor" r="3" stroke="none"></circle></svg> Segmento Largo Plazo <span aria-label="Ayuda: Porción que se empieza a pagar después de graduarse. No genera cuota durante los estudios y su tasa será la vigente al iniciar la amortización." class="tip" data-tip="Porción que se empieza a pagar después de graduarse. No genera cuota durante los estudios y su tasa será la vigente al iniciar la amortización." tabindex="0">?</span></div>
@@ -362,7 +362,7 @@
 </div>
 <div class="note guarantee-info guarantee-info--compact guarantee-info--lp u-mt-3 surface-success-text u-mb-0">
 <span class="guarantee-info__icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg></span>
-<div class="guarantee-info__body"><strong class="u-text-success">Garantisa LP (2.86%) <span aria-label="Ayuda: Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." class="tip" data-tip="Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." tabindex="0">?</span></strong><span class="guarantee-info__value" id="gLP-val">—</span></div>
+<div class="guarantee-info__body"><strong class="u-text-success"><span id="garantisa-lp-label">Aporte Garantisa LP: —</span> <span aria-label="Ayuda: Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." class="tip" data-tip="Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." tabindex="0">?</span></strong><span class="guarantee-info__value" id="gLP-val">—</span></div>
 </div>
 </div>
 <button class="idiomas-btn u-hide u-mt-12" data-action="abrir-idiomas" data-tab="2" id="btn-idiomas-2" type="button">
@@ -580,7 +580,7 @@
 </div>
 <div class="note guarantee-info u-mb-4" id="gar7-note">
 <span class="guarantee-info__icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg></span>
-<div class="guarantee-info__body"><strong>Aporte Garantisa (<span id="gar7-rate">4.17%</span>) <span aria-label="Ayuda: Aporte obligatorio al fondo de garantía, calculado sobre el monto financiado. Se paga junto con la cuota inicial." class="tip" data-tip="Aporte obligatorio al fondo de garantía, calculado sobre el monto financiado. Se paga junto con la cuota inicial." tabindex="0">?</span></strong><span class="guarantee-info__value u-muted" id="gar7-val">—</span></div>
+<div class="guarantee-info__body"><strong><span id="garantisa7-label">Aporte Garantisa: —</span><span id="gar7-rate" hidden>4.17%</span> <span aria-label="Ayuda: Aporte obligatorio al fondo de garantía, calculado sobre el monto financiado. Se paga junto con la cuota inicial." class="tip" data-tip="Aporte obligatorio al fondo de garantía, calculado sobre el monto financiado. Se paga junto con la cuota inicial." tabindex="0">?</span></strong><span class="guarantee-info__value u-muted" id="gar7-val">—</span></div>
 </div>
 <button class="btn btn--primary btn--lg btn--block" data-action="calcular" data-tab="7"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><rect height="20" rx="2" width="16" x="4" y="2"></rect><line x1="8" x2="16" y1="6" y2="6"></line><line x1="16" x2="16" y1="14" y2="18"></line><path d="M16 10h.01M12 10h.01M8 10h.01M12 14h.01M8 14h.01M12 18h.01M8 18h.01"></path></svg> Calcular Cuota Inicial</button>
 <button class="btn btn--block u-mt-2" data-action="limpiar-tab" data-tab="7"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" x2="10" y1="11" y2="17"></line><line x1="14" x2="14" y1="11" y2="17"></line></svg> Limpiar / Nueva simulación</button>
@@ -1547,6 +1547,7 @@
 <script src="../../shared/exports/simulation-report.js"></script>
 <script src="../../shared/exports/excel-report.js"></script>
 <script src="../../shared/ui/rate-ui.js"></script>
+<script src="../../shared/ui/guarantee-copy.js"></script>
 <script src="./simulador-assets/js/09-bootstrap.js?v=uninorte-ui-3-12-pdf-aptos"></script>
 <script src="./simulador-assets/js/10-pdf-aptos.js?v=uninorte-ui-3-12-pdf-aptos"></script>
 <!-- MODAL IDIOMAS -->

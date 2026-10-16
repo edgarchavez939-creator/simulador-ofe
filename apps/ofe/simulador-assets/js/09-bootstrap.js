@@ -10,8 +10,8 @@
       main.setAttribute('aria-busy', 'true');
     }
     if (status) {
-      status.hidden = false;
-      status.textContent = 'Cargando programas…';
+      status.hidden = true;
+      status.textContent = '';
     }
     try {
       await global.SimuladorOFE.init((completed,total)=>operation?.update({completed,total,message:completed?'Preparando los módulos del simulador…':'Cargando programas…'}));
@@ -24,6 +24,7 @@
       console.error('[SimuladorOFE] Falló el arranque de la aplicación', error);
       if (main) main.removeAttribute('aria-busy');
       if (status) {
+        status.hidden = false;
         status.className = 'note note--danger u-mb-4';
         status.setAttribute('role', 'alert');
         status.textContent = 'No fue posible iniciar el simulador. Recarga la página para intentarlo de nuevo.';

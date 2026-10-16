@@ -35,7 +35,7 @@
 .view--admin .tbl td.admin-name { color:var(--text-heading); font-weight:600; max-width:340px; min-width:200px; }.view--admin .tbl td small { display:block; font-size:11px; color:var(--text-muted); font-weight:400; margin-top:4px; }
 .view--admin .tbl tbody tr:last-child td { border-bottom:0; }.view--admin .tbl tbody tr:hover td { background:var(--surface-2); }
 .view--admin .tbl td.admin-money { text-align:right; font-size:12px; font-weight:500; font-variant-numeric:tabular-nums; }.view--admin .tbl th:nth-child(3):has(+ th) { white-space:nowrap; }
-#tab6 .tbl th:nth-child(3) { text-align:right; }
+#tab6 .tbl th:nth-child(3),#tab6 .tbl th:nth-child(4) { text-align:right; }
 .view--admin .tbl :is(th,td):last-child { width:112px; white-space:nowrap; text-align:right; }
 .view--admin .admin-row-action { min-height:32px; height:32px; padding:0 10px; border:1px solid var(--border-default); background:var(--surface-panel); color:var(--text-body); font-size:11px; }
 .admin-badge { display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border-default); border-radius:6px; padding:3px 8px; background:var(--surface-2); color:var(--text-muted); font-size:10px; font-weight:500; }
@@ -116,3 +116,9 @@
 @media(max-width:640px) { #tab11 .admin-filter { grid-template-columns:1fr; }.admin-filter-actions { flex-direction:column; } }
 .rate-equivalences .table-wrap > table.tbl { min-width:0; width:100%; table-layout:fixed; }
 @media(max-width:640px) { .rate-equivalences .table-wrap > table.tbl { min-width:430px; } }
+
+/* Valores y acciones de Idiomas visibles en el catálogo. */
+.program-row-actions { display:flex; justify-content:flex-end; gap:8px; }
+#program-languages-section .field__hint { margin:10px 0 0; line-height:1.6; }
+.guarantee-info__body strong { flex-wrap:wrap; line-height:1.45; }
+.guarantee-info__value { color:var(--text-muted); }

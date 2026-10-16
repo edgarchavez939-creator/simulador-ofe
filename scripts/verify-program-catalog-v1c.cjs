@@ -225,7 +225,7 @@ function startupElements() {
   }]));
 }
 for (const app of ['public', 'ofe']) {
-  test(`${app}: bootstrap displays loading, enables success and leaves failure visibly blocked`, async () => {
+  test(`${app}: bootstrap keeps the inline banner hidden while loading and exposes startup errors`, async () => {
     for (const success of [true, false]) {
       const gate = deferred();
       const elements = startupElements();
@@ -237,7 +237,8 @@ for (const app of ['public', 'ofe']) {
       vm.runInContext(read(`apps/${app}/simulador-assets/js/09-bootstrap.js`), context);
       const start = events.find(event => event.name === 'DOMContentLoaded').handler;
       const started = start();
-      assert.equal(elements['app-startup-status'].textContent, 'Cargando programas…');
+      assert.equal(elements['app-startup-status'].textContent, '');
+      assert.equal(elements['app-startup-status'].hidden, true);
       assert.equal(elements['main-content'].inert, true);
       gate.resolve(response(success ? fixture() : null, success ? 200 : 503));
       await started;
