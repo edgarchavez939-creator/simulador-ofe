@@ -606,7 +606,7 @@ const VIEW_META = Object.freeze({
   8:{section:'ANALIZAR', title:'Comparar escenarios', desc:'Accede a las comparaciones disponibles dentro de cada modalidad de simulación.'},
   9:{section:'HISTORIAL', title:'Mis simulaciones', desc:'Consulta las simulaciones recientes guardadas localmente en este navegador.'},
   10:{section:'ADMINISTRACIÓN',title:'Usuarios',desc:'Gestiona los accesos al simulador.'},
-  12:{section:'ADMINISTRACIÓN',title:'Configuración',desc:'Parámetros para nuevas simulaciones.'},
+  12:{section:'ADMINISTRACIÓN',title:'Configuración',desc:'Parámetros, colores y acceso público.'},
   11:{section:'ADMINISTRACIÓN',title:'Auditoría',desc:'Consulta la trazabilidad de los cambios.'},
   6:{section:'ADMINISTRACIÓN', title:'Actualizar Programas', desc:'Gestiona los programas y valores disponibles para nuevas simulaciones.'}
 });

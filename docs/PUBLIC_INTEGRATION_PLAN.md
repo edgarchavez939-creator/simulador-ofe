@@ -1,5 +1,9 @@
 # Acceso público e integración con Uninorte — v10
 
+## Configuración dentro de la aplicación — v11
+
+El administrador dispone ahora de Acceso público e integración en Configuración: enlace, código copiable, comprobación anónima y vista previa en escritorio/móvil. También puede calibrar la paleta de marca conservando los fondos de cada modo. Ver [uso y validación](CONFIGURACION_PUBLICA_COLORES_V11.md).
+
 ## Qué queda implementado
 
 El mismo servicio dispone de dos entradas independientes:

@@ -146,3 +146,7 @@ Nota de alcance: Chromium headless del entorno no produjo una sesión utilizable
 ## Acceso público e iframe
 
 El servicio puede habilitar una pantalla sin cuenta y una API pública de consulta, manteniendo privada la administración. Ver [activación en Render y entrega a DTIC](docs/PUBLIC_INTEGRATION_PLAN.md), [ejemplo para la web institucional](examples/uninorte-embed.html) y [validación v10](docs/PUBLIC_VALIDATION_V10.md).
+
+## Configuración visual e integración desde la aplicación
+
+Configuración incluye Parámetros, Colores de la interfaz y Acceso público e integración. Ver [uso, permisos y validación v11](docs/CONFIGURACION_PUBLICA_COLORES_V11.md).

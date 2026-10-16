@@ -4,6 +4,7 @@ const {randomUUID}=require('node:crypto');
 const {openStore,publicUser,ROLES}=require('./store.cjs');
 const {frameOrigins,publicAssets,publicProgram,publicSettings}=require('./public-access.cjs');
 const {DEFINITIONS,validate:validateSettings,readSettings}=require('./settings.cjs');
+const {palette,readAppearance}=require('./appearance.cjs');
 const {digest,token,hashPassword,verifyPassword,passwordPolicy}=require('./security.cjs');
 const fail=(status,message,field)=>Object.assign(new Error(message),{status,field});
 const TYPES={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.ttf':'font/ttf'};
@@ -96,6 +97,9 @@ async function createApplication(options={}){
    if(route==='/api/public/simulation-settings')return json(res,200,publicSettings(readSettings(db)));
    throw fail(404,'Ruta no encontrada.');
   }
+  if(['/shared/ui/brand.css','/auth-assets/brand.css'].includes(route)&&['GET','HEAD'].includes(method)){
+   res.setHeader('Content-Type',TYPES['.css']);return res.end(method==='HEAD'?'':palette.css(readAppearance(db).values));
+  }
   if(route==='/api/health'&&method==='GET')return json(res,200,{ok:true});
   if(route==='/api/auth/login'&&method==='POST'){
    rate('ip:'+digest(req.socket.remoteAddress||''),60);
@@ -140,9 +144,26 @@ async function createApplication(options={}){
    }
    if(route==='/api/programs'&&method==='GET'){requireSession(s,'programs.view');return json(res,200,{programs:db.prepare('SELECT * FROM programs ORDER BY rowid').all().map(row=>({...JSON.parse(row.data),version:row.version,updated_at:row.updated_at}))});}
    if(route==='/api/simulation-settings'&&method==='GET'){requireSession(s,'simulator.use');return json(res,200,readSettings(db));}
+   if(route==='/api/admin/public-access'&&method==='GET'){
+    requireSession(s,'settings.read');return json(res,200,{enabled:publicEnabled,url:origin.origin+'/apps/public/',frameOrigins:parents});
+   }
+   if(route==='/api/admin/appearance'){
+    requireSession(s,method==='GET'?'settings.read':'settings.update');
+    if(method==='GET')return json(res,200,{...readAppearance(db),defaults:palette.defaults});
+    if(method==='PUT'){
+     const data=await body(req),requested=palette.validate(data.changes);s=live(req,'settings.update');
+     const saved=transaction(()=>{
+      const old=readAppearance(db);if(data.version!==old.version)throw fail(409,'Los colores cambiaron. Recarga la configuración antes de guardar.','version');
+      const next={...old.values,...requested},changes=Object.keys(requested).filter(key=>old.values[key]!==next[key]);
+      for(const key of changes)audit(s.user,'CONFIG_UPDATE','settings',{type:'appearance',id:'appearance',name:'Colores de la interfaz'},key,old.values[key],next[key],requestId);
+      if(changes.length)db.prepare('UPDATE appearance_settings SET data=?,version=version+1,updated_at=?,updated_by=? WHERE id=1').run(JSON.stringify(next),new Date().toISOString(),s.user.id);
+      return {...readAppearance(db),defaults:palette.defaults};
+     });return json(res,200,saved);
+    }
+   }
    if(route==='/api/admin/settings'){
     requireSession(s,method==='GET'?'settings.read':'settings.update');
-    if(method==='GET')return json(res,200,{...readSettings(db),definitions:DEFINITIONS,fieldUpdates:Object.fromEntries(db.prepare("SELECT field_name,MAX(timestamp) AS timestamp FROM audit_log WHERE module='settings' AND action='CONFIG_UPDATE' AND result='SUCCESS' GROUP BY field_name").all().map(row=>[row.field_name,row.timestamp]))});
+    if(method==='GET')return json(res,200,{...readSettings(db),definitions:DEFINITIONS,fieldUpdates:Object.fromEntries(db.prepare("SELECT field_name,MAX(timestamp) AS timestamp FROM audit_log WHERE module='settings' AND entity_type='setting' AND action='CONFIG_UPDATE' AND result='SUCCESS' GROUP BY field_name").all().map(row=>[row.field_name,row.timestamp]))});
     if(method==='PUT'){
      const data=await body(req);validateSettings(data.changes);s=live(req,'settings.update');
      const settings=transaction(()=>{
@@ -282,7 +303,7 @@ async function createApplication(options={}){
   if(res.headersSent){res.destroy();return;}
   const status=error.status||500;
   if(req.url.startsWith('/api/admin/')){
-   try { const actor=session(req)?.user;const module=req.url.includes('/programs')?'programs':req.url.includes('/users')?'users':req.url.includes('/settings')?'settings':'audit';audit(actor,'ADMIN_REQUEST_FAILURE',module,{type:'request'},null,undefined,undefined,res.getHeader('X-Request-Id'),status===401||status===403?'DENIED':'ERROR'); } catch(_){}
+   try { const actor=session(req)?.user;const module=req.url.includes('/programs')?'programs':req.url.includes('/users')?'users':['/settings','/appearance','/public-access'].some(part=>req.url.includes(part))?'settings':'audit';audit(actor,'ADMIN_REQUEST_FAILURE',module,{type:'request'},null,undefined,undefined,res.getHeader('X-Request-Id'),status===401||status===403?'DENIED':'ERROR'); } catch(_){}
   }
   if(status===401&&!req.url.startsWith('/api/'))return redirect(res,'/login');
   json(res,status,{error:status===500?'No fue posible completar la operación.':error.message,...(error.field?{field:error.field}:{})});
