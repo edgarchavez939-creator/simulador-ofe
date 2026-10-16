@@ -31,7 +31,7 @@ test('compact Excel retains exact totals and every schedule entry, including sep
  const base=JSON.parse(JSON.stringify(c.OFEReport.normalize(1,c.OFEReport.result(1))));base.plans.push({...base.plans[0],name:'Componente adicional'});const multi=host.OFEExcel.build(base).getWorksheet('Plan de pagos');assert.equal(multi.getCell(4,1).value,'Componente');assert.equal(multi.getCell(5,3).value,base.plans[0].rows[0].payment);assert.equal(multi.rowCount,base.plans[0].rows.length*2+5);
 });
 test('PDF header logo is exactly ten percent smaller while its source asset is reused',async()=>{
- const {context:c}=await fixture(),calls=[],{jsPDF}=require('../shared/vendor/jspdf-2.5.1.umd.min.js');c.jspdf={jsPDF:function(options){const doc=new jsPDF(options),add=doc.addImage;doc.addImage=function(...args){calls.push(args);return add.apply(this,args);};return doc;}};
+ const {context:c}=await fixture(),calls=[],{jsPDF}=require('../shared/vendor/jspdf-4.2.1.umd.min.js');c.jspdf={jsPDF:function(options){const doc=new jsPDF(options),add=doc.addImage;doc.addImage=function(...args){calls.push(args);return add.apply(this,args);};return doc;}};
  vm.runInContext(fs.readFileSync(require.resolve('../shared/exports/pdf-report.js'),'utf8'),c);
  const identity={regular:fs.readFileSync(require.resolve('../shared/fonts/PublicSans-Regular.ttf')).toString('base64'),bold:fs.readFileSync(require.resolve('../shared/fonts/PublicSans-Bold.ttf')).toString('base64'),logo};
  c.OFEPdf.build([c.OFEReport.pdf(1)],identity);assert.ok(calls.length);for(const args of calls){assert.equal(args[0],logo);assert.equal(args[4],270*.9);assert.equal(args[5]/args[4],59/304);}

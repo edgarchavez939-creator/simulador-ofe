@@ -17,7 +17,7 @@ El esquema de auditoría no puede modificarse desde la API ni desde el rol syste
 
 No se incluyen secretos de DTIC. La futura identidad institucional se vinculará al usuario interno sin sustituir la autorización. Véase [operación y traspaso](AUTONOMOUS_DEPLOYMENT.md) y [matriz, eventos y pruebas](PHASE_V2.md).
 
-El frontend conserva las versiones actuales de Chart.js, jsPDF y SheetJS desde CDN con integridad, y fuentes externas. La CSP permite esos orígenes concretos. Su empaquetado local sigue siendo una mejora de autonomía de distribución, distinta de la autenticación autónoma ya implementada; no se promete funcionamiento sin Internet.
+El frontend sirve jsPDF 4.2.1, SheetJS CE 0.20.3, Chart.js 4.5.1 y ExcelJS 4.4.0 desde `shared/vendor/`, con integridad SRI, licencias y manifiesto de procedencia. Las fuentes también son locales. La CSP HTTP limita scripts al propio origen; mantiene estilos en línea por compatibilidad con la interfaz actual. Véase [dependencias y evaluación de las alertas de SheetJS](DEPENDENCIES.md). La administración continúa requiriendo su servicio de datos.
 
 ## Modo de demostración gratuito
 

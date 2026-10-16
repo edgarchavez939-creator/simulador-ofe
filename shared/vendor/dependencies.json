@@ -1,0 +1,52 @@
+{
+  "verifiedAt": "2026-10-16",
+  "dependencies": [
+    {
+      "name": "jspdf",
+      "version": "4.2.1",
+      "file": "jspdf-4.2.1.umd.min.js",
+      "license": "JSPDF-LICENSE.txt",
+      "source": "https://registry.npmjs.org/jspdf/-/jspdf-4.2.1.tgz",
+      "packageIntegrity": "sha512-YyAXyvnmjTbR4bHQRLzex3CuINCDlQnBqoSYyjJwTP2x9jDLuKDzy7aKUl0hgx3uhcl7xzg32agn5vlie6HIlQ==",
+      "release": "https://github.com/parallax/jsPDF/releases/tag/v4.2.1",
+      "sha256": "e6551fcdc32f09d6853b2c5126d18d01d9447e0da618a41a11ebeee0f6c20d54",
+      "integrity": "sha384-qovJwSBbRDPP5cEjCp8S0UP66wrvnjaa60XMOGzTNanrThcrGfXfnZkvgY8N1KT3",
+      "size": 420165
+    },
+    {
+      "name": "chart.js",
+      "version": "4.5.1",
+      "file": "chart-4.5.1.umd.min.js",
+      "license": "CHARTJS-LICENSE.md",
+      "source": "https://registry.npmjs.org/chart.js/-/chart.js-4.5.1.tgz",
+      "packageIntegrity": "sha512-GIjfiT9dbmHRiYi6Nl2yFCq7kkwdkp1W/lp2J99rX0yo9tgJGn3lKQATztIjb5tVtevcBtIdICNWqlq5+E8/Pw==",
+      "release": "https://github.com/chartjs/Chart.js/releases/tag/v4.5.1",
+      "sha256": "48444a82d4edcb5bec0f1965faacdde18d9c17db3063d042abada2f705c9f54a",
+      "integrity": "sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ",
+      "size": 208522
+    },
+    {
+      "name": "exceljs",
+      "version": "4.4.0",
+      "file": "exceljs-4.4.0.min.js",
+      "license": "EXCELJS-LICENSE.txt",
+      "source": "https://registry.npmjs.org/exceljs/-/exceljs-4.4.0.tgz",
+      "packageIntegrity": "sha512-XctvKaEMaj1Ii9oDOqbW/6e1gXknSY4g/aLCDicOXqBE4M0nRWkUu0PTp++UPNzoFY12BNHMfs/VadKIS6llvg==",
+      "release": "https://github.com/exceljs/exceljs/releases/tag/v4.4.0",
+      "sha256": "7e49da68588e250dbb8bba190d2caa8ab3787cc0284bda1d8b2f805c4df742c9",
+      "integrity": "sha384-Pqp51FUN2/qzfxZxBCtF0stpc9ONI6MYZpVqmo8m20SoaQCzf+arZvACkLkirlPz",
+      "size": 947702
+    },
+    {
+      "name": "xlsx",
+      "version": "0.20.3",
+      "file": "xlsx-0.20.3.full.min.js",
+      "license": "SHEETJS-LICENSE.txt",
+      "source": "https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js",
+      "release": "https://docs.sheetjs.com/docs/getting-started/installation/standalone/",
+      "sha256": "cc015130aa8521e7f088f88898eba949ccdcbfb38df0bd129b44b7273c3a6f41",
+      "integrity": "sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT",
+      "size": 951904
+    }
+  ]
+}

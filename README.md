@@ -6,9 +6,10 @@ Aplicación de apoyo a la simulación de crédito educativo de la Universidad de
 
 Actualizado al **16 de octubre de 2026**, conforme a la confirmación del responsable del proyecto:
 
-- La versión en línea de Render está actualizada con los últimos cambios.
+- El responsable confirmó el funcionamiento de la versión de Render antes de esta actualización de dependencias. Para publicar esta revisión debe desplegarse su nuevo commit en Render.
 - La revisión funcional de la versión actual fue realizada y su funcionamiento fue confirmado por el responsable.
 - Los textos de los exportables ya fueron enviados a Jurídica. Está pendiente su concepto y, si corresponde, aplicar sus observaciones.
+- Las bibliotecas del navegador y las fuentes se sirven desde el proyecto: jsPDF 4.2.1, SheetJS CE 0.20.3, Chart.js 4.5.1 y ExcelJS 4.4.0. La actualización pasó 131 pruebas; véase [dependencias y validación](docs/DEPENDENCIES.md).
 - La información para el traslado e integración institucional está resumida en [Entrega a DTIC](docs/DTIC_INTEGRATION.md).
 
 ## Funcionalidades disponibles
@@ -64,6 +65,7 @@ Los programas se actualizan en el área administrativa del servicio, con validac
 - [Resumen para DTIC: lo entregado y lo pendiente](docs/DTIC_INTEGRATION.md).
 - [Instalación, respaldo, restauración y traslado](docs/AUTONOMOUS_DEPLOYMENT.md).
 - [Acceso público e integración en la web institucional](docs/PUBLIC_INTEGRATION_PLAN.md).
+- [Versiones, procedencia y validación de dependencias](docs/DEPENDENCIES.md).
 - [Seguridad, sesiones y permisos](docs/SECURITY.md).
 - [Configuración de parámetros, colores y vista previa](docs/CONFIGURACION_PUBLICA_COLORES_V11.md).
 - [Estado de la revisión de textos por Jurídica](docs/PDF_TEXTS_FOR_LEGAL_REVIEW.md).

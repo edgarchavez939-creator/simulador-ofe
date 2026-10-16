@@ -4,12 +4,13 @@
 
 ## Lo que quedó listo
 
-El aplicativo está desarrollado, actualizado en Render y revisado funcionalmente. Cuenta con:
+El aplicativo está desarrollado y su versión anterior fue revisada en Render por el responsable. Esta revisión incorpora la actualización de dependencias; debe desplegarse el nuevo commit para probarla en línea. Cuenta con:
 
 - Simulaciones de crédito, comparación de escenarios, conversor de tasas y exportación a PDF y Excel.
 - Pantalla pública sin inicio de sesión y área interna con usuarios, permisos y registro de cambios administrativos.
 - Actualización de programas, matrículas e idiomas, además de configuración de parámetros y colores.
 - Servicio de consulta y almacenamiento de datos, código fuente y documentación de instalación y operación.
+- Bibliotecas y fuentes alojadas en el proyecto, sin cargas de CDN en el navegador; versiones actualizadas y 131 pruebas aprobadas. [Detalle de dependencias](DEPENDENCIES.md).
 - Enlace público, código de iframe y vista previa preparados para su incorporación a la web de Uninorte.
 
 ## Pendiente por parte de DTIC

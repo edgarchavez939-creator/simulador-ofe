@@ -1,5 +1,7 @@
 # PDF B + C implementado
 
+> Informe histórico de la fase v13. La versión de jsPDF indicada aquí fue sustituida por 4.2.1; el estado vigente está en [Dependencias](DEPENDENCIES.md).
+
 Aprobado por el usuario el 16 de octubre de 2026, junto con la inclusión del logo
 y el título “Simulación de Crédito Uninorte” a 15 pt.
 

@@ -2,7 +2,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs'),path=require('node:path');
 const {fixture}=require('./test-support/report-fixtures.cjs');
 const {selectorContext}=require('./test-support/selector-context.cjs');
-const {jsPDF}=require('../shared/vendor/jspdf-2.5.1.umd.min.js');
+const {jsPDF}=require('../shared/vendor/jspdf-4.2.1.umd.min.js');
 const root=path.resolve(__dirname,'..'),read=p=>fs.readFileSync(path.join(root,p));
 const identity={regular:read('shared/fonts/PublicSans-Regular.ttf').toString('base64'),bold:read('shared/fonts/PublicSans-Bold.ttf').toString('base64'),logo:new Uint8Array(read('shared/branding/ofe-color.png'))};
 function renderer(c){
@@ -19,7 +19,7 @@ test('PDF uses exact same normalized amounts as Excel for all modalities; real o
   if(key===3){assert.ok(combined.includes('Crédito Banco Aliado'));assert.ok(combined.includes('la entidad financiera'));assert.ok(!/Uninorte|Universidad del Norte|Vigilado Mineducación/.test(combined));assert.ok(!/\/Subtype\s*\/Image/.test(output.toString('latin1')));}
   else{assert.ok(combined.includes('Simulación de Crédito Uninorte'));assert.ok(calls.some(x=>x.text==='Vigilado Mineducación'&&x.options.angle===90));}
   assert.ok(calls.every(x=>x.font==='PublicSans'));assert.ok(calls.every(x=>x.x>=34&&x.x<=544&&x.y<818));
-  assert.ok(combined.includes('no constituye aprobación del crédito.'));
+  assert.ok(combined.replace(/\s+/g,' ').includes('no constituye aprobación del crédito.'));
   const financing=normalized.sections.find(s=>s.title==='Financiación'||s.title==='Financiación de la nueva condición'||s.title==='Financiación total');assert.ok(combined.includes(amount(financing.fields.find(f=>/Monto financiado/.test(f.label)).value)));
   const total=normalized.sections.find(s=>/^Totales/.test(s.title)).fields.find(f=>/Costo total/.test(f.label));assert.ok(texts.includes(amount(total.value)));
   const textByPage=new Map();for(const call of calls){if(!textByPage.has(call.page))textByPage.set(call.page,[]);textByPage.get(call.page).push(call.text);}
