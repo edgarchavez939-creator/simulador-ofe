@@ -12,11 +12,12 @@ En GitHub institucional debe versionarse el **contenido descomprimido**, con `pa
 
 **Se mantiene un único proyecto y servicio**, con pantalla pública y área interna protegida bajo el mismo origen HTTPS, API y base de datos compartidas. Esta arquitectura fue confirmada por el responsable el 20 de octubre de 2026. Microsoft Entra ID continúa pendiente de integración y validación con DTIC. Los textos de exportación ya fueron enviados a Jurídica y continúa pendiente su concepto.
 
-La validación completa de esta entrega terminó con **147 pruebas aprobadas, 0 fallidas**, incluido el arranque normal con entorno externo, reinicio y respaldo consistente. Los motores y valores financieros permanecen preservados. Ver [dependencias locales](docs/DEPENDENCIES.md), [revisión del paquete](docs/DEPURACION_ENTREGA.md) e [información para DTIC](docs/DTIC_INTEGRATION.md).
+La validación completa de esta entrega terminó con **157 pruebas aprobadas, 0 fallidas**, incluido el arranque normal con entorno externo, reinicio y respaldo consistente. Los motores y valores financieros permanecen preservados. Ver [dependencias locales](docs/DEPENDENCIES.md), [revisión del paquete](docs/DEPURACION_ENTREGA.md) e [información para DTIC](docs/DTIC_INTEGRATION.md).
 
 ## Funcionalidades disponibles
 
 - Simulación de corto plazo, corto y largo plazo, banco aliado, cuota inicial, idiomas y reestructuración de crédito.
+- Reestructuración con pagos iniciales y condonaciones simuladas por concepto, comparación con el plan vigente y plazo mínimo según capacidad. Importes con separadores mientras se escribe. Ver [uso y límites v21](docs/REESTRUCTURACION_V21.md).
 - Beneficios y descuentos, comparación de escenarios, historial de simulaciones y conversor de tasas.
 - Exportación a PDF y Excel. Los documentos de Banco Aliado tienen presentación neutra, sin marca institucional. Excel utiliza Aptos Narrow; la aplicación y el PDF utilizan Public Sans.
 - Administración de programas, matrículas e idiomas, con edición individual e importación desde Excel. Catálogo base: **29 pregrados y 144 posgrados**, con identificadores únicos.

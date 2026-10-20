@@ -94,9 +94,20 @@
   for(let col=1;col<=5+offset;col++){const cell=totals.getCell(col);cell.font=font(10,true);cell.alignment={horizontal:col>1?'right':'left',vertical:'middle'};cell.border={top:{style:'thin',color:{argb:'FF'+colors.gold}}};}totals.height=25;
   ws.views=[{state:'frozen',ySplit:4,showGridLines:false}];ws.autoFilter={from:{row:4,column:1},to:{row:end,column:5+offset}};ws.pageSetup.printTitlesRow='1:4';ws.pageSetup.printArea='A1:'+ws.getColumn(5+offset).letter+totals.number;
  }
+ function restructuringTreatment(wb,report){
+  const treatment=report.restructuring?.treatment;if(!treatment)return;
+  const ws=base(wb,'Tratamiento del saldo',true);ws.columns=[{width:28},...Array.from({length:4},()=>({width:23}))];
+  ws.addRow(['Concepto','Importe a corte','Pago inicial','Condonación simulada','A financiar']);
+  ws.getRow(1).eachCell(cell=>{cell.font=font(10,true,C.white);cell.fill=fill(C.red);});
+  for(const item of treatment.rows){const row=ws.addRow([item.label,item.amount,item.paid,item.forgiven,item.financed]);row.eachCell((cell,index)=>{cell.font=font();if(index>1)cell.numFmt=formats.money;});}
+  const sums=['Total',treatment.gross,treatment.initial,treatment.forgiven,treatment.financed],total=ws.addRow(sums);total.eachCell((cell,index)=>{cell.font=font(10,true);if(index>1)cell.numFmt=formats.money;});
+  ws.mergeCells(8,1,8,5);ws.getCell(8,1).value='Fecha de corte: '+report.restructuring.cutoff;ws.getCell(8,1).font=font(10);
+  ws.mergeCells(9,1,10,5);ws.getCell(9,1).value=treatment.forgiven>0?'Condonación simulada, sujeta a validación y aprobación. Referencia: '+report.restructuring.reference:'Sin condonación simulada.';ws.getCell(9,1).font=font(10);ws.getCell(9,1).alignment={wrapText:true,vertical:'top'};ws.getRow(9).height=32;
+  ws.views=[{state:'frozen',ySplit:1,showGridLines:false}];ws.pageSetup.printArea='A1:E10';
+ }
  function build(report,logo){
   if(!global.ExcelJS)throw Error('No fue posible cargar el generador de Excel. Recarga la página e inténtalo nuevamente.');
-  const wb=new global.ExcelJS.Workbook();wb.creator=isBankReport(report)?'Simulador de crédito':'Universidad del Norte';if(isBankReport(report))wb.lastModifiedBy='Simulador de crédito';wb.subject='Simulación informativa de crédito';wb.created=new Date();wb.modified=new Date();wb.views=[{activeTab:0,firstSheet:0}];wb.calcProperties.fullCalcOnLoad=true;summary(wb,report,logo);plans(wb,report);return wb;
+  const wb=new global.ExcelJS.Workbook();wb.creator=isBankReport(report)?'Simulador de crédito':'Universidad del Norte';if(isBankReport(report))wb.lastModifiedBy='Simulador de crédito';wb.subject='Simulación informativa de crédito';wb.created=new Date();wb.modified=new Date();wb.views=[{activeTab:0,firstSheet:0}];wb.calcProperties.fullCalcOnLoad=true;summary(wb,report,logo);plans(wb,report);restructuringTreatment(wb,report);return wb;
  }
  async function saveWorkbook(wb,name){const buffer=await wb.xlsx.writeBuffer();const url=URL.createObjectURL(new Blob([buffer],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));const anchor=document.createElement('a');anchor.href=url;anchor.download=name;document.body.appendChild(anchor);anchor.click();anchor.remove();global.setTimeout(()=>URL.revokeObjectURL(url),1000);return wb;}
  async function download(report){const identity=isBankReport(report)?null:await global.OFEPdf?.assets();const wb=build(report,identity?.logo);await saveWorkbook(wb,filename(report));global.toast?.('Excel descargado','success');return wb;}

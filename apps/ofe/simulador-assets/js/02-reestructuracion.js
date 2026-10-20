@@ -1,124 +1,59 @@
-// Reutiliza el parser COP estricto; conserva decimales y rechaza negativos.
-function initRefiMoney(){
- const descriptor=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value');
- for(const id of ['refi-capital','refi-intcorr','refi-mora','refi-costos','refi-ingreso','refi-capacidad']){
-  const field=document.getElementById(id);if(!field||field.dataset.refiMoney)return;
-  field.dataset.refiMoney='1';
-  Object.defineProperty(field,'value',{configurable:true,get(){const text=descriptor.get.call(this);if(text==='')return '';try{return String(ProgramCatalogImport.amount(text));}catch(_){return 'NaN';}},set(value){descriptor.set.call(this,String(value??''));}});
-  field.addEventListener('blur',()=>{const number=Number(field.value);if(field.value!==''&&Number.isFinite(number))descriptor.set.call(field,new Intl.NumberFormat('es-CO',{maximumFractionDigits:2}).format(number));});
+const REFI_SOURCE={capital:'refi-capital',intCorr:'refi-intcorr',mora:'refi-mora',costos:'refi-costos'};
+const REFI_MONEY_IDS=[...Object.values(REFI_SOURCE),'refi-ingreso','refi-capacidad','refi-current-payment','refi-current-total',...Object.keys(REFI_SOURCE).flatMap(key=>['refi-paid-'+key,'refi-forgiven-'+key])];
+const REFI_FORM_IDS=[...REFI_MONEY_IDS,'refi-cuotas-nva','refi-tasa-nva','refi-cutoff','refi-current-rate','refi-current-term','refi-treatment-note','refi-plazo-mode'];
+function refiToday(){const parts=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'America/Bogota',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).map(item=>[item.type,item.value]));return parts.year+'-'+parts.month+'-'+parts.day;}
+function initRefiMoney(){for(const id of REFI_MONEY_IDS)window.OFERefiMoney.attach(document.getElementById(id),HTMLInputElement.prototype);}
+function refiAmounts(){return Object.fromEntries(Object.entries(REFI_SOURCE).map(([key,id])=>[key,Number(document.getElementById(id)?.value||0)]));}
+function refiAllocation(){return window.OFERestructuring.allocate(refiAmounts(),Object.fromEntries(Object.keys(REFI_SOURCE).map(key=>[key,Number(document.getElementById('refi-paid-'+key)?.value||0)])),Object.fromEntries(Object.keys(REFI_SOURCE).map(key=>[key,Number(document.getElementById('refi-forgiven-'+key)?.value||0)])));}
+function syncRefiControls(){
+ const enabled=!!document.getElementById('refi-compare-enabled')?.checked,panel=document.getElementById('refi-current-fields');if(panel)panel.hidden=!enabled;
+ for(const id of ['refi-current-payment','refi-current-rate','refi-current-term','refi-current-total']){const field=document.getElementById(id);if(field)field.disabled=!enabled;}
+ const automatic=document.getElementById('refi-plazo-mode')?.value==='capacity',term=document.getElementById('refi-cuotas-nva');if(term){term.readOnly=automatic;term.setAttribute('aria-label',automatic?'Plazo mínimo calculado según capacidad':'Número de cuotas del nuevo escenario');}
+ try{const data=refiAllocation();for(const row of data.rows){const gross=document.getElementById('refi-gross-'+row.key),financed=document.getElementById('refi-financed-'+row.key);if(gross)gross.textContent=cop(row.amount);if(financed)financed.textContent=cop(row.financed);}const summary=document.getElementById('refi-treatment-summary');if(summary)summary.textContent='Pago inicial: '+cop(data.initial)+' · Condonación simulada: '+cop(data.forgiven)+' · A financiar: '+cop(data.financed);}
+ catch(error){for(const key of Object.keys(REFI_SOURCE)){const field=document.getElementById('refi-financed-'+key);if(field)field.textContent='—';}const summary=document.getElementById('refi-treatment-summary');if(summary)summary.textContent=error.message;}
+}
+function captureRefiForm(){return {values:Object.fromEntries(REFI_FORM_IDS.map(id=>[id,document.getElementById(id)?.value??''])),compare:!!document.getElementById('refi-compare-enabled')?.checked};}
+function restoreRefiForm(data){
+ invalidarRefi();REFI_FORM_IDS.forEach(clearFieldError);
+ for(const id of REFI_FORM_IDS){const field=document.getElementById(id);if(field)field.value='';}document.getElementById('refi-compare-enabled').checked=false;document.getElementById('refi-plazo-mode').value='manual';document.getElementById('refi-cutoff').value=refiToday();
+ const saved=data.refiForm;if(saved){for(const [id,value] of Object.entries(saved.values||{}))if(REFI_FORM_IDS.includes(id))document.getElementById(id).value=value;document.getElementById('refi-compare-enabled').checked=!!saved.compare;}
+ else{for(const [id,value] of Object.entries({'refi-capital':data.capital,'refi-intcorr':data.intCorr,'refi-mora':data.mora,'refi-costos':data.costos,'refi-ingreso':data.ingreso,'refi-capacidad':data.capacidad,'refi-cuotas-nva':data.n||24,'refi-tasa-nva':(Number.isFinite(data.tm)?data.tm:.0153)*100}))document.getElementById(id).value=value??'';}
+ sumarSaldoRefi();calcTaRefi();syncRefiControls();
+}
+function sumarSaldoRefi(){const values=refiAmounts(),total=values.capital+values.intCorr+values.mora;document.getElementById('refi-saldo-total').textContent=Number.isFinite(total)?cop(total):'Revisa los importes';syncRefiControls();return total;}
+function calcTaRefi(){const tm=Number(document.getElementById('refi-tasa-nva').value)/100;if(Number.isFinite(tm))document.getElementById('refi-ta-nva').textContent=((Math.pow(1+tm,12)-1)*100).toFixed(2)+'%';}
+const reestructState=SimuladorOFE.state.restructuring;
+function refiDetailsHTML(data){
+ const allocation=data.treatment,comparison=data.comparison;let html='';
+ if(allocation.initial>0||allocation.forgiven>0){html+='<section class="refi-treatment-result"><h3 class="section__title">Tratamiento de los conceptos</h3><div class="table-wrap"><table class="tbl"><thead><tr><th>Concepto</th><th>Importe</th><th>Pago inicial</th><th>Condonación</th><th>A financiar</th></tr></thead><tbody>'+allocation.rows.map(row=>'<tr><td>'+escHTML(row.label)+'</td><td>'+cop(row.amount)+'</td><td>'+cop(row.paid)+'</td><td>'+cop(row.forgiven)+'</td><td>'+cop(row.financed)+'</td></tr>').join('')+'</tbody></table></div><p class="field__hint refi-allocation-note">'+escHTML(data.treatmentNote||'Sin condonación simulada.')+'</p></section>';}
+ if(comparison){const relief=comparison.paymentRelief,delta=comparison.totalDifference;html+='<section class="refi-compare-results"><h3>Comparación desde la misma fecha de corte</h3><p class="field__hint">Corte: '+escHTML(data.cutoff)+'. El total de la propuesta incluye el pago inicial y todas las nuevas cuotas.</p><div class="kpi-grid"><div class="kpi"><span class="kpi__label">Cuota vigente</span><strong class="kpi__value kpi__value--md">'+cop(comparison.current.payment)+'</strong></div><div class="kpi"><span class="kpi__label">'+(relief>=0?'Reducción mensual':'Aumento mensual')+'</span><strong class="kpi__value kpi__value--md">'+cop(Math.abs(relief))+'</strong></div><div class="kpi"><span class="kpi__label">Total pendiente vigente informado</span><strong class="kpi__value kpi__value--md">'+cop(comparison.current.total)+'</strong></div><div class="kpi"><span class="kpi__label">'+(delta<=0?'Reducción del total pendiente':'Aumento del total pendiente')+'</span><strong class="kpi__value kpi__value--md">'+cop(Math.abs(delta))+'</strong></div></div><p>'+Math.abs(comparison.additionalMonths)+' meses '+(comparison.additionalMonths>=0?'adicionales':'menos')+' frente al plazo pendiente. Tasa vigente: '+(comparison.current.rate*100).toLocaleString('es-CO')+'% M.V.</p><p class="field__hint">Una cuota menor puede aumentar el total a pagar. Se comparan importes pendientes declarados, sin volver a sumar pagos anteriores ni intereses ya incluidos en el total vigente.</p></section>';}
+ else html+='<p class="field__hint">Cuota vigente y plazo restante: no registrados. No se calcula un ahorro sin esos datos.</p>';
+ if(data.termMode==='capacity'&&data.principal>0)html+='<div class="note note--info refi-solver-note">Plazo mínimo calculado: '+data.n+' meses. La cuota no supera la capacidad declarada; un plazo menor sí la superaría. Esta referencia no constituye aprobación de crédito.</div>';
+ if(data.principal===0)html+='<div class="note note--info refi-solver-note">No queda monto a financiar. La propuesta se resuelve con el pago inicial y/o la condonación simulada, sin intereses nuevos ni plan de amortización.</div>';
+ return html;
+}
+function calcularRefi(){
+ REFI_FORM_IDS.forEach(clearFieldError);
+ const mode=document.getElementById('refi-plazo-mode')?.value||'manual';if(!['manual','capacity'].includes(mode))return showFieldError('refi-plazo-mode','Selecciona cómo definir el plazo.');
+ const definitions=[['refi-capital','Capital pendiente',false,1e12],['refi-intcorr','Intereses corrientes',false,1e12],['refi-mora','Intereses de mora',false,1e12],['refi-costos','Costos adicionales',false,1e12],['refi-ingreso','Ingreso mensual',false,1e12],['refi-capacidad','Capacidad mensual',false,1e12],['refi-tasa-nva','Tasa mensual',true,100]];
+ const values={};
+ for(const [id,label,required,max] of definitions){clearFieldError(id);const raw=document.getElementById(id)?.value??'',number=raw===''&&!required?0:Number(raw);if((required&&raw==='')||!Number.isFinite(number)||number<0||number>max)return showFieldError(id,label+': ingresa un valor válido.');values[id]=number;}
+ const capital=values['refi-capital'],intCorr=values['refi-intcorr'],mora=values['refi-mora'],costos=values['refi-costos'],saldo=capital+intCorr+mora,ingreso=values['refi-ingreso'],capacidad=values['refi-capacidad'],tmNva=values['refi-tasa-nva']/100;
+ if(saldo<=0)return showFieldError('refi-capital','Registra un saldo pendiente mayor que cero.');
+ let treatment;try{treatment=refiAllocation();}catch(error){let id=REFI_SOURCE[error.field];for(const key of Object.keys(REFI_SOURCE))if(error.field===key+'-paid'||error.field===key+'-forgiven')id='refi-paid-'+key;return showFieldError(id||'refi-capital',error.message);}
+ const treatmentNote=String(document.getElementById('refi-treatment-note')?.value||'').trim();if(treatmentNote.length>300||/[\u0000-\u001F\u007F]/.test(treatmentNote))return showFieldError('refi-treatment-note','Usa una referencia de hasta 300 caracteres en una sola línea.');if(treatment.forgiven>0&&!treatmentNote)return showFieldError('refi-treatment-note','Registra el supuesto o la referencia del acuerdo para la condonación simulada.');
+ const principal=treatment.financed;let nNva=Number(document.getElementById('refi-cuotas-nva').value);
+ if(principal>0){if(mode==='capacity'){try{nNva=window.OFERestructuring.minimumTerm(principal,tmNva,capacidad,600,cuotaMes).term;}catch(error){return showFieldError(error.field==='rate'?'refi-tasa-nva':'refi-capacidad',error.message);}document.getElementById('refi-cuotas-nva').value=nNva;}else if(!Number.isInteger(nNva)||nNva<1||nNva>600)return showFieldError('refi-cuotas-nva','Plazo: ingresa un valor válido de 1 a 600 meses.');}else nNva=0;
+ const B=principal>0?amortizacion(principal,tmNva,nNva):{rows:[],cuota:0,totInt:0,totCap:0};if(![B.cuota,B.totInt,B.totCap].every(Number.isFinite))return showFieldError('refi-tasa-nva','No se obtiene una cuota válida con esta tasa. Revísala o utiliza cero si no se pactaron intereses.');
+ const totalB=B.totCap+B.totInt,pagoInicial=treatment.initial,totalGeneral=pagoInicial+totalB,cutoff=document.getElementById('refi-cutoff')?.value||refiToday();if(!window.OFERestructuring.validDate(cutoff))return showFieldError('refi-cutoff','Selecciona una fecha de corte válida.');
+ let comparison=null;if(document.getElementById('refi-compare-enabled')?.checked){
+  const current={cutoff};for(const [key,id,max,integer] of [['payment','refi-current-payment',1e12,false],['rate','refi-current-rate',100,false],['term','refi-current-term',600,true],['total','refi-current-total',1e15,false]]){const raw=document.getElementById(id).value,number=Number(raw);if(raw===''||!Number.isFinite(number)||number<0||number>max||(integer&&(!Number.isInteger(number)||number<1))||(key!=='rate'&&number<=0))return showFieldError(id,'Completa este dato del crédito vigente con un valor válido.');current[key]=key==='rate'?number/100:number;}
+  try{comparison=window.OFERestructuring.compare(current,{payment:B.cuota,term:nNva,total:totalGeneral},saldo);}catch(error){return showFieldError('refi-current-total',error.message);}
  }
-}
-
-// ── REFINANCIACIÓN — cálculo ─────────────────────────────────────────────────
-function sumarSaldoRefi() {
-  const cap  = parseFloat(document.getElementById('refi-capital').value)||0;
-  const intC = parseFloat(document.getElementById('refi-intcorr').value)||0;
-  const mora = parseFloat(document.getElementById('refi-mora').value)||0;
-  const total = cap + intC + mora;
-  document.getElementById('refi-saldo-total').textContent = cop(total);
-  return total;
-}
-
-function calcTaRefi(which) {
-  const tm = parseFloat(document.getElementById('refi-tasa-nva').value)/100;
-  if(!isNaN(tm)) document.getElementById('refi-ta-nva').textContent =
-    ((Math.pow(1+tm,12)-1)*100).toFixed(2)+'%';
-}
-
-// ── Estado de escenarios de reestructuración ──────────────────────
-const reestructState = SimuladorOFE.state.restructuring;
-
-function calcularRefi() {
-  const definitions=[
-    ['refi-capital','Capital pendiente',true,1e12],['refi-intcorr','Intereses corrientes',false,1e12],
-    ['refi-mora','Intereses de mora',false,1e12],['refi-costos','Costos adicionales',false,1e12],
-    ['refi-ingreso','Ingreso mensual',false,1e12],['refi-capacidad','Capacidad mensual',false,1e12],
-    ['refi-cuotas-nva','Plazo',true,600],['refi-tasa-nva','Tasa mensual',true,100]
-  ];
-  const values={};
-  for(const [id,label,required,max] of definitions){
-    clearFieldError(id);
-    const raw=document.getElementById(id)?.value??'',number=raw===''&&!required?0:Number(raw);
-    if((required&&raw==='')||!Number.isFinite(number)||number<0||number>max||
-      ((id==='refi-capital'||id==='refi-cuotas-nva')&&number<=0)||
-      (id==='refi-cuotas-nva'&&!Number.isInteger(number))) {
-      return showFieldError(id,label+': ingresa un valor válido'+(id==='refi-cuotas-nva'?' de 1 a 600 meses.':'.'));
-    }
-    values[id]=number;
-  }
-  const capital=values['refi-capital'],intCorr=values['refi-intcorr'],mora=values['refi-mora'];
-  const saldo=capital+intCorr+mora,nNva=values['refi-cuotas-nva'],tmNva=values['refi-tasa-nva']/100;
-  const costos=values['refi-costos'],ingreso=values['refi-ingreso'],capacidad=values['refi-capacidad'];
-
-  const principal = saldo + costos;
-  const B = amortizacion(principal, tmNva, nNva);
-  const totalB = B.totCap + B.totInt;
-
-  // Store current scenario data on window for "guardar"
-  SimuladorOFE.state.restructuring.current = {
-    saldo, capital, intCorr, mora, costos, principal,
-    n: nNva, tm: tmNva, cuota: B.cuota, totInt: B.totInt, totCap: B.totCap,
-    totalGeneral: totalB, rows: B.rows,
-    ingreso, capacidad,
-    label: nNva+' meses @ '+(tmNva*100).toFixed(2)+'%',
-    sub: 'Saldo '+cop(saldo)+(costos>0?' + costos '+cop(costos):'')
-  };
-
-  document.getElementById('res-refi').innerHTML = `
-  <div class="card">
-    ${fechaBadgeHtml()}
-    <div class="card-title">Resultado de la reestructuración</div>
-    ${resultHero({
-      eyebrow:'Reestructuración de Crédito', label:'Nueva cuota estimada', value:cop(B.cuota),
-      meta:`${nNva} cuotas | ${(tmNva*100).toFixed(2)}% M.V.`, tone:'info',
-      metrics:[
-        {label:'Saldo actual',value:cop(saldo)},
-        {label:'Monto reestructurado',value:cop(principal)},
-        {label:'Total intereses',value:cop(B.totInt)},
-        {label:'Total a pagar',value:cop(totalB)}
-      ],
-      note:'Los intereses corrientes y de mora ya causados forman parte del saldo. Los costos adicionales se financian junto con ese saldo. La tasa y el plazo indicados se aplican a la nueva propuesta.'
-    })}
-    <section class="restruct-comparison" aria-label="Saldo actual y nueva propuesta">
-      <div class="card"><span class="eyebrow">Situación actual</span><h3>Saldo a la fecha</h3><strong>${cop(saldo)}</strong><p>Capital ${cop(capital)} + intereses causados ${cop(intCorr+mora)}.</p><p class="field__hint">Cuota vigente y plazo restante: no registrados. No se calcula un ahorro sin esos datos.</p></div>
-      <div class="card"><span class="eyebrow">Nueva propuesta</span><h3>Monto a reestructurar</h3><strong>${cop(principal)}</strong><p>Saldo ${cop(saldo)} + costos financiados ${cop(costos)}.</p><p class="field__hint">${nNva} cuotas de ${cop(B.cuota)}. Total de intereses nuevos: ${cop(B.totInt)}.</p></div>
-    </section>
-    ${capacidad>0?`<div class="note note--${B.cuota>capacidad?'warning':'success'}" role="status">${B.cuota>capacidad?'La nueva cuota supera':'La nueva cuota está dentro de'} tu capacidad declarada de ${cop(capacidad)} por mes. Diferencia: ${cop(Math.abs(capacidad-B.cuota))}. Ajusta la propuesta si lo necesitas.</div>`:''}
-    <div class="result-actions" aria-label="Acciones del escenario">
-      <span class="result-actions__label">Guarda este escenario para compararlo con otra alternativa.</span>
-      <button class="btn btn--primary btn--sm" data-action="guardar-esc-refi">${icon('save')} Guardar escenario</button>
-      <button class="btn btn--secondary btn--sm" data-action="pdf-refi">${icon('file-text')} PDF</button><button class="btn btn--secondary btn--sm" data-action="xls-refi">${icon('table')} Excel</button>
-      ${reestructState.scenarios.length>=2?`<button class="btn btn--ghost btn--sm" data-action="comparar-esc-refi">${icon('scale')} Comparar</button>`:''}
-    </div>
-    <div class="financial-details">
-    <div class="section__title u-mt-5 u-mt-0 u-text-info">Saldo a la fecha</div>
-    <div class="kpi-grid">
-      <div class="kpi"><span class="kpi__label">Capital pendiente</span><div class="kpi__value kpi__value--md">${cop(capital)}</div></div>
-      ${intCorr>0?`<div class="kpi"><span class="kpi__label">Intereses corrientes</span><div class="kpi__value kpi__value--md">${cop(intCorr)}</div></div>`:''}
-      ${mora>0?`<div class="kpi kpi--warning"><span class="kpi__label">Mora / Moratorios</span><div class="kpi__value kpi__value--md">${cop(mora)}</div></div>`:''}
-      <div class="kpi kpi--accent u-col-span-all"><span class="kpi__label">Saldo total a refinanciar</span><div class="kpi__value kpi__value--md">${cop(saldo)}</div></div>
-    </div>
-
-    <div class="section__title u-mt-5">Nueva financiación — ${nNva} meses @ ${(tmNva*100).toFixed(2)}%</div>
-    <div class="kpi-grid">
-      ${costos>0?`<div class="kpi"><span class="kpi__label">Saldo + Costos</span><div class="kpi__value kpi__value--md">${cop(principal)}</div></div>`:''}
-      <div class="kpi kpi--success"><span class="kpi__label">Cuota Mensual</span><div class="kpi__value kpi__value--md">${cop(B.cuota)}</div></div>
-      <div class="kpi"><span class="kpi__label">Total Intereses</span><div class="kpi__value kpi__value--md">${cop(B.totInt)}</div></div>
-      <div class="kpi kpi--accent u-col-span-all"><span class="kpi__label">Total a Pagar</span><div class="kpi__value kpi__value--md">${cop(totalB)}</div></div>
-    </div>
-
-    ${ingreso>0 ? `<div class="card"><h3>Cuota e ingreso declarado</h3><p>La nueva cuota representa el <strong>${((B.cuota/ingreso)*100).toFixed(1)}%</strong> del ingreso mensual registrado (${cop(ingreso)}).</p><p>Disponible después de la cuota: <strong>${cop(ingreso-B.cuota)}</strong>.</p><p class="field__hint">Es una comparación informativa; no constituye aprobación de crédito.</p></div>` : ''}
-
-    <div class="section__title u-mt-5">Plan de Pagos (${nNva} cuotas)</div>
-    ${renderTabla(B.rows, B.cuota, B.totInt, B.totCap)}
-
-    </div>
-  </div>`;
-
-  markViewHasResult(5,true);
-  renderEscRefi();
-  if(typeof registrarHistorial === 'function') setTimeout(()=>registrarHistorial(5),100);
-  toast('Escenario de reestructuración calculado','success');
+ const data={saldo,capital,intCorr,mora,costos,principal,n:nNva,tm:tmNva,cuota:B.cuota,totInt:B.totInt,totCap:B.totCap,totalCredito:totalB,totalGeneral,rows:B.rows,ingreso,capacidad,pagoInicial,treatment,treatmentNote,comparison,cutoff,termMode:mode,refiForm:captureRefiForm(),label:principal>0?nNva+' meses @ '+(tmNva*100).toFixed(2)+'%':'Sin monto a financiar',sub:'Saldo '+cop(saldo)+' · Pago inicial '+cop(pagoInicial)};
+ SimuladorOFE.state.restructuring.current=data;
+ document.getElementById('res-refi').innerHTML='<div class="card">'+fechaBadgeHtml()+'<div class="card-title">Resultado de la reestructuración</div><p class="refi-cutoff">Saldo con corte al '+escHTML(cutoff)+'</p>'+resultHero({eyebrow:'Reestructuración de Crédito',label:principal>0?'Nueva cuota estimada':'Pago inicial de la propuesta',value:cop(principal>0?B.cuota:pagoInicial),meta:principal>0?nNva+' cuotas | '+(tmNva*100).toFixed(2)+'% M.V.':'Sin nueva financiación',tone:'info',metrics:[{label:'Saldo actual',value:cop(saldo)},{label:'Monto a financiar',value:cop(principal)},{label:'Pago inicial',value:cop(pagoInicial)},{label:'Total pendiente de la propuesta',value:cop(totalGeneral)}],note:'La nueva tasa se aplica únicamente al monto que queda a financiar. Los pagos iniciales y las condonaciones simuladas se muestran por separado.'})+refiDetailsHTML(data)+(capacidad>0?'<div class="note note--'+(B.cuota>capacidad?'warning':'success')+'" role="status">La nueva cuota '+(B.cuota>capacidad?'supera':'está dentro de')+' tu capacidad declarada de '+cop(capacidad)+' por mes. Diferencia: '+cop(Math.abs(capacidad-B.cuota))+'.</div>':'')+'<div class="result-actions"><span class="result-actions__label">Guarda esta propuesta para comparar alternativas.</span><button class="btn btn--primary btn--sm" data-action="guardar-esc-refi">'+icon('save')+' Guardar escenario</button><button class="btn btn--secondary btn--sm" data-action="pdf-refi">'+icon('file-text')+' PDF</button><button class="btn btn--secondary btn--sm" data-action="xls-refi">'+icon('table')+' Excel</button></div><div class="financial-details"><div class="section__title">Nueva financiación</div><div class="kpi-grid"><div class="kpi"><span class="kpi__label">Monto financiado</span><strong class="kpi__value kpi__value--md">'+cop(principal)+'</strong></div><div class="kpi"><span class="kpi__label">Intereses nuevos</span><strong class="kpi__value kpi__value--md">'+cop(B.totInt)+'</strong></div><div class="kpi kpi--accent"><span class="kpi__label">Total de cuotas futuras</span><strong class="kpi__value kpi__value--md">'+cop(totalB)+'</strong></div><div class="kpi kpi--accent"><span class="kpi__label">Total con pago inicial</span><strong class="kpi__value kpi__value--md">'+cop(totalGeneral)+'</strong></div></div>'+(ingreso>0?'<p>La cuota representa '+((B.cuota/ingreso)*100).toFixed(1)+'% del ingreso declarado. Disponible después de la cuota: '+cop(ingreso-B.cuota)+'.</p>':'')+(B.rows.length?'<div class="section__title u-mt-5">Plan de pagos ('+nNva+' cuotas)</div>'+renderTabla(B.rows,B.cuota,B.totInt,B.totCap):'')+'</div></div>';
+ markViewHasResult(5,true);renderEscRefi();if(typeof registrarHistorial==='function')setTimeout(()=>registrarHistorial(5),100);toast('Escenario de reestructuración calculado','success');
 }
 
 // ── PDF: single refinancing scenario ─────────────────────────────────────────
@@ -189,7 +124,9 @@ async function limpiarRefi() {
   document.getElementById('refi-costos').value = '';
   document.getElementById('refi-ingreso').value = '';
   document.getElementById('refi-capacidad').value = '';
-  ['refi-capital','refi-intcorr','refi-mora','refi-costos','refi-ingreso','refi-capacidad','refi-cuotas-nva','refi-tasa-nva'].forEach(clearFieldError);
+  REFI_FORM_IDS.forEach(clearFieldError);
+  for(const id of REFI_FORM_IDS){if(['refi-cuotas-nva','refi-tasa-nva'].includes(id))continue;const field=document.getElementById(id);if(field)field.value='';}
+  document.getElementById('refi-plazo-mode').value='manual';document.getElementById('refi-compare-enabled').checked=false;document.getElementById('refi-cutoff').value=refiToday();syncRefiControls();sumarSaldoRefi();
   calcTaRefi('nva');
   reestructState.scenarios.splice(0, reestructState.scenarios.length);
   SimuladorOFE.state.restructuring.current = null;
@@ -229,8 +166,9 @@ function invalidarRefi(){
 
 SimuladorOFE.register('reestructuracion', {
   init(app){
-    initRefiMoney();
-    document.getElementById('tab5')?.addEventListener('input',event=>{if(event.target.matches?.('input'))invalidarRefi();});
+    initRefiMoney();document.getElementById('refi-cutoff').value=refiToday();syncRefiControls();
+    document.getElementById('tab5')?.addEventListener('input',event=>{if(event.target.matches?.('input,select,textarea')){invalidarRefi();sumarSaldoRefi();}});
+    document.getElementById('tab5')?.addEventListener('change',()=>{invalidarRefi();syncRefiControls();});
     calcTaRefi();
     app.services['reestructuracion'] = {
       calcularRefi: typeof calcularRefi === 'function' ? calcularRefi : undefined,

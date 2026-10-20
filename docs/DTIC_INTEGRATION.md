@@ -33,3 +33,5 @@ La revisión v18 incorpora [planes de pago y control del menú público](MODULOS
 La revisión v19 incorpora [mantenimiento público, recursos de radicación por línea y calibración de colores](MEJORAS_INSTITUCIONALES_V19.md), validada con 145 pruebas. No agrega variables de entorno. La migración automática 005 conserva los datos existentes. El mantenimiento se aplica desde Node, incluyendo rutas y API públicas; el área interna mantiene su autenticación. GitHub Pages no ejecuta la configuración global del servicio.
 
 La corrección [v20](RECURSOS_POR_MODULO_V20.md) configura tres enlaces por módulo —Cuota Inicial, Corto Plazo y Corto y Largo Plazo— compartidos por pregrado y posgrado. Incluye migración 006 con conservación de los recursos anteriores y validación completa de 147 pruebas.
+
+La mejora [v21 de Reestructuración](REESTRUCTURACION_V21.md) incorpora distribución de pagos/condonaciones simuladas, comparación a una misma fecha de corte y plazo por capacidad. No añade variables ni migraciones; conserva la autenticación y el historial local. La batería completa aprueba 157 pruebas.

@@ -169,6 +169,7 @@ Registrar resultado, revisión, fecha y responsable:
 - Interno sin sesión: exige login. Probar roles, cambio inicial, cierre de sesión y acceso directo a API con 401/403 según corresponda.
 - Como administrador de programas: editar en prueba matrícula e idiomas, importar Excel, revisar, guardar y comprobar auditoría y consulta pública. Mantener registros y valores oficiales fuera de las pruebas sintéticas.
 - Calcular corto plazo, mixto, banco aliado, idiomas, cuota inicial y reestructuración. Revisar PDF/Excel, gráficos y ausencia de peticiones a CDN.
+- En Reestructuración, comprobar distribución por concepto, comparación vigente opcional, plazo por capacidad y separadores al escribir. Usar datos ficticios y seguir los [criterios v21](REESTRUCTURACION_V21.md); estas funciones no autorizan condonaciones.
 - Activar y ocultar módulos públicos, comprobarlos al recargar y verificar que OFE conserve sus opciones. Revisar auditoría y conservación tras reiniciar.
 - Validar colores, enlace/iframe desde el portal autorizado y rechazo desde un origen no autorizado. Revisar cookies Secure/HttpOnly/SameSite y cabeceras en las respuestas reales detrás del proxy.
 - Reiniciar proceso/servidor y comprobar conservación de cuentas, catálogo, parámetros y auditoría. Generar y restaurar un respaldo en un entorno separado.

@@ -117,6 +117,7 @@ function selectorContext(app, options = {}) {
   vm.runInContext(read('shared/ui/icons.js'),context);vm.runInContext(read('shared/ui/dates.js'),context);
   if(options.publicApi){context.NodeFilter={SHOW_TEXT:4};context.document.createTreeWalker=()=>({nextNode:()=>null});vm.runInContext(read('shared/settings/simulation-settings.js'),context);}
   if(app==='ofe')vm.runInContext(read('shared/program-catalog/catalog-import.js'),context);
+  if(app==='ofe'){vm.runInContext(read('shared/finance/restructuring.js'),context);vm.runInContext(read('shared/ui/refi-money.js'),context);}
   for (const filename of ['01-core-ui.js', ...(app === 'ofe' ? ['02-reestructuracion.js'] : []), '03-finance-core.js', '04-exports-pdf-excel.js', '05-idiomas-herramientas.js', '06-actions-history.js', '07-financing-engine.js']) {
     vm.runInContext(read(`apps/${app}/simulador-assets/js/${filename}`), context, { filename });
   }

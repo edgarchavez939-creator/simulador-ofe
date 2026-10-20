@@ -21,6 +21,7 @@
 <link rel="stylesheet" href="../../shared/ui/workspace.css">
 <link rel="stylesheet" href="../../shared/ui/loading.css">
 <link rel="stylesheet" href="../../shared/ui/institutional.css?v=20">
+<link rel="stylesheet" href="../../shared/ui/restructuring.css?v=21">
 <link id="brand-style" rel="stylesheet" href="../../shared/ui/brand.css">
 </head>
 <body>
@@ -530,7 +531,8 @@
 <p class="text-muted-md u-mb-18">Revisa lo que debes hoy y compara propuestas de pago con nuevas condiciones.</p>
 <div class="summary-panel summary-panel--info u-mb-16">
 <div class="eyebrow eyebrow--info u-mb-4"><span class="icon-host " data-icon="clipboard" aria-hidden="true"></span> 1 · Situación actual</div>
-<p class="text-muted-xs u-mb-12">Valores ya causados — no se les aplica ningún cálculo.</p>
+<p class="text-muted-xs u-mb-12">Registra el saldo a una misma fecha de corte. Los pagos anteriores no se incluyen de nuevo.</p>
+<div class="field u-mb-12"><label class="field__label" for="refi-cutoff">Fecha de corte del saldo</label><input id="refi-cutoff" class="input" type="date"></div>
 <div class="field u-mb-8">
 <label class="field__label">Capital pendiente</label>
 <div class="input-affix u-border-info"><span class="input-affix__tag">$</span><input aria-label="Capital pendiente" class="input" data-input-action="sumar-refi" id="refi-capital" min="0" placeholder="0" step="1000" type="text" inputmode="decimal"/></div>
@@ -546,11 +548,25 @@
 <div class="kpi kpi--info u-mb-3"><div class="kpi__label icon-label">Saldo total a refinanciar
 <span class="icon-label__icon"><span class="icon-host " data-icon="rotate-ccw" aria-hidden="true"></span></span></div><div class="kpi__value kpi__value--md" id="refi-saldo-total">$ 0</div>
 </div>
+<label class="refi-check" for="refi-compare-enabled"><input class="check" type="checkbox" id="refi-compare-enabled"> Comparar con el crédito vigente</label>
+<p class="field__hint">Opcional. Usa las condiciones y el total pendiente del plan vigente a la misma fecha de corte.</p>
+<div id="refi-current-fields" class="refi-current-fields" hidden>
+<div class="field"><label class="field__label" for="refi-current-payment">Cuota mensual vigente</label><div class="input-affix"><span class="input-affix__tag">$</span><input class="input" id="refi-current-payment" type="text" inputmode="decimal" placeholder="0" disabled></div></div>
+<div class="field"><label class="field__label" for="refi-current-rate">Tasa vigente (mes vencido)</label><div class="input-affix"><input class="input" id="refi-current-rate" type="number" min="0" max="100" step="0.01" placeholder="0" disabled><span class="input-affix__tag input-affix__tag--end">%</span></div></div>
+<div class="field"><label class="field__label" for="refi-current-term">Cuotas mensuales pendientes</label><input class="input" id="refi-current-term" type="number" min="1" max="600" step="1" placeholder="12" disabled></div>
+<div class="field"><label class="field__label" for="refi-current-total">Total pendiente según el plan vigente</label><div class="input-affix"><span class="input-affix__tag">$</span><input class="input" id="refi-current-total" type="text" inputmode="decimal" placeholder="0" disabled></div><p class="field__hint">Incluye capital, intereses causados y futuros y cargos pendientes. Excluye lo ya pagado. Usa el total informado por cartera, sin volver a sumar el saldo de arriba.</p></div>
+</div>
 </div>
 <div class="summary-panel summary-panel--success u-mb-16">
 <div class="eyebrow eyebrow--success u-mb-12"><span class="icon-host " data-icon="plus" aria-hidden="true"></span> 2 · Nueva propuesta</div>
 <div class="field u-mb-10">
-<label class="field__label">Plazo</label>
+<label class="field__label">Costos de reestructuración (opcional)</label>
+<div class="input-affix u-border-success"><span class="input-affix__tag">$</span><input aria-label="Costos adicionales de la reestructuración" class="input" id="refi-costos" min="0" placeholder="0" step="1000" type="text" inputmode="decimal"/></div>
+<div class="field__hint">Estudio, comisiones, seguros, etc.</div>
+</div>
+<details class="refi-treatment" open><summary>Tratamiento del saldo y los costos</summary><p class="field__hint">Indica pagos al formalizar y condonaciones por concepto. El resto se financia con la nueva tasa. La distribución es una simulación; no aprueba condonaciones ni modifica la obligación.</p><div class="refi-treatment-scroll" role="region" aria-label="Tratamiento de los conceptos" tabindex="0"><table class="tbl refi-treatment-table"><thead><tr><th scope="col">Concepto / importe</th><th scope="col">Pago inicial</th><th scope="col">Condonación</th><th scope="col">A financiar</th></tr></thead><tbody><tr><th scope="row">Capital pendiente<small id="refi-gross-capital">$ 0</small></th><td><input aria-label="Pago inicial de capital pendiente" class="input" id="refi-paid-capital" type="text" inputmode="decimal" placeholder="0"></td><td><input aria-label="Condonación de capital pendiente" class="input" id="refi-forgiven-capital" type="text" inputmode="decimal" placeholder="0"></td><td><output id="refi-financed-capital">$ 0</output></td></tr><tr><th scope="row">Intereses corrientes<small id="refi-gross-intCorr">$ 0</small></th><td><input aria-label="Pago inicial de intereses corrientes" class="input" id="refi-paid-intCorr" type="text" inputmode="decimal" placeholder="0"></td><td><input aria-label="Condonación de intereses corrientes" class="input" id="refi-forgiven-intCorr" type="text" inputmode="decimal" placeholder="0"></td><td><output id="refi-financed-intCorr">$ 0</output></td></tr><tr><th scope="row">Intereses de mora<small id="refi-gross-mora">$ 0</small></th><td><input aria-label="Pago inicial de intereses de mora" class="input" id="refi-paid-mora" type="text" inputmode="decimal" placeholder="0"></td><td><input aria-label="Condonación de intereses de mora" class="input" id="refi-forgiven-mora" type="text" inputmode="decimal" placeholder="0"></td><td><output id="refi-financed-mora">$ 0</output></td></tr><tr><th scope="row">Costos adicionales<small id="refi-gross-costos">$ 0</small></th><td><input aria-label="Pago inicial de costos adicionales" class="input" id="refi-paid-costos" type="text" inputmode="decimal" placeholder="0"></td><td><input aria-label="Condonación de costos adicionales" class="input" id="refi-forgiven-costos" type="text" inputmode="decimal" placeholder="0"></td><td><output id="refi-financed-costos">$ 0</output></td></tr></tbody></table></div><p id="refi-treatment-summary" class="field__hint" role="status"></p><div class="field"><label class="field__label" for="refi-treatment-note">Referencia del acuerdo o motivo de la condonación</label><input id="refi-treatment-note" class="input" maxlength="300" placeholder="Requerido si simulas una condonación"><small class="field__hint">Registra el supuesto o la referencia autorizada por OFE. Este simulador no reemplaza su aprobación.</small></div></details>
+<div class="field u-mb-10">
+<label class="field__label" for="refi-plazo-mode">Definir el plazo</label><select id="refi-plazo-mode" class="select"><option value="manual">Ingresar el número de meses</option><option value="capacity">Calcular según la capacidad mensual</option></select><label class="field__label u-mt-3" for="refi-cuotas-nva">Número de meses</label>
 <div class="input-affix u-border-success"><input aria-label="Número de cuotas del nuevo escenario" class="input" id="refi-cuotas-nva" max="600" min="1" placeholder="24" type="number" value="24"/><span class="input-affix__tag input-affix__tag--end">meses</span></div>
 </div>
 <div class="field u-mb-10">
@@ -560,18 +576,13 @@
 <div class="tasa-badge"><div><small>Equiv. Anual <span aria-label="Ayuda: Tasa Efectiva Anual: lo que realmente cuesta el crédito en un año, incluyendo el efecto de capitalización mensual. Permite comparar créditos con distintas periodicidades." class="tip" data-tip="Tasa Efectiva Anual: lo que realmente cuesta el crédito en un año, incluyendo el efecto de capitalización mensual. Permite comparar créditos con distintas periodicidades." tabindex="0">?</span></small><span id="refi-ta-nva">19.56%</span></div><span><span class="icon-host " data-icon="trending-up" aria-hidden="true"></span></span></div>
 </div>
 </div>
-<div class="field u-mb-10">
-<label class="field__label">Costos de reestructuración (opcional)</label>
-<div class="input-affix u-border-success"><span class="input-affix__tag">$</span><input aria-label="Costos adicionales de la reestructuración" class="input" id="refi-costos" min="0" placeholder="0" step="1000" type="text" inputmode="decimal"/></div>
-<div class="field__hint">Estudio, comisiones, seguros, etc.</div>
-</div>
 <div class="field u-mb-0">
 <label class="field__label">Ingreso mensual del estudiante <span class="u-fs-10-muted">(opcional — para capacidad de pago)</span></label>
 <div class="input-affix u-border-success"><span class="input-affix__tag">$</span><input aria-label="Ingreso mensual disponible" class="input" id="refi-ingreso" min="0" placeholder="0" step="1000" type="text" inputmode="decimal"/></div>
 <div class="field__hint">Permite evaluar si la cuota es sostenible</div>
 </div>
 </div>
-<div class="field"><label class="field__label" for="refi-capacidad">3 · Capacidad mensual disponible (opcional)</label><div class="input-affix"><span class="input-affix__tag">$</span><input id="refi-capacidad" class="input" type="text" inputmode="decimal" min="0" max="1000000000000" placeholder="0"></div><p class="field__hint">Compara tu límite mensual con la nueva cuota, sin alterar el cálculo.</p></div>
+<div class="field"><label class="field__label" for="refi-capacidad">3 · Capacidad mensual disponible</label><div class="input-affix"><span class="input-affix__tag">$</span><input id="refi-capacidad" class="input" type="text" inputmode="decimal" min="0" max="1000000000000" placeholder="0"></div><p class="field__hint">En modo automático, se busca el menor plazo cuya cuota no supere esta capacidad. Si la capacidad no cubre los intereses, se informa que no hay una solución por ampliación del plazo.</p></div>
 <button class="btn btn--primary btn--lg btn--block" data-action="calcular-refi">Simular nueva propuesta <span data-icon="arrow-right" aria-hidden="true"></span></button>
 <button class="btn btn--block u-mt-2" data-action="limpiar-refi"><span class="icon-host " data-icon="trash-2" aria-hidden="true"></span> Nueva propuesta desde cero</button>
 </div>
@@ -1612,11 +1623,13 @@
 <script src="../../shared/settings/simulation-settings.js"></script>
 <script src="../../shared/program-catalog/program-picker.js"></script>
 <script src="./simulador-assets/js/01-core-ui.js?v=uninorte-ui-3-12-pdf-aptos"></script>
-<script src="./simulador-assets/js/02-reestructuracion.js?v=uninorte-ui-3-12-pdf-aptos"></script>
+<script src="../../shared/finance/restructuring.js?v=21"></script>
+<script src="../../shared/ui/refi-money.js?v=21"></script>
+<script src="./simulador-assets/js/02-reestructuracion.js?v=21"></script>
 <script src="./simulador-assets/js/03-finance-core.js?v=uninorte-ui-3-12-pdf-aptos"></script>
 <script src="./simulador-assets/js/04-exports-pdf-excel.js?v=uninorte-ui-3-12-pdf-aptos"></script>
 <script src="./simulador-assets/js/05-idiomas-herramientas.js?v=uninorte-ui-3-12-pdf-aptos"></script>
-<script src="./simulador-assets/js/06-actions-history.js?v=uninorte-ui-3-12-pdf-aptos"></script>
+<script src="./simulador-assets/js/06-actions-history.js?v=21"></script>
 <script src="./simulador-assets/js/07-financing-engine.js?v=uninorte-ui-3-12-pdf-aptos"></script>
 <script src="../../shared/program-catalog/catalog-import.js"></script>
 <script src="../../shared/admin/program-template.js"></script>
@@ -1629,10 +1642,10 @@
 <script src="../../shared/admin/admin-ui.js"></script>
 <script src="../../shared/vendor/exceljs-4.4.0.min.js" integrity="sha384-Pqp51FUN2/qzfxZxBCtF0stpc9ONI6MYZpVqmo8m20SoaQCzf+arZvACkLkirlPz" crossorigin="anonymous"></script>
 <script src="../../shared/settings/institutional-settings.js?v=20"></script>
-<script src="../../shared/exports/simulation-report.js?v=20"></script>
-<script src="../../shared/exports/excel-report.js?v=16-bank-neutral"></script>
+<script src="../../shared/exports/simulation-report.js?v=21"></script>
+<script src="../../shared/exports/excel-report.js?v=21"></script>
 <script src="../../shared/vendor/jspdf-4.2.1.umd.min.js" integrity="sha384-qovJwSBbRDPP5cEjCp8S0UP66wrvnjaa60XMOGzTNanrThcrGfXfnZkvgY8N1KT3" crossorigin="anonymous"></script>
-<script src="../../shared/exports/pdf-report.js?v=20"></script>
+<script src="../../shared/exports/pdf-report.js?v=21"></script>
 <script src="../../shared/ui/rate-ui.js"></script>
 <script src="../../shared/ui/guarantee-copy.js"></script>
 <script src="../../shared/ui/result-details.js?v=14"></script>

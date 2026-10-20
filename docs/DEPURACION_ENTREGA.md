@@ -51,3 +51,7 @@ El [manifiesto](../MANIFIESTO-ENTREGA.json) registra exclusiones, archivos modif
 3. [Plantillas y rutas](../deploy/README.md).
 4. [Información y pendientes](DTIC_INTEGRATION.md).
 5. [Seguridad](SECURITY.md), [dependencias](DEPENDENCIES.md) y [revisión jurídica](PDF_TEXTS_FOR_LEGAL_REVIEW.md).
+
+## Actualización de reestructuración v21
+
+Base `59ca624`. La actualización suma los campos y validaciones descritos en [Reestructuración v21](REESTRUCTURACION_V21.md), con 157 pruebas aprobadas. No requiere nuevas variables, dependencias ni migración de base de datos. Se preservan los motores y catálogos. Los archivos de pruebas, bases temporales, capturas y documentos ficticios de validación permanecen fuera del paquete del proyecto.

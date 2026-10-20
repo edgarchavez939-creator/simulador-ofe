@@ -87,12 +87,12 @@
    if(payment){this.text('Cuota mensual',x,y,8.5,false,C.muted);this.text(value(payment),x,y+20,14,true,this.accent);y+=33;}
    return y-start+8;
   }
-  plan(plan,inline=false){
+  plan(plan,inline=false,stageNumber=4){
    const rowH=18,heads=['N.º','Cuota','Capital','Intereses','Saldo'],positions=[X+3,X+(R-X)*.27,X+(R-X)*.52,X+(R-X)*.76,R-3];
    const heading=()=>{this.ensure(44);const lines=inline?[]:this.wrap(plan.name,R-X,9,true);for(const line of lines){this.text(line,X,this.y+9,9,true);this.y+=12;}this.y+=6;heads.forEach((h,i)=>this.text(h,positions[i],this.y,8,true,C.muted,i?'right':'left'));this.rule(this.y+8);this.y+=23;};
-   if(!inline){this.newPage(this.report,true);this.stage('Plan de pagos estimado',4);}heading();
+   if(!inline){this.newPage(this.report,true);this.stage('Plan de pagos estimado',stageNumber);}heading();
    for(const item of plan.rows){
-    if(this.y+rowH>BOTTOM){this.newPage(this.report,true);this.stage('Plan de pagos · Continuación',4);heading();}
+    if(this.y+rowH>BOTTOM){this.newPage(this.report,true);this.stage('Plan de pagos · Continuación',stageNumber);heading();}
     [item.installment,money(item.payment),money(item.capital),money(item.interest),money(item.balance)].forEach((v,i)=>this.text(v,positions[i],this.y,8,false,C.ink,i?'right':'left'));this.rule(this.y+6);this.y+=rowH;
    }
    this.y+=6;
@@ -106,7 +106,30 @@
    this.y+=6;this.row('Capital LP acumulado',money(data.acumCapital),{bold:true});
    this.paragraph('Proyección estimada. No incluye intereses futuros del largo plazo.');
   }
+  restructuringBody(r){
+   this.newPage(r);this.step=0;
+   const current=section(r,'Condición actual');this.stage('Situación actual',1);this.fields(current.fields);if(current.note)this.paragraph(current.note);
+   const treatment=r.restructuring.treatment;
+   if(treatment.initial>0||treatment.forgiven>0){
+    this.ensure(152);this.stage('Tratamiento del saldo y los costos',2);
+    const positions=[X,X+177,X+264,X+351,R-3];['Concepto','Importe','Pago inicial','Condonación','A financiar'].forEach((label,i)=>this.text(label,positions[i],this.y+8,7.3,true,C.muted,i?'right':'left'));this.rule(this.y+15);this.y+=30;
+    for(const row of treatment.rows){[row.label,money(row.amount),money(row.paid),money(row.forgiven),money(row.financed)].forEach((label,i)=>this.text(label,positions[i],this.y,7.3,false,C.ink,i?'right':'left'));this.rule(this.y+7);this.y+=22;}
+    this.paragraph('Corte del saldo: '+r.restructuring.cutoff+'. Los pagos y las condonaciones se descuentan por concepto antes de financiar.');
+    if(treatment.forgiven>0)this.paragraph('Condonación simulada, sujeta al acuerdo autorizado por OFE. Referencia: '+r.restructuring.reference);
+   }
+   const financing=section(r,'Financiación de la nueva condición');this.ensure(financing?132:112);this.stage('Nueva propuesta',3);
+   if(financing){
+    const amount=field(financing,'Monto financiado'),rate=field(financing,'Tasa'),term=field(financing,'Plazo (meses)'),payment=field(financing,'Cuota mensual estimada');
+    this.row(amount.label,value(amount),{bold:true});this.text('Tasa: '+value(rate)+' M.V.',X,this.y+10,8.4,false,C.muted);this.text(term.value+' meses / '+term.value+' cuotas',R,this.y+10,8.4,false,C.muted,'right');this.y+=22;this.row(payment.label,value(payment),{bold:true,size:14});
+   }else{this.fields(section(r,'Nueva condición').fields);this.paragraph('Sin monto a financiar. No se genera una nueva amortización.');}
+   this.row('Pago inicial al formalizar',money(treatment.initial),{bold:true});
+   const comparison=section(r,'Comparación con el crédito vigente');if(comparison){this.stage('Comparación con el crédito vigente',4);this.fields(comparison.fields);this.paragraph(comparison.note);}
+   const capacity=section(r,'Capacidad de pago');if(capacity){this.stage('Capacidad y plazo',5);this.fields(capacity.fields.filter(f=>f.label!=='Nueva cuota mensual'));if(capacity.note)this.paragraph(capacity.note);}
+   const totals=r.sections.find(s=>/^Totales/.test(s.title));this.stage('Total pendiente de la propuesta',6);if(totals){this.fields(totals.fields.filter(f=>f.label!=='Monto financiado'));this.paragraph(totals.note);}
+   if(r.plans.length)this.paragraph('El plan de pagos completo se incluye en el anexo, sin fechas de vencimiento pactadas.');for(const plan of r.plans)this.plan(plan,false,7);
+  }
   reportBody(r){
+   if(r.restructuring)return this.restructuringBody(r);
    this.newPage(r);this.step=0;
    const current=section(r,'Condición actual'),academic=section(r,'Matrícula')||section(r,'Valor de idiomas');
    if(current||academic){this.stage(current?'Situación actual':'El valor académico');this.fields((current||academic).fields,{bold:!current});if(current?.note)this.paragraph(current.note);}
