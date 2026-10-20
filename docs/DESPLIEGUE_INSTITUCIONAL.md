@@ -126,7 +126,9 @@ Con acceso público habilitado, las direcciones institucionales serán `<APP_ORI
 
 Autorizar el origen del portal mediante `OFE_PUBLIC_FRAME_ORIGINS` y, si la CSP del portal limita `frame-src`, autorizar allí el origen del simulador. La página pública no requiere cookies ni autenticación. Login y administración no deben insertarse por iframe. Ver [acceso público](PUBLIC_INTEGRATION_PLAN.md) y el [ejemplo HTML](../examples/uninorte-embed.html).
 
-Los roles existentes son `simulator_user`, `program_admin` y `system_admin`, definidos en el servidor. Crear las cuentas desde Usuarios; las cuentas creadas o restablecidas deben cambiar su contraseña inicial. Las tasas, cuotas y aportes Garantisa se administran en Configuración; las matrículas e idiomas, en Actualizar Programas. No son variables de entorno ni deben editarse en las fórmulas. Los colores se guardan en la base; el blanco/negro de cada modo se conserva.
+Los roles existentes son `simulator_user`, `program_admin` y `system_admin`, definidos en el servidor. Crear las cuentas desde Usuarios; las cuentas creadas o restablecidas deben cambiar su contraseña inicial. Los módulos del menú público se activan u ocultan en Configuración → Acceso público e integración → Módulos visibles para el público. Los cambios se aplican al abrir o recargar la pantalla pública y no alteran los módulos internos. No requieren variables nuevas; se guardan en `public_module_settings` mediante la migración `004-public-modules.sql`. Ver [uso y validación v18](MODULOS_PUBLICOS_Y_PLANES_V18.md).
+
+Las tasas, cuotas y aportes Garantisa se administran en Configuración; las matrículas e idiomas, en Actualizar Programas. No son variables de entorno ni deben editarse en las fórmulas. Los colores se guardan en la base; el blanco/negro de cada modo se conserva.
 
 Los recursos de exportación, fuentes y licencias se incluyen localmente. Los documentos de Banco Aliado mantienen presentación sin marca. Los textos jurídicos siguen pendientes de concepto.
 
@@ -167,6 +169,7 @@ Registrar resultado, revisión, fecha y responsable:
 - Interno sin sesión: exige login. Probar roles, cambio inicial, cierre de sesión y acceso directo a API con 401/403 según corresponda.
 - Como administrador de programas: editar en prueba matrícula e idiomas, importar Excel, revisar, guardar y comprobar auditoría y consulta pública. Mantener registros y valores oficiales fuera de las pruebas sintéticas.
 - Calcular corto plazo, mixto, banco aliado, idiomas, cuota inicial y reestructuración. Revisar PDF/Excel, gráficos y ausencia de peticiones a CDN.
+- Activar y ocultar módulos públicos, comprobarlos al recargar y verificar que OFE conserve sus opciones. Revisar auditoría y conservación tras reiniciar.
 - Validar colores, enlace/iframe desde el portal autorizado y rechazo desde un origen no autorizado. Revisar cookies Secure/HttpOnly/SameSite y cabeceras en las respuestas reales detrás del proxy.
 - Reiniciar proceso/servidor y comprobar conservación de cuentas, catálogo, parámetros y auditoría. Generar y restaurar un respaldo en un entorno separado.
 - Confirmar aprobación jurídica, decisión sobre Entra ID y restricciones de red. Obtener conformidad de DTIC sobre la arquitectura de servicio único y la instalación antes de habilitar producción.

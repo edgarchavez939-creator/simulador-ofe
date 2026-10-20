@@ -26,3 +26,7 @@ El arranque normal es `server/start.cjs`, con `NODE_ENV=production`, `APP_ORIGIN
 ## Modo de demostración gratuito
 
 `server/start-demo.cjs` es una entrada opcional que exige `OFE_EPHEMERAL_DEMO=1` y credenciales privadas configuradas por el propietario. Solo inicializa la primera cuenta si no hay usuarios y utiliza el mismo bootstrap transaccional, hash, API, sesiones y permisos reales. No abre setup por HTTP ni incluye cuentas o contraseñas predeterminadas. La contraseña inicial se consume y elimina del entorno del proceso; Render conserva la variable privada para reconstruir la demo después de perder el disco efímero. Por eso se usan credenciales exclusivas de prueba y no se activa esta entrada en el entorno persistente o institucional. Véase [guía gratuita](RENDER_FREE_DEMO.md).
+
+## Visibilidad del menú público — v18
+
+La configuración de módulos requiere `settings.read`/`settings.update` en el servidor, con CSRF, control de versión y auditoría transaccional. La API pública expone solo estados booleanos. El cliente bloquea la navegación a módulos ocultos; esto configura la presentación pública y no reemplaza la autorización de las API internas. Consultar [v18](MODULOS_PUBLICOS_Y_PLANES_V18.md).

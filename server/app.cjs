@@ -5,6 +5,7 @@ const {openStore,publicUser,ROLES}=require('./store.cjs');
 const {frameOrigins,publicAssets,publicProgram,publicSettings}=require('./public-access.cjs');
 const {DEFINITIONS,validate:validateSettings,readSettings}=require('./settings.cjs');
 const {palette,readAppearance}=require('./appearance.cjs');
+const {schema:publicModuleSchema,readPublicModules}=require('./public-modules.cjs');
 const {digest,token,hashPassword,verifyPassword,passwordPolicy}=require('./security.cjs');
 const fail=(status,message,field)=>Object.assign(new Error(message),{status,field});
 const TYPES={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.ttf':'font/ttf'};
@@ -95,6 +96,7 @@ async function createApplication(options={}){
     const program=programs.find(p=>p.id===id);if(!program)throw fail(404,'Programa no encontrado.');return json(res,200,program);
    }
    if(route==='/api/public/simulation-settings')return json(res,200,publicSettings(readSettings(db)));
+   if(route==='/api/public/modules')return json(res,200,{values:readPublicModules(db).values});
    throw fail(404,'Ruta no encontrada.');
   }
   if(['/shared/ui/brand.css','/auth-assets/brand.css'].includes(route)&&['GET','HEAD'].includes(method)){
@@ -146,6 +148,20 @@ async function createApplication(options={}){
    if(route==='/api/simulation-settings'&&method==='GET'){requireSession(s,'simulator.use');return json(res,200,readSettings(db));}
    if(route==='/api/admin/public-access'&&method==='GET'){
     requireSession(s,'settings.read');return json(res,200,{enabled:publicEnabled,url:origin.origin+'/apps/public/',frameOrigins:parents});
+   }
+   if(route==='/api/admin/public-modules'){
+    requireSession(s,method==='GET'?'settings.read':'settings.update');
+    if(method==='GET')return json(res,200,readPublicModules(db));
+    if(method==='PUT'){
+     const data=await body(req);let requested;try{requested=publicModuleSchema.validate(data.changes,true);}catch(error){throw fail(422,error.message);}
+     s=live(req,'settings.update');const saved=transaction(()=>{
+      const old=readPublicModules(db);if(data.version!==old.version)throw fail(409,'Los módulos públicos cambiaron. Recarga antes de guardar.','version');
+      const next={...old.values,...requested},changed=Object.keys(requested).filter(key=>old.values[key]!==next[key]);
+      for(const key of changed)audit(s.user,'CONFIG_UPDATE','settings',{type:'public_modules',id:'public_modules',name:'Módulos del simulador público'},key,old.values[key],next[key],requestId);
+      if(changed.length)db.prepare('UPDATE public_module_settings SET data=?,version=version+1,updated_at=?,updated_by=? WHERE id=1').run(JSON.stringify(next),new Date().toISOString(),s.user.id);
+      return readPublicModules(db);
+     });return json(res,200,saved);
+    }
    }
    if(route==='/api/admin/appearance'){
     requireSession(s,method==='GET'?'settings.read':'settings.update');
@@ -303,7 +319,7 @@ async function createApplication(options={}){
   if(res.headersSent){res.destroy();return;}
   const status=error.status||500;
   if(req.url.startsWith('/api/admin/')){
-   try { const actor=session(req)?.user;const module=req.url.includes('/programs')?'programs':req.url.includes('/users')?'users':['/settings','/appearance','/public-access'].some(part=>req.url.includes(part))?'settings':'audit';audit(actor,'ADMIN_REQUEST_FAILURE',module,{type:'request'},null,undefined,undefined,res.getHeader('X-Request-Id'),status===401||status===403?'DENIED':'ERROR'); } catch(_){}
+   try { const actor=session(req)?.user;const module=req.url.includes('/programs')?'programs':req.url.includes('/users')?'users':['/settings','/appearance','/public-access','/public-modules'].some(part=>req.url.includes(part))?'settings':'audit';audit(actor,'ADMIN_REQUEST_FAILURE',module,{type:'request'},null,undefined,undefined,res.getHeader('X-Request-Id'),status===401||status===403?'DENIED':'ERROR'); } catch(_){}
   }
   if(status===401&&!req.url.startsWith('/api/'))return redirect(res,'/login');
   json(res,status,{error:status===500?'No fue posible completar la operación.':error.message,...(error.field?{field:error.field}:{})});

@@ -123,6 +123,7 @@ function selectorContext(app, options = {}) {
   vm.runInContext(read('shared/ui/guarantee-copy.js'),context);
   vm.runInContext(read('shared/exports/simulation-report.js'),context);vm.runInContext(read('shared/exports/excel-report.js'),context);
   vm.runInContext(read('shared/ui/result-details.js'),context);
+  vm.runInContext(read('shared/ui/tuition-composition.js'),context);
   return { context, elements, snapshot, messages, scheduled, button: () => new Element('button') };
 }
 module.exports = { selectorContext };

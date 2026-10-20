@@ -12,7 +12,7 @@ En GitHub institucional debe versionarse el **contenido descomprimido**, con `pa
 
 **Se mantiene un único proyecto y servicio**, con pantalla pública y área interna protegida bajo el mismo origen HTTPS, API y base de datos compartidas. Esta arquitectura fue confirmada por el responsable el 20 de octubre de 2026. Microsoft Entra ID continúa pendiente de integración y validación con DTIC. Los textos de exportación ya fueron enviados a Jurídica y continúa pendiente su concepto.
 
-La validación completa de esta entrega terminó con **132 pruebas aprobadas, 0 fallidas**, incluido el arranque normal con entorno externo, reinicio y respaldo consistente. Los motores y valores financieros permanecen preservados. Ver [dependencias locales](docs/DEPENDENCIES.md), [revisión del paquete](docs/DEPURACION_ENTREGA.md) e [información para DTIC](docs/DTIC_INTEGRATION.md).
+La validación completa de esta entrega terminó con **137 pruebas aprobadas, 0 fallidas**, incluido el arranque normal con entorno externo, reinicio y respaldo consistente. Los motores y valores financieros permanecen preservados. Ver [dependencias locales](docs/DEPENDENCIES.md), [revisión del paquete](docs/DEPURACION_ENTREGA.md) e [información para DTIC](docs/DTIC_INTEGRATION.md).
 
 ## Funcionalidades disponibles
 
@@ -21,7 +21,7 @@ La validación completa de esta entrega terminó con **132 pruebas aprobadas, 0 
 - Exportación a PDF y Excel. Los documentos de Banco Aliado tienen presentación neutra, sin marca institucional. Excel utiliza Aptos Narrow; la aplicación y el PDF utilizan Public Sans.
 - Administración de programas, matrículas e idiomas, con edición individual e importación desde Excel. Catálogo base: **29 pregrados y 144 posgrados**, con identificadores únicos.
 - Usuarios, permisos por rol y registro de los cambios administrativos en el servidor.
-- Configuración de parámetros, colores de marca y acceso público, con enlace, código de iframe y vista previa.
+- Configuración de parámetros, colores de marca y acceso público, con enlace, código de iframe, vista previa e interruptores para mostrar u ocultar módulos del menú público.
 
 El inicio de sesión actual utiliza cuentas locales del aplicativo. La conexión con las cuentas institucionales mediante Microsoft Entra ID está pendiente de coordinación e implementación con DTIC.
 
@@ -65,6 +65,8 @@ La entrada raíz de GitHub Pages conduce a `apps/public/`. La publicación debe 
 Los programas se actualizan en el área administrativa del servicio, con validación, control de permisos y registro de cambios. Los antiguos flujos de PIN y reemplazo manual del HTML se conservan únicamente como antecedentes.
 
 ## Documentación de entrega
+
+- [Módulos públicos, planes de pago y barra de composición](docs/MODULOS_PUBLICOS_Y_PLANES_V18.md).
 
 - [Guía completa de despliegue institucional](docs/DESPLIEGUE_INSTITUCIONAL.md).
 - [Plantillas de entorno, systemd, Docker y proxy](deploy/README.md).

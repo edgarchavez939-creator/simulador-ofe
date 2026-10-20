@@ -307,7 +307,8 @@
 </div>
 </div>
 <div class="group group--accent">
-<div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" fill="currentColor" r="3" stroke="none"></circle></svg> Segmento Corto Plazo <span aria-label="Ayuda: Porción que el estudiante amortiza mientras cursa el semestre, con cuotas mensuales durante el período académico." class="tip" data-tip="Porción que el estudiante amortiza mientras cursa el semestre, con cuotas mensuales durante el período académico." tabindex="0">?</span></div>
+<div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" fill="currentColor" r="3" stroke="none"></circle></svg> Plan de pago a corto plazo <span aria-label="Ayuda: Define en cuántos meses pagarás la parte de corto plazo durante el período académico." class="tip" data-tip="Define en cuántos meses pagarás la parte de corto plazo durante el período académico." tabindex="0">?</span></div>
+<p class="plan-payment-copy">Paga esta parte durante el período académico, en cuotas mensuales.</p>
 <div class="field u-mb-8">
 <label class="field__label">Número de Meses</label>
 <div class="input-affix u-border-accent"><input aria-label="Meses de corto plazo" class="input u-input-clean" data-input-action="upd-eq-cp" id="plazoCP" min="1" placeholder="6" type="number" value="6"/><span class="input-affix__tag input-affix__tag--end">meses</span></div>
@@ -315,7 +316,8 @@
 <div class="note guarantee-info guarantee-info--compact u-mt-3 u-mb-0"><span class="guarantee-info__icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg></span><div class="guarantee-info__body"><strong><span id="garantisa-cp-label">Aporte Garantisa CP: —</span> <span aria-label="Ayuda: Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." class="tip" data-tip="Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." tabindex="0">?</span></strong><span class="guarantee-info__value" id="gCP-val">—</span></div></div>
 </div>
 <div class="group group--success u-mt-12">
-<div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" fill="currentColor" r="3" stroke="none"></circle></svg> Segmento Largo Plazo <span aria-label="Ayuda: Porción que se empieza a pagar después de graduarse. No genera cuota durante los estudios y su tasa será la vigente al iniciar la amortización." class="tip" data-tip="Porción que se empieza a pagar después de graduarse. No genera cuota durante los estudios y su tasa será la vigente al iniciar la amortización." tabindex="0">?</span></div>
+<div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" fill="currentColor" r="3" stroke="none"></circle></svg> Plan de pago a largo plazo <span aria-label="Ayuda: Consulta el capital acumulado y el plazo para pagar la parte de largo plazo después de graduarte y del período de gracia. La tasa será la vigente al iniciar el pago." class="tip" data-tip="Consulta el capital acumulado y el plazo para pagar la parte de largo plazo después de graduarte y del período de gracia. La tasa será la vigente al iniciar el pago." tabindex="0">?</span></div>
+<p class="plan-payment-copy">El pago de esta parte comienza después de graduarte y del período de gracia.</p>
 <div class="field u-mb-8">
 <label class="field__label">Duración del Programa <span aria-label="Ayuda: Total de semestres del plan de estudios. Se usa para saber cuántos semestres restan por financiar desde el semestre de inicio." class="tip" data-tip="Total de semestres del plan de estudios. Se usa para saber cuántos semestres restan por financiar desde el semestre de inicio." tabindex="0">?</span></label>
 <div class="input-affix u-border-success">
@@ -357,7 +359,7 @@
 <input aria-label="IPC anual proyectado" class="input u-input-clean" id="ipcLP" inputmode="decimal" max="30" min="0" placeholder="5.0" step="0.1" type="number" value="5.0"/><span class="input-affix__tag input-affix__tag--end">% IPC anual</span>
 </div>
 <label class="field__label inline-control-label inline-control-label--projection" role="button">
-<input aria-label="Mostrar proyección de largo plazo" checked="" class="check control-auto sr-toggle-check" id="proyLP" type="checkbox"/>
+<input aria-label="Mostrar proyección de largo plazo" class="check control-auto sr-toggle-check" id="proyLP" type="checkbox"/>
 <span aria-hidden="true" class="inline-control-label__icon"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="m9 12 2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg></span>
 <span class="inline-control-label__text">Ver proyección</span>
 <span aria-hidden="true" class="inline-control-label__state"></span>
@@ -1558,6 +1560,9 @@
 <script src="../../shared/ui/rate-ui.js"></script>
 <script src="../../shared/ui/guarantee-copy.js"></script>
 <script src="../../shared/ui/result-details.js?v=14"></script>
+<script src="../../shared/settings/public-modules.js"></script>
+<script src="../../shared/ui/public-navigation.js?v=18"></script>
+<script src="../../shared/ui/tuition-composition.js?v=18"></script>
 <script src="./simulador-assets/js/09-bootstrap.js?v=uninorte-ui-3-12-pdf-aptos"></script>
 <script src="./simulador-assets/js/10-pdf-aptos.js?v=13-bc"></script>
 <!-- MODAL IDIOMAS -->
@@ -1658,7 +1663,7 @@
 <input aria-label="IPC anual proyectado para idiomas" class="input u-input-clean" id="id-ipcLP" inputmode="decimal" max="30" min="0" placeholder="5.0" step="0.1" type="number" value="5.0"/><span class="input-affix__tag input-affix__tag--end">% IPC anual</span>
 </div>
 <label class="field__label inline-control-label inline-control-label--projection" role="button">
-<input aria-label="Mostrar proyección de largo plazo para idiomas" checked="" class="check control-auto sr-toggle-check" id="id-proyLP" type="checkbox"/>
+<input aria-label="Mostrar proyección de largo plazo para idiomas" class="check control-auto sr-toggle-check" id="id-proyLP" type="checkbox"/>
 <span aria-hidden="true" class="inline-control-label__icon"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="m9 12 2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg></span>
 <span class="inline-control-label__text">Ver proyección</span>
 <span aria-hidden="true" class="inline-control-label__state"></span>

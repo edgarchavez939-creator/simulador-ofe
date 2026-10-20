@@ -37,12 +37,17 @@ La página pública no necesita cookies ni cuenta; login y área interna conserv
 
 Render se utilizó para pruebas de login y actualización en línea. Sus instrucciones se conservan en [Render Free](RENDER_FREE_DEMO.md). No se requiere ese proveedor para el servidor institucional ni deben trasladarse sus variables de demostración o credenciales. El historial de un despliegue anterior no certifica la instalación institucional.
 
+## Módulos visibles para el público
+
+El administrador puede activar u ocultar módulos completos desde Configuración → Acceso público e integración. Los cambios se aplican al abrir o recargar la pantalla pública, con auditoría y sin alterar las opciones internas. Ver [módulos públicos v18](MODULOS_PUBLICOS_Y_PLANES_V18.md). La versión estática no consulta esa configuración.
+
 ## Contrato de API pública
 
 Misma dirección que la pantalla, sin CORS ni configuración de origen adicional en el navegador:
 
 | Ruta | Respuesta | Métodos |
 | --- | --- | --- |
+| `/api/public/modules` | `{values:{...}}`; estados booleanos de los siete módulos, sin autor ni versión de edición | GET, HEAD |
 | `/api/public/programs` | `{programs:[...]}`; solo activos | GET, HEAD |
 | `/api/public/programs/{id}` | Un programa activo; 404 si no existe o está inactivo | GET, HEAD |
 | `/api/public/simulation-settings` | `{values:{default_interest_rate,default_installments,garantisa_cp_percent,garantisa_lp_percent}}` | GET, HEAD |

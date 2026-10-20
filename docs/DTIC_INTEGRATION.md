@@ -6,7 +6,7 @@ Entrega revisada el **20 de octubre de 2026**. El responsable confirma que carg�
 
 - Simulaciones, comparación, conversor y exportación PDF/Excel; Banco Aliado sin marca institucional.
 - Pantalla pública sin cuenta y área interna con autenticación local, roles, permisos y auditoría de cambios.
-- Actualización de matrículas e idiomas, importación Excel, parámetros y colores administrables.
+- Actualización de matrículas e idiomas, importación Excel, parámetros y colores administrables. Control de los siete módulos del menú público desde Configuración, con persistencia y auditoría.
 - Backend portable Node.js/SQLite y recursos del navegador locales, con licencias y manifiesto de integridad.
 - [Guía de despliegue](DESPLIEGUE_INSTITUCIONAL.md) con todas las variables, arranque, primer administrador, persistencia, HTTPS, iframe, respaldo/restauración y aceptación. [Plantillas](../deploy/README.md) para completar por DTIC.
 - ZIP depurado, pruebas reproducibles y documentación histórica identificada como antecedente.
@@ -27,3 +27,5 @@ El responsable confirmó el 20 de octubre de 2026 mantener **un único proyecto 
 | Repositorio anterior | Coordinar su retiro y el cierre de los ambientes anteriores, considerando la continuidad de las pruebas. Este paquete no los modifica. |
 
 Los textos de exportación **ya fueron enviados a Jurídica**; está pendiente recibir su concepto y aplicar las observaciones. La autorización de producción corresponde a la validación final de DTIC y las aprobaciones aplicables.
+
+La revisión v18 incorpora [planes de pago y control del menú público](MODULOS_PUBLICOS_Y_PLANES_V18.md), validada con 137 pruebas. No requiere variables nuevas; incluye la migración automática `004-public-modules.sql`.

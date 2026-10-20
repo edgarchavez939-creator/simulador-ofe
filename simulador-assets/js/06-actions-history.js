@@ -215,7 +215,7 @@ function calcular7() {
     </div>
 
     <div class="section__title">${icon('percent')} Cómo se compone la matrícula</div>
-    <div class="dist u-mb-4">${distribucionHTML(pctBenef, pctInicial, pctFin, 0)}</div>
+    <div class="dist u-mb-4">${window.OFEComposition.html(pctBenef, pctInicial, pctFin, 0)}</div>
 
     <div class="section__title">${icon('credit-card')} Crédito resultante</div>
     <div class="kpi-grid">

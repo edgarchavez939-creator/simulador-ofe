@@ -36,9 +36,9 @@ La nueva plantilla `deploy/nginx-institutional.conf.example` sustituye los ejemp
 
 ## Verificación
 
-**132 pruebas aprobadas, 0 fallidas**, con Node 24.22.0. La nueva prueba ejecuta `server/start.cjs` mediante `--env-file` en un proceso real, con entorno aislado, origen HTTPS de prueba y base persistente. Verifica cookies seguras, rutas protegidas, catálogo de 173 IDs, edición de matrícula/idiomas en datos ficticios, conservación tras reiniciar, respaldo consistente por CLI y apertura de la copia restaurada con `PRAGMA integrity_check = ok`.
+La preparación institucional inicial aprobó 132 pruebas. La actualización v18 suma **137 pruebas aprobadas, 0 fallidas**., con Node 24.22.0. La nueva prueba ejecuta `server/start.cjs` mediante `--env-file` en un proceso real, con entorno aislado, origen HTTPS de prueba y base persistente. Verifica cookies seguras, rutas protegidas, catálogo de 173 IDs, edición de matrícula/idiomas en datos ficticios, conservación tras reiniciar, respaldo consistente por CLI y apertura de la copia restaurada con `PRAGMA integrity_check = ok`.
 
-Los motores financieros, HTML de las aplicaciones con sus catálogos originales, valores y dependencias distribuidas permanecen byte por byte iguales al punto de partida. El cambio ejecutable de producto es un texto de ayuda en Configuración; no cambia cálculos, permisos, sesiones ni contratos de API. Se conserva el código de pruebas necesario para repetir la validación.
+Los motores financieros, valores y datos JSON de los catálogos y las dependencias distribuidas permanecen intactos. La revisión v18 modifica títulos, valor inicial de proyección y presentación de la barra, e incorpora configuración de módulos públicos en el servidor y cliente. La migración conserva usuarios, catálogo y parámetros. Ver [alcance y verificación v18](MODULOS_PUBLICOS_Y_PLANES_V18.md). Se conserva el código de pruebas necesario para repetir la validación.
 
 Las plantillas systemd, Nginx y Docker no se han ejecutado en este equipo: no están instalados esos servicios. DTIC debe comprobarlas en su infraestructura. Las pruebas locales no certifican dominios, certificados, restricciones de red, integración Entra ni despliegues remotos.
 
