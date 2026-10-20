@@ -6,6 +6,7 @@ const {frameOrigins,publicAssets,publicProgram,publicSettings}=require('./public
 const {DEFINITIONS,validate:validateSettings,readSettings}=require('./settings.cjs');
 const {palette,readAppearance}=require('./appearance.cjs');
 const {schema:publicModuleSchema,readPublicModules}=require('./public-modules.cjs');
+const {definitions:institutionalDefinitions,readInstitutional,publicResources,maintenancePage}=require('./institutional-settings.cjs');
 const {digest,token,hashPassword,verifyPassword,passwordPolicy}=require('./security.cjs');
 const fail=(status,message,field)=>Object.assign(new Error(message),{status,field});
 const TYPES={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.ttf':'font/ttf'};
@@ -86,9 +87,14 @@ async function createApplication(options={}){
    if(req.headers.origin!==origin.origin)throw fail(403,'Origen de petición no permitido.');
    if(route!=='/api/auth/login'&&(!s||req.headers['x-csrf-token']!==s.csrf_token))throw fail(s?403:401,s?'La sesión de la página cambió. Recarga e inténtalo nuevamente.':'Inicia sesión para continuar.');
   }
+  const maintenance=()=>readInstitutional(db,'maintenance').values;
+  const publicFrames=()=>{res.setHeader('Content-Security-Policy',res.getHeader('Content-Security-Policy').replace("frame-ancestors 'none'","frame-ancestors 'self'"+(parents.length?' '+parents.join(' '):'')));if(parents.length)res.removeHeader('X-Frame-Options');else res.setHeader('X-Frame-Options','SAMEORIGIN');};
   if(route.startsWith('/api/public/')){
    if(!publicEnabled)throw fail(404,'Ruta no encontrada.');
    if(!['GET','HEAD'].includes(method))throw fail(405,'La API pública solo permite consultas.');
+   if(route==='/api/public/status')return json(res,200,{maintenance:maintenance()});
+   if(maintenance().enabled){res.setHeader('Retry-After','60');return json(res,503,{error:'El simulador público está en mantenimiento.',maintenance:maintenance()});}
+   if(route==='/api/public/radication-resources')return json(res,200,publicResources(db));
    if(route==='/api/public/programs'||route.startsWith('/api/public/programs/')){
     const programs=db.prepare('SELECT data FROM programs ORDER BY rowid').all().map(row=>JSON.parse(row.data)).filter(p=>p.activo).map(publicProgram);
     if(route==='/api/public/programs')return json(res,200,{programs});
@@ -146,6 +152,22 @@ async function createApplication(options={}){
    }
    if(route==='/api/programs'&&method==='GET'){requireSession(s,'programs.view');return json(res,200,{programs:db.prepare('SELECT * FROM programs ORDER BY rowid').all().map(row=>({...JSON.parse(row.data),version:row.version,updated_at:row.updated_at}))});}
    if(route==='/api/simulation-settings'&&method==='GET'){requireSession(s,'simulator.use');return json(res,200,readSettings(db));}
+   if(route==='/api/radication-resources'&&method==='GET'){requireSession(s,'simulator.use');return json(res,200,publicResources(db));}
+   const institutionalName={'/api/admin/maintenance':'maintenance','/api/admin/radication-resources':'radication_resources'}[route];
+   if(institutionalName){
+    requireSession(s,method==='GET'?'settings.read':'settings.update');
+    if(method==='GET')return json(res,200,readInstitutional(db,institutionalName));
+    if(method==='PUT'){
+     const data=await body(req),definition=institutionalDefinitions[institutionalName],requested=definition.validate(data.changes,true);s=live(req,'settings.update');
+     const saved=transaction(()=>{
+      const old=readInstitutional(db,institutionalName);if(data.version!==old.version)throw fail(409,'La configuración cambió. Recarga antes de guardar.','version');
+      const next=definition.validate({...old.values,...requested}),changed=Object.keys(requested).filter(key=>JSON.stringify(old.values[key])!==JSON.stringify(next[key]));
+      for(const key of changed)audit(s.user,'CONFIG_UPDATE','settings',{type:institutionalName,id:institutionalName,name:definition.label},key,old.values[key],next[key],requestId);
+      if(changed.length)db.prepare('UPDATE institutional_settings SET data=?,version=version+1,updated_at=?,updated_by=? WHERE name=?').run(JSON.stringify(next),new Date().toISOString(),s.user.id,institutionalName);
+      return readInstitutional(db,institutionalName);
+     });return json(res,200,saved);
+    }
+   }
    if(route==='/api/admin/public-access'&&method==='GET'){
     requireSession(s,'settings.read');return json(res,200,{enabled:publicEnabled,url:origin.origin+'/apps/public/',frameOrigins:parents});
    }
@@ -275,6 +297,13 @@ async function createApplication(options={}){
   }
   if(!['GET','HEAD'].includes(method))throw fail(405,'Método no permitido.');
   if(publicEnabled){
+   const maintenanceAssets={'/shared/ui/maintenance.css':'shared/ui/maintenance.css','/shared/ui/maintenance.js':'shared/ui/maintenance.js','/shared/branding/ofe-color.png':'shared/branding/ofe-color.png'};
+   if(maintenanceAssets[route])return serve(res,path.join(root,maintenanceAssets[route]),method);
+   if(maintenance().enabled&&(route.startsWith('/apps/public/')||route==='/apps/public'||route==='/simulador'||route==='/simulador/')){
+    publicFrames();res.setHeader('Retry-After','60');res.writeHead(503,{'Content-Type':TYPES['.html']});return res.end(method==='HEAD'?'':maintenancePage(root,maintenance()));
+   }
+   // Shared calculation/export assets remain available only to authorized internal sessions during maintenance.
+   if(maintenance().enabled&&anonymousAssets.has(route)){if(!s){res.setHeader('Retry-After','60');return json(res,503,{error:'El simulador público está en mantenimiento.'});}requireSession(s,'simulator.use');if(s.user.must_change_password)throw fail(403,'Cambia tu contraseña inicial para continuar.');return serve(res,path.join(root,'.'+route),method);}
    if(['/simulador','/simulador/','/apps/public'].includes(route))return redirect(res,'/apps/public/');
    if(route==='/apps/public/'||route==='/apps/public/index.html'){
     res.setHeader('Content-Security-Policy',res.getHeader('Content-Security-Policy').replace("frame-ancestors 'none'","frame-ancestors 'self'"+(parents.length?' '+parents.join(' '):'')));
@@ -289,7 +318,7 @@ async function createApplication(options={}){
   if(route==='/')return redirect(res,'/apps/ofe/');
   if(route==='/apps/public/'||route==='/index.html')return redirect(res,'/apps/ofe/');
   if(route==='/login'||route==='/login/')return serve(res,path.join(root,'shared/auth/login.html'),method);
-  const assets={'/auth-assets/loading.js':'shared/ui/loading.js','/auth-assets/loading.css':'shared/ui/loading.css','/auth-assets/access.css':'shared/auth/access.css','/auth-assets/fonts.css':'shared/fonts/public-sans.css','/auth-assets/density.css':'shared/ui/density.css','/auth-assets/PublicSans-Variable.ttf':'shared/fonts/PublicSans-Variable.ttf','/auth-assets/styles.css':'apps/ofe/simulador-assets/styles.css','/auth-assets/login.js':'shared/auth/login.js','/auth-assets/theme.js':'shared/theme.js','/auth-assets/icons.js':'shared/ui/icons.js'};
+  const assets={'/auth-assets/institutional.css':'shared/ui/institutional.css','/auth-assets/loading.js':'shared/ui/loading.js','/auth-assets/loading.css':'shared/ui/loading.css','/auth-assets/access.css':'shared/auth/access.css','/auth-assets/fonts.css':'shared/fonts/public-sans.css','/auth-assets/density.css':'shared/ui/density.css','/auth-assets/PublicSans-Variable.ttf':'shared/fonts/PublicSans-Variable.ttf','/auth-assets/styles.css':'apps/ofe/simulador-assets/styles.css','/auth-assets/login.js':'shared/auth/login.js','/auth-assets/theme.js':'shared/theme.js','/auth-assets/icons.js':'shared/ui/icons.js'};
   if(assets[route])return serve(res,path.join(root,assets[route]),method);
   requireSession(s);
   if(route==='/apps/ofe/config.js')return serve(res,path.join(root,'apps/ofe/config.js'),method);
@@ -319,7 +348,7 @@ async function createApplication(options={}){
   if(res.headersSent){res.destroy();return;}
   const status=error.status||500;
   if(req.url.startsWith('/api/admin/')){
-   try { const actor=session(req)?.user;const module=req.url.includes('/programs')?'programs':req.url.includes('/users')?'users':['/settings','/appearance','/public-access','/public-modules'].some(part=>req.url.includes(part))?'settings':'audit';audit(actor,'ADMIN_REQUEST_FAILURE',module,{type:'request'},null,undefined,undefined,res.getHeader('X-Request-Id'),status===401||status===403?'DENIED':'ERROR'); } catch(_){}
+   try { const actor=session(req)?.user;const module=req.url.includes('/programs')?'programs':req.url.includes('/users')?'users':['/settings','/appearance','/public-access','/public-modules','/maintenance','/radication-resources'].some(part=>req.url.includes(part))?'settings':'audit';audit(actor,'ADMIN_REQUEST_FAILURE',module,{type:'request'},null,undefined,undefined,res.getHeader('X-Request-Id'),status===401||status===403?'DENIED':'ERROR'); } catch(_){}
   }
   if(status===401&&!req.url.startsWith('/api/'))return redirect(res,'/login');
   json(res,status,{error:status===500?'No fue posible completar la operación.':error.message,...(error.field?{field:error.field}:{})});

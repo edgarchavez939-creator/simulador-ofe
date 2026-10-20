@@ -29,3 +29,5 @@ El responsable confirmó el 20 de octubre de 2026 mantener **un único proyecto 
 Los textos de exportación **ya fueron enviados a Jurídica**; está pendiente recibir su concepto y aplicar las observaciones. La autorización de producción corresponde a la validación final de DTIC y las aprobaciones aplicables.
 
 La revisión v18 incorpora [planes de pago y control del menú público](MODULOS_PUBLICOS_Y_PLANES_V18.md), validada con 137 pruebas. No requiere variables nuevas; incluye la migración automática `004-public-modules.sql`.
+
+La revisión v19 incorpora [mantenimiento público, recursos de radicación por línea y calibración de colores](MEJORAS_INSTITUCIONALES_V19.md), validada con 145 pruebas. No agrega variables de entorno. La migración automática 005 conserva los datos existentes. El mantenimiento se aplica desde Node, incluyendo rutas y API públicas; el área interna mantiene su autenticación. GitHub Pages no ejecuta la configuración global del servicio.

@@ -36,7 +36,7 @@
   return 'Simulación del '+new Intl.DateTimeFormat('es-CO',{timeZone:'America/Bogota',day:'numeric',month:'long',year:'numeric'}).format(new Date(report.occurredAt));
  }
  class Layout{
-  constructor(doc,identity){this.doc=doc;this.identity=identity;this.pages=[];this.y=0;this.report=null;this.step=0;}
+  constructor(doc,identity,resources={}){this.resources=resources;this.doc=doc;this.identity=identity;this.pages=[];this.y=0;this.report=null;this.step=0;}
   font(size=9.5,bold=false,color=C.ink){this.doc.setFont('PublicSans',bold?'bold':'normal');this.doc.setFontSize(size);this.doc.setTextColor(color);}
   text(text,x,y,size=9.5,bold=false,color=C.ink,align='left'){this.font(size,bold,color);this.doc.text(String(text),x,y,{align});}
   wrap(text,width,size=9.5,bold=false){this.font(size,bold);return this.doc.splitTextToSize(String(text),width);}
@@ -155,19 +155,32 @@
  Layout.prototype.footer=function(){const total=this.doc.getNumberOfPages();for(const item of this.pages){this.doc.setPage(item.number);this.rule(714,L,R);this.text('ALCANCE DE LA SIMULACIÓN',L,732,8,true,C.muted);
   const disclaimer=isBankReport(item.report)?item.report.disclaimer.replace('la Universidad del Norte y/o las entidades que intervengan en el proceso de financiación','la entidad financiera'):item.report.disclaimer;
   const lines=this.wrap(disclaimer+' Este documento no constituye aprobación del crédito.',R-L,8.1);lines.forEach((line,i)=>this.text(line,L,748+i*10.8,8.1,false,C.muted));
+  const first=this.pages.find(page=>page.report===item.report)?.number===item.number,resource=first&&global.OFEInstitutionalSettings?.resourceFor(item.report,this.resources);
+  // Fixed free space below the existing legal notice; never move body/footer elements or add pages.
+  if(resource&&lines.length<=3){
+   this.font(9.5,true,this.accent);let label=resource.text;while(this.doc.getTextWidth(label)>R-L&&label.length>1)label=label.slice(0,-2);if(label!==resource.text)label+='…';
+   this.doc.text(label,L,784);const width=this.doc.getTextWidth(label);this.doc.setDrawColor(this.accent);this.doc.setLineWidth(.45);this.doc.line(L,786,L+width,786);this.doc.link(L,774,width,14,{url:resource.url});
+   if(resource.description){this.font(7.5,false,C.muted);let description=resource.description;while(this.doc.getTextWidth(description)>R-L&&description.length>1)description=description.slice(0,-2);if(description!==resource.description)description+='…';this.doc.text(description,L,795);}
+  }
   this.text('Generado por',L,807,8,false,C.muted);this.text(item.report.signature||'Usuario Público',L+81,807,9,true);this.text('Pág. '+item.number+' de '+total,R,807,8,false,C.muted,'right');if(!isBankReport(item.report)){this.font(7.5,false,C.muted);this.doc.text('Vigilado Mineducación',34,650,{angle:90});}
  }};
- function build(reports,identity){
+ function build(reports,identity,resources={}){
   const Constructor=global.jspdf?.jsPDF;if(!Constructor)throw Error('No fue posible cargar el generador PDF. Recarga la página.');
   const doc=new Constructor({unit:'pt',format:'a4',compress:true,putOnlyUsedFonts:true});doc.addFileToVFS('PublicSans-Regular.ttf',identity.regular);doc.addFont('PublicSans-Regular.ttf','PublicSans','normal');doc.addFileToVFS('PublicSans-Bold.ttf',identity.bold);doc.addFont('PublicSans-Bold.ttf','PublicSans','bold');
   const branded=reports.some(report=>!isBankReport(report));
   doc.setProperties({title:branded?'Simulación de Crédito Uninorte':'Simulación de crédito - Banco Aliado',author:branded?'Universidad del Norte':'',subject:'Simulación informativa de crédito'});
-  const layout=new Layout(doc,identity);for(const report of reports)layout.reportBody(report);layout.footer();return doc;
+  const layout=new Layout(doc,identity,resources);for(const report of reports)layout.reportBody(report);layout.footer();return doc;
+ }
+ async function resourcesFor(reports){
+  if(!reports.some(report=>global.OFEInstitutionalSettings?.lines.some(line=>line.id===report.creditLineId)))return {};
+  if(global.OFE_SERVER)return (await global.OFEAuth.request('/api/radication-resources')).values;
+  if(global.OFE_PUBLIC){await global.OFEPublicAvailability?.check();return (await global.ProgramCatalogHttp.request(global.OFE_PUBLIC.apiBaseUrl+'/radication-resources')).values;}
+  return {};
  }
  function filename(report){return ('Simulacion_'+report.modality+'_'+(report.program||'')).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9_-]+/g,'_').replace(/_+$/,'').slice(0,140)+'.pdf';}
  async function download(reports){
   const operation=global.OFELoading?.begin('Generando PDF',{total:3,message:'Preparando la identidad institucional…'});
-  try{await operation?.checkpoint({completed:0});const identity=await assets();await operation?.checkpoint({completed:1,message:'Organizando la simulación…'});const doc=build(reports,identity);await operation?.checkpoint({completed:2,message:'Preparando la descarga…'});doc.save(filename(reports[0]));await operation?.checkpoint({completed:3});global.toast?.('PDF descargado','success');return doc;
+  try{await operation?.checkpoint({completed:0});if(global.OFE_PUBLIC&&!global.OFE_SERVER)await global.OFEPublicAvailability?.check();const identity=await assets();await operation?.checkpoint({completed:1,message:'Organizando la simulación…'});const resources=await resourcesFor(reports);const doc=build(reports,identity,resources);await operation?.checkpoint({completed:2,message:'Preparando la descarga…'});doc.save(filename(reports[0]));await operation?.checkpoint({completed:3});global.toast?.('PDF descargado','success');return doc;
   }catch(error){global.toast?.(error.message,'error');throw error;}finally{operation?.end();}
  }
  global.OFEPdf={build,download,assets,filename};

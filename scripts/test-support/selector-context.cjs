@@ -105,7 +105,7 @@ function selectorContext(app, options = {}) {
     querySelector: () => null
   });
   Object.assign(context, {
-    HTMLElement: Element, HTMLInputElement: Input, Chart: class {},
+    URL, URLSearchParams, HTMLElement: Element, HTMLInputElement: Input, Chart: class {},
     localStorage: { getItem: key => storage.get(key) || null, setItem: (key, value) => storage.set(key, String(value)) },
     matchMedia: () => ({ matches: false }), addEventListener() {}, scrollTo() {},
     requestAnimationFrame: callback => setTimeout(callback, 0),
@@ -121,7 +121,7 @@ function selectorContext(app, options = {}) {
     vm.runInContext(read(`apps/${app}/simulador-assets/js/${filename}`), context, { filename });
   }
   vm.runInContext(read('shared/ui/guarantee-copy.js'),context);
-  vm.runInContext(read('shared/exports/simulation-report.js'),context);vm.runInContext(read('shared/exports/excel-report.js'),context);
+  vm.runInContext(read('shared/settings/institutional-settings.js'),context);vm.runInContext(read('shared/exports/simulation-report.js'),context);vm.runInContext(read('shared/exports/excel-report.js'),context);
   vm.runInContext(read('shared/ui/result-details.js'),context);
   vm.runInContext(read('shared/ui/tuition-composition.js'),context);
   return { context, elements, snapshot, messages, scheduled, button: () => new Element('button') };

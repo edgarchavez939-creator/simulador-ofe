@@ -36,6 +36,7 @@ async function openStore(filename,root) {
   const programs=await catalogFromRepository(root);
   db.exec('BEGIN IMMEDIATE');try{for(const program of programs)db.prepare('INSERT INTO programs(id,data) VALUES (?,?)').run(program.id,JSON.stringify(program));db.exec('COMMIT');}catch(e){db.exec('ROLLBACK');throw e;}
  }
+ require('./institutional-settings.cjs').initialize(db);
  const permissions=role=>db.prepare('SELECT permission_id FROM role_permissions WHERE role_id=?').all(role).map(x=>x.permission_id);
  function transaction(fn){db.exec('BEGIN IMMEDIATE');try{const result=fn();db.exec('COMMIT');return result;}catch(e){db.exec('ROLLBACK');throw e;}}
  function audit(actor,action,module,entity,field,oldValue,newValue,requestId,result='SUCCESS') {

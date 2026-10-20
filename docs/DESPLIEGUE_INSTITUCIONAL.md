@@ -191,3 +191,11 @@ Registrar resultado, revisión, fecha y responsable:
 Las variables y rutas se contrastaron con `server/start.cjs`, `public-access.cjs`, `bootstrap.cjs`, `backup.cjs` y `container.cjs`. Se prueba el arranque real con `--env-file` y SQLite persistente en un entorno aislado. Las plantillas de proxy, servicio e imagen son material para adaptación; no constituyen una instalación institucional validada.
 
 Referencias oficiales: [Node CLI y archivo de entorno](https://nodejs.org/api/cli.html#--env-filefile), [proxy HTTP de Nginx](https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass), [servicios systemd](https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html) y [SQLite WAL](https://sqlite.org/wal.html). La opción `--env-file` también se comprobó con el binario Node 24.22.0 usado en pruebas.
+
+## 13. Actualización institucional v19
+
+La migración `005-institutional-settings.sql` agrega mantenimiento público y recursos de radicación por línea. No exige variables nuevas ni sustituir la base. Respaldar antes de actualizar y conservar el archivo de datos. El mantenimiento comienza desactivado y los recursos sin URL y deshabilitados; se administran con el permiso `settings.update`.
+
+Ver [operación, API y validación v19](MEJORAS_INSTITUCIONALES_V19.md). En la aceptación, activar mantenimiento, comprobar 503 institucional por ruta directa y API, verificar acceso interno, desactivar desde Administración y confirmar la recuperación pública. Configurar recursos de prueba distintos por línea y revisar que solo su PDF contenga el enlace.
+
+El proxy debe reenviar también los archivos públicos a Node, conservar `Cache-Control: no-store`, `Retry-After` y el cuerpo de HTTP 503, sin caché ni página de error sustituta. No utilizar un `root` estático alternativo para eludir el control de mantenimiento. GitHub Pages no ejecuta estas funciones globales.

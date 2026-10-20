@@ -104,7 +104,7 @@ test('migrations and consistent backups preserve users and catalog across restar
  const fs=require('node:fs'),os=require('node:os'),{openStore}=require('../server/store.cjs'),{backup,DatabaseSync}=require('node:sqlite');
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'ofe-persist-'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));const file=path.join(dir,'data.sqlite');
  let store=await openStore(file,root);await store.bootstrap('Persistencia','persist@example.test',PASSWORD);const ids=store.db.prepare('SELECT id FROM programs ORDER BY rowid').all().map(x=>x.id);
- store.close();store=await openStore(file,root);assert.equal(store.db.prepare('SELECT count(*) AS n FROM users').get().n,1);assert.deepEqual(store.db.prepare('SELECT id FROM programs ORDER BY rowid').all().map(x=>x.id),ids);assert.equal(store.db.prepare('SELECT count(*) AS n FROM schema_migrations').get().n,4);
+ store.close();store=await openStore(file,root);assert.equal(store.db.prepare('SELECT count(*) AS n FROM users').get().n,1);assert.deepEqual(store.db.prepare('SELECT id FROM programs ORDER BY rowid').all().map(x=>x.id),ids);assert.equal(store.db.prepare('SELECT count(*) AS n FROM schema_migrations').get().n,5);
  const target=path.join(dir,'backup.sqlite');await backup(store.db,target);store.close();const copy=new DatabaseSync(target,{readOnly:true});assert.equal(copy.prepare('SELECT count(*) AS n FROM audit_log').get().n,1);assert.equal(copy.prepare('PRAGMA integrity_check').get().integrity_check,'ok');copy.close();
 });
 test('mandatory audit failure rolls back user creation and invalid fields never create records',async t=>{
