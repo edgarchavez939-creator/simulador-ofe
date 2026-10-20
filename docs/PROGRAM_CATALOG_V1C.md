@@ -1,5 +1,7 @@
 # Program Catalog v1C: lectura remota y arranque asíncrono
 
+> Informe histórico de una fase anterior. Sus versiones, pendientes y resultados describen ese momento. Para el estado de entrega consultar el [README](../README.md), [Información para DTIC](DTIC_INTEGRATION.md) y [Dependencias](DEPENDENCIES.md).
+
 Público y OFE mantienen `embedded` como proveedor activo. El arranque espera la lectura y validación completas del catálogo antes de inicializar cualquier módulo. Los selectores y motores financieros siguen usando el puente temporal `PROGRAMAS` / `POSGRADOS`.
 
 ## Contrato común de lectura

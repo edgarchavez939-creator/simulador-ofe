@@ -19,6 +19,10 @@ No se incluyen secretos de DTIC. La futura identidad institucional se vinculará
 
 El frontend sirve jsPDF 4.2.1, SheetJS CE 0.20.3, Chart.js 4.5.1 y ExcelJS 4.4.0 desde `shared/vendor/`, con integridad SRI, licencias y manifiesto de procedencia. Las fuentes también son locales. La CSP HTTP limita scripts al propio origen; mantiene estilos en línea por compatibilidad con la interfaz actual. Véase [dependencias y evaluación de las alertas de SheetJS](DEPENDENCIES.md). La administración continúa requiriendo su servicio de datos.
 
+## Instalación institucional
+
+El arranque normal es `server/start.cjs`, con `NODE_ENV=production`, `APP_ORIGIN` institucional y `OFE_DATABASE` persistente. Las variables se suministran al proceso o mediante `node --env-file=...`; no existe carga automática de `.env`. Entra ID y separación en dos proyectos/dominios siguen pendientes. Véase [guía institucional](DESPLIEGUE_INSTITUCIONAL.md).
+
 ## Modo de demostración gratuito
 
 `server/start-demo.cjs` es una entrada opcional que exige `OFE_EPHEMERAL_DEMO=1` y credenciales privadas configuradas por el propietario. Solo inicializa la primera cuenta si no hay usuarios y utiliza el mismo bootstrap transaccional, hash, API, sesiones y permisos reales. No abre setup por HTTP ni incluye cuentas o contraseñas predeterminadas. La contraseña inicial se consume y elimina del entorno del proceso; Render conserva la variable privada para reconstruir la demo después de perder el disco efímero. Por eso se usan credenciales exclusivas de prueba y no se activa esta entrada en el entorno persistente o institucional. Véase [guía gratuita](RENDER_FREE_DEMO.md).

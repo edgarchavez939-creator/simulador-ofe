@@ -1,5 +1,7 @@
 # Administración y configuración global — v3
 
+> Informe histórico de una fase anterior. Sus versiones, pendientes y resultados describen ese momento. Para el estado de entrega consultar el [README](../README.md), [Información para DTIC](DTIC_INTEGRATION.md) y [Dependencias](DEPENDENCIES.md).
+
 Implementación para `feat/dtic-readiness`. Validación con Node 24.22.0. No requiere nuevos servicios, paquetes ni suscripciones.
 
 ## Resultado

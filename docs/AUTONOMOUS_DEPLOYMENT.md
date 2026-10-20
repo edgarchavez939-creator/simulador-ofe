@@ -1,5 +1,7 @@
 # Servicio autónomo OFE y alojamiento propuesto
 
+> Para el servidor institucional, comenzar por [Despliegue institucional](DESPLIEGUE_INSTITUCIONAL.md). Las secciones de Render de este documento se conservan como referencia del alojamiento anterior y no son un requisito para DTIC.
+
 ## Pruebas con presupuesto cero
 
 Para pruebas temporales y entrega a DTIC, usar [la guía Render Free](RENDER_FREE_DEMO.md). Este modo crea el primer administrador mediante variables privadas, ya que Free no ofrece Shell. El disco es efímero: al reiniciar, suspenderse o redesplegar pueden perderse usuarios, auditoría y cambios. La propuesta con persistencia de las secciones siguientes es opcional para una futura operación; no contratarla para esta demostración.
@@ -19,7 +21,7 @@ Fuentes verificadas el 15-10-2026: [discos y limitaciones](https://render.com/do
 Requisito: Node.js 24 o posterior. No hay dependencias npm de servidor que instalar.
 
 ```bash
-cd /Users/edgarchavez/Proyectos/simulador-ofe
+cd Simulador-Credito-OFE-DTIC
 npm run bootstrap-admin
 npm start
 ```
@@ -70,7 +72,7 @@ Antes de actualizar: respaldo consistente, pruebas, despliegue manual y comproba
 
 ## Traspaso a DTIC
 
-Se entrega el código, Dockerfile, esquema versionado, configuración no secreta y respaldo consistente. Cambiar alojamiento conserva los IDs de usuario y programa y el historial de auditoría. Las sesiones deberían revocarse durante el traslado.
+Se entrega el código, Dockerfile, esquema versionado y configuración no secreta. Este ZIP no contiene bases de datos ni respaldos; si se requiere trasladar datos, el operador debe generar un respaldo consistente y enviarlo por un canal restringido. Cambiar alojamiento conserva los IDs de usuario y programa y el historial de auditoría. Las sesiones deberían revocarse durante el traslado.
 
 Para SSO institucional se implementará la validación del proveedor OIDC/Entra y una tabla de correspondencia `(provider, subject) → users.id` mediante una migración nueva. Vincular cuentas explícitamente; nunca por coincidencia de correo sin verificación. El usuario interno mantiene su rol, permisos y autoría de auditoría. No se otorgan roles de administrador por pertenecer al dominio de correo.
 

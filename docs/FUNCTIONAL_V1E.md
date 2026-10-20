@@ -1,5 +1,7 @@
 # Iteración funcional v1E y preparación administrativa
 
+> Informe histórico de una fase anterior. Sus versiones, pendientes y resultados describen ese momento. Para el estado de entrega consultar el [README](../README.md), [Información para DTIC](DTIC_INTEGRATION.md) y [Dependencias](DEPENDENCIES.md).
+
 Fecha: 2026-10-15. Rama: `feat/dtic-readiness`. Base: `d300f3a`.
 
 ## Alcance acordado

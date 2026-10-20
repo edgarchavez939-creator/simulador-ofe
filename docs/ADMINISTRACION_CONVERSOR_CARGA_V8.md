@@ -1,5 +1,7 @@
 # Administración, conversor y carga v8
 
+> Informe histórico de una fase anterior. Sus versiones, pendientes y resultados describen ese momento. Para el estado de entrega consultar el [README](../README.md), [Información para DTIC](DTIC_INTEGRATION.md) y [Dependencias](DEPENDENCIES.md).
+
 Cambios sobre `23f5519`, en la rama `feat/dtic-readiness`.
 
 ## 1. Rediseño de administración

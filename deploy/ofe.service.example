@@ -1,0 +1,25 @@
+# Plantilla Linux/systemd. Revisar rutas, usuario y binario Node antes de instalar.
+# Copiar como /etc/systemd/system/ofe.service después de preparar el entorno.
+[Unit]
+Description=Simulador de Credito OFE
+After=network.target
+
+[Service]
+Type=simple
+User=ofe
+Group=ofe
+WorkingDirectory=/opt/simulador-ofe
+ExecStart=/usr/bin/node --env-file=/etc/ofe/ofe.env /opt/simulador-ofe/server/start.cjs
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+KillSignal=SIGTERM
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/ofe /var/backups/ofe
+
+[Install]
+WantedBy=multi-user.target

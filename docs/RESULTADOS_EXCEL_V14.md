@@ -1,5 +1,7 @@
 # Resultados y Excel compacto v14
 
+> Informe histórico de una fase anterior. Sus versiones, pendientes y resultados describen ese momento. Para el estado de entrega consultar el [README](../README.md), [Información para DTIC](DTIC_INTEGRATION.md) y [Dependencias](DEPENDENCIES.md).
+
 16 de octubre de 2026. Continúa sobre PDF B + C y la rama `feat/dtic-readiness`.
 
 ## Presentación de resultados

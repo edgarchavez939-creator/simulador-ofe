@@ -1,5 +1,7 @@
 # Garantisa, Idiomas y carga — v9
 
+> Informe histórico de una fase anterior. Sus versiones, pendientes y resultados describen ese momento. Para el estado de entrega consultar el [README](../README.md), [Información para DTIC](DTIC_INTEGRATION.md) y [Dependencias](DEPENDENCIES.md).
+
 ## Cambios
 
 - Garantisa presenta dos líneas: `Aporte Garantisa: $549.222` y `4,17% sobre $13.170.800 financiados` para la base del ejemplo. Los valores son dinámicos, con formato colombiano y redondeo de presentación a pesos. Se aplica en corto plazo, segmentos CP/LP y Cuota Inicial; se conserva la ayuda contextual.

@@ -2,15 +2,17 @@
 
 Aplicación de apoyo a la simulación de crédito educativo de la Universidad del Norte, con una pantalla pública y un área interna para usuarios autorizados.
 
-## Estado actual
+## Entrega institucional
 
-Actualizado al **16 de octubre de 2026**, conforme a la confirmación del responsable del proyecto:
+Revisión del **20 de octubre de 2026**. El responsable informa que el proyecto fue cargado en GitHub institucional. Esta entrega actualiza instrucciones y plantillas para alojarlo en el servidor de DTIC; no realiza un despliegue remoto.
 
-- El responsable confirmó el funcionamiento de la versión de Render antes de esta actualización de dependencias. Para publicar esta revisión debe desplegarse su nuevo commit en Render.
-- La revisión funcional de la versión actual fue realizada y su funcionamiento fue confirmado por el responsable.
-- Los textos de los exportables ya fueron enviados a Jurídica. Está pendiente su concepto y, si corresponde, aplicar sus observaciones.
-- Las bibliotecas del navegador y las fuentes se sirven desde el proyecto: jsPDF 4.2.1, SheetJS CE 0.20.3, Chart.js 4.5.1 y ExcelJS 4.4.0. La actualización pasó 131 pruebas; véase [dependencias y validación](docs/DEPENDENCIES.md).
-- La información para el traslado e integración institucional está resumida en [Entrega a DTIC](docs/DTIC_INTEGRATION.md).
+En GitHub institucional debe versionarse el **contenido descomprimido**, con `package.json`, `server/`, `apps/` y `shared/` en la raíz del proyecto desplegable. Un ZIP almacenado como archivo adjunto no ejecuta la aplicación. Al sustituir una entrega anterior, aplicar también las exclusiones registradas en el manifiesto.
+
+**Comenzar por [Despliegue institucional](docs/DESPLIEGUE_INSTITUCIONAL.md)**. Incluye todas las variables, rutas, primer administrador, servicio permanente, HTTPS, iframe, respaldos, restauración, actualización y pruebas de aceptación. Las [plantillas](deploy/README.md) requieren completar dominio, certificados y rutas reales. El aplicativo no carga archivos `.env` automáticamente.
+
+El servicio actual reúne pantalla pública y área interna bajo un mismo origen. **Microsoft Entra ID y la separación en dos proyectos/dominios aún no están implementados** y requieren decisión, integración y validación con DTIC. Los textos de exportación ya fueron enviados a Jurídica y continúa pendiente su concepto.
+
+La validación completa de esta entrega terminó con **132 pruebas aprobadas, 0 fallidas**, incluido el arranque normal con entorno externo, reinicio y respaldo consistente. Los motores y valores financieros permanecen preservados. Ver [dependencias locales](docs/DEPENDENCIES.md), [revisión del paquete](docs/DEPURACION_ENTREGA.md) e [información para DTIC](docs/DTIC_INTEGRATION.md).
 
 ## Funcionalidades disponibles
 
@@ -23,18 +25,18 @@ Actualizado al **16 de octubre de 2026**, conforme a la confirmación del respon
 
 El inicio de sesión actual utiliza cuentas locales del aplicativo. La conexión con las cuentas institucionales mediante Microsoft Entra ID está pendiente de coordinación e implementación con DTIC.
 
-## Ambientes y publicación
+## Ambientes de referencia
 
 | Ambiente | Acceso | Alcance |
 | --- | --- | --- |
 | Render | [Simulador público](https://simulador-ofe-pruebas.onrender.com/apps/public/) · [Acceso interno](https://simulador-ofe-pruebas.onrender.com/login) | Aplicación con servicio de datos, autenticación, administración y auditoría. |
 | GitHub Pages | [Simulador público estático](https://edgarchavez939-creator.github.io/simulador-ofe/) | Versión pública con catálogo embebido; no ejecuta el servicio de usuarios ni la administración. |
 
-GitHub Pages se publica desde `main`; Render utiliza `feat/dtic-readiness`. Las actualizaciones guardadas en la administración de Render se consultan mediante su servicio de datos y no se sincronizan automáticamente con el catálogo estático de GitHub Pages.
+Estos enlaces corresponden a los ambientes anteriores de referencia; no son la dirección institucional ni se certifica aquí su despliegue actual. En el repositorio anterior, GitHub Pages se publica desde `main` y Render utiliza `feat/dtic-readiness`. Las actualizaciones guardadas en la administración de Render se consultan mediante su servicio de datos y no se sincronizan automáticamente con el catálogo estático de GitHub Pages.
 
-El enlace y el iframe del servicio público están preparados para incorporarse a la página de [Crédito Uninorte](https://www.uninorte.edu.co/web/apoyo-financiero/credito-uninorte). La publicación dentro del portal y las autorizaciones correspondientes se coordinan con DTIC y el responsable de la web.
+En el servidor institucional, Configuración genera el enlace y el iframe desde `APP_ORIGIN`. La plantilla HTML requiere reemplazar el dominio de ejemplo. Su incorporación se coordina para la página de [Crédito Uninorte](https://www.uninorte.edu.co/web/apoyo-financiero/credito-uninorte). La publicación dentro del portal y las autorizaciones correspondientes se coordinan con DTIC y el responsable de la web.
 
-## Ejecución local
+## Ejecución local de desarrollo
 
 Requisito: **Node.js 24 o posterior**. La aplicación utiliza SQLite para guardar usuarios, catálogo, configuración y auditoría.
 
@@ -44,6 +46,8 @@ npm start
 ```
 
 El primer comando crea el administrador inicial si la base está vacía. No existen cuentas predeterminadas. Abrir `http://127.0.0.1:8787`; el administrador gestiona las demás cuentas desde el aplicativo.
+
+Para producción, seguir la guía institucional: `NODE_ENV=production`, origen HTTPS y base persistente fuera del código. Cargar el entorno con `node --env-file=...` o desde el gestor del servicio.
 
 La base local se guarda por defecto en `var/ofe.sqlite`, fuera del repositorio. El historial de simulaciones se conserva en el navegador; no es un archivo central de expedientes.
 
@@ -61,6 +65,9 @@ La entrada raíz de GitHub Pages conduce a `apps/public/`. La publicación debe 
 Los programas se actualizan en el área administrativa del servicio, con validación, control de permisos y registro de cambios. Los antiguos flujos de PIN y reemplazo manual del HTML se conservan únicamente como antecedentes.
 
 ## Documentación de entrega
+
+- [Guía completa de despliegue institucional](docs/DESPLIEGUE_INSTITUCIONAL.md).
+- [Plantillas de entorno, systemd, Docker y proxy](deploy/README.md).
 
 - [Resumen para DTIC: lo entregado y lo pendiente](docs/DTIC_INTEGRATION.md).
 - [Instalación, respaldo, restauración y traslado](docs/AUTONOMOUS_DEPLOYMENT.md).

@@ -1,5 +1,7 @@
 # Program Catalog v1B: identidad técnica del catálogo embebido
 
+> Informe histórico de una fase anterior. Sus versiones, pendientes y resultados describen ese momento. Para el estado de entrega consultar el [README](../README.md), [Información para DTIC](DTIC_INTEGRATION.md) y [Dependencias](DEPENDENCIES.md).
+
 `ProgramCatalog` ofrece lectura normalizada mediante el adapter `embedded` en Público y OFE. Los simuladores conservan los arrays legacy `PROGRAMAS` y `POSGRADOS`.
 
 ## Diagnóstico completo

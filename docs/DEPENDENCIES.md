@@ -28,6 +28,8 @@ El servidor entrega CSP con `script-src 'self'` y `font-src 'self' data:`, sin l
 
 Las páginas conservan una CSP meta de respaldo para el alojamiento estático. GitHub Pages no permite configurar todas las cabeceras de respuesta necesarias: la instalación institucional debe usar el servidor o un proxy configurado por DTIC. La administración requiere el servicio propio de datos; alojar recursos localmente no convierte esa parte en una aplicación sin conexión.
 
+La entrega institucional posterior incorpora una prueba de arranque, persistencia y respaldo y suma **132 pruebas aprobadas**; véase [guía institucional](DESPLIEGUE_INSTITUCIONAL.md). Las verificaciones siguientes registran la actualización original de dependencias del 16 de octubre.
+
 ## Validación de esta actualización
 
 - Batería completa: **131 pruebas aprobadas**, ninguna fallida.

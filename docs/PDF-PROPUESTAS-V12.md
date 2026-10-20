@@ -1,5 +1,7 @@
 # PDF: auditoría y propuestas para aprobación visual
 
+> Informe histórico de una fase anterior. Sus versiones, pendientes y resultados describen ese momento. Para el estado de entrega consultar el [README](../README.md), [Información para DTIC](DTIC_INTEGRATION.md) y [Dependencias](DEPENDENCIES.md).
+
 Fecha: 16 de octubre de 2026. Estado: propuestas; exportador sin modificar.
 
 ## Cambio administrativo completado

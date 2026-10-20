@@ -1,5 +1,7 @@
 # Informe de implementación — fase v2
 
+> Informe histórico de una fase anterior. Sus versiones, pendientes y resultados describen ese momento. Para el estado de entrega consultar el [README](../README.md), [Información para DTIC](DTIC_INTEGRATION.md) y [Dependencias](DEPENDENCIES.md).
+
 Fecha de validación: 15 de octubre de 2026. Base: `479852f`, rama `feat/dtic-readiness`.
 
 ## Auditoría previa y límites preservados

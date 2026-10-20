@@ -27,7 +27,7 @@ test('PDF uses exact same normalized amounts as Excel for all modalities; real o
  }
 });
 test('signature is derived from authenticated email; public ignores identity; snapshots and projections survive mutable controls/configuration',async()=>{
- for(const [email,publicMode,wanted] of [['chavezje@uninorte.edu.co',false,'chavezje'],['asesor.credito@uninorte.edu.co',false,'asesor.credito'],['chavezje@uninorte.edu.co',true,'Usuario Público']]){
+ for(const [email,publicMode,wanted] of [['qa.autor@example.test',false,'qa.autor'],['asesor.credito@example.test',false,'asesor.credito'],['qa.autor@example.test',true,'Usuario Público']]){
   const {context:c,elements:e}=selectorContext('ofe');c.OFE_SERVER={};if(publicMode)c.OFE_PUBLIC={};c.OFEAuth={...c.OFEAuth,getUser:async()=>({email,name:'Nombre que no se debe imprimir'})};await c.SimuladorOFE.init();
   e.prog1.value=c.SimuladorOFE.catalog.programs[0].id;c.setMat(1);e.plazo1.value=6;e.tasa1.value=1.53;c.calcular1();const d=c.OFEReport.result(1),before=c.OFEReport.pdf(1);assert.equal(before.signature,wanted);
   d.reportSnapshot={...d.reportSnapshot,generatedBy:'falso@example.com',signature:'FIRMA ARBITRARIA'};e.tasa1.value=9;c.SimuladorOFE.config={garantisaCP:.99};assert.equal(JSON.stringify(c.OFEReport.pdf(1)),JSON.stringify(before));

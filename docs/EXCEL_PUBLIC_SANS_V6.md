@@ -1,5 +1,7 @@
 # Excel institucional y calibración visual v6
 
+> Informe histórico de una fase anterior. Sus versiones, pendientes y resultados describen ese momento. Para el estado de entrega consultar el [README](../README.md), [Información para DTIC](DTIC_INTEGRATION.md) y [Dependencias](DEPENDENCIES.md).
+
 > Documento histórico. La tipografía y composición de Excel se actualizan en
 > [Resultados y Excel compacto v14](RESULTADOS_EXCEL_V14.md): Aptos Narrow
 > exclusivamente para Excel; Public Sans permanece en la app y el PDF.

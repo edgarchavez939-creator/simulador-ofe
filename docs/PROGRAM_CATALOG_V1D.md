@@ -1,5 +1,7 @@
 # Program Catalog v1D: selección de programas por ID
 
+> Informe histórico de una fase anterior. Sus versiones, pendientes y resultados describen ese momento. Para el estado de entrega consultar el [README](../README.md), [Información para DTIC](DTIC_INTEGRATION.md) y [Dependencias](DEPENDENCIES.md).
+
 Los selectores de Público y OFE consumen `SimuladorOFE.catalog.programs`, la lista validada que `ProgramCatalog` entrega durante el arranque. Cada opción guarda el ID único del programa. Cambiar de selección, nivel o subnivel no vuelve a consultar al proveedor.
 
 ## Comportamiento

@@ -37,6 +37,6 @@ Los 173 IDs del catálogo embebido y los seis archivos `03-finance-core.js` / `0
 
 Se verificó en navegador el acceso público del servicio de Render sin iniciar sesión. La nueva Configuración necesita desplegar esta revisión en Render; no se accedió a la cuenta administrativa remota ni se cambiaron allí colores o variables de entorno.
 
-## Despliegue
+## Despliegue institucional
 
-En el servicio existente, usar Manual Deploy → Deploy latest commit de `feat/dtic-readiness`. No hay variables nuevas que agregar para estas pestañas. La base se actualiza automáticamente al iniciar el servicio. Después, entrar como administrador y abrir Configuración. El acceso público y los orígenes de iframe ya configurados se conservan.
+Seguir [Despliegue institucional](DESPLIEGUE_INSTITUCIONAL.md). Estas pestañas no necesitan nuevas variables específicas de colores; las variables generales de origen, base persistente y acceso público están documentadas allí. Las migraciones se aplican al iniciar. Después, entrar como administrador y abrir Configuración. La referencia anterior a Manual Deploy correspondía al ambiente histórico de Render.

@@ -1,15 +1,21 @@
-# Publicación actual en GitHub Pages
+# Publicación y alojamiento
 
-- Sitio: https://edgarchavez939-creator.github.io/simulador-ofe/
-- Fuente de Pages: rama `main`, carpeta raíz `/`.
-- `index.html` redirige a `./apps/public/`; el enlace habitual abre la aplicación pública actualizada.
-- Publicar toda la estructura: `apps/public`, sus recursos y `shared/program-catalog`. No publicar un HTML aislado.
-- La publicación OFE con usuarios y auditoría reales usa el nuevo servidor autónomo. Seguir [AUTONOMOUS_DEPLOYMENT](AUTONOMOUS_DEPLOYMENT.md); Pages conserva la variante estática y no ejecuta el backend.
-- Enviar cambios a otra rama no actualiza Pages; la revisión validada debe llegar a `main` mediante avance directo o el flujo de revisión del repositorio.
+Este ZIP contiene el proyecto ejecutable; no necesita completar un scaffold ni generar carpetas `dist/`. Las rutas de dominio institucional deben acordarse con DTIC.
 
-## Despliegue institucional previsto
+La guía operativa vigente para DTIC es [Despliegue institucional](DESPLIEGUE_INSTITUCIONAL.md), con [plantillas](../deploy/README.md).
 
-- `dist/public/` -> `simulador.uninorte.edu.co`
-- `dist/ofe/` -> `simulador-ofe.uninorte.edu.co`
+## Servicio con autenticación y administración
 
-Los builds institucionales deben generarse desde una única fuente compartida y no mantener copias independientes del motor financiero. Estas rutas son el destino previsto y aún dependen de DTIC.
+Seguir [operación y traslado](AUTONOMOUS_DEPLOYMENT.md). Se ejecuta el servidor Node.js de `server/`, con SQLite persistente y un proxy HTTPS institucional. La pantalla pública y el área interna comparten el servidor actual, con rutas y permisos separados. El despliegue como dos proyectos o dominios institucionales sigue pendiente de diseño y validación con DTIC; no se entrega como implementado.
+
+Consultar [guía de infraestructura](../deploy/README.md) para evitar publicar la carpeta de código como raíz estática del área interna.
+
+## GitHub Pages
+
+El sitio de referencia es `https://edgarchavez939-creator.github.io/simulador-ofe/`, desde `main` y la carpeta raíz. La entrada raíz conduce a `apps/public/`. Publicar toda la estructura de recursos necesaria, incluida `shared/`; un HTML aislado no contiene la aplicación.
+
+Pages sirve la variante pública estática, con catálogo embebido. No ejecuta sesiones, API, administración ni auditoría, y no recibe automáticamente los cambios guardados en Render.
+
+## Demostración gratuita
+
+La [guía de Render Free](RENDER_FREE_DEMO.md) describe la prueba con almacenamiento efímero. `render.yaml` corresponde a la alternativa de pago con disco persistente; no usar ese Blueprint para una prueba sin presupuesto. Ningún recurso se crea al descomprimir este ZIP.

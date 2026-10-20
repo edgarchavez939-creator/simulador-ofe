@@ -1,5 +1,7 @@
 # Pruebas gratuitas en Render antes de entregar a DTIC
 
+> Referencia del ambiente anterior de demostración. Para la instalación en DTIC usar [Despliegue institucional](DESPLIEGUE_INSTITUCIONAL.md); no trasladar el modo efímero ni credenciales de prueba.
+
 Esta ruta permite una demostración con autenticación, roles y auditoría reales, sin disco de pago. No es almacenamiento permanente. El arranque normal y la propuesta persistente siguen disponibles por separado.
 
 ## 1. Cuenta y repositorio

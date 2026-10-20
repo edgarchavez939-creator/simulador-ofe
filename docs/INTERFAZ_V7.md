@@ -1,5 +1,7 @@
 # Modales, subtítulos y acceso v7
 
+> Informe histórico de una fase anterior. Sus versiones, pendientes y resultados describen ese momento. Para el estado de entrega consultar el [README](../README.md), [Información para DTIC](DTIC_INTEGRATION.md) y [Dependencias](DEPENDENCIES.md).
+
 Cambios sobre `78d5af0` en `feat/dtic-readiness`.
 
 ## Modales con agrupaciones visibles

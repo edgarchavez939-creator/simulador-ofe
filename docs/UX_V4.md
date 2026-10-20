@@ -1,5 +1,7 @@
 # UX v4 — Acceso, navegación y administración
 
+> Informe histórico de una fase anterior. Sus versiones, pendientes y resultados describen ese momento. Para el estado de entrega consultar el [README](../README.md), [Información para DTIC](DTIC_INTEGRATION.md) y [Dependencias](DEPENDENCIES.md).
+
 Intervención sobre `feat/dtic-readiness`, después de Administración v3. Alcance principal: login y aplicación autenticada OFE. Se conservan el backend, sus APIs, la base de datos, los permisos, los eventos de auditoría y el motor financiero.
 
 ## Cambios de experiencia
