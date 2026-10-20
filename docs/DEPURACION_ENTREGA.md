@@ -9,7 +9,8 @@ Esta revisión incorpora al proyecto las instrucciones de instalación para DTIC
 - Guía institucional completa, con todas las variables leídas por el servidor, valores predeterminados, diferencias con el modo de prueba y uso explícito de `--env-file`.
 - Plantillas sin secretos para Node/Linux y Docker; ejemplo de servicio systemd y proxy Nginx. DTIC debe completar dominio, certificados, usuarios y rutas y validarlos en destino.
 - Procedimientos de primer administrador, base persistente, permisos, HTTPS, acceso público/iframe, respaldo, restauración, publicación, reversión y aceptación.
-- Pendientes explícitos: Microsoft Entra ID, separación en dos proyectos/dominios si se exige, restricciones de red, operación y concepto jurídico. No se presentan como implementados.
+- Arquitectura confirmada por el responsable el 20 de octubre de 2026: un proyecto y servicio, con pantalla pública y área interna protegida, API y base de datos compartidas. La división en dos proyectos se retira de los trabajos pendientes.
+- Pendientes explícitos: Microsoft Entra ID, restricciones de red, operación y concepto jurídico. No se presentan como implementados.
 - Mensaje de Configuración independiente del proveedor de alojamiento. La plantilla del portal usa un dominio reservado `.invalid` que debe sustituirse por el real.
 - Documentación de API corregida y antecedentes identificados; instrucciones de instalación sin rutas personales de macOS.
 - Identidad ficticia en la prueba de firma PDF. No se incluyen la cuenta ni la contraseña de pruebas del responsable.

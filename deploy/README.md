@@ -12,6 +12,6 @@ La guía principal es [Despliegue institucional](../docs/DESPLIEGUE_INSTITUCIONA
 
 Estas plantillas no se activan al descomprimir. DTIC debe adaptarlas y validarlas en su servidor. La aplicación no carga un `.env` automáticamente: usar `node --env-file=...` o variables del servicio. El entorno se mantiene fuera de Git.
 
-Las versiones institucionales actuales comparten un servicio y un origen para público e interno. Entra ID y la separación en dos proyectos/dominios no están implementados. Ver [pendientes y responsables](../docs/DTIC_INTEGRATION.md).
+La arquitectura confirmada mantiene un único proyecto, servicio y origen HTTPS para público e interno, con API y base compartidas. No se planifica dividir el despliegue en dos aplicaciones. Entra ID continúa pendiente de integración. Ver [pendientes y responsables](../docs/DTIC_INTEGRATION.md).
 
 Se retiraron los antiguos ejemplos estáticos. La nueva plantilla Nginx hace proxy al servidor; no publica la raíz del repositorio. El ZIP no incluye credenciales, base de datos ni respaldo.

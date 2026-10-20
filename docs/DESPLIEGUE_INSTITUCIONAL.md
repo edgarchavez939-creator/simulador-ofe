@@ -2,22 +2,24 @@
 
 Revisión del **20 de octubre de 2026**. Esta guía describe el código entregado y las decisiones pendientes. El alojamiento institucional no depende de Render, GitHub Pages ni Supabase. GitHub institucional conserva el código; el servidor de DTIC ejecuta la aplicación y guarda sus datos.
 
-## 1. Alcance implementado y decisiones previas
+## 1. Arquitectura confirmada y decisiones previas
 
-El servidor actual ofrece pantalla pública `/apps/public/`, área interna `/apps/ofe/`, login `/login` y API bajo el mismo origen HTTPS. El código de las pantallas está separado en `apps/public/` y `apps/ofe/`, con recursos compartidos. Esto **no constituye dos proyectos desplegables independientes**.
+El responsable confirmó el **20 de octubre de 2026** que se mantendrá la arquitectura actual: **un único proyecto, servicio y origen HTTPS**, con pantalla pública `/apps/public/`, área interna `/apps/ofe/`, login `/login`, API y base de datos compartidas. Las pantallas conservan sus carpetas y recursos compartidos. El público accede sin cuenta; el área interna y su administración mantienen autenticación, roles y permisos del servidor.
+
+La división en dos proyectos o despliegues no forma parte de esta entrega ni se registra como trabajo pendiente. DTIC debe revisar esta arquitectura como parte de su conformidad institucional; la decisión del responsable no representa una aprobación ya emitida por DTIC.
 
 Antes de autorizar producción, DTIC debe completar:
 
 | Decisión | Estado y acción |
 | --- | --- |
-| Dominio y arquitectura | Confirmar el dominio y si se acepta un servicio con dos accesos o se exige separar aplicaciones y dominios. La segunda opción requiere adaptación y pruebas; no se resuelve poniendo dos dominios delante del servidor actual. |
+| Dominio institucional | Confirmar un origen HTTPS canónico para el servicio único y configurar en él las rutas públicas e internas. |
 | Acceso institucional | Microsoft Entra ID está pendiente de implementar. Hay usuarios locales con permisos y auditoría reales. DTIC debe aprobar expresamente cualquier uso temporal de esas cuentas. |
 | Red | Definir restricciones de acceso interno y aplicarlas también a las API de autenticación/administración. La plantilla no limita el acceso a la red universitaria. |
 | Persistencia | Definir volumen local permanente, respaldos, retención, responsables y recuperación. |
 | Textos | Recibir concepto de Jurídica y aplicar los ajustes aprobados; el envío previo no equivale a aprobación. |
 | Repositorio | El responsable informa que cargó el proyecto en GitHub institucional. Confirmar que esta revisión actualizada se incorpore allí; el ZIP no crea permisos ni actualiza repositorios remotos. |
 
-Para el servicio actual, usar un origen canónico. Las mutaciones validan origen y CSRF, las cookies son del host y la vista previa requiere el mismo origen. No activar CORS ni cambiar a comodines para hacer funcionar dos dominios. La futura separación necesita diseñar consulta pública, backend compartido, vinculación de datos y controles internos.
+Usar un único origen canónico. Las mutaciones validan origen y CSRF, las cookies son del host y la vista previa requiere el mismo origen. La arquitectura actual no requiere habilitar CORS ni usar comodines. La restricción del acceso interno debe abarcar también las API correspondientes, conforme a la política que defina DTIC.
 
 ## 2. Requisitos y rutas
 
@@ -167,7 +169,7 @@ Registrar resultado, revisión, fecha y responsable:
 - Calcular corto plazo, mixto, banco aliado, idiomas, cuota inicial y reestructuración. Revisar PDF/Excel, gráficos y ausencia de peticiones a CDN.
 - Validar colores, enlace/iframe desde el portal autorizado y rechazo desde un origen no autorizado. Revisar cookies Secure/HttpOnly/SameSite y cabeceras en las respuestas reales detrás del proxy.
 - Reiniciar proceso/servidor y comprobar conservación de cuentas, catálogo, parámetros y auditoría. Generar y restaurar un respaldo en un entorno separado.
-- Confirmar aprobación jurídica, decisión sobre Entra ID, restricciones de red y arquitectura. Obtener conformidad de DTIC antes de habilitar producción.
+- Confirmar aprobación jurídica, decisión sobre Entra ID y restricciones de red. Obtener conformidad de DTIC sobre la arquitectura de servicio único y la instalación antes de habilitar producción.
 
 ## 11. Diagnóstico
 

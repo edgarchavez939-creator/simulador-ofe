@@ -21,7 +21,7 @@ El frontend sirve jsPDF 4.2.1, SheetJS CE 0.20.3, Chart.js 4.5.1 y ExcelJS 4.4.0
 
 ## Instalación institucional
 
-El arranque normal es `server/start.cjs`, con `NODE_ENV=production`, `APP_ORIGIN` institucional y `OFE_DATABASE` persistente. Las variables se suministran al proceso o mediante `node --env-file=...`; no existe carga automática de `.env`. Entra ID y separación en dos proyectos/dominios siguen pendientes. Véase [guía institucional](DESPLIEGUE_INSTITUCIONAL.md).
+El arranque normal es `server/start.cjs`, con `NODE_ENV=production`, `APP_ORIGIN` institucional y `OFE_DATABASE` persistente. Las variables se suministran al proceso o mediante `node --env-file=...`; no existe carga automática de `.env`. El responsable confirmó mantener un solo proyecto y servicio, con rutas públicas e internas y controles de acceso en el servidor. Entra ID continúa pendiente de integración. Véase [guía institucional](DESPLIEGUE_INSTITUCIONAL.md).
 
 ## Modo de demostración gratuito
 

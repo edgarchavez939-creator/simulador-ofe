@@ -1,6 +1,6 @@
 {
   "preparedAt": "2026-10-20",
-  "release": "institutional-deployment-2026-10-20",
+  "release": "institutional-single-service-2026-10-20",
   "baseCommit": "fed52b6dd68b30fe5dae9c6d59cb4738f7f12843",
   "scope": "Guía y plantillas para DTIC, mensaje neutral de alojamiento y depuración de entrega. No realiza despliegue ni integración Entra.",
   "tests": {
@@ -72,7 +72,7 @@
       ".dockerignore": "820e3b8c998f89675e3d338f798871413e97aa54674caefca0c016df6b57fce9",
       ".gitignore": "fdc0c4bce1bfd2ea07aa80f162f53377669bb88a7bc666ccb91e0d103a6486ad",
       "Dockerfile": "6afe7737e8c70db223081602bf3f8601f50af086d48c4d6d283b2b48b59a0381",
-      "README.md": "5d00c93da2f27d7208d33ada32a04fb1fcb9259e4b333f75abaa63b6799bded5",
+      "README.md": "b0f67b6461c34d449b19b4bf1b8533bc92ff7a17e737e6c4ae3f40fcf5351498",
       "apps/ofe/config.js": "29cdc197fb0d45702a3cd054b805d2ce1f3dd3f70365aa1507e6bedf121b8a11",
       "apps/ofe/index.html": "972f78602848df77498db409fe2c1380e99c796d6d287a028abad82cc9aa7850",
       "apps/ofe/simulador-assets/favicon-180.png": "cfcd5a1f2d6e240dfe1eeff71ff2a9bb2f7152eaeadb7ea4e0f079411a3591ce",
@@ -108,7 +108,7 @@
       "apps/public/simulador-assets/js/10-pdf-aptos.js": "2e8020b6438b7295eff2d3c74e20c8a4feb032b4aa2ed92f55e0d1275820b63b",
       "apps/public/simulador-assets/styles.css": "3642ae47ffe6c7818f10bc393a888b709d9e2d3b219937d72c2125c8bdd8b019",
       "data/mock-program-catalog.json": "5939cb00d0690d49d17eab3b0b5ef715333aa8e60d54e7253e09afad6efe6d91",
-      "deploy/README.md": "b626930e9fa3e25620eac68c80560b9e22d3e7f10af2532b4f525ec7f844bdca",
+      "deploy/README.md": "fe38eb89beb1bcb80464fff44bd5e2e92e43ef7de219e73f1a199c5e140ffca6",
       "deploy/institutional.docker.env.example": "44b031c92e639991f7afc69a1cb84b1cd38f15f4955629c7ee366b1797875b16",
       "deploy/institutional.env.example": "2b0d7ad720a1bc83f339700e3645b5807e79347f2966a6e80d5e07b30da0ef05",
       "deploy/nginx-institutional.conf.example": "8c21e813c54d2326cb7ed671d1a46d2698936b784b8f58faee48045798ca3f7d",
@@ -119,10 +119,10 @@
       "docs/AUTONOMOUS_DEPLOYMENT.md": "60165532afbc4d691574d757becd1357cb37b9370b3f328e3fc1d2d9a2babacc",
       "docs/CONFIGURACION_PUBLICA_COLORES_V11.md": "5174aa0f25011e8b2a0cdb4cd2c669f403ce4bb99ccd351b3c0644f3855300b5",
       "docs/DEPENDENCIES.md": "1a3b45c91624c8a47e8fce4808779eda683f7cff06fdbd8b23329d45359c1072",
-      "docs/DEPLOYMENT.md": "2da1159ac25292c4b3893fa49cbb72cbbc152d847d557e18a725feb7ce6cc27a",
-      "docs/DEPURACION_ENTREGA.md": "0a385a273abd3ec980f462da6059a5916cdcddb9bc922cb84a4380af698b1fbd",
-      "docs/DESPLIEGUE_INSTITUCIONAL.md": "b2e7e5768a9cd50ca7f0c7768c7a41c2193edd0717e3cafb51d5a1031f43cc87",
-      "docs/DTIC_INTEGRATION.md": "6add0287f410b9cdabc153f7013bb8d658534f298c19ae0810aebdcac69d3ac2",
+      "docs/DEPLOYMENT.md": "36b8edaef839ace7b16b6410f7d9f09cab445e076ce542697f6ec6c38602031c",
+      "docs/DEPURACION_ENTREGA.md": "5b0ebfe8de915222f9411770a4e5ed307609d3caf354f99e3c0f79e28e54951c",
+      "docs/DESPLIEGUE_INSTITUCIONAL.md": "d82209359d355bdf8a60a444b6a361972a61071c70e272487f62699cd7ae2f32",
+      "docs/DTIC_INTEGRATION.md": "7a80e21a20f32aad3875a9b504ba1a7bfbd1be712020fe8f07f25d241b82589c",
       "docs/EXCEL_PUBLIC_SANS_V6.md": "3658c37c44b6113f64bf82067934e5a749dfba074f76c7602cee9cfb9c6f44dd",
       "docs/FUNCTIONAL_V1E.md": "68551c8703c36617d09273c16af16a663f3b0dcf0af779ccc7191d918a1d0b12",
       "docs/GARANTISA_IDIOMAS_CARGA_V9.md": "986a8168bcd1faa7ff8a9368f534fa5ae8ddc52a65c81684dedc375961f20b9c",
@@ -140,7 +140,7 @@
       "docs/REFINAMIENTO_V5.md": "e653c5f27349cea1ef00b4fdaa59489a2fdd0508d84b61dcb81f23f20093c31e",
       "docs/RENDER_FREE_DEMO.md": "52dc7ac6b86cbe638f76a3b9dedb27e97dac0ea95d7d086d0b7cf8704364eead",
       "docs/RESULTADOS_EXCEL_V14.md": "aafd6c68795a6cbe5c4d60cd8e869019ffe34622a4d5ce4d015265a9d324f82f",
-      "docs/SECURITY.md": "bcb937344457d6f50de9e6bfe3681c357ef8bdd3705fa40d833bd88c98630139",
+      "docs/SECURITY.md": "2121ac8a5266dbd742e47d7f24ab929995d74fd082aeb655a80f7ab1f17b2283",
       "docs/UX_V4.md": "1f892803b698caeeca3b701214280145b111ada7c401e8f99ddfbf39be1d0ec2",
       "examples/uninorte-embed.html": "a6f5f7159393478c63e7827b9ff2a4058af625c9e0bdc95050cfe651d4b3a037",
       "index.html": "62dbb390d9b37f9dd6191ab2041db3df5b5e9b69d1e38b999c1cec689c840259",
@@ -259,5 +259,12 @@
       "simulador-assets/logo-uninorte-brandbook.png": "5d9abe8533ba12fbebde474913c99e4a1e65dc316e0b8c10635874dc88908ec4",
       "simulador-assets/styles.css": "e5a37a3474fd02c7078a75ca52848408c72b4cc246571cf6e9b164794fbcdb00"
     }
+  },
+  "architecture": {
+    "decisionDate": "2026-10-20",
+    "decisionBy": "Responsable del proyecto",
+    "deployment": "Un proyecto y servicio bajo un origen HTTPS; pantalla pública y área interna protegida; API y base de datos compartidas.",
+    "splitDeploymentInScope": false,
+    "institutionalApproval": "Pendiente de conformidad de DTIC; no se registra aprobación emitida."
   }
 }

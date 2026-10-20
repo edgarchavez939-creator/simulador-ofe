@@ -6,7 +6,7 @@ La guía operativa vigente para DTIC es [Despliegue institucional](DESPLIEGUE_IN
 
 ## Servicio con autenticación y administración
 
-Seguir [operación y traslado](AUTONOMOUS_DEPLOYMENT.md). Se ejecuta el servidor Node.js de `server/`, con SQLite persistente y un proxy HTTPS institucional. La pantalla pública y el área interna comparten el servidor actual, con rutas y permisos separados. El despliegue como dos proyectos o dominios institucionales sigue pendiente de diseño y validación con DTIC; no se entrega como implementado.
+Seguir [operación y traslado](AUTONOMOUS_DEPLOYMENT.md). Se ejecuta el servidor Node.js de `server/`, con SQLite persistente y un proxy HTTPS institucional. La pantalla pública y el área interna comparten el servidor actual, con rutas y permisos separados. Por decisión del responsable, se conserva un único proyecto y servicio bajo un mismo origen HTTPS, con API y base de datos compartidas. La división en dos despliegues no forma parte del alcance de esta entrega.
 
 Consultar [guía de infraestructura](../deploy/README.md) para evitar publicar la carpeta de código como raíz estática del área interna.
 

@@ -10,7 +10,7 @@ En GitHub institucional debe versionarse el **contenido descomprimido**, con `pa
 
 **Comenzar por [Despliegue institucional](docs/DESPLIEGUE_INSTITUCIONAL.md)**. Incluye todas las variables, rutas, primer administrador, servicio permanente, HTTPS, iframe, respaldos, restauración, actualización y pruebas de aceptación. Las [plantillas](deploy/README.md) requieren completar dominio, certificados y rutas reales. El aplicativo no carga archivos `.env` automáticamente.
 
-El servicio actual reúne pantalla pública y área interna bajo un mismo origen. **Microsoft Entra ID y la separación en dos proyectos/dominios aún no están implementados** y requieren decisión, integración y validación con DTIC. Los textos de exportación ya fueron enviados a Jurídica y continúa pendiente su concepto.
+**Se mantiene un único proyecto y servicio**, con pantalla pública y área interna protegida bajo el mismo origen HTTPS, API y base de datos compartidas. Esta arquitectura fue confirmada por el responsable el 20 de octubre de 2026. Microsoft Entra ID continúa pendiente de integración y validación con DTIC. Los textos de exportación ya fueron enviados a Jurídica y continúa pendiente su concepto.
 
 La validación completa de esta entrega terminó con **132 pruebas aprobadas, 0 fallidas**, incluido el arranque normal con entorno externo, reinicio y respaldo consistente. Los motores y valores financieros permanecen preservados. Ver [dependencias locales](docs/DEPENDENCIES.md), [revisión del paquete](docs/DEPURACION_ENTREGA.md) e [información para DTIC](docs/DTIC_INTEGRATION.md).
 
