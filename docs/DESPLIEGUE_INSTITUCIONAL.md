@@ -196,6 +196,8 @@ Referencias oficiales: [Node CLI y archivo de entorno](https://nodejs.org/api/cl
 
 La migración `005-institutional-settings.sql` agrega mantenimiento público y recursos de radicación por línea. No exige variables nuevas ni sustituir la base. Respaldar antes de actualizar y conservar el archivo de datos. El mantenimiento comienza desactivado y los recursos sin URL y deshabilitados; se administran con el permiso `settings.update`.
 
-Ver [operación, API y validación v19](MEJORAS_INSTITUCIONALES_V19.md). En la aceptación, activar mantenimiento, comprobar 503 institucional por ruta directa y API, verificar acceso interno, desactivar desde Administración y confirmar la recuperación pública. Configurar recursos de prueba distintos por línea y revisar que solo su PDF contenga el enlace.
+Ver [operación, API y validación v19](MEJORAS_INSTITUCIONALES_V19.md). En la aceptación, activar mantenimiento, comprobar 503 institucional por ruta directa y API, verificar acceso interno, desactivar desde Administración y confirmar la recuperación pública. Configurar recursos de prueba distintos por módulo y revisar que solo su PDF contenga el enlace.
 
 El proxy debe reenviar también los archivos públicos a Node, conservar `Cache-Control: no-store`, `Retry-After` y el cuerpo de HTTP 503, sin caché ni página de error sustituta. No utilizar un `root` estático alternativo para eludir el control de mantenimiento. GitHub Pages no ejecuta estas funciones globales.
+
+La corrección [v20](RECURSOS_POR_MODULO_V20.md) define exactamente tres enlaces: Cuota Inicial, Corto Plazo y Corto y Largo Plazo, cada uno para ambos niveles. La migración 006 conserva los recursos anteriores para consulta administrativa; si los de pregrado y posgrado difieren, se configura el enlace común sin elegir uno automáticamente. Sin variables nuevas.

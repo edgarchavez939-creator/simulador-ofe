@@ -43,8 +43,8 @@
   if(key===5&&d.capacidad>0)add('Capacidad de pago',[field('Capacidad mensual indicada',d.capacidad),field('Nueva cuota mensual',d.cuota),field('Diferencia disponible',difference(d.capacidad,d.cuota))]);
   const fallbackName=String(d.progNombre||'');
   const program=Object.hasOwn(metadata,'program')?metadata.program:!(/^(Programa|Sin programa.*|.*Ingresar matrícula manualmente)$/i.test(fallbackName))?fallbackName:null;
-  const creditLineId=global.OFEInstitutionalSettings?.creditLine(key,metadata.level||d.nivel||null,mixed)||null;
-  return {creditLineId,modality,program:key===5?null:program,level:metadata.level||d.nivel||null,occurredAt:metadata.occurredAt||null,generatedBy:metadata.generatedBy||null,sections,plans,pending,disclaimer};
+  const creditModuleId=global.OFEInstitutionalSettings?.creditModule(key,metadata.moduleId)||null;
+  return {creditModuleId,modality,program:key===5?null:program,level:metadata.level||d.nivel||null,occurredAt:metadata.occurredAt||null,generatedBy:metadata.generatedBy||null,sections,plans,pending,disclaimer};
  }
  const pdfModels=new WeakMap();let sessionSignature='Usuario Público';
  const copy=value=>JSON.parse(JSON.stringify(value));
@@ -65,7 +65,7 @@
   const email=user?.email;sessionSignature=typeof email==='string'&&email.includes('@')?email.slice(0,email.indexOf('@')):'Usuario Público';
   for(const [name,key] of [['calcular1',1],['calcular2',2],['calcular3',3],['calcular7',7],['calcularRefi',5],['calcularIdiomas','languages']]){
    const original=global[name];if(typeof original!=='function')continue;
-   global[name]=function(...args){const before=result(key),value=original.apply(this,args),after=result(key);if(after&&after!==before){const tab=key==='languages'?app.state.languages.context.tabId:key;const selected=(tab===5?null:global.programaSeleccionado?.(tab));after.reportSnapshot=Object.freeze({occurredAt:new Date().toISOString(),program:selected?.nombre||null,level:selected?.nivel||app.state.ui.levelByTab[tab]||null,generatedBy:user?.name||null});capturePdf(key,after);}return value;};
+   global[name]=function(...args){const before=result(key),value=original.apply(this,args),after=result(key);if(after&&after!==before){const tab=key==='languages'?app.state.languages.context.tabId:key;const selected=(tab===5?null:global.programaSeleccionado?.(tab));after.reportSnapshot=Object.freeze({occurredAt:new Date().toISOString(),moduleId:keys[tab]||null,program:selected?.nombre||null,level:selected?.nivel||app.state.ui.levelByTab[tab]||null,generatedBy:user?.name||null});capturePdf(key,after);}return value;};
   }
  }});
 })(window);

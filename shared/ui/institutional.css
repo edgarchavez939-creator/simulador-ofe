@@ -37,3 +37,5 @@
 
 :root :is(.access-brand__mark,.brand__mark){background:var(--brand-fill);color:var(--brand-on-fill)}
 :root .access-card{border-top-color:var(--brand-fill)}
+
+.radication-line>header>div{min-width:0}.radication-line>header .field__hint{margin-top:5px}.radication-legacy{display:grid;gap:8px;margin-block:16px;min-width:0}.radication-legacy dt{font-size:var(--type-small);color:var(--text-muted)}.radication-legacy dd{margin:0 0 12px;font-size:var(--type-body);color:var(--text-body);overflow-wrap:anywhere}#resources-legacy summary{cursor:pointer;color:var(--accent);margin-top:12px}

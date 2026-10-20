@@ -12,7 +12,7 @@ En GitHub institucional debe versionarse el **contenido descomprimido**, con `pa
 
 **Se mantiene un único proyecto y servicio**, con pantalla pública y área interna protegida bajo el mismo origen HTTPS, API y base de datos compartidas. Esta arquitectura fue confirmada por el responsable el 20 de octubre de 2026. Microsoft Entra ID continúa pendiente de integración y validación con DTIC. Los textos de exportación ya fueron enviados a Jurídica y continúa pendiente su concepto.
 
-La validación completa de esta entrega terminó con **145 pruebas aprobadas, 0 fallidas**, incluido el arranque normal con entorno externo, reinicio y respaldo consistente. Los motores y valores financieros permanecen preservados. Ver [dependencias locales](docs/DEPENDENCIES.md), [revisión del paquete](docs/DEPURACION_ENTREGA.md) e [información para DTIC](docs/DTIC_INTEGRATION.md).
+La validación completa de esta entrega terminó con **147 pruebas aprobadas, 0 fallidas**, incluido el arranque normal con entorno externo, reinicio y respaldo consistente. Los motores y valores financieros permanecen preservados. Ver [dependencias locales](docs/DEPENDENCIES.md), [revisión del paquete](docs/DEPURACION_ENTREGA.md) e [información para DTIC](docs/DTIC_INTEGRATION.md).
 
 ## Funcionalidades disponibles
 
@@ -23,7 +23,7 @@ La validación completa de esta entrega terminó con **145 pruebas aprobadas, 0 
 - Usuarios, permisos por rol y registro de los cambios administrativos en el servidor.
 - Configuración de parámetros, colores de marca y acceso público, con enlace, código de iframe, vista previa e interruptores para mostrar u ocultar módulos del menú público.
 - Mantenimiento público administrable con aviso institucional, persistencia y bloqueo desde el servidor; la operación interna autorizada se conserva.
-- Recursos HTTPS de radicación independientes para PDF de corto plazo de pregrado, posgrado e idiomas, sin modificar la distribución del documento. Ver [mejoras institucionales v19](docs/MEJORAS_INSTITUCIONALES_V19.md).
+- Tres recursos HTTPS de radicación por módulo: Cuota Inicial, Crédito a Corto Plazo y Crédito Corto y Largo Plazo; cada uno compartido por pregrado y posgrado, sin modificar la distribución del documento. Ver [recursos por módulo v20](docs/RECURSOS_POR_MODULO_V20.md) y [mejoras institucionales](docs/MEJORAS_INSTITUCIONALES_V19.md).
 
 El inicio de sesión actual utiliza cuentas locales del aplicativo. La conexión con las cuentas institucionales mediante Microsoft Entra ID está pendiente de coordinación e implementación con DTIC.
 

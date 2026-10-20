@@ -31,3 +31,5 @@ Los textos de exportación **ya fueron enviados a Jurídica**; está pendiente r
 La revisión v18 incorpora [planes de pago y control del menú público](MODULOS_PUBLICOS_Y_PLANES_V18.md), validada con 137 pruebas. No requiere variables nuevas; incluye la migración automática `004-public-modules.sql`.
 
 La revisión v19 incorpora [mantenimiento público, recursos de radicación por línea y calibración de colores](MEJORAS_INSTITUCIONALES_V19.md), validada con 145 pruebas. No agrega variables de entorno. La migración automática 005 conserva los datos existentes. El mantenimiento se aplica desde Node, incluyendo rutas y API públicas; el área interna mantiene su autenticación. GitHub Pages no ejecuta la configuración global del servicio.
+
+La corrección [v20](RECURSOS_POR_MODULO_V20.md) configura tres enlaces por módulo —Cuota Inicial, Corto Plazo y Corto y Largo Plazo— compartidos por pregrado y posgrado. Incluye migración 006 con conservación de los recursos anteriores y validación completa de 147 pruebas.

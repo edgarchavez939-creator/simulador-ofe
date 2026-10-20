@@ -172,7 +172,7 @@
   const layout=new Layout(doc,identity,resources);for(const report of reports)layout.reportBody(report);layout.footer();return doc;
  }
  async function resourcesFor(reports){
-  if(!reports.some(report=>global.OFEInstitutionalSettings?.lines.some(line=>line.id===report.creditLineId)))return {};
+  if(!reports.some(report=>global.OFEInstitutionalSettings?.modules.some(item=>item.id===report.creditModuleId)))return {};
   if(global.OFE_SERVER)return (await global.OFEAuth.request('/api/radication-resources')).values;
   if(global.OFE_PUBLIC){await global.OFEPublicAvailability?.check();return (await global.ProgramCatalogHttp.request(global.OFE_PUBLIC.apiBaseUrl+'/radication-resources')).values;}
   return {};

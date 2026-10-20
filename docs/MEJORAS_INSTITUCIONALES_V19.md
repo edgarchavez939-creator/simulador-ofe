@@ -1,4 +1,4 @@
-# Mejoras institucionales v19
+# Mejoras institucionales v19 — configuración de recursos corregida en v20
 
 Revisión del 20 de octubre de 2026. Se conserva un proyecto y servicio con API y SQLite compartidas. No se modifican el motor financiero, las matrículas oficiales ni los 29 pregrados y 144 posgrados del catálogo base.
 
@@ -20,21 +20,21 @@ Las páginas públicas abiertas comprueban el estado periódicamente, al recuper
 
 **Límite de la arquitectura:** el servicio no puede retirar archivos ya descargados ni impedir que alguien ejecute una copia local del motor JavaScript. El mantenimiento suspende el servicio público, sin convertir el cálculo local en un cálculo de servidor. `OFE_PUBLIC_ENABLED=0` mantiene su prioridad: un interruptor administrativo no puede habilitar un servicio desactivado desde el entorno.
 
-### Recursos de radicación por línea de crédito
+### Recursos de radicación por módulo de crédito
 
-En **Configuración → Parámetros → Recursos de radicación por línea de crédito**, cada línea tiene un formulario y guardado independiente:
+En **Configuración → Parámetros → Recursos de radicación por módulo de crédito**, cada módulo tiene un formulario y guardado independiente:
 
-| ID técnico reutilizando los dominios existentes | Línea |
+| ID técnico existente | Módulo para pregrado y posgrado |
 | --- | --- |
-| `shortTerm:pregrado` | Crédito Pregrado - Corto Plazo |
-| `shortTerm:posgrado` | Crédito Posgrado - Corto Plazo |
-| `languages` | Crédito Idiomas - Corto Plazo |
+| `initialPayment` | Cuota Inicial |
+| `shortTerm` | Crédito a Corto Plazo |
+| `mixed` | Crédito Corto y Largo Plazo |
 
-`shortTerm`, `languages`, `pregrado` y `posgrado` ya identifican resultados y niveles en el aplicativo; no son códigos institucionales. Se capturan al simular, incluidos escenarios con matrícula manual. No se deducen del nombre del programa ni del texto del título al descargar.
+Los tres identificadores ya corresponden a resultados del aplicativo; no son códigos institucionales. El módulo se captura al simular, incluidos escenarios con matrícula manual, y no depende del nivel, el nombre del programa ni el título visible. Idiomas utiliza el enlace del módulo de origen (Corto Plazo o Corto y Largo Plazo); no tiene una cuarta configuración. Banco Aliado y Reestructuración no reciben estos enlaces.
 
 Cada formulario permite habilitar el enlace, editar URL HTTPS, texto (hasta 72 caracteres), descripción opcional (hasta 100) y tipo informativo: video, documento, página web, tutorial, presentación u otro. Se admiten URL con cualquier extensión o sin extensión; no se aceptan HTTP, JavaScript, datos, credenciales ni caracteres de control. No se verifica la disponibilidad del destino ni se descarga contenido remoto desde el servidor.
 
-Los recursos comienzan **deshabilitados y sin URL**. No se suministran recursos ficticios ni se modifica la configuración de otras líneas al guardar una. Si está deshabilitado o no tiene URL, el PDF se genera sin elementos adicionales. Si falla la consulta de configuración al exportar, se informa el error y puede reintentarse; no se utiliza silenciosamente otro enlace.
+Los recursos comienzan **deshabilitados y sin URL**. No se suministran recursos ficticios ni se modifica la configuración de otros módulos al guardar una. Si está deshabilitado o no tiene URL, el PDF se genera sin elementos adicionales. Si falla la consulta de configuración al exportar, se informa el error y puede reintentarse; no se utiliza silenciosamente otro enlace.
 
 La descarga consulta la configuración vigente, incluso para un resultado calculado antes de cambiar el recurso. Los PDF ya descargados permanecen iguales. La configuración tiene versión compartida para detectar ediciones concurrentes: ante un conflicto, recargar y revisar antes de guardar. El tipo y la descripción son informativos; no alteran cálculos, tasas ni condiciones.
 
@@ -44,7 +44,7 @@ Se inspeccionó el PDF anterior: existe un espacio entre el aviso legal y la fir
 
 Se conservan A4, encabezado, logotipo, tipografías de los elementos existentes, márgenes, tablas, columnas, orden, datos y número de páginas. No se cambia el límite del cuerpo ni se agregan páginas para el enlace. La descripción se acorta si supera el ancho disponible. Si un futuro aviso legal ocupa más de tres líneas, el enlace no se fuerza en ese espacio; deberá revisarse otra ubicación antes de alterar el diseño.
 
-No se añade recurso a mixto, largo plazo, banco aliado, cuota inicial ni reestructuración. El PDF de Banco Aliado conserva su presentación neutra. En un PDF combinado, cada simulación elegible incorpora solo su propio recurso.
+Cuota Inicial y Corto Plazo usan sus respectivos recursos. Todo escenario generado desde Corto y Largo Plazo conserva el recurso `mixed`, aunque su distribución sea 100 % CP o 100 % LP. El PDF de Banco Aliado conserva su presentación neutra y no recibe enlaces; Reestructuración tampoco. En un PDF combinado, cada simulación elegible incorpora el recurso de su módulo de origen.
 
 ## Identidad visual
 
@@ -54,7 +54,7 @@ La calibración se comparte con login, OFE y público. No cambia la identidad de
 
 ## Despliegue y persistencia
 
-No hay variables nuevas. Se aplica automáticamente `005-institutional-settings.sql` al abrir la base, agregando `institutional_settings`, con estado de mantenimiento y recursos separados. Se conservan usuarios, catálogo, parámetros, apariencia, módulos públicos y auditoría. Respaldar la base antes de actualizar y conservar `OFE_DATABASE` en almacenamiento persistente; se mantienen las instrucciones de despliegue y restauración de la guía institucional.
+No hay variables nuevas. Se aplica automáticamente `005-institutional-settings.sql` al abrir la base, agregando `institutional_settings`, con estado de mantenimiento y recursos separados. La corrección v20 agrega `006-radication-modules.sql`: conserva la configuración anterior en `radication_resources_legacy` y la presenta solo a administradores. Únicamente enlaces anteriores idénticos de pregrado/posgrado se trasladan a Corto Plazo; si difieren, se debe configurar el enlace común. Ver [migración v20](RECURSOS_POR_MODULO_V20.md). Se conservan usuarios, catálogo, parámetros, apariencia, módulos públicos y auditoría. Respaldar la base antes de actualizar y conservar `OFE_DATABASE` en almacenamiento persistente; se mantienen las instrucciones de despliegue y restauración de la guía institucional.
 
 El proxy debe reenviar las peticiones a Node, sin servir por su cuenta `/apps/public/` ni los archivos de simulación. No debe cachear respuestas o reemplazar el 503 institucional por una página genérica. Las plantillas existentes de Nginx mantienen `proxy_cache off` y `proxy_intercept_errors off`.
 
@@ -76,15 +76,15 @@ Las escrituras son transaccionales junto con su auditoría: si falla el registro
 
 ## Validación y archivos
 
-La batería completa aprobó **145 pruebas, 0 fallidas**, incluidas ocho pruebas nuevas de mantenimiento, permisos, CSRF, validación de URL, independencia, concurrencia, auditoría/rollback, migración, persistencia, enlaces PDF, geometría y comprobación de páginas públicas abiertas.
+La batería completa aprobó **147 pruebas, 0 fallidas**, incluidas diez pruebas de la fase institucional de mantenimiento, permisos, CSRF, validación de URL, independencia, concurrencia, auditoría/rollback, migración, persistencia, enlaces PDF, geometría y comprobación de páginas públicas abiertas.
 
-Se generaron PDF de pregrado, posgrado, idiomas y mixto, y casos habilitado/deshabilitado/sin URL. La comparación con el PDF anterior confirmó las posiciones de los caracteres existentes y el mismo número de páginas. La imagen renderizada con enlace deshabilitado fue idéntica al original. Se verificaron visualmente claro/oscuro, activación y restablecimiento desde Administración, operación interna durante mantenimiento y descarga pública real. Los destinos `example.test` utilizados en las pruebas son ficticios y no se guardan en la configuración entregada.
+Se generaron PDF de los tres módulos en pregrado y posgrado, idiomas y las distribuciones mixtas, y casos habilitado/deshabilitado/sin URL. La comparación con el PDF anterior confirmó las posiciones de los caracteres existentes y el mismo número de páginas. La imagen renderizada con enlace deshabilitado fue idéntica al original. Se verificaron visualmente claro/oscuro, activación y restablecimiento desde Administración, operación interna durante mantenimiento y descarga pública real. Los destinos `example.test` utilizados en las pruebas son ficticios y no se guardan en la configuración entregada.
 
 Archivos principales:
 
-- Servidor: `server/app.cjs`, `server/store.cjs`, `server/institutional-settings.cjs` y migración 005.
+- Servidor: `server/app.cjs`, `server/store.cjs`, `server/institutional-settings.cjs` y migraciones 005 y 006.
 - Configuración e interfaz: `shared/settings/institutional-settings.js`, `shared/admin/institutional-settings-ui.js`, ajustes en integración/auditoría, `shared/ui/institutional.css`, `brand-palette.js`, `public-availability.js` y archivos `maintenance.*`.
-- Exportación: `shared/exports/simulation-report.js` y `pdf-report.js`; solo identificación técnica, consulta del recurso y enlace en el espacio libre.
+- Exportación: `shared/exports/simulation-report.js` y `pdf-report.js`; solo identificación del módulo, consulta del recurso y enlace en el espacio libre.
 - Carga: los tres HTML principales y login; versiones de recursos actualizadas.
 - Pruebas: `scripts/verify-institutional-v19.cjs`, soporte de navegador simulado y conteo de migraciones actualizado; comando de pruebas en `package.json`.
 - Documentación: README, guía de despliegue, integración DTIC, este documento y manifiesto de integridad.
