@@ -22,6 +22,7 @@
 <link rel="stylesheet" href="../../shared/ui/loading.css">
 <link rel="stylesheet" href="../../shared/ui/institutional.css?v=20">
 <link id="brand-style" rel="stylesheet" href="../../shared/ui/brand.css">
+<link rel="stylesheet" href="../../shared/ui/text-settings.css?v=22">
 </head>
 <body>
 <a class="skip-link" href="#main-content">Saltar al contenido principal</a>
@@ -70,7 +71,7 @@
 <div class="split">
 <div>
 <div class="card form-panel">
-<div class="card__title">Configura tu simulación</div><div class="form-section-label">Información académica</div><div class="form-section-copy">Selecciona el programa y confirma el valor base de la matrícula.</div>
+<div class="card__title" data-text-key="ui_form_title">Configura tu simulación</div><div class="form-section-label" data-text-key="ui_academic">Información académica</div><div class="form-section-copy" data-text-key="ui_academic_help">Selecciona el programa y confirma el valor base de la matrícula.</div>
 <div aria-live="assertive" class="note note--danger u-mb-4" hidden="" id="alert1" role="alert"></div>
 <div class="field">
 <label class="field__label">Nivel de Estudios</label>
@@ -110,13 +111,13 @@
 <div class="field__hint" id="mat1-source">Sin programa seleccionado. Puedes ingresar la matrícula manualmente.</div>
 </div>
 <div class="group group--success">
-<div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><rect height="4" rx="1" width="18" x="3" y="8"></rect><path d="M12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"></path></svg> Beneficios / Descuentos <span aria-label="Ayuda: Becas, descuentos por convenio, caja de compensación u otros apoyos que reducen el valor a pagar. Se descuentan antes de calcular el financiamiento." class="tip" data-tip="Becas, descuentos por convenio, caja de compensación u otros apoyos que reducen el valor a pagar. Se descuentan antes de calcular el financiamiento." tabindex="0">?</span></div>
+<div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><rect height="4" rx="1" width="18" x="3" y="8"></rect><path d="M12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"></path></svg> <span data-text-key="ui_benefits">Beneficios / Descuentos</span> <span aria-label="Ayuda: Becas, descuentos por convenio, caja de compensación u otros apoyos que reducen el valor a pagar. Se descuentan antes de calcular el financiamiento." class="tip" data-text-tip="ui_help_benefits" data-tip="Becas, descuentos por convenio, caja de compensación u otros apoyos que reducen el valor a pagar. Se descuentan antes de calcular el financiamiento." tabindex="0">?</span></div>
 <div class="benef-items" id="benef-items-1"></div>
 <button class="btn btn--sm btn--block" data-action="add-benef" data-tab="1">+ Agregar beneficio o descuento</button>
 <div class="benef-subtotal" id="benef-subtotal-1"></div>
 </div>
 <div class="group group--warning">
-<div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><rect height="12" rx="2" width="20" x="2" y="6"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg> Pago de Contado / Cuota Inicial <span aria-label="Ayuda: Parte de la matrícula que el estudiante paga de inmediato, sin financiar. Reduce el monto del crédito y por tanto los intereses." class="tip" data-tip="Parte de la matrícula que el estudiante paga de inmediato, sin financiar. Reduce el monto del crédito y por tanto los intereses." tabindex="0">?</span></div>
+<div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><rect height="12" rx="2" width="20" x="2" y="6"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg> <span data-text-key="ui_initial">Pago de Contado / Cuota Inicial</span> <span aria-label="Ayuda: Parte de la matrícula que el estudiante paga de inmediato, sin financiar. Reduce el monto del crédito y por tanto los intereses." class="tip" data-text-tip="ui_help_initial" data-tip="Parte de la matrícula que el estudiante paga de inmediato, sin financiar. Reduce el monto del crédito y por tanto los intereses." tabindex="0">?</span></div>
 <div class="dual">
 <div class="input-affix u-border-warning">
 <input aria-label="Porcentaje de pago de contado" class="input" data-input-action="contado-pct" data-tab="1" id="cont1-pct" max="100" min="0" placeholder="0" step="0.1" type="number" value="50"/><span class="input-affix__tag input-affix__tag--end">%</span>
@@ -155,8 +156,8 @@
 </div>
 <div class="dist" hidden="" id="dist-1"></div>
 </div>
-<div class="form-section-label">Condiciones del crédito</div>
-<p class="form-section-copy">Define el plazo y la tasa que se aplicarán al monto financiado.</p>
+<div class="form-section-label" data-text-key="ui_conditions">Condiciones del crédito</div>
+<p class="form-section-copy" data-text-key="ui_conditions_help">Define el plazo y la tasa que se aplicarán al monto financiado.</p>
 <div class="field">
 <label class="field__label">Número de Meses</label>
 <div class="input-affix"><input aria-label="Número de meses del crédito" class="input" id="plazo1" min="1" placeholder="6" type="number" value="6"/><span class="input-affix__tag input-affix__tag--end">meses</span></div>
@@ -195,7 +196,7 @@
 <div class="split">
 <div>
 <div class="card form-panel">
-<div class="card__title">Configura la distribución del crédito</div><div class="form-section-label">Información académica</div><div class="form-section-copy">Selecciona el programa y define cuánto se financiará a corto y largo plazo.</div>
+<div class="card__title">Configura la distribución del crédito</div><div class="form-section-label" data-text-key="ui_academic">Información académica</div><div class="form-section-copy">Selecciona el programa y define cuánto se financiará a corto y largo plazo.</div>
 <div aria-live="assertive" class="note note--danger u-mb-4" hidden="" id="alert2" role="alert"></div>
 <div class="field">
 <label class="field__label">Nivel de Estudios</label>
@@ -235,13 +236,13 @@
 <div class="field__hint" id="mat2-source">Sin programa seleccionado. Puedes ingresar la matrícula manualmente.</div>
 </div>
 <div class="group group--success">
-<div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><rect height="4" rx="1" width="18" x="3" y="8"></rect><path d="M12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"></path></svg> Beneficios / Descuentos <span aria-label="Ayuda: Becas, descuentos por convenio, caja de compensación u otros apoyos que reducen el valor a pagar. Se descuentan antes de calcular el financiamiento." class="tip" data-tip="Becas, descuentos por convenio, caja de compensación u otros apoyos que reducen el valor a pagar. Se descuentan antes de calcular el financiamiento." tabindex="0">?</span></div>
+<div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><rect height="4" rx="1" width="18" x="3" y="8"></rect><path d="M12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"></path></svg> <span data-text-key="ui_benefits">Beneficios / Descuentos</span> <span aria-label="Ayuda: Becas, descuentos por convenio, caja de compensación u otros apoyos que reducen el valor a pagar. Se descuentan antes de calcular el financiamiento." class="tip" data-text-tip="ui_help_benefits" data-tip="Becas, descuentos por convenio, caja de compensación u otros apoyos que reducen el valor a pagar. Se descuentan antes de calcular el financiamiento." tabindex="0">?</span></div>
 <div class="benef-items" id="benef-items-2"></div>
 <button class="btn btn--sm btn--block" data-action="add-benef" data-tab="2">+ Agregar beneficio o descuento</button>
 <div class="benef-subtotal" id="benef-subtotal-2"></div>
 </div>
 <div class="group group--warning">
-<div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><rect height="12" rx="2" width="20" x="2" y="6"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg> Pago de Contado / Cuota Inicial <span aria-label="Ayuda: Parte de la matrícula que el estudiante paga de inmediato, sin financiar. Reduce el monto del crédito y por tanto los intereses." class="tip" data-tip="Parte de la matrícula que el estudiante paga de inmediato, sin financiar. Reduce el monto del crédito y por tanto los intereses." tabindex="0">?</span></div>
+<div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><rect height="12" rx="2" width="20" x="2" y="6"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg> <span data-text-key="ui_initial">Pago de Contado / Cuota Inicial</span> <span aria-label="Ayuda: Parte de la matrícula que el estudiante paga de inmediato, sin financiar. Reduce el monto del crédito y por tanto los intereses." class="tip" data-text-tip="ui_help_initial" data-tip="Parte de la matrícula que el estudiante paga de inmediato, sin financiar. Reduce el monto del crédito y por tanto los intereses." tabindex="0">?</span></div>
 <div class="dual">
 <div class="input-affix u-border-warning">
 <input aria-label="Porcentaje de pago de contado" class="input" data-input-action="contado-pct" data-tab="2" id="cont2-pct" max="100" min="0" placeholder="0" step="0.1" type="number" value="50"/><span class="input-affix__tag input-affix__tag--end">%</span>
@@ -308,7 +309,7 @@
 </div>
 </div>
 <div class="group group--accent">
-<div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" fill="currentColor" r="3" stroke="none"></circle></svg> Plan de pago a corto plazo <span aria-label="Ayuda: Define en cuántos meses pagarás la parte de corto plazo durante el período académico." class="tip" data-tip="Define en cuántos meses pagarás la parte de corto plazo durante el período académico." tabindex="0">?</span></div>
+<div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" fill="currentColor" r="3" stroke="none"></circle></svg> <span data-text-key="ui_short_plan">Plan de pago a corto plazo</span> <span aria-label="Ayuda: Define en cuántos meses pagarás la parte de corto plazo durante el período académico." class="tip" data-tip="Define en cuántos meses pagarás la parte de corto plazo durante el período académico." tabindex="0">?</span></div>
 <p class="plan-payment-copy">Paga esta parte durante el período académico, en cuotas mensuales.</p>
 <div class="field u-mb-8">
 <label class="field__label">Número de Meses</label>
@@ -317,7 +318,7 @@
 <div class="note guarantee-info guarantee-info--compact u-mt-3 u-mb-0"><span class="guarantee-info__icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg></span><div class="guarantee-info__body"><strong><span id="garantisa-cp-label">Aporte Garantisa CP: —</span> <span aria-label="Ayuda: Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." class="tip" data-tip="Aporte obligatorio al fondo de garantía que respalda el crédito. Se paga una sola vez al momento del desembolso. Corto plazo: 4.17% (3.5% + IVA). Largo plazo: 2.86%." tabindex="0">?</span></strong><span class="guarantee-info__value" id="gCP-val">—</span></div></div>
 </div>
 <div class="group group--success u-mt-12">
-<div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" fill="currentColor" r="3" stroke="none"></circle></svg> Plan de pago a largo plazo <span aria-label="Ayuda: Consulta el capital acumulado y el plazo para pagar la parte de largo plazo después de graduarte y del período de gracia. La tasa será la vigente al iniciar el pago." class="tip" data-tip="Consulta el capital acumulado y el plazo para pagar la parte de largo plazo después de graduarte y del período de gracia. La tasa será la vigente al iniciar el pago." tabindex="0">?</span></div>
+<div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" fill="currentColor" r="3" stroke="none"></circle></svg> <span data-text-key="ui_long_plan">Plan de pago a largo plazo</span> <span aria-label="Ayuda: Consulta el capital acumulado y el plazo para pagar la parte de largo plazo después de graduarte y del período de gracia. La tasa será la vigente al iniciar el pago." class="tip" data-tip="Consulta el capital acumulado y el plazo para pagar la parte de largo plazo después de graduarte y del período de gracia. La tasa será la vigente al iniciar el pago." tabindex="0">?</span></div>
 <p class="plan-payment-copy">El pago de esta parte comienza después de graduarte y del período de gracia.</p>
 <div class="field u-mb-8">
 <label class="field__label">Duración del Programa <span aria-label="Ayuda: Total de semestres del plan de estudios. Se usa para saber cuántos semestres restan por financiar desde el semestre de inicio." class="tip" data-tip="Total de semestres del plan de estudios. Se usa para saber cuántos semestres restan por financiar desde el semestre de inicio." tabindex="0">?</span></label>
@@ -394,7 +395,7 @@
 <div class="split">
 <div>
 <div class="card form-panel">
-<div class="card__title">Configura el crédito con banco aliado</div><div class="form-section-label">Información académica</div><div class="form-section-copy">Selecciona el programa y confirma la base sobre la que se calculará la financiación.</div>
+<div class="card__title">Configura el crédito con banco aliado</div><div class="form-section-label" data-text-key="ui_academic">Información académica</div><div class="form-section-copy">Selecciona el programa y confirma la base sobre la que se calculará la financiación.</div>
 <div aria-live="assertive" class="note note--danger u-mb-4" hidden="" id="alert3" role="alert"></div>
 <div class="field">
 <label class="field__label">Nivel de Estudios</label>
@@ -434,13 +435,13 @@
 <div class="field__hint" id="mat3-source">Sin programa seleccionado. Puedes ingresar la matrícula manualmente.</div>
 </div>
 <div class="group group--success">
-<div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><rect height="4" rx="1" width="18" x="3" y="8"></rect><path d="M12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"></path></svg> Beneficios / Descuentos <span aria-label="Ayuda: Becas, descuentos por convenio, caja de compensación u otros apoyos que reducen el valor a pagar. Se descuentan antes de calcular el financiamiento." class="tip" data-tip="Becas, descuentos por convenio, caja de compensación u otros apoyos que reducen el valor a pagar. Se descuentan antes de calcular el financiamiento." tabindex="0">?</span></div>
+<div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><rect height="4" rx="1" width="18" x="3" y="8"></rect><path d="M12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"></path></svg> <span data-text-key="ui_benefits">Beneficios / Descuentos</span> <span aria-label="Ayuda: Becas, descuentos por convenio, caja de compensación u otros apoyos que reducen el valor a pagar. Se descuentan antes de calcular el financiamiento." class="tip" data-text-tip="ui_help_benefits" data-tip="Becas, descuentos por convenio, caja de compensación u otros apoyos que reducen el valor a pagar. Se descuentan antes de calcular el financiamiento." tabindex="0">?</span></div>
 <div class="benef-items" id="benef-items-3"></div>
 <button class="btn btn--sm btn--block" data-action="add-benef" data-tab="3">+ Agregar beneficio o descuento</button>
 <div class="benef-subtotal" id="benef-subtotal-3"></div>
 </div>
 <div class="group group--warning">
-<div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><rect height="12" rx="2" width="20" x="2" y="6"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg> Pago de Contado / Cuota Inicial <span aria-label="Ayuda: Parte de la matrícula que el estudiante paga de inmediato, sin financiar. Reduce el monto del crédito y por tanto los intereses." class="tip" data-tip="Parte de la matrícula que el estudiante paga de inmediato, sin financiar. Reduce el monto del crédito y por tanto los intereses." tabindex="0">?</span></div>
+<div class="group__title"><svg aria-hidden="true" class="icon" viewbox="0 0 24 24"><rect height="12" rx="2" width="20" x="2" y="6"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg> <span data-text-key="ui_initial">Pago de Contado / Cuota Inicial</span> <span aria-label="Ayuda: Parte de la matrícula que el estudiante paga de inmediato, sin financiar. Reduce el monto del crédito y por tanto los intereses." class="tip" data-text-tip="ui_help_initial" data-tip="Parte de la matrícula que el estudiante paga de inmediato, sin financiar. Reduce el monto del crédito y por tanto los intereses." tabindex="0">?</span></div>
 <div class="dual">
 <div class="input-affix u-border-warning">
 <input aria-label="Porcentaje de pago de contado" class="input" data-input-action="contado-pct" data-tab="3" id="cont3-pct" max="100" min="0" placeholder="0" step="0.1" type="number" value="50"/><span class="input-affix__tag input-affix__tag--end">%</span>
@@ -479,7 +480,7 @@
 </div>
 <div class="dist" hidden="" id="dist-3"></div>
 </div>
-<div class="form-section-label">Condiciones del crédito</div>
+<div class="form-section-label" data-text-key="ui_conditions">Condiciones del crédito</div>
 <p class="form-section-copy">Configura el plazo, la tasa y los cargos asociados a esta alternativa.</p>
 <div class="field">
 <label class="field__label">Número de Meses</label>
@@ -1547,7 +1548,7 @@
 <script src="../../shared/simulation/lifecycle.js"></script>
 <script src="../../shared/settings/simulation-settings.js"></script>
 <script src="../../shared/program-catalog/program-picker.js"></script>
-<script src="./simulador-assets/js/01-core-ui.js?v=uninorte-ui-3-12-pdf-aptos"></script>
+<script src="./simulador-assets/js/01-core-ui.js?v=22"></script>
 <script src="./simulador-assets/js/03-finance-core.js?v=uninorte-ui-3-12-pdf-aptos"></script>
 <script src="./simulador-assets/js/04-exports-pdf-excel.js?v=uninorte-ui-3-12-pdf-aptos"></script>
 <script src="./simulador-assets/js/05-idiomas-herramientas.js?v=uninorte-ui-3-12-pdf-aptos"></script>
@@ -1555,10 +1556,12 @@
 <script src="./simulador-assets/js/07-financing-engine.js?v=uninorte-ui-3-12-pdf-aptos"></script>
 <script src="../../shared/vendor/exceljs-4.4.0.min.js" integrity="sha384-Pqp51FUN2/qzfxZxBCtF0stpc9ONI6MYZpVqmo8m20SoaQCzf+arZvACkLkirlPz" crossorigin="anonymous"></script>
 <script src="../../shared/settings/institutional-settings.js?v=20"></script>
-<script src="../../shared/exports/simulation-report.js?v=21"></script>
+<script src="../../shared/settings/text-settings.js?v=22"></script>
+<script src="../../shared/ui/text-content.js?v=22"></script>
+<script src="../../shared/exports/simulation-report.js?v=22"></script>
 <script src="../../shared/exports/excel-report.js?v=21"></script>
 <script src="../../shared/vendor/jspdf-4.2.1.umd.min.js" integrity="sha384-qovJwSBbRDPP5cEjCp8S0UP66wrvnjaa60XMOGzTNanrThcrGfXfnZkvgY8N1KT3" crossorigin="anonymous"></script>
-<script src="../../shared/exports/pdf-report.js?v=21"></script>
+<script src="../../shared/exports/pdf-report.js?v=22"></script>
 <script src="../../shared/ui/rate-ui.js"></script>
 <script src="../../shared/ui/guarantee-copy.js"></script>
 <script src="../../shared/ui/result-details.js?v=14"></script>

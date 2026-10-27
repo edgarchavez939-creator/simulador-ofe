@@ -135,7 +135,7 @@ function runCalculation(button, tabId, task, loadingTitle) {
   const epoch=window.SimulationLifecycle?.begin(tabId);
   setResultLoading(tabId, loadingTitle);
   return Promise.resolve(runButtonTask(button, async () => {
-    if(window.OFE_SERVER)try{await window.OFEGlobalSettings?.prepare(tabId,()=>!window.SimulationLifecycle||window.SimulationLifecycle.current(tabId,epoch));}
+    try{await window.OFETextSettings?.refresh();if(window.OFE_SERVER)await window.OFEGlobalSettings?.prepare(tabId,()=>!window.SimulationLifecycle||window.SimulationLifecycle.current(tabId,epoch));}
     catch(error){if(!window.SimulationLifecycle||window.SimulationLifecycle.current(tabId,epoch)){if(target)target.innerHTML=previousHTML;markViewHasResult(tabId,!!before);toast(error.message,'error');}return;}
     if(window.SimulationLifecycle && !window.SimulationLifecycle.current(tabId,epoch)) return;
     if ([1,2,3,7].includes(tabId)) sincronizarMatriculaCatalogo(tabId);
@@ -606,7 +606,7 @@ const VIEW_META = Object.freeze({
   8:{section:'ANALIZAR', title:'Comparar escenarios', desc:'Accede a las comparaciones disponibles dentro de cada modalidad de simulación.'},
   9:{section:'HISTORIAL', title:'Mis simulaciones', desc:'Consulta las simulaciones recientes guardadas localmente en este navegador.'},
   10:{section:'ADMINISTRACIÓN',title:'Usuarios',desc:'Gestiona los accesos al simulador.'},
-  12:{section:'ADMINISTRACIÓN',title:'Configuración',desc:'Parámetros, colores y acceso público.'},
+  12:{section:'ADMINISTRACIÓN',title:'Configuración',desc:'Parámetros, textos, colores y acceso público.'},
   11:{section:'ADMINISTRACIÓN',title:'Auditoría',desc:'Consulta la trazabilidad de los cambios.'},
   6:{section:'ADMINISTRACIÓN', title:'Actualizar Programas', desc:'Gestiona los programas y valores disponibles para nuevas simulaciones.'}
 });
@@ -621,7 +621,7 @@ function switchTab(n) {
     if(on) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current');
   });
   document.querySelectorAll('.view[data-view]').forEach(p => { p.hidden = Number(p.dataset.view) !== n; });
-  const meta = VIEW_META[n];
+  const meta = window.OFETextSettings?.view(n,VIEW_META[n]) || VIEW_META[n];
   if(meta) {
     const ht = document.getElementById('header-title');
     const hd = document.getElementById('header-desc');

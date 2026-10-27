@@ -94,6 +94,7 @@ async function createApplication(options={}){
    if(!['GET','HEAD'].includes(method))throw fail(405,'La API pública solo permite consultas.');
    if(route==='/api/public/status')return json(res,200,{maintenance:maintenance()});
    if(maintenance().enabled){res.setHeader('Retry-After','60');return json(res,503,{error:'El simulador público está en mantenimiento.',maintenance:maintenance()});}
+   if(route==='/api/public/text-settings'){const data=readInstitutional(db,'texts');return json(res,200,{values:data.values,version:data.version});}
    if(route==='/api/public/radication-resources')return json(res,200,publicResources(db));
    if(route==='/api/public/programs'||route.startsWith('/api/public/programs/')){
     const programs=db.prepare('SELECT data FROM programs ORDER BY rowid').all().map(row=>JSON.parse(row.data)).filter(p=>p.activo).map(publicProgram);
@@ -152,8 +153,9 @@ async function createApplication(options={}){
    }
    if(route==='/api/programs'&&method==='GET'){requireSession(s,'programs.view');return json(res,200,{programs:db.prepare('SELECT * FROM programs ORDER BY rowid').all().map(row=>({...JSON.parse(row.data),version:row.version,updated_at:row.updated_at}))});}
    if(route==='/api/simulation-settings'&&method==='GET'){requireSession(s,'simulator.use');return json(res,200,readSettings(db));}
+   if(route==='/api/text-settings'&&method==='GET'){requireSession(s,'simulator.use');const data=readInstitutional(db,'texts');return json(res,200,{values:data.values,version:data.version});}
    if(route==='/api/radication-resources'&&method==='GET'){requireSession(s,'simulator.use');return json(res,200,publicResources(db));}
-   const institutionalName={'/api/admin/maintenance':'maintenance','/api/admin/radication-resources':'radication_resources'}[route];
+   const institutionalName={'/api/admin/text-settings':'texts','/api/admin/maintenance':'maintenance','/api/admin/radication-resources':'radication_resources'}[route];
    if(institutionalName){
     requireSession(s,method==='GET'?'settings.read':'settings.update');
     if(method==='GET')return json(res,200,readInstitutional(db,institutionalName));
@@ -163,7 +165,7 @@ async function createApplication(options={}){
       const old=readInstitutional(db,institutionalName);if(data.version!==old.version)throw fail(409,'La configuración cambió. Recarga antes de guardar.','version');
       const next=definition.validate({...old.values,...requested}),changed=Object.keys(requested).filter(key=>JSON.stringify(old.values[key])!==JSON.stringify(next[key]));
       for(const key of changed)audit(s.user,'CONFIG_UPDATE','settings',{type:institutionalName,id:institutionalName,name:definition.label},key,old.values[key],next[key],requestId);
-      if(changed.length)db.prepare('UPDATE institutional_settings SET data=?,version=version+1,updated_at=?,updated_by=? WHERE name=?').run(JSON.stringify(next),new Date().toISOString(),s.user.id,institutionalName);
+      if(changed.length)db.prepare('UPDATE '+(institutionalName==='texts'?'text_settings':'institutional_settings')+' SET data=?,version=version+1,updated_at=?,updated_by=? WHERE name=?').run(JSON.stringify(next),new Date().toISOString(),s.user.id,institutionalName);
       return readInstitutional(db,institutionalName);
      });return json(res,200,saved);
     }
@@ -348,7 +350,7 @@ async function createApplication(options={}){
   if(res.headersSent){res.destroy();return;}
   const status=error.status||500;
   if(req.url.startsWith('/api/admin/')){
-   try { const actor=session(req)?.user;const module=req.url.includes('/programs')?'programs':req.url.includes('/users')?'users':['/settings','/appearance','/public-access','/public-modules','/maintenance','/radication-resources'].some(part=>req.url.includes(part))?'settings':'audit';audit(actor,'ADMIN_REQUEST_FAILURE',module,{type:'request'},null,undefined,undefined,res.getHeader('X-Request-Id'),status===401||status===403?'DENIED':'ERROR'); } catch(_){}
+   try { const actor=session(req)?.user;const module=req.url.includes('/programs')?'programs':req.url.includes('/users')?'users':['/settings','/text-settings','/appearance','/public-access','/public-modules','/maintenance','/radication-resources'].some(part=>req.url.includes(part))?'settings':'audit';audit(actor,'ADMIN_REQUEST_FAILURE',module,{type:'request'},null,undefined,undefined,res.getHeader('X-Request-Id'),status===401||status===403?'DENIED':'ERROR'); } catch(_){}
   }
   if(status===401&&!req.url.startsWith('/api/'))return redirect(res,'/login');
   json(res,status,{error:status===500?'No fue posible completar la operación.':error.message,...(error.field?{field:error.field}:{})});

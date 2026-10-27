@@ -615,7 +615,7 @@ function switchTab(n) {
     if(on) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current');
   });
   document.querySelectorAll('.view[data-view]').forEach(p => { p.hidden = Number(p.dataset.view) !== n; });
-  const meta = VIEW_META[n];
+  const meta = window.OFETextSettings?.view(n,VIEW_META[n]) || VIEW_META[n];
   if(meta) {
     const ht = document.getElementById('header-title');
     const hd = document.getElementById('header-desc');

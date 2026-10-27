@@ -35,3 +35,5 @@ La revisión v19 incorpora [mantenimiento público, recursos de radicación por 
 La corrección [v20](RECURSOS_POR_MODULO_V20.md) configura tres enlaces por módulo —Cuota Inicial, Corto Plazo y Corto y Largo Plazo— compartidos por pregrado y posgrado. Incluye migración 006 con conservación de los recursos anteriores y validación completa de 147 pruebas.
 
 La mejora [v21 de Reestructuración](REESTRUCTURACION_V21.md) incorpora distribución de pagos/condonaciones simuladas, comparación a una misma fecha de corte y plazo por capacidad. No añade variables ni migraciones; conserva la autenticación y el historial local. La batería completa aprueba 157 pruebas.
+
+La [configuración de textos v22](TEXTOS_CONFIGURABLES_V22.md) añade Configuración → Textos y migración automática 007, sin variables nuevas. Valida el espacio de cada título y aviso antes de guardarlo; conserva el diseño PDF, permisos, auditoría y versiones por simulación. La batería completa aprueba 167 pruebas.

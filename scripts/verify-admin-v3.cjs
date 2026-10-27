@@ -60,7 +60,7 @@ test('simulation snapshots retain old results and exports; new rate, installment
  const vm=require('node:vm'),{selectorContext}=require('./test-support/selector-context.cjs'),{read}=require('./test-support/catalog-context.cjs');
  const {context:c,elements:e,button}=selectorContext('ofe');await c.SimuladorOFE.init();
  let settings={version:1,updated_at:new Date().toISOString(),values:{default_interest_rate:1.25,default_installments:6,garantisa_cp_percent:4.17,garantisa_lp_percent:2.86}};
- c.OFE_SERVER={};c.OFEAuth={request:async()=>JSON.parse(JSON.stringify(settings))};c.NodeFilter={SHOW_TEXT:4};c.document.createTreeWalker=()=>({nextNode:()=>null});
+ c.OFE_SERVER={};c.OFEAuth={request:async route=>JSON.parse(JSON.stringify(route==='/api/text-settings'?{values:c.OFETextSchema.defaults,version:1}:settings))};c.NodeFilter={SHOW_TEXT:4};c.document.createTreeWalker=()=>({nextNode:()=>null});
  vm.runInContext(read('shared/settings/simulation-settings.js'),c);await c.SimuladorOFE.modules['global-simulation-settings'].init();
  assert.equal(e.tasa1.value,'1.25');assert.equal(e.plazo1.value,'6');assert.equal(e.plazo3.value,'12');assert.equal(e['refi-cuotas-nva'].value,'24');
  const program=c.SimuladorOFE.catalog.programs.find(p=>p.nivel==='pregrado');e.prog1.value=program.id;c.setMat(1);c.calcular1();const old=c.SimuladorOFE.state.results.shortTerm;

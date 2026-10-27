@@ -8,6 +8,7 @@
  const result=key=>key===5?global.SimuladorOFE.state.restructuring.current:global.SimuladorOFE.state.results[keys[key]];
  function normalize(key,d){
   if(!d)throw Error('Primero realiza la simulación.');
+  const textSettings=d.textSettingsSnapshot||{values:global.OFETextSchema?.defaults,version:0};
   const metadata=d.reportSnapshot||{},mixed=key===2||(key==='languages'&&d.isMixto),cp=mixed?(d.CP||d.idCP):d,lp=mixed?(d.LP||d.idLP):null;
   const pending=!!(lp?.noAmortize||(mixed&&d.finLP>0&&!lp?.rows?.length));
   const modality=key===5?'Reestructuración de crédito':key===7?'Cuota inicial':key===3?'Crédito banco aliado':key==='languages'?(mixed?'Idiomas · Crédito mixto':'Crédito de idiomas'):key===2?(d.finCP>0&&d.finLP>0?'Crédito mixto':d.finLP>0?'Crédito largo plazo':'Crédito corto plazo'):'Crédito corto plazo';
@@ -48,7 +49,7 @@
   const fallbackName=String(d.progNombre||'');
   const program=Object.hasOwn(metadata,'program')?metadata.program:!(/^(Programa|Sin programa.*|.*Ingresar matrícula manualmente)$/i.test(fallbackName))?fallbackName:null;
   const creditModuleId=global.OFEInstitutionalSettings?.creditModule(key,metadata.moduleId)||null;
-  return {...(enhancedRefi?{restructuring:{treatment:JSON.parse(JSON.stringify(d.treatment)),reference:d.treatmentNote,cutoff:d.cutoff,termMode:d.termMode,comparison:d.comparison?JSON.parse(JSON.stringify(d.comparison)):null}}:{}),creditModuleId,modality,program:key===5?null:program,level:metadata.level||d.nivel||null,occurredAt:metadata.occurredAt||null,generatedBy:metadata.generatedBy||null,sections,plans,pending,disclaimer};
+  return {...(global.OFETextSchema?{textSettings:JSON.parse(JSON.stringify(textSettings))}:{}),...(enhancedRefi?{restructuring:{treatment:JSON.parse(JSON.stringify(d.treatment)),reference:d.treatmentNote,cutoff:d.cutoff,termMode:d.termMode,comparison:d.comparison?JSON.parse(JSON.stringify(d.comparison)):null}}:{}),creditModuleId,modality,program:key===5?null:program,level:metadata.level||d.nivel||null,occurredAt:metadata.occurredAt||null,generatedBy:metadata.generatedBy||null,sections,plans,pending,disclaimer:global.OFETextSchema?(textSettings.values[key===3?'pdf_legal_bank':'pdf_legal_main']):disclaimer};
  }
  const pdfModels=new WeakMap();let sessionSignature='Usuario Público';
  const copy=value=>JSON.parse(JSON.stringify(value));

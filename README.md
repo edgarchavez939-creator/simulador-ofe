@@ -4,7 +4,7 @@ Aplicación de apoyo a la simulación de crédito educativo de la Universidad de
 
 ## Entrega institucional
 
-Revisión del **20 de octubre de 2026**. El responsable informa que el proyecto fue cargado en GitHub institucional. Esta entrega actualiza instrucciones y plantillas para alojarlo en el servidor de DTIC; no realiza un despliegue remoto.
+Revisión del **27 de octubre de 2026**. El responsable informa que el proyecto fue cargado en GitHub institucional. Esta entrega actualiza instrucciones y plantillas para alojarlo en el servidor de DTIC; no realiza un despliegue remoto.
 
 En GitHub institucional debe versionarse el **contenido descomprimido**, con `package.json`, `server/`, `apps/` y `shared/` en la raíz del proyecto desplegable. Un ZIP almacenado como archivo adjunto no ejecuta la aplicación. Al sustituir una entrega anterior, aplicar también las exclusiones registradas en el manifiesto.
 
@@ -12,7 +12,7 @@ En GitHub institucional debe versionarse el **contenido descomprimido**, con `pa
 
 **Se mantiene un único proyecto y servicio**, con pantalla pública y área interna protegida bajo el mismo origen HTTPS, API y base de datos compartidas. Esta arquitectura fue confirmada por el responsable el 20 de octubre de 2026. Microsoft Entra ID continúa pendiente de integración y validación con DTIC. Los textos de exportación ya fueron enviados a Jurídica y continúa pendiente su concepto.
 
-La validación completa de esta entrega terminó con **157 pruebas aprobadas, 0 fallidas**, incluido el arranque normal con entorno externo, reinicio y respaldo consistente. Los motores y valores financieros permanecen preservados. Ver [dependencias locales](docs/DEPENDENCIES.md), [revisión del paquete](docs/DEPURACION_ENTREGA.md) e [información para DTIC](docs/DTIC_INTEGRATION.md).
+La validación completa de esta entrega terminó con **167 pruebas aprobadas, 0 fallidas**, incluido el arranque normal con entorno externo, reinicio y respaldo consistente. Los motores y valores financieros permanecen preservados. Ver [dependencias locales](docs/DEPENDENCIES.md), [revisión del paquete](docs/DEPURACION_ENTREGA.md) e [información para DTIC](docs/DTIC_INTEGRATION.md).
 
 ## Funcionalidades disponibles
 
@@ -23,6 +23,7 @@ La validación completa de esta entrega terminó con **157 pruebas aprobadas, 0 
 - Administración de programas, matrículas e idiomas, con edición individual e importación desde Excel. Catálogo base: **29 pregrados y 144 posgrados**, con identificadores únicos.
 - Usuarios, permisos por rol y registro de los cambios administrativos en el servidor.
 - Configuración de parámetros, colores de marca y acceso público, con enlace, código de iframe, vista previa e interruptores para mostrar u ocultar módulos del menú público.
+- Configuración de 42 textos de interfaz y PDF, con límites de espacio, muestra por modalidad, restauración, versiones y auditoría. Ver [Textos v22](docs/TEXTOS_CONFIGURABLES_V22.md).
 - Mantenimiento público administrable con aviso institucional, persistencia y bloqueo desde el servidor; la operación interna autorizada se conserva.
 - Tres recursos HTTPS de radicación por módulo: Cuota Inicial, Crédito a Corto Plazo y Crédito Corto y Largo Plazo; cada uno compartido por pregrado y posgrado, sin modificar la distribución del documento. Ver [recursos por módulo v20](docs/RECURSOS_POR_MODULO_V20.md) y [mejoras institucionales](docs/MEJORAS_INSTITUCIONALES_V19.md).
 

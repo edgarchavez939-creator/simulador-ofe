@@ -39,6 +39,11 @@
   constructor(doc,identity,resources={}){this.resources=resources;this.doc=doc;this.identity=identity;this.pages=[];this.y=0;this.report=null;this.step=0;}
   font(size=9.5,bold=false,color=C.ink){this.doc.setFont('PublicSans',bold?'bold':'normal');this.doc.setFontSize(size);this.doc.setTextColor(color);}
   text(text,x,y,size=9.5,bold=false,color=C.ink,align='left'){this.font(size,bold,color);this.doc.text(String(text),x,y,{align});}
+  configured(key,fallback,x,y,size,bold,color=C.ink,suffix=''){
+   const S=global.OFETextSchema;if(!S||!key)return this.text(fallback+suffix,x,y,size,bold,color);
+   const values=S.valuesFor(this.report);let fitted;try{fitted=S.fit(this.doc,key,values[key],suffix);}catch{fitted=S.fit(this.doc,key,S.defaults[key],suffix);}
+   fitted.lines.forEach((line,i)=>this.text(line,x,y+i*fitted.lineHeight,fitted.size,bold,color));
+  }
   wrap(text,width,size=9.5,bold=false){this.font(size,bold);return this.doc.splitTextToSize(String(text),width);}
   rule(y,x=X,end=R,color=C.line){this.doc.setDrawColor(color);this.doc.setLineWidth(.6);this.doc.line(x,y,end,y);}
   paragraph(text,{x=X,width=R-X,size=8.5,gap=7}={}){const lines=this.wrap(text,width,size);for(const line of lines){this.ensure(size*1.4);this.text(line,x,this.y+size,size,false,C.muted);this.y+=size*1.4;}this.y+=gap;}
@@ -47,13 +52,14 @@
    const bank=isBankReport(report);this.accent=bank?'#374151':C.red;this.trim=bank?'#9CA3AF':C.gold;this.panel=bank?'#F3F4F6':C.panel;
    if(bank){
     this.text('Simulación de crédito',L,49,15,true);
-    this.text('Crédito Banco Aliado'+(continuation?' · Continuación':''),L,69,10,true,this.accent);
+    this.configured('pdf_title_bank','Crédito Banco Aliado',L,69,10,true,this.accent,continuation?' · Continuación':'');
     this.rule(83,L,R);this.y=105;
    }else{
     this.doc.addImage(this.identity.logo,'PNG',L,28,243,243*59/304,'ofe-logo');
     this.rule(87,L,R,this.accent);this.rule(87,R-54,R,this.trim);
-    this.text('Simulación de Crédito Uninorte',L,108,15,true);
-    this.text(modalityTitle(report)+(continuation?' · Continuación':''),L,128,10,true,this.accent);
+    this.configured('pdf_header','Simulación de Crédito Uninorte',L,108,15,true);
+    const key=global.OFETextSchema?.pdfKey(report),scenario=report.modality.match(/ · Escenario \d+$/)?.[0]||'';
+    this.configured(key,modalityTitle(report),L,128,10,true,this.accent,scenario+(continuation?' · Continuación':''));
     this.y=148;
    }
    if(report.program){const lines=this.wrap(report.program,R-L,12,true);for(const line of lines){this.text(line,L,this.y,12,true);this.y+=15;}}
@@ -175,9 +181,12 @@
 
  }
  // A separate footer implementation keeps the legally required side legend vertical and ascending.
- Layout.prototype.footer=function(){const total=this.doc.getNumberOfPages();for(const item of this.pages){this.doc.setPage(item.number);this.rule(714,L,R);this.text('ALCANCE DE LA SIMULACIÓN',L,732,8,true,C.muted);
+ Layout.prototype.footer=function(){const total=this.doc.getNumberOfPages();for(const item of this.pages){this.doc.setPage(item.number);this.rule(714,L,R);this.report=item.report;this.configured('pdf_scope','ALCANCE DE LA SIMULACIÓN',L,732,8,true,C.muted);
   const disclaimer=isBankReport(item.report)?item.report.disclaimer.replace('la Universidad del Norte y/o las entidades que intervengan en el proceso de financiación','la entidad financiera'):item.report.disclaimer;
-  const lines=this.wrap(disclaimer+' Este documento no constituye aprobación del crédito.',R-L,8.1);lines.forEach((line,i)=>this.text(line,L,748+i*10.8,8.1,false,C.muted));
+  const S=global.OFETextSchema,key=isBankReport(item.report)?'pdf_legal_bank':'pdf_legal_main';let fitted;
+  if(S){try{fitted=S.fit(this.doc,key,S.valuesFor(item.report)[key]);}catch{fitted=S.fit(this.doc,key,S.defaults[key]);}}
+  else fitted={lines:this.wrap(disclaimer+' Este documento no constituye aprobación del crédito.',R-L,8.1),size:8.1};
+  const lines=fitted.lines;lines.forEach((line,i)=>this.text(line,L,748+i*10.8,fitted.size,false,C.muted));
   const first=this.pages.find(page=>page.report===item.report)?.number===item.number,resource=first&&global.OFEInstitutionalSettings?.resourceFor(item.report,this.resources);
   // Fixed free space below the existing legal notice; never move body/footer elements or add pages.
   if(resource&&lines.length<=3){

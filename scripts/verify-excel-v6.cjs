@@ -17,7 +17,7 @@ test('all supported effective/nominal periods preserve the original annual basis
 test('normalized snapshots retain real amounts, optional identity and future LP uncertainty',async()=>{
  const {context:c,elements:e}=await fixture();
  for(const key of [1,2,3,7,5,'languages']){
-  const d=c.OFEReport.result(key),before=JSON.stringify(d),r=c.OFEReport.normalize(key,d);assert.equal(r.disclaimer,c.OFEReport.disclaimer);assert.ok(r.occurredAt);assert.equal(JSON.stringify(d),before);
+  const d=c.OFEReport.result(key),before=JSON.stringify(d),r=c.OFEReport.normalize(key,d);assert.equal(r.disclaimer,key===3?c.OFETextSchema.defaults.pdf_legal_bank:c.OFEReport.disclaimer);assert.ok(r.occurredAt);assert.equal(JSON.stringify(d),before);
   if(key===7){assert.equal(find(r,'Total inicial'),d.desembolso);assert.equal(find(r,'Cuota inicial requerida (sin Garantisa)'),d.cuotaInicial);assert.equal(find(r,'Capacidad mensual indicada'),d.capIngresada);assert.equal(find(r,'Diferencia disponible'),0);}
   if(key===3){assert.equal(find(r,'Otros cargos iniciales'),d.cargos);assert.ok(!r.sections.some(s=>s.title==='Garantisa'));}
   if(key===2){assert.equal(r.pending,true);assert.ok(r.sections.some(s=>s.title==='Componente largo plazo'&&/pendientes/.test(s.note)));assert.ok(!r.sections.find(s=>s.title==='Componente largo plazo').fields.some(f=>f.label==='Cuota mensual estimada'));assert.ok(Math.abs(find(r,'Costo total conocido, sin intereses futuros LP')-(d.pagoInicial+d.CP.totCap+d.CP.totInt+d.finLP))<1e-6);}

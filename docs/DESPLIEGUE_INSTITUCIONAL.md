@@ -202,3 +202,7 @@ Ver [operación, API y validación v19](MEJORAS_INSTITUCIONALES_V19.md). En la a
 El proxy debe reenviar también los archivos públicos a Node, conservar `Cache-Control: no-store`, `Retry-After` y el cuerpo de HTTP 503, sin caché ni página de error sustituta. No utilizar un `root` estático alternativo para eludir el control de mantenimiento. GitHub Pages no ejecuta estas funciones globales.
 
 La corrección [v20](RECURSOS_POR_MODULO_V20.md) define exactamente tres enlaces: Cuota Inicial, Corto Plazo y Corto y Largo Plazo, cada uno para ambos niveles. La migración 006 conserva los recursos anteriores para consulta administrativa; si los de pregrado y posgrado difieren, se configura el enlace común sin elegir uno automáticamente. Sin variables nuevas.
+
+## Configuración de textos (v22)
+
+La actualización aplica automáticamente la migración 007 y agrega los textos originales sin sustituir configuraciones previas. No requiere variables nuevas ni conexión externa. Respaldar la base antes de actualizar. En aceptación, abrir Configuración → Textos con un administrador, probar un texto válido y uno que no quepa, comprobar el acceso público conectado y generar un PDF de muestra. Ver [alcance y límites](TEXTOS_CONFIGURABLES_V22.md).

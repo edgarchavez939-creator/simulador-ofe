@@ -11,3 +11,7 @@ El responsable del proyecto confirma que los textos de los exportables **ya fuer
 - Registrar la versión de los textos aprobados y la referencia de la respuesta recibida.
 
 La versión en línea está actualizada y su revisión funcional fue confirmada por el responsable del proyecto. Al recibir el concepto, se actualizará este registro con la fecha y la referencia de la respuesta.
+
+## Edición administrativa desde v22
+
+Los avisos institucional y de Banco Aliado pueden editarse por separado desde Configuración → Textos, con control de longitud y espacio, versiones y auditoría. Sus valores iniciales se conservan. La frase de no aprobación permanece fija. La edición no supone concepto favorable de Jurídica; deben coordinarse los textos autorizados antes de sustituirlos. Ver [límites del editor](TEXTOS_CONFIGURABLES_V22.md).

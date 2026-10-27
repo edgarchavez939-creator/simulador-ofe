@@ -55,3 +55,7 @@ El [manifiesto](../MANIFIESTO-ENTREGA.json) registra exclusiones, archivos modif
 ## Actualización de reestructuración v21
 
 Base `59ca624`. La actualización suma los campos y validaciones descritos en [Reestructuración v21](REESTRUCTURACION_V21.md), con 157 pruebas aprobadas. No requiere nuevas variables, dependencias ni migración de base de datos. Se preservan los motores y catálogos. Los archivos de pruebas, bases temporales, capturas y documentos ficticios de validación permanecen fuera del paquete del proyecto.
+
+## Actualización de textos v22
+
+Base `c6319a6`, revisión del 27 de octubre de 2026. Agrega la configuración de textos y migración 007; no cambia los motores, catálogos ni dependencias. 167 pruebas aprobadas. Se conservan fuera del paquete los datos ficticios, registros y documentos de validación. Ver [Textos v22](TEXTOS_CONFIGURABLES_V22.md).
