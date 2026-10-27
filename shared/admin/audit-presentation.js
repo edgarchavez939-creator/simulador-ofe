@@ -73,7 +73,7 @@
  function availableCategories(role,module){return categories.filter(item=>(role!=='program_admin'||item.module==='programs')&&(!module||item.module===module));}
  function availableActions(role,module,category){
   const scope=role==='program_admin'?'programs':module||categories.find(item=>item.key===category)?.module;
-  return Object.entries(actions).filter(([key])=>!scope||(scope==='programs'?key==='PROGRAM_UPDATE':scope==='settings'?key.startsWith('CONFIG_'):key.startsWith('USER_')||key==='ADMIN_BOOTSTRAP'));
+  return Object.entries(actions).filter(([key])=>!scope||(scope==='programs'?key==='PROGRAM_UPDATE':scope==='settings'?key==='CONFIG_UPDATE'||key==='CONFIG_MIGRATION'&&(!category||category==='radication_resources'):key.startsWith('USER_')||key==='ADMIN_BOOTSTRAP')).map(([key,label])=>[key,key==='CONFIG_UPDATE'&&updates[category]?updates[category]:label]);
  }
  return Object.freeze({categories,actions,fieldLabel,describe,renderValue,rowHTML,detailHTML,availableCategories,availableActions});
 });
