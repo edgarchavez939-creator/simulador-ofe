@@ -1,0 +1,27 @@
+/* Business audit: readable categories and complete before/after values. */
+#tab11 .audit-table-wrap{overflow-x:auto}
+#tab11 .tbl{min-width:1060px}
+#tab11 .tbl td{vertical-align:top;overflow-wrap:anywhere}
+#tab11 .tbl .audit-date{min-width:125px;max-width:160px}
+#tab11 .tbl .audit-person{min-width:155px;max-width:230px}
+#tab11 .tbl td.admin-name{min-width:180px;max-width:290px}
+#tab11 .tbl td:nth-child(3){min-width:150px;max-width:200px}
+#tab11 .tbl td:nth-child(4){min-width:145px;max-width:190px}
+#tab11 .audit-category{display:block;font-weight:650;color:var(--text-heading)}
+#tab11 .admin-filter-actions{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+#audit-dialog .audit-change>section{min-width:0;max-height:none;overflow:visible}
+#audit-dialog .audit-value{margin:0;font-size:13px;font-weight:500;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+#audit-dialog .audit-object{display:grid;gap:14px;margin:0}
+#audit-dialog .audit-object>div{min-width:0;padding-bottom:12px;border-bottom:1px solid var(--border-default)}
+#audit-dialog .audit-object>div:last-child{padding-bottom:0;border-bottom:0}
+#audit-dialog .audit-object dt{margin:0 0 4px;font-weight:600}
+#audit-dialog .audit-object dd{margin:0;min-width:0}
+#audit-dialog .audit-object .audit-object{margin-top:8px;padding-left:12px;border-left:2px solid var(--border-default)}
+#audit-dialog .audit-facts dd,#audit-dialog .audit-technical dd{overflow-wrap:anywhere}
+#audit-dialog .audit-technical pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;max-width:100%}
+#audit-dialog .audit-technical>dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 20px}
+#audit-dialog .audit-technical>dl>div{min-width:0}
+#audit-dialog .audit-technical>dl dt{margin-bottom:4px}
+@media(max-width:760px){#audit-dialog .audit-technical>dl{grid-template-columns:1fr}}
+#tab11 .admin-filter{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:640px){#tab11 .admin-filter{grid-template-columns:1fr}}

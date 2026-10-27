@@ -59,3 +59,7 @@ Base `59ca624`. La actualización suma los campos y validaciones descritos en [R
 ## Actualización de textos v22
 
 Base `c6319a6`, revisión del 27 de octubre de 2026. Agrega la configuración de textos y migración 007; no cambia los motores, catálogos ni dependencias. 167 pruebas aprobadas. Se conservan fuera del paquete los datos ficticios, registros y documentos de validación. Ver [Textos v22](TEXTOS_CONFIGURABLES_V22.md).
+
+## Actualización de auditoría v23
+
+Base `e867f93`, revisión del 27 de octubre de 2026. Presentación clara de ocho categorías y los 42 textos configurables, filtro por categoría, valores compuestos y comparación completa. Corrige la consulta de migraciones de recursos y conserva los filtros aplicados al mostrar más registros. 176 pruebas aprobadas. No requiere variables, dependencias ni migraciones nuevas y no modifica registros existentes, permisos, motores, catálogos ni exportables. Las capturas y datos ficticios de validación permanecen fuera del paquete. Ver [Auditoría v23](AUDITORIA_V23.md).

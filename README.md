@@ -12,7 +12,7 @@ En GitHub institucional debe versionarse el **contenido descomprimido**, con `pa
 
 **Se mantiene un único proyecto y servicio**, con pantalla pública y área interna protegida bajo el mismo origen HTTPS, API y base de datos compartidas. Esta arquitectura fue confirmada por el responsable el 20 de octubre de 2026. Microsoft Entra ID continúa pendiente de integración y validación con DTIC. Los textos de exportación ya fueron enviados a Jurídica y continúa pendiente su concepto.
 
-La validación completa de esta entrega terminó con **167 pruebas aprobadas, 0 fallidas**, incluido el arranque normal con entorno externo, reinicio y respaldo consistente. Los motores y valores financieros permanecen preservados. Ver [dependencias locales](docs/DEPENDENCIES.md), [revisión del paquete](docs/DEPURACION_ENTREGA.md) e [información para DTIC](docs/DTIC_INTEGRATION.md).
+La validación completa de esta entrega terminó con **176 pruebas aprobadas, 0 fallidas**, incluido el arranque normal con entorno externo, reinicio y respaldo consistente. Los motores y valores financieros permanecen preservados. Ver [dependencias locales](docs/DEPENDENCIES.md), [revisión del paquete](docs/DEPURACION_ENTREGA.md) e [información para DTIC](docs/DTIC_INTEGRATION.md).
 
 ## Funcionalidades disponibles
 
@@ -21,7 +21,7 @@ La validación completa de esta entrega terminó con **167 pruebas aprobadas, 0 
 - Beneficios y descuentos, comparación de escenarios, historial de simulaciones y conversor de tasas.
 - Exportación a PDF y Excel. Los documentos de Banco Aliado tienen presentación neutra, sin marca institucional. Excel utiliza Aptos Narrow; la aplicación y el PDF utilizan Public Sans.
 - Administración de programas, matrículas e idiomas, con edición individual e importación desde Excel. Catálogo base: **29 pregrados y 144 posgrados**, con identificadores únicos.
-- Usuarios, permisos por rol y registro de los cambios administrativos en el servidor.
+- Usuarios, permisos por rol y registro de los cambios administrativos en el servidor. Auditoría con ocho categorías, filtros y comparación legible de valores anteriores y nuevos. Ver [Auditoría v23](docs/AUDITORIA_V23.md).
 - Configuración de parámetros, colores de marca y acceso público, con enlace, código de iframe, vista previa e interruptores para mostrar u ocultar módulos del menú público.
 - Configuración de 42 textos de interfaz y PDF, con límites de espacio, muestra por modalidad, restauración, versiones y auditoría. Ver [Textos v22](docs/TEXTOS_CONFIGURABLES_V22.md).
 - Mantenimiento público administrable con aviso institucional, persistencia y bloqueo desde el servidor; la operación interna autorizada se conserva.

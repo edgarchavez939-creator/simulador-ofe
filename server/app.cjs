@@ -1,6 +1,7 @@
 'use strict';
 const http=require('node:http'),fs=require('node:fs'),path=require('node:path');
 const {randomUUID}=require('node:crypto');
+const {categories:auditCategories}=require('../shared/admin/audit-presentation.js');
 const {openStore,publicUser,ROLES}=require('./store.cjs');
 const {frameOrigins,publicAssets,publicProgram,publicSettings}=require('./public-access.cjs');
 const {DEFINITIONS,validate:validateSettings,readSettings}=require('./settings.cjs');
@@ -280,10 +281,14 @@ async function createApplication(options={}){
    if(route==='/api/admin/audit'&&method==='GET'){
     requireSession(s,'audit.read');const conditions=[],args=[];
     const administrative=url.searchParams.get('category')==='administrative';
-    if(administrative)conditions.push("module IN ('users','programs','settings') AND action IN ('ADMIN_BOOTSTRAP','USER_CREATE','USER_UPDATE','USER_ROLE_CHANGE','USER_ACTIVATE','USER_DEACTIVATE','PROGRAM_UPDATE','CONFIG_UPDATE')");
+    if(administrative)conditions.push("module IN ('users','programs','settings') AND action IN ('ADMIN_BOOTSTRAP','USER_CREATE','USER_UPDATE','USER_ROLE_CHANGE','USER_ACTIVATE','USER_DEACTIVATE','PROGRAM_UPDATE','CONFIG_UPDATE','CONFIG_MIGRATION')");
     const localDates=url.searchParams.get('timeZone')==='America/Bogota';
     if(url.searchParams.has('timeZone')&&!localDates)throw fail(422,'Zona de fechas no admitida.');
     if(s.user.role==='program_admin')conditions.push("module='programs'");
+    if(url.searchParams.get('entityType')){
+     const category=url.searchParams.get('entityType');if(!auditCategories.some(item=>item.key===category))throw fail(422,'Categoría de auditoría no admitida.');
+     conditions.push('entity_type=?');args.push(category);
+    }
     if(url.searchParams.get('actor')){conditions.push("(actor_user_id=? OR instr(lower(coalesce(actor_email,'')),lower(?))>0 OR instr(lower(coalesce(actor_name,'')),lower(?))>0)");args.push(url.searchParams.get('actor'),url.searchParams.get('actor'),url.searchParams.get('actor'));}
     for(const [key,column] of [['action','action'],['module','module'],['result','result']])if(url.searchParams.get(key)){conditions.push(column+'=?');args.push(url.searchParams.get(key));}
     if(url.searchParams.get('entity')){conditions.push("(instr(lower(coalesce(entity_name,'')),lower(?))>0 OR entity_id=?)");args.push(url.searchParams.get('entity'),url.searchParams.get('entity'));}
