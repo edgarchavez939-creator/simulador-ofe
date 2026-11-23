@@ -7,8 +7,8 @@ const { root, plain, read, embeddedElements, snapshotFrom, loadApp } = require('
 
 const baseId = 'posgrado:especializacion:especializacion-en-seguridad-de-la-informacion';
 const hashes = {
-  programas: '64f05236a5dfcb9eec5d3556ad3f271bbbd82bce07a6ed88c809c8c82a9ce4ff',
-  posgrados: '1447d5a1e5263769c98aa93bf45d4dfc4d7966d3eaa6e477a88235672d90deb1',
+  programas: '698070bc856e8cacb7a4bfdea3720c57a127cdde771adb382864edd326ebcdd6',
+  posgrados: '0d6cbbf1a8b86e721aba245e1787db6fd2ea92f9ebaf0f9863ba16c4712f6f15',
   '03-finance-core.js': 'e74c1e10f5f3aeb3215d09bd6a14cf1348c167c64f38c24636e3beffbf0ea9f7',
   '07-financing-engine.js': '54d3f4be288bfb28962a4bc01f46cd77d3e5cf7d661fc9ab5bfc5221c6ead098'
 };
@@ -49,8 +49,8 @@ for (const app of ['public', 'ofe']) {
     const collisions = await catalog.list({ q: 'especializacion en seguridad de la informacion' });
     assert.equal(collisions.length, 2);
     assert.deepEqual(plain(collisions.map(program => [program.id, program.sourceIndex, program.valorMatricula])), [
-      [`${baseId}:source-71`, 71, 20495600],
-      [`${baseId}:source-72`, 72, 14346600]
+      [`${baseId}:source-71`, 71, 22278700],
+      [`${baseId}:source-72`, 72, 22278700]
     ]);
     assert.equal(await catalog.get('missing'), null);
     for (const operation of ['create', 'update', 'setStatus', 'import']) {

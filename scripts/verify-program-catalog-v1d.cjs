@@ -60,7 +60,7 @@ test('duplicate options show distinct tuition labels and retain canonical text a
     const check = () => {
       const options = elements['prog'+tab].options.filter(option => duplicates.some(program => program.id === option.value));
       assert.equal(options.length, 2); assert.notEqual(options[0].value, options[1].value); assert.notEqual(options[0].label, options[1].label);
-      assert.match(options[0].label, /20\.495\.600/); assert.match(options[1].label, /14\.346\.600/);
+      assert.match(options[0].label, /22\.278\.700.*Registro 1/); assert.match(options[1].label, /22\.278\.700.*Registro 2/);
       assert.ok(options.every(option => !option.textContent.includes('Matrícula')));
       for (const program of duplicates) {
         elements['prog'+tab].value = program.id; context.setMat(tab); assert.equal(Number(elements['mat'+tab].value), program.valorMatricula);
@@ -127,7 +127,7 @@ test('history restores exact postgraduate IDs; legacy snapshots resolve only una
   const entry = context.getHistorial()[0]; choose(context, elements, 1, duplicates[0]); context.duplicarHistorial(entry.id);
   assert.equal(elements.prog1.value, duplicates[1].id); assert.equal(context.SimuladorOFE.state.ui.levelByTab[1], 'posgrado');
   assert.equal(Number(elements.mat1.value), duplicates[1].valorMatricula);
-  assert.equal(context.programaDeHistorial({ progNombre: duplicates[0].nombre, mat: duplicates[0].valorMatricula }).id, duplicates[0].id);
+  assert.equal(context.programaDeHistorial({ progNombre: duplicates[0].nombre, mat: duplicates[0].valorMatricula }), null); // Ambiguo: misma matrícula en ambos registros.
   assert.equal(context.programaDeHistorial({ progNombre: duplicates[0].nombre, mat: 1 }), null);
   assert.equal(context.programaDeHistorial({ ...entry.snap, progId: 'missing' }), null);
   assert.equal(context.programaDeHistorial({ ...entry.snap, catalogSource: 'api' }), null);

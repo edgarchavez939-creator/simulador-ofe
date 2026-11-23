@@ -351,11 +351,11 @@ function extraerProgramasDelHTML(html) {
     const preRaw = parseBlock(MK_PRE_S, MK_PRE_E, 'PROGRAMAS');
     const posRaw = parseBlock(MK_POS_S, MK_POS_E, 'POSGRADOS');
     if(!Array.isArray(preRaw) || !Array.isArray(posRaw)) return null;
-    const pre = ProgramCatalogImport.parse([[], ...preRaw], 'pregrado', {nombre:0,valor:1,idiomas:2,semestres:3});
-    const pos = ProgramCatalogImport.parse([[], ...posRaw], 'posgrado', {nombre:0,subnivel:1,valor:2});
-    if(!pre.valid || !pos.valid) return null;
-    const pregrado = pre.rows, posgrado = pos.rows;
-    return {pregrado, posgrado};
+    // Validar como catálogo publicado, no como formulario de actualización.
+    // El Excel oficial contiene posgrados con matrícula 0: son valores explícitos,
+    // válidos en el catálogo, aunque la edición manual pueda exigir valor positivo.
+    ProgramCatalogValidator.readList(ProgramCatalogNormalizer.fromSnapshot({programas: preRaw, posgrados: posRaw}));
+    return {pregrado: preRaw, posgrado: posRaw};
   } catch(e) { return null; }
 }
 
@@ -373,181 +373,902 @@ function actualizarBadgeSync() {
 
 // Programas actuales pre-cargados (extraidos del simulador vigente)
 const _PRE_ACTUAL = [
-    ["Administración de Empresas",16105200,0,10],
-    ["Arquitectura",16618800,1635500,9],
-    ["Ciencia de Datos",13574400,1635500,8],
-    ["Ciencia Política y Gobierno",13170800,1635500,8],
-    ["Comunicación Social y Period.",11976300,1635500,9],
-    ["Contaduría Pública",7945700,0,8],
-    ["Derecho",13422900,1635500,10],
-    ["Diseño Gráfico",13342300,1635500,8],
-    ["Diseño Industrial",16461100,1635500,8],
-    ["Economía",12553400,1635500,8],
-    ["Enfermería",7601500,0,8],
-    ["Filosofía y Humanidades",6917800,0,8],
-    ["Geología",13331000,1635500,9],
-    ["Ingeniería Biomédica",15471900,1635500,8],
-    ["Ingeniería Civil",13574400,1635500,10],
-    ["Ingeniería Eléctrica",13574400,1635500,10],
-    ["Ingeniería Electrónica",15471900,1635500,10],
-    ["Ingeniería Industrial",16641300,1635500,10],
-    ["Ingeniería Mecánica",13574400,1635500,10],
-    ["Ingeniería Sistemas Y Computación",13574400,1635500,10],
-    ["Lenguas Modernas y Cultura",12673500,1635500,8],
-    ["Licenciatura en Pedagogía Infantil",8703000,1635500,8],
-    ["Matemáticas",8153900,1635500,8],
-    ["Medicina",28431000,1995700,12],
-    ["Música",13466700,1635500,8],
-    ["Negocios Internacionales",17922800,1635500,10],
-    ["Odontología",17877500,1995700,10],
-    ["Psicología",11976300,1635500,10],
-    ["Relaciones Internacionales",12673500,1635500,10]
+  [
+    "Administración de Empresas",
+    17506400,
+    0,
+    10
+  ],
+  [
+    "Arquitectura",
+    18064600,
+    1777600,
+    9
+  ],
+  [
+    "Ciencia de Datos",
+    14755400,
+    1777600,
+    8
+  ],
+  [
+    "Ciencia Política y Gobierno",
+    14316700,
+    1777600,
+    8
+  ],
+  [
+    "Comunicación Social y Period.",
+    13018200,
+    1777600,
+    9
+  ],
+  [
+    "Contaduría Pública",
+    8637000,
+    0,
+    8
+  ],
+  [
+    "Derecho",
+    14590700,
+    1777600,
+    10
+  ],
+  [
+    "Diseño Gráfico",
+    14503100,
+    1777600,
+    8
+  ],
+  [
+    "Diseño Industrial",
+    17893200,
+    1777600,
+    8
+  ],
+  [
+    "Economía",
+    13645500,
+    1777600,
+    8
+  ],
+  [
+    "Enfermería",
+    8080400,
+    0,
+    8
+  ],
+  [
+    "Filosofía y Humanidades",
+    7519600,
+    0,
+    8
+  ],
+  [
+    "Geología",
+    14490800,
+    1777600,
+    9
+  ],
+  [
+    "Ingeniería Biomédica",
+    16818000,
+    1777600,
+    8
+  ],
+  [
+    "Ingeniería Civil",
+    14755400,
+    1777600,
+    10
+  ],
+  [
+    "Ingeniería Eléctrica",
+    14755400,
+    1777600,
+    10
+  ],
+  [
+    "Ingeniería Electrónica",
+    16818000,
+    1777600,
+    10
+  ],
+  [
+    "Ingeniería Industrial",
+    18089100,
+    1777600,
+    10
+  ],
+  [
+    "Ingeniería Mecánica",
+    14755400,
+    1777600,
+    10
+  ],
+  [
+    "Ingeniería Sistemas Y Computación",
+    14755400,
+    1777600,
+    10
+  ],
+  [
+    "Lenguas Modernas y Cultura",
+    13776100,
+    1777600,
+    8
+  ],
+  [
+    "Licenciatura en Pedagogía Infantil",
+    9460200,
+    1777600,
+    8
+  ],
+  [
+    "Matemáticas",
+    8863300,
+    1777600,
+    8
+  ],
+  [
+    "Medicina",
+    30904500,
+    2169300,
+    12
+  ],
+  [
+    "Música",
+    14638300,
+    1777600,
+    8
+  ],
+  [
+    "Negocios Internacionales",
+    19482100,
+    1777600,
+    10
+  ],
+  [
+    "Odontología",
+    19432800,
+    2169300,
+    10
+  ],
+  [
+    "Psicología",
+    13018200,
+    1777600,
+    10
+  ],
+  [
+    "Relaciones Internacionales",
+    13776100,
+    1777600,
+    10
+  ]
 ];
 const _POS_ACTUAL = [
-    ["Doctorado En Administración","Doctorado",30388900],
-    ["Doctorado En Ciencias Biomédicas","Doctorado",20841700],
-    ["Doctorado En Ciencias Del Mar","Doctorado",17509050],
-    ["Doctorado En Ciencias Naturales","Doctorado",18483900],
-    ["Doctorado En Ciencias Sociales","Doctorado",22390300],
-    ["Doctorado En Comunicación","Doctorado",21319300],
-    ["Doctorado En Derecho","Doctorado",22347800],
-    ["Doctorado En Economía","Doctorado",22390300],
-    ["Doctorado En Educación","Doctorado",18623500],
-    ["Doctorado En Ingeniería Civil","Doctorado",21914400],
-    ["Doctorado En Ingeniería De Sistemas Y Computación","Doctorado",21914400],
-    ["Doctorado En Ingeniería Eléctrica Y Electrónica","Doctorado",21914400],
-    ["Doctorado En Ingeniería Industrial","Doctorado",21914400],
-    ["Doctorado En Ingeniería Mecánica","Doctorado",21914400],
-    ["Doctorado En Psicología","Doctorado",21319300],
-    ["CAR - Especialización En Gerencia De La Calidad Y Auditoría En Salud","Especialización",16543700],
-    ["CAR - Especialización En Seguridad Y Salud En El Trabajo","Especialización",16543700],
-    ["Especialización En Análisis Y Diseño De Estructuras","Especialización",20495600],
-    ["Especialización En Arqueología","Especialización",15032100],
-    ["Especialización En Comunicación Digital","Especialización",15032100],
-    ["Especialización En Derecho Administrativo","Especialización",14739100],
-    ["Especialización En Derecho Ambiental, Territorial Y Urbanístico","Especialización",14739100],
-    ["Especialización En Derecho Civil Y De Familia","Especialización",14739100],
-    ["Especialización En Derecho Comercial","Especialización",16440000],
-    ["Especialización En Derecho Constitucional","Especialización",14739100],
-    ["Especialización En Derecho Contractual","Especialización",14739100],
-    ["Especialización En Derecho De Sociedades","Especialización",14739100],
-    ["Especialización En Derecho Laboral","Especialización",14739100],
-    ["Especialización En Derecho Penal","Especialización",16567700],
-    ["Especialización En Derecho Público","Especialización",14739100],
-    ["Especialización En Derechos Humanos","Especialización",14739100],
-    ["Especialización En Dermatología","Especialización",52550300],
-    ["Especialización En Desarrollo Familiar","Especialización",13454400],
-    ["Especialización En Desarrollo Organizacional Y Procesos Humanos","Especialización",15971200],
-    ["Especialización En Desarrollo Social","Especialización",16902400],
-    ["Especialización En Dirección De Operaciones","Especialización",17421300],
-    ["Especialización En Diseño Y Evaluación De Proyectos","Especialización",20495600],
-    ["Especialización En Enfermería Del Cuidado Crítico Adulto","Especialización",9640900],
-    ["Especialización En Enfermería Del Cuidado Neonatal","Especialización",9640900],
-    ["Especialización En Finanzas","Especialización",25324000],
-    ["Especialización En Gerencia De Empresas Comerciales","Especialización",25324000],
-    ["Especialización En Gerencia De La Calidad Y Auditoría En Salud","Especialización",18227700],
-    ["Especialización En Gerencia De La Calidad Y Auditoría En Salud Virtual","Especialización",14582100],
-    ["Especialización En Gerencia De La Comunicación Organizacional","Especialización",13800400],
-    ["Especialización En Gerencia De Proyectos","Especialización",20495600],
-    ["Especialización En Gerencia De Proyectos De Construcción","Especialización",20495600],
-    ["Especialización En Gerencia De Servicios De Salud","Especialización",18944500],
-    ["Especialización En Gerencia De Tecnologías De La Información","Especialización",20495600],
-    ["Especialización En Gerencia Del Talento Humano","Especialización",21915000],
-    ["Especialización En Gerencia Financiera De Servicios De Salud","Especialización",18909700],
-    ["Especialización En Gerencia Pública","Especialización",21915000],
-    ["Especialización En Gestión De Sistemas Eléctricos De Potencia","Especialización",20495600],
-    ["Especialización En Gobierno Y Políticas Públicas","Especialización",14739100],
-    ["Especialización En Ingeniería De Procesos Industriales","Especialización",20495600],
-    ["Especialización En Ingeniería De Sistemas Hídricos Urbanos","Especialización",18638700],
-    ["Especialización En Ingeniería Del Software","Especialización",20495600],
-    ["Especialización En La Enseñanza Del Inglés","Especialización",12854100],
-    ["Especialización En Logística De Transporte Internacional De Mercancia","Especialización",23557300],
-    ["Especialización En Logística Empresarial","Especialización",18638700],
-    ["Especialización En Medicina Familiar","Especialización",39362300],
-    ["Especialización En Medicina Interna","Especialización",52550300],
-    ["Especialización En Mercadeo","Especialización",25324000],
-    ["Especialización En Negociación Y Manejo De Conflictos","Especialización",14945800],
-    ["Especialización En Neonatología","Especialización",60377100],
-    ["Especialización En Oftalmología","Especialización",54503900],
-    ["Especialización En Pavimentos Y Geotecnia Vial","Especialización",20495600],
-    ["Especialización En Pediatría","Especialización",52550300],
-    ["Especialización En Psicología Forense","Especialización",14906800],
-    ["Especialización En Psiquiatría","Especialización",52550300],
-    ["Especialización En Radiología E Imágenes Diagnósticas","Especialización",54503900],
-    ["Especialización En Responsabilidad Civil Y Seguros","Especialización",14739100],
-    ["Especialización En Seguridad De La Información","Especialización",20495600],
-    ["Especialización En Seguridad De La Información","Especialización",14346600],
-    ["Especialización En Seguridad Y Salud En El Trabajo","Especialización",16543700],
-    ["Especialización En Seguridad Y Salud En El Trabajo Virtual","Especialización",14582100],
-    ["Especialización En Transformación Digital","Especialización",20495600],
-    ["Especialización En Tributación","Especialización",14739100],
-    ["Especialización En Valoración De Bienes","Especialización",14070600],
-    ["RIO - Especialización En Gerencia De La Calidad Y Auditoría En Salud","Especialización",16543700],
-    ["RIO - Especialización En Seguridad Y Salud En El Trabajo","Especialización",16543700],
-    ["SM - Especialización En Derecho Público","Especialización",12528100],
-    ["SM - Especialización En Dirección Estratégica Empresarial","Especialización",13191200],
-    ["SM - Especialización En Finanzas","Especialización",18993000],
-    ["SM - Especialización En Gerencia De La Calidad Y Auditoría En Salud","Especialización",13539100],
-    ["SM - Especialización En Gerencia De Proyectos","Especialización",15371800],
-    ["SM - Especialización En Seguridad Y Salud En El Trabajo","Especialización",12407700],
-    ["SM - Especialización En Tributación","Especialización",12528100],
-    ["Maestría En Administración De Empresas","Maestría",25324000],
-    ["Maestría En Análisis Y Gestión De Sistemas Eléctricos","Maestría",21034700],
-    ["Maestría En Analítica De Datos","Maestría",21034700],
-    ["Maestría En Ciencia Política Y Gobierno","Maestría",17770000],
-    ["Maestría En Ciencias Básicas Biomédicas","Maestría",19241600],
-    ["Maestría En Ciencias De La Tierra","Maestría",14068300],
-    ["Maestría En Ciencias Naturales","Maestría",12658900],
-    ["Maestría En Comunicación","Maestría",16307400],
-    ["Maestría En Cooperación Internacional Y Gestión De Proyectos","Maestría",15694100],
-    ["Maestría En Derecho","Maestría",17770000],
-    ["Maestría En Derecho Ambiental Y Urbano-Territorial","Maestría",17770000],
-    ["Maestría En Derecho Civil Y De Familia","Maestría",14739100],
-    ["Maestría En Derecho Del Comercio","Maestría",17770000],
-    ["Maestría En Derecho Del Trabajo Y De La Seguridad Social","Maestría",17770000],
-    ["Maestría En Derecho Público","Maestría",17770000],
-    ["Maestría En Desarrollo Organizacional Y Procesos Humanos","Maestría",15694100],
-    ["Maestría En Desarrollo Social","Maestría",16902400],
-    ["Maestría En Diseño E Innovación Md+I","Maestría",16089700],
-    ["Maestría En Economia","Maestría",15743100],
-    ["Maestría En Educación","Maestría",12658900],
-    ["Maestría En Educación Mediada Por Tic","Maestría",11393000],
-    ["Maestría En Enfermería","Maestría",11490200],
-    ["Maestría En Epidemiología","Maestría",19241600],
-    ["Maestría En Epidemiología Clínica","Maestría",20131400],
-    ["Maestría En Estadística Aplicada","Maestría",12658900],
-    ["Maestría En Filosofía","Maestría",11173700],
-    ["Maestría En Finanzas","Maestría",25324000],
-    ["Maestría En Fisica Aplicada","Maestría",12658900],
-    ["Maestría En Gestión De Riesgos Naturales, Prevención Y Atención De Desastres","Maestría",21034700],
-    ["Maestría En Gobierno De Tecnología Informática","Maestría",21034700],
-    ["Maestría En Historia","Maestría",12883800],
-    ["Maestría En Ingeniería Administrativa","Maestría",21034700],
-    ["Maestría En Ingeniería Ambiental","Maestría",21034700],
-    ["Maestría En Ingeniería Biomédica","Maestría",21034700],
-    ["Maestría En Ingeniería Civil","Maestría",21034700],
-    ["Maestría En Ingeniería De Sistemas Y Computación","Maestría",21034700],
-    ["Maestría En Ingeniería Eléctrica","Maestría",21034700],
-    ["Maestría En Ingeniería Electrónica","Maestría",21034700],
-    ["Maestría En Ingeniería Industrial","Maestría",21034700],
-    ["Maestría En Ingeniería Mecánica","Maestría",21034700],
-    ["Maestría En La Enseñanza Del Inglés","Maestría",12854100],
-    ["Maestría En Lenguaje Y Sociedad","Maestría",12854100],
-    ["Maestría En Literatura Y Escrituras Creativas","Maestría",12044800],
-    ["Maestría En Matemáticas","Maestría",12658900],
-    ["Maestría En Mercadeo","Maestría",25324000],
-    ["Maestría En Negociación Y Manejo De Conflictos","Maestría",17770000],
-    ["Maestría En Negocios Internacionales","Maestría",25324000],
-    ["Maestría En Pedagogía Social E Intervención Educativa En Contextos Sociales","Maestría",11393000],
-    ["Maestría En Periodismo","Maestría",15694100],
-    ["Maestría En Psicología Énfasis Investigativo","Maestría",16640700],
-    ["Maestría En Relaciones Internacionales","Maestría",15694100],
-    ["Maestría En Relaciones Públicas","Maestría",15694100],
-    ["Maestría En Salud Pública","Maestría",19241600],
-    ["Maestría En Sistemas Integrados De Gestión","Maestría",21034700],
-    ["Maestría En Trastornos Cognoscitivos Y Del Aprendizaje","Maestría",15694100],
-    ["Maestría En Tributación Y Aduanas","Maestría",17770000],
-    ["Maestría En Urbanismo Y Desarrollo Territorial","Maestría",16089700]
+  [
+    "Doctorado En Administración",
+    "Doctorado",
+    33032700
+  ],
+  [
+    "Doctorado En Ciencias Biomédicas",
+    "Doctorado",
+    22654900
+  ],
+  [
+    "Doctorado En Ciencias Del Mar",
+    "Doctorado",
+    0
+  ],
+  [
+    "Doctorado En Ciencias Naturales",
+    "Doctorado",
+    20091900
+  ],
+  [
+    "Doctorado En Ciencias Sociales",
+    "Doctorado",
+    24338200
+  ],
+  [
+    "Doctorado En Comunicación",
+    "Doctorado",
+    0
+  ],
+  [
+    "Doctorado En Derecho",
+    "Doctorado",
+    24292000
+  ],
+  [
+    "Doctorado En Economía",
+    "Doctorado",
+    24338200
+  ],
+  [
+    "Doctorado En Educación",
+    "Doctorado",
+    20243700
+  ],
+  [
+    "Doctorado En Ingeniería Civil",
+    "Doctorado",
+    23820900
+  ],
+  [
+    "Doctorado En Ingeniería De Sistemas Y Computación",
+    "Doctorado",
+    23820900
+  ],
+  [
+    "Doctorado En Ingeniería Eléctrica Y Electrónica",
+    "Doctorado",
+    23820900
+  ],
+  [
+    "Doctorado En Ingeniería Industrial",
+    "Doctorado",
+    23820900
+  ],
+  [
+    "Doctorado En Ingeniería Mecánica",
+    "Doctorado",
+    23820900
+  ],
+  [
+    "Doctorado En Psicología",
+    "Doctorado",
+    23174000
+  ],
+  [
+    "CAR - Especialización En Gerencia De La Calidad Y Auditoría En Salud",
+    "Especialización",
+    0
+  ],
+  [
+    "CAR - Especialización En Seguridad Y Salud En El Trabajo",
+    "Especialización",
+    17983000
+  ],
+  [
+    "Especialización En Análisis Y Diseño De Estructuras",
+    "Especialización",
+    22278700
+  ],
+  [
+    "Especialización En Arqueología",
+    "Especialización",
+    16339800
+  ],
+  [
+    "Especialización En Comunicación Digital",
+    "Especialización",
+    16339800
+  ],
+  [
+    "Especialización En Derecho Administrativo",
+    "Especialización",
+    16021400
+  ],
+  [
+    "Especialización En Derecho Ambiental, Territorial Y Urbanístico",
+    "Especialización",
+    16021400
+  ],
+  [
+    "Especialización En Derecho Civil Y De Familia",
+    "Especialización",
+    16021400
+  ],
+  [
+    "Especialización En Derecho Comercial",
+    "Especialización",
+    17870200
+  ],
+  [
+    "Especialización En Derecho Constitucional",
+    "Especialización",
+    16021400
+  ],
+  [
+    "Especialización En Derecho Contractual",
+    "Especialización",
+    16021400
+  ],
+  [
+    "Especialización En Derecho De Sociedades",
+    "Especialización",
+    16021400
+  ],
+  [
+    "Especialización En Derecho Laboral",
+    "Especialización",
+    16021400
+  ],
+  [
+    "Especialización En Derecho Penal",
+    "Especialización",
+    18009000
+  ],
+  [
+    "Especialización En Derecho Público",
+    "Especialización",
+    16021400
+  ],
+  [
+    "Especialización En Derechos Humanos",
+    "Especialización",
+    16021400
+  ],
+  [
+    "Especialización En Dermatología",
+    "Especialización",
+    57122100
+  ],
+  [
+    "Especialización En Desarrollo Familiar",
+    "Especialización",
+    14624900
+  ],
+  [
+    "Especialización En Desarrollo Organizacional Y Procesos Humanos",
+    "Especialización",
+    17360600
+  ],
+  [
+    "Especialización En Desarrollo Social",
+    "Especialización",
+    18372900
+  ],
+  [
+    "Especialización En Dirección De Operaciones",
+    "Especialización",
+    18936900
+  ],
+  [
+    "Especialización En Diseño Y Evaluación De Proyectos",
+    "Especialización",
+    22278700
+  ],
+  [
+    "Especialización En Enfermería Del Cuidado Crítico Adulto",
+    "Especialización",
+    10479600
+  ],
+  [
+    "Especialización En Enfermería Del Cuidado Neonatal",
+    "Especialización",
+    10479600
+  ],
+  [
+    "Especialización En Finanzas",
+    "Especialización",
+    27527100
+  ],
+  [
+    "Especialización En Gerencia De Empresas Comerciales",
+    "Especialización",
+    27527100
+  ],
+  [
+    "Especialización En Gerencia De La Calidad Y Auditoría En Salud",
+    "Especialización",
+    19813500
+  ],
+  [
+    "Especialización En Gerencia De La Calidad Y Auditoría En Salud Virtual",
+    "Especialización",
+    15850700
+  ],
+  [
+    "Especialización En Gerencia De La Comunicación Organizacional",
+    "Especialización",
+    15001000
+  ],
+  [
+    "Especialización En Gerencia De Proyectos",
+    "Especialización",
+    22278700
+  ],
+  [
+    "Especialización En Gerencia De Proyectos De Construcción",
+    "Especialización",
+    22278700
+  ],
+  [
+    "Especialización En Gerencia De Servicios De Salud",
+    "Especialización",
+    20592600
+  ],
+  [
+    "Especialización En Gerencia De Tecnologías De La Información",
+    "Especialización",
+    22278700
+  ],
+  [
+    "Especialización En Gerencia Del Talento Humano",
+    "Especialización",
+    23821600
+  ],
+  [
+    "Especialización En Gerencia Financiera De Servicios De Salud",
+    "Especialización",
+    20554800
+  ],
+  [
+    "Especialización En Gerencia Pública",
+    "Especialización",
+    23821600
+  ],
+  [
+    "Especialización En Gestión De Sistemas Eléctricos De Potencia",
+    "Especialización",
+    22278700
+  ],
+  [
+    "Especialización En Gobierno Y Políticas Públicas",
+    "Especialización",
+    16021400
+  ],
+  [
+    "Especialización En Ingeniería De Procesos Industriales",
+    "Especialización",
+    22278700
+  ],
+  [
+    "Especialización En Ingeniería De Sistemas Hídricos Urbanos",
+    "Especialización",
+    20260200
+  ],
+  [
+    "Especialización En Ingeniería Del Software",
+    "Especialización",
+    22278700
+  ],
+  [
+    "Especialización En La Enseñanza Del Inglés",
+    "Especialización",
+    13972400
+  ],
+  [
+    "Especialización En Logística De Transporte Internacional De Mercancia",
+    "Especialización",
+    0
+  ],
+  [
+    "Especialización En Logística Empresarial",
+    "Especialización",
+    0
+  ],
+  [
+    "Especialización En Medicina Familiar",
+    "Especialización",
+    42786800
+  ],
+  [
+    "Especialización En Medicina Interna",
+    "Especialización",
+    57122100
+  ],
+  [
+    "Especialización En Mercadeo",
+    "Especialización",
+    0
+  ],
+  [
+    "Especialización En Negociación Y Manejo De Conflictos",
+    "Especialización",
+    16246000
+  ],
+  [
+    "Especialización En Neonatología",
+    "Especialización",
+    65629900
+  ],
+  [
+    "Especialización En Oftalmología",
+    "Especialización",
+    59245700
+  ],
+  [
+    "Especialización En Pavimentos Y Geotecnia Vial",
+    "Especialización",
+    22278700
+  ],
+  [
+    "Especialización En Pediatría",
+    "Especialización",
+    57122100
+  ],
+  [
+    "Especialización En Psicología Forense",
+    "Especialización",
+    16203600
+  ],
+  [
+    "Especialización En Psiquiatría",
+    "Especialización",
+    57122100
+  ],
+  [
+    "Especialización En Radiología E Imágenes Diagnósticas",
+    "Especialización",
+    59245700
+  ],
+  [
+    "Especialización En Responsabilidad Civil Y Seguros",
+    "Especialización",
+    16021400
+  ],
+  [
+    "Especialización En Seguridad De La Información",
+    "Especialización",
+    22278700
+  ],
+  [
+    "Especialización En Seguridad De La Información",
+    "Especialización",
+    22278700
+  ],
+  [
+    "Especialización En Seguridad Y Salud En El Trabajo",
+    "Especialización",
+    17983000
+  ],
+  [
+    "Especialización En Seguridad Y Salud En El Trabajo Virtual",
+    "Especialización",
+    15850700
+  ],
+  [
+    "Especialización En Transformación Digital",
+    "Especialización",
+    22278700
+  ],
+  [
+    "Especialización En Tributación",
+    "Especialización",
+    16021400
+  ],
+  [
+    "Especialización En Valoración De Bienes",
+    "Especialización",
+    15294700
+  ],
+  [
+    "RIO - Especialización En Gerencia De La Calidad Y Auditoría En Salud",
+    "Especialización",
+    0
+  ],
+  [
+    "RIO - Especialización En Seguridad Y Salud En El Trabajo",
+    "Especialización",
+    17983000
+  ],
+  [
+    "SM - Especialización En Derecho Público",
+    "Especialización",
+    13618000
+  ],
+  [
+    "SM - Especialización En Dirección Estratégica Empresarial",
+    "Especialización",
+    14338800
+  ],
+  [
+    "SM - Especialización En Finanzas",
+    "Especialización",
+    20645300
+  ],
+  [
+    "SM - Especialización En Gerencia De La Calidad Y Auditoría En Salud",
+    "Especialización",
+    14717000
+  ],
+  [
+    "SM - Especialización En Gerencia De Proyectos",
+    "Especialización",
+    16709100
+  ],
+  [
+    "SM - Especialización En Seguridad Y Salud En El Trabajo",
+    "Especialización",
+    0
+  ],
+  [
+    "SM - Especialización En Tributación",
+    "Especialización",
+    13618000
+  ],
+  [
+    "Maestría En Administración De Empresas",
+    "Maestría",
+    27527100
+  ],
+  [
+    "Maestría En Análisis Y Gestión De Sistemas Eléctricos",
+    "Maestría",
+    22864700
+  ],
+  [
+    "Maestría En Analítica De Datos",
+    "Maestría",
+    22864700
+  ],
+  [
+    "Maestría En Ciencia Política Y Gobierno",
+    "Maestría",
+    19315900
+  ],
+  [
+    "Maestría En Ciencias Básicas Biomédicas",
+    "Maestría",
+    20915600
+  ],
+  [
+    "Maestría En Ciencias De La Tierra",
+    "Maestría",
+    15292200
+  ],
+  [
+    "Maestría En Ciencias Naturales",
+    "Maestría",
+    13760200
+  ],
+  [
+    "Maestría En Comunicación",
+    "Maestría",
+    17726100
+  ],
+  [
+    "Maestría En Cooperación Internacional Y Gestión De Proyectos",
+    "Maestría",
+    17059400
+  ],
+  [
+    "Maestría En Derecho",
+    "Maestría",
+    19315900
+  ],
+  [
+    "Maestría En Derecho Ambiental Y Urbano-Territorial",
+    "Maestría",
+    19315900
+  ],
+  [
+    "Maestría En Derecho Civil Y De Familia",
+    "Maestría",
+    16021400
+  ],
+  [
+    "Maestría En Derecho Del Comercio",
+    "Maestría",
+    19315900
+  ],
+  [
+    "Maestría En Derecho Del Trabajo Y De La Seguridad Social",
+    "Maestría",
+    19315900
+  ],
+  [
+    "Maestría En Derecho Público",
+    "Maestría",
+    19315900
+  ],
+  [
+    "Maestría En Desarrollo Organizacional Y Procesos Humanos",
+    "Maestría",
+    17059400
+  ],
+  [
+    "Maestría En Desarrollo Social",
+    "Maestría",
+    18372900
+  ],
+  [
+    "Maestría En Diseño E Innovación Md+I",
+    "Maestría",
+    17489500
+  ],
+  [
+    "Maestría En Economia",
+    "Maestría",
+    17112700
+  ],
+  [
+    "Maestría En Educación",
+    "Maestría",
+    13760200
+  ],
+  [
+    "Maestría En Educación Mediada Por Tic",
+    "Maestría",
+    12384100
+  ],
+  [
+    "Maestría En Enfermería",
+    "Maestría",
+    12489800
+  ],
+  [
+    "Maestría En Epidemiología",
+    "Maestría",
+    20915600
+  ],
+  [
+    "Maestría En Epidemiología Clínica",
+    "Maestría",
+    21882800
+  ],
+  [
+    "Maestría En Estadística Aplicada",
+    "Maestría",
+    13760200
+  ],
+  [
+    "Maestría En Filosofía",
+    "Maestría",
+    0
+  ],
+  [
+    "Maestría En Finanzas",
+    "Maestría",
+    27527100
+  ],
+  [
+    "Maestría En Fisica Aplicada",
+    "Maestría",
+    13760200
+  ],
+  [
+    "Maestría En Gestión De Riesgos Naturales, Prevención Y Atención De Desastres",
+    "Maestría",
+    22864700
+  ],
+  [
+    "Maestría En Gobierno De Tecnología Informática",
+    "Maestría",
+    22864700
+  ],
+  [
+    "Maestría En Historia",
+    "Maestría",
+    0
+  ],
+  [
+    "Maestría En Ingeniería Administrativa",
+    "Maestría",
+    22864700
+  ],
+  [
+    "Maestría En Ingeniería Ambiental",
+    "Maestría",
+    22864700
+  ],
+  [
+    "Maestría En Ingeniería Biomédica",
+    "Maestría",
+    22864700
+  ],
+  [
+    "Maestría En Ingeniería Civil",
+    "Maestría",
+    22864700
+  ],
+  [
+    "Maestría En Ingeniería De Sistemas Y Computación",
+    "Maestría",
+    22864700
+  ],
+  [
+    "Maestría En Ingeniería Eléctrica",
+    "Maestría",
+    22864700
+  ],
+  [
+    "Maestría En Ingeniería Electrónica",
+    "Maestría",
+    22864700
+  ],
+  [
+    "Maestría En Ingeniería Industrial",
+    "Maestría",
+    22864700
+  ],
+  [
+    "Maestría En Ingeniería Mecánica",
+    "Maestría",
+    22864700
+  ],
+  [
+    "Maestría En La Enseñanza Del Inglés",
+    "Maestría",
+    12156300
+  ],
+  [
+    "Maestría En Lenguaje Y Sociedad",
+    "Maestría",
+    13972400
+  ],
+  [
+    "Maestría En Literatura Y Escrituras Creativas",
+    "Maestría",
+    13092600
+  ],
+  [
+    "Maestría En Matemáticas",
+    "Maestría",
+    11693100
+  ],
+  [
+    "Maestría En Mercadeo",
+    "Maestría",
+    0
+  ],
+  [
+    "Maestría En Negociación Y Manejo De Conflictos",
+    "Maestría",
+    19315900
+  ],
+  [
+    "Maestría En Negocios Internacionales",
+    "Maestría",
+    0
+  ],
+  [
+    "Maestría En Pedagogía Social E Intervención Educativa En Contextos Sociales",
+    "Maestría",
+    0
+  ],
+  [
+    "Maestría En Periodismo",
+    "Maestría",
+    17059400
+  ],
+  [
+    "Maestría En Psicología Énfasis Investigativo",
+    "Maestría",
+    18088400
+  ],
+  [
+    "Maestría En Relaciones Internacionales",
+    "Maestría",
+    17059400
+  ],
+  [
+    "Maestría En Relaciones Públicas",
+    "Maestría",
+    17059400
+  ],
+  [
+    "Maestría En Salud Pública",
+    "Maestría",
+    20915600
+  ],
+  [
+    "Maestría En Sistemas Integrados De Gestión",
+    "Maestría",
+    0
+  ],
+  [
+    "Maestría En Trastornos Cognoscitivos Y Del Aprendizaje",
+    "Maestría",
+    17059400
+  ],
+  [
+    "Maestría En Tributación Y Aduanas",
+    "Maestría",
+    19315900
+  ],
+  [
+    "Maestría En Urbanismo Y Desarrollo Territorial",
+    "Maestría",
+    17489500
+  ]
 ];
 
 function descargarPlantilla() {

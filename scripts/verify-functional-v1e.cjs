@@ -75,7 +75,7 @@ test('search supports accents, partial text, keyboard selection, duplicate label
   c.setNivel(1,'posgrado');input.value='seguridad de la informacion';input.fire('input');
   assert.equal(list.children.length,3);assert.notEqual(list.children[1].textContent,list.children[2].textContent);
   input.fire('keydown',{key:'ArrowDown'});input.fire('keydown',{key:'Enter'});
-  assert.equal(Number(e.mat1.value),14346600);
+  assert.equal(Number(e.mat1.value),22278700);
   input.value='zzzz';input.fire('input');assert.equal(list.children.length,1);input.fire('keydown',{key:'Escape'});
   assert.equal(input.attributes['aria-expanded'],'false');assert.equal(e.mat1.readOnly,false);
 });
@@ -92,10 +92,15 @@ test('import parses COP formats exactly and rejects malformed or negative data',
 });
 test('import validates all sheets, retains same-name rows and leaves live catalog unchanged',()=>{
   const {api,snapshot}=importer();const before=JSON.stringify(snapshot);
-  const pos=api.parse([['N','S','V'],...snapshot.posgrados],'posgrado',{nombre:0,subnivel:1,valor:2});
+  // El Excel oficial contiene 14 matrículas de posgrado en cero:
+  // la importación administrativa existente las rechaza intencionalmente.
+  const unchanged=api.parse([['N','S','V'],...snapshot.posgrados],'posgrado',{nombre:0,subnivel:1,valor:2});
+  assert.equal(unchanged.valid,false);assert.equal(unchanged.errors.length,14);
+  const synthetic=snapshot.posgrados.map(row=>row[2]===0?[row[0],row[1],1]:row);
+  const pos=api.parse([['N','S','V'],...synthetic],'posgrado',{nombre:0,subnivel:1,valor:2});
   const candidate=api.prepare({pos},snapshot);
   assert.equal(candidate.total,173);assert.equal(candidate.uniqueIds,173);assert.equal(candidate.duplicateGroups,1);
-  assert.deepEqual(plain(candidate.changedLevels),[]);assert.equal(JSON.stringify(snapshot),before);
+  assert.deepEqual(plain(candidate.changedLevels),['posgrados']);assert.equal(JSON.stringify(snapshot),before);
   assert.throws(()=>api.prepare({pos,bad:{valid:false,rows:[]}},snapshot));
 });
 test('permissions deny unconfigured authentication and clear grants after session expiry',async()=>{

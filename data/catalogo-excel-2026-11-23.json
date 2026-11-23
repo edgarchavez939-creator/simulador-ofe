@@ -1,0 +1,1247 @@
+{
+  "source": "plantilla-programas.xlsx",
+  "updatedDate": "2026-11-23",
+  "total": 173,
+  "programs": [
+    {
+      "id": "pregrado:administracion-de-empresas",
+      "nombre": "Administración de Empresas",
+      "nivel": "pregrado",
+      "valorMatricula": 17506400,
+      "valorIdiomas": 0,
+      "semestres": 10
+    },
+    {
+      "id": "pregrado:arquitectura",
+      "nombre": "Arquitectura",
+      "nivel": "pregrado",
+      "valorMatricula": 18064600,
+      "valorIdiomas": 1777600,
+      "semestres": 9
+    },
+    {
+      "id": "pregrado:ciencia-de-datos",
+      "nombre": "Ciencia de Datos",
+      "nivel": "pregrado",
+      "valorMatricula": 14755400,
+      "valorIdiomas": 1777600,
+      "semestres": 8
+    },
+    {
+      "id": "pregrado:ciencia-politica-y-gobierno",
+      "nombre": "Ciencia Política y Gobierno",
+      "nivel": "pregrado",
+      "valorMatricula": 14316700,
+      "valorIdiomas": 1777600,
+      "semestres": 8
+    },
+    {
+      "id": "pregrado:comunicacion-social-y-period",
+      "nombre": "Comunicación Social y Period.",
+      "nivel": "pregrado",
+      "valorMatricula": 13018200,
+      "valorIdiomas": 1777600,
+      "semestres": 9
+    },
+    {
+      "id": "pregrado:contaduria-publica",
+      "nombre": "Contaduría Pública",
+      "nivel": "pregrado",
+      "valorMatricula": 8637000,
+      "valorIdiomas": 0,
+      "semestres": 8
+    },
+    {
+      "id": "pregrado:derecho",
+      "nombre": "Derecho",
+      "nivel": "pregrado",
+      "valorMatricula": 14590700,
+      "valorIdiomas": 1777600,
+      "semestres": 10
+    },
+    {
+      "id": "pregrado:diseno-grafico",
+      "nombre": "Diseño Gráfico",
+      "nivel": "pregrado",
+      "valorMatricula": 14503100,
+      "valorIdiomas": 1777600,
+      "semestres": 8
+    },
+    {
+      "id": "pregrado:diseno-industrial",
+      "nombre": "Diseño Industrial",
+      "nivel": "pregrado",
+      "valorMatricula": 17893200,
+      "valorIdiomas": 1777600,
+      "semestres": 8
+    },
+    {
+      "id": "pregrado:economia",
+      "nombre": "Economía",
+      "nivel": "pregrado",
+      "valorMatricula": 13645500,
+      "valorIdiomas": 1777600,
+      "semestres": 8
+    },
+    {
+      "id": "pregrado:enfermeria",
+      "nombre": "Enfermería",
+      "nivel": "pregrado",
+      "valorMatricula": 8080400,
+      "valorIdiomas": 0,
+      "semestres": 8
+    },
+    {
+      "id": "pregrado:filosofia-y-humanidades",
+      "nombre": "Filosofía y Humanidades",
+      "nivel": "pregrado",
+      "valorMatricula": 7519600,
+      "valorIdiomas": 0,
+      "semestres": 8
+    },
+    {
+      "id": "pregrado:geologia",
+      "nombre": "Geología",
+      "nivel": "pregrado",
+      "valorMatricula": 14490800,
+      "valorIdiomas": 1777600,
+      "semestres": 9
+    },
+    {
+      "id": "pregrado:ingenieria-biomedica",
+      "nombre": "Ingeniería Biomédica",
+      "nivel": "pregrado",
+      "valorMatricula": 16818000,
+      "valorIdiomas": 1777600,
+      "semestres": 8
+    },
+    {
+      "id": "pregrado:ingenieria-civil",
+      "nombre": "Ingeniería Civil",
+      "nivel": "pregrado",
+      "valorMatricula": 14755400,
+      "valorIdiomas": 1777600,
+      "semestres": 10
+    },
+    {
+      "id": "pregrado:ingenieria-electrica",
+      "nombre": "Ingeniería Eléctrica",
+      "nivel": "pregrado",
+      "valorMatricula": 14755400,
+      "valorIdiomas": 1777600,
+      "semestres": 10
+    },
+    {
+      "id": "pregrado:ingenieria-electronica",
+      "nombre": "Ingeniería Electrónica",
+      "nivel": "pregrado",
+      "valorMatricula": 16818000,
+      "valorIdiomas": 1777600,
+      "semestres": 10
+    },
+    {
+      "id": "pregrado:ingenieria-industrial",
+      "nombre": "Ingeniería Industrial",
+      "nivel": "pregrado",
+      "valorMatricula": 18089100,
+      "valorIdiomas": 1777600,
+      "semestres": 10
+    },
+    {
+      "id": "pregrado:ingenieria-mecanica",
+      "nombre": "Ingeniería Mecánica",
+      "nivel": "pregrado",
+      "valorMatricula": 14755400,
+      "valorIdiomas": 1777600,
+      "semestres": 10
+    },
+    {
+      "id": "pregrado:ingenieria-sistemas-y-computacion",
+      "nombre": "Ingeniería Sistemas Y Computación",
+      "nivel": "pregrado",
+      "valorMatricula": 14755400,
+      "valorIdiomas": 1777600,
+      "semestres": 10
+    },
+    {
+      "id": "pregrado:lenguas-modernas-y-cultura",
+      "nombre": "Lenguas Modernas y Cultura",
+      "nivel": "pregrado",
+      "valorMatricula": 13776100,
+      "valorIdiomas": 1777600,
+      "semestres": 8
+    },
+    {
+      "id": "pregrado:licenciatura-en-pedagogia-infantil",
+      "nombre": "Licenciatura en Pedagogía Infantil",
+      "nivel": "pregrado",
+      "valorMatricula": 9460200,
+      "valorIdiomas": 1777600,
+      "semestres": 8
+    },
+    {
+      "id": "pregrado:matematicas",
+      "nombre": "Matemáticas",
+      "nivel": "pregrado",
+      "valorMatricula": 8863300,
+      "valorIdiomas": 1777600,
+      "semestres": 8
+    },
+    {
+      "id": "pregrado:medicina",
+      "nombre": "Medicina",
+      "nivel": "pregrado",
+      "valorMatricula": 30904500,
+      "valorIdiomas": 2169300,
+      "semestres": 12
+    },
+    {
+      "id": "pregrado:musica",
+      "nombre": "Música",
+      "nivel": "pregrado",
+      "valorMatricula": 14638300,
+      "valorIdiomas": 1777600,
+      "semestres": 8
+    },
+    {
+      "id": "pregrado:negocios-internacionales",
+      "nombre": "Negocios Internacionales",
+      "nivel": "pregrado",
+      "valorMatricula": 19482100,
+      "valorIdiomas": 1777600,
+      "semestres": 10
+    },
+    {
+      "id": "pregrado:odontologia",
+      "nombre": "Odontología",
+      "nivel": "pregrado",
+      "valorMatricula": 19432800,
+      "valorIdiomas": 2169300,
+      "semestres": 10
+    },
+    {
+      "id": "pregrado:psicologia",
+      "nombre": "Psicología",
+      "nivel": "pregrado",
+      "valorMatricula": 13018200,
+      "valorIdiomas": 1777600,
+      "semestres": 10
+    },
+    {
+      "id": "pregrado:relaciones-internacionales",
+      "nombre": "Relaciones Internacionales",
+      "nivel": "pregrado",
+      "valorMatricula": 13776100,
+      "valorIdiomas": 1777600,
+      "semestres": 10
+    },
+    {
+      "id": "posgrado:doctorado:doctorado-en-administracion",
+      "nombre": "Doctorado En Administración",
+      "nivel": "posgrado",
+      "subnivel": "Doctorado",
+      "valorMatricula": 33032700
+    },
+    {
+      "id": "posgrado:doctorado:doctorado-en-ciencias-biomedicas",
+      "nombre": "Doctorado En Ciencias Biomédicas",
+      "nivel": "posgrado",
+      "subnivel": "Doctorado",
+      "valorMatricula": 22654900
+    },
+    {
+      "id": "posgrado:doctorado:doctorado-en-ciencias-del-mar",
+      "nombre": "Doctorado En Ciencias Del Mar",
+      "nivel": "posgrado",
+      "subnivel": "Doctorado",
+      "valorMatricula": 0
+    },
+    {
+      "id": "posgrado:doctorado:doctorado-en-ciencias-naturales",
+      "nombre": "Doctorado En Ciencias Naturales",
+      "nivel": "posgrado",
+      "subnivel": "Doctorado",
+      "valorMatricula": 20091900
+    },
+    {
+      "id": "posgrado:doctorado:doctorado-en-ciencias-sociales",
+      "nombre": "Doctorado En Ciencias Sociales",
+      "nivel": "posgrado",
+      "subnivel": "Doctorado",
+      "valorMatricula": 24338200
+    },
+    {
+      "id": "posgrado:doctorado:doctorado-en-comunicacion",
+      "nombre": "Doctorado En Comunicación",
+      "nivel": "posgrado",
+      "subnivel": "Doctorado",
+      "valorMatricula": 0
+    },
+    {
+      "id": "posgrado:doctorado:doctorado-en-derecho",
+      "nombre": "Doctorado En Derecho",
+      "nivel": "posgrado",
+      "subnivel": "Doctorado",
+      "valorMatricula": 24292000
+    },
+    {
+      "id": "posgrado:doctorado:doctorado-en-economia",
+      "nombre": "Doctorado En Economía",
+      "nivel": "posgrado",
+      "subnivel": "Doctorado",
+      "valorMatricula": 24338200
+    },
+    {
+      "id": "posgrado:doctorado:doctorado-en-educacion",
+      "nombre": "Doctorado En Educación",
+      "nivel": "posgrado",
+      "subnivel": "Doctorado",
+      "valorMatricula": 20243700
+    },
+    {
+      "id": "posgrado:doctorado:doctorado-en-ingenieria-civil",
+      "nombre": "Doctorado En Ingeniería Civil",
+      "nivel": "posgrado",
+      "subnivel": "Doctorado",
+      "valorMatricula": 23820900
+    },
+    {
+      "id": "posgrado:doctorado:doctorado-en-ingenieria-de-sistemas-y-computacion",
+      "nombre": "Doctorado En Ingeniería De Sistemas Y Computación",
+      "nivel": "posgrado",
+      "subnivel": "Doctorado",
+      "valorMatricula": 23820900
+    },
+    {
+      "id": "posgrado:doctorado:doctorado-en-ingenieria-electrica-y-electronica",
+      "nombre": "Doctorado En Ingeniería Eléctrica Y Electrónica",
+      "nivel": "posgrado",
+      "subnivel": "Doctorado",
+      "valorMatricula": 23820900
+    },
+    {
+      "id": "posgrado:doctorado:doctorado-en-ingenieria-industrial",
+      "nombre": "Doctorado En Ingeniería Industrial",
+      "nivel": "posgrado",
+      "subnivel": "Doctorado",
+      "valorMatricula": 23820900
+    },
+    {
+      "id": "posgrado:doctorado:doctorado-en-ingenieria-mecanica",
+      "nombre": "Doctorado En Ingeniería Mecánica",
+      "nivel": "posgrado",
+      "subnivel": "Doctorado",
+      "valorMatricula": 23820900
+    },
+    {
+      "id": "posgrado:doctorado:doctorado-en-psicologia",
+      "nombre": "Doctorado En Psicología",
+      "nivel": "posgrado",
+      "subnivel": "Doctorado",
+      "valorMatricula": 23174000
+    },
+    {
+      "id": "posgrado:especializacion:car-especializacion-en-gerencia-de-la-calidad-y-auditoria-en-salud",
+      "nombre": "CAR - Especialización En Gerencia De La Calidad Y Auditoría En Salud",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 0
+    },
+    {
+      "id": "posgrado:especializacion:car-especializacion-en-seguridad-y-salud-en-el-trabajo",
+      "nombre": "CAR - Especialización En Seguridad Y Salud En El Trabajo",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 17983000
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-analisis-y-diseno-de-estructuras",
+      "nombre": "Especialización En Análisis Y Diseño De Estructuras",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 22278700
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-arqueologia",
+      "nombre": "Especialización En Arqueología",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 16339800
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-comunicacion-digital",
+      "nombre": "Especialización En Comunicación Digital",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 16339800
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-derecho-administrativo",
+      "nombre": "Especialización En Derecho Administrativo",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 16021400
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-derecho-ambiental-territorial-y-urbanistico",
+      "nombre": "Especialización En Derecho Ambiental, Territorial Y Urbanístico",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 16021400
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-derecho-civil-y-de-familia",
+      "nombre": "Especialización En Derecho Civil Y De Familia",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 16021400
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-derecho-comercial",
+      "nombre": "Especialización En Derecho Comercial",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 17870200
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-derecho-constitucional",
+      "nombre": "Especialización En Derecho Constitucional",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 16021400
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-derecho-contractual",
+      "nombre": "Especialización En Derecho Contractual",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 16021400
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-derecho-de-sociedades",
+      "nombre": "Especialización En Derecho De Sociedades",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 16021400
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-derecho-laboral",
+      "nombre": "Especialización En Derecho Laboral",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 16021400
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-derecho-penal",
+      "nombre": "Especialización En Derecho Penal",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 18009000
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-derecho-publico",
+      "nombre": "Especialización En Derecho Público",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 16021400
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-derechos-humanos",
+      "nombre": "Especialización En Derechos Humanos",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 16021400
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-dermatologia",
+      "nombre": "Especialización En Dermatología",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 57122100
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-desarrollo-familiar",
+      "nombre": "Especialización En Desarrollo Familiar",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 14624900
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-desarrollo-organizacional-y-procesos-humanos",
+      "nombre": "Especialización En Desarrollo Organizacional Y Procesos Humanos",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 17360600
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-desarrollo-social",
+      "nombre": "Especialización En Desarrollo Social",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 18372900
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-direccion-de-operaciones",
+      "nombre": "Especialización En Dirección De Operaciones",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 18936900
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-diseno-y-evaluacion-de-proyectos",
+      "nombre": "Especialización En Diseño Y Evaluación De Proyectos",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 22278700
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-enfermeria-del-cuidado-critico-adulto",
+      "nombre": "Especialización En Enfermería Del Cuidado Crítico Adulto",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 10479600
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-enfermeria-del-cuidado-neonatal",
+      "nombre": "Especialización En Enfermería Del Cuidado Neonatal",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 10479600
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-finanzas",
+      "nombre": "Especialización En Finanzas",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 27527100
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-gerencia-de-empresas-comerciales",
+      "nombre": "Especialización En Gerencia De Empresas Comerciales",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 27527100
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-gerencia-de-la-calidad-y-auditoria-en-salud",
+      "nombre": "Especialización En Gerencia De La Calidad Y Auditoría En Salud",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 19813500
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-gerencia-de-la-calidad-y-auditoria-en-salud-virtual",
+      "nombre": "Especialización En Gerencia De La Calidad Y Auditoría En Salud Virtual",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 15850700
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-gerencia-de-la-comunicacion-organizacional",
+      "nombre": "Especialización En Gerencia De La Comunicación Organizacional",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 15001000
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-gerencia-de-proyectos",
+      "nombre": "Especialización En Gerencia De Proyectos",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 22278700
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-gerencia-de-proyectos-de-construccion",
+      "nombre": "Especialización En Gerencia De Proyectos De Construcción",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 22278700
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-gerencia-de-servicios-de-salud",
+      "nombre": "Especialización En Gerencia De Servicios De Salud",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 20592600
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-gerencia-de-tecnologias-de-la-informacion",
+      "nombre": "Especialización En Gerencia De Tecnologías De La Información",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 22278700
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-gerencia-del-talento-humano",
+      "nombre": "Especialización En Gerencia Del Talento Humano",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 23821600
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-gerencia-financiera-de-servicios-de-salud",
+      "nombre": "Especialización En Gerencia Financiera De Servicios De Salud",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 20554800
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-gerencia-publica",
+      "nombre": "Especialización En Gerencia Pública",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 23821600
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-gestion-de-sistemas-electricos-de-potencia",
+      "nombre": "Especialización En Gestión De Sistemas Eléctricos De Potencia",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 22278700
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-gobierno-y-politicas-publicas",
+      "nombre": "Especialización En Gobierno Y Políticas Públicas",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 16021400
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-ingenieria-de-procesos-industriales",
+      "nombre": "Especialización En Ingeniería De Procesos Industriales",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 22278700
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-ingenieria-de-sistemas-hidricos-urbanos",
+      "nombre": "Especialización En Ingeniería De Sistemas Hídricos Urbanos",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 20260200
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-ingenieria-del-software",
+      "nombre": "Especialización En Ingeniería Del Software",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 22278700
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-la-ensenanza-del-ingles",
+      "nombre": "Especialización En La Enseñanza Del Inglés",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 13972400
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-logistica-de-transporte-internacional-de-mercancia",
+      "nombre": "Especialización En Logística De Transporte Internacional De Mercancia",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 0
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-logistica-empresarial",
+      "nombre": "Especialización En Logística Empresarial",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 0
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-medicina-familiar",
+      "nombre": "Especialización En Medicina Familiar",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 42786800
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-medicina-interna",
+      "nombre": "Especialización En Medicina Interna",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 57122100
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-mercadeo",
+      "nombre": "Especialización En Mercadeo",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 0
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-negociacion-y-manejo-de-conflictos",
+      "nombre": "Especialización En Negociación Y Manejo De Conflictos",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 16246000
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-neonatologia",
+      "nombre": "Especialización En Neonatología",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 65629900
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-oftalmologia",
+      "nombre": "Especialización En Oftalmología",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 59245700
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-pavimentos-y-geotecnia-vial",
+      "nombre": "Especialización En Pavimentos Y Geotecnia Vial",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 22278700
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-pediatria",
+      "nombre": "Especialización En Pediatría",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 57122100
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-psicologia-forense",
+      "nombre": "Especialización En Psicología Forense",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 16203600
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-psiquiatria",
+      "nombre": "Especialización En Psiquiatría",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 57122100
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-radiologia-e-imagenes-diagnosticas",
+      "nombre": "Especialización En Radiología E Imágenes Diagnósticas",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 59245700
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-responsabilidad-civil-y-seguros",
+      "nombre": "Especialización En Responsabilidad Civil Y Seguros",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 16021400
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-seguridad-de-la-informacion:source-71",
+      "nombre": "Especialización En Seguridad De La Información",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 22278700
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-seguridad-de-la-informacion:source-72",
+      "nombre": "Especialización En Seguridad De La Información",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 22278700
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-seguridad-y-salud-en-el-trabajo",
+      "nombre": "Especialización En Seguridad Y Salud En El Trabajo",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 17983000
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-seguridad-y-salud-en-el-trabajo-virtual",
+      "nombre": "Especialización En Seguridad Y Salud En El Trabajo Virtual",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 15850700
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-transformacion-digital",
+      "nombre": "Especialización En Transformación Digital",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 22278700
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-tributacion",
+      "nombre": "Especialización En Tributación",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 16021400
+    },
+    {
+      "id": "posgrado:especializacion:especializacion-en-valoracion-de-bienes",
+      "nombre": "Especialización En Valoración De Bienes",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 15294700
+    },
+    {
+      "id": "posgrado:especializacion:rio-especializacion-en-gerencia-de-la-calidad-y-auditoria-en-salud",
+      "nombre": "RIO - Especialización En Gerencia De La Calidad Y Auditoría En Salud",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 0
+    },
+    {
+      "id": "posgrado:especializacion:rio-especializacion-en-seguridad-y-salud-en-el-trabajo",
+      "nombre": "RIO - Especialización En Seguridad Y Salud En El Trabajo",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 17983000
+    },
+    {
+      "id": "posgrado:especializacion:sm-especializacion-en-derecho-publico",
+      "nombre": "SM - Especialización En Derecho Público",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 13618000
+    },
+    {
+      "id": "posgrado:especializacion:sm-especializacion-en-direccion-estrategica-empresarial",
+      "nombre": "SM - Especialización En Dirección Estratégica Empresarial",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 14338800
+    },
+    {
+      "id": "posgrado:especializacion:sm-especializacion-en-finanzas",
+      "nombre": "SM - Especialización En Finanzas",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 20645300
+    },
+    {
+      "id": "posgrado:especializacion:sm-especializacion-en-gerencia-de-la-calidad-y-auditoria-en-salud",
+      "nombre": "SM - Especialización En Gerencia De La Calidad Y Auditoría En Salud",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 14717000
+    },
+    {
+      "id": "posgrado:especializacion:sm-especializacion-en-gerencia-de-proyectos",
+      "nombre": "SM - Especialización En Gerencia De Proyectos",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 16709100
+    },
+    {
+      "id": "posgrado:especializacion:sm-especializacion-en-seguridad-y-salud-en-el-trabajo",
+      "nombre": "SM - Especialización En Seguridad Y Salud En El Trabajo",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 0
+    },
+    {
+      "id": "posgrado:especializacion:sm-especializacion-en-tributacion",
+      "nombre": "SM - Especialización En Tributación",
+      "nivel": "posgrado",
+      "subnivel": "Especialización",
+      "valorMatricula": 13618000
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-administracion-de-empresas",
+      "nombre": "Maestría En Administración De Empresas",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 27527100
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-analisis-y-gestion-de-sistemas-electricos",
+      "nombre": "Maestría En Análisis Y Gestión De Sistemas Eléctricos",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 22864700
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-analitica-de-datos",
+      "nombre": "Maestría En Analítica De Datos",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 22864700
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-ciencia-politica-y-gobierno",
+      "nombre": "Maestría En Ciencia Política Y Gobierno",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 19315900
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-ciencias-basicas-biomedicas",
+      "nombre": "Maestría En Ciencias Básicas Biomédicas",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 20915600
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-ciencias-de-la-tierra",
+      "nombre": "Maestría En Ciencias De La Tierra",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 15292200
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-ciencias-naturales",
+      "nombre": "Maestría En Ciencias Naturales",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 13760200
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-comunicacion",
+      "nombre": "Maestría En Comunicación",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 17726100
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-cooperacion-internacional-y-gestion-de-proyectos",
+      "nombre": "Maestría En Cooperación Internacional Y Gestión De Proyectos",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 17059400
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-derecho",
+      "nombre": "Maestría En Derecho",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 19315900
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-derecho-ambiental-y-urbano-territorial",
+      "nombre": "Maestría En Derecho Ambiental Y Urbano-Territorial",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 19315900
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-derecho-civil-y-de-familia",
+      "nombre": "Maestría En Derecho Civil Y De Familia",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 16021400
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-derecho-del-comercio",
+      "nombre": "Maestría En Derecho Del Comercio",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 19315900
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-derecho-del-trabajo-y-de-la-seguridad-social",
+      "nombre": "Maestría En Derecho Del Trabajo Y De La Seguridad Social",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 19315900
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-derecho-publico",
+      "nombre": "Maestría En Derecho Público",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 19315900
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-desarrollo-organizacional-y-procesos-humanos",
+      "nombre": "Maestría En Desarrollo Organizacional Y Procesos Humanos",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 17059400
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-desarrollo-social",
+      "nombre": "Maestría En Desarrollo Social",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 18372900
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-diseno-e-innovacion-md-i",
+      "nombre": "Maestría En Diseño E Innovación Md+I",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 17489500
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-economia",
+      "nombre": "Maestría En Economia",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 17112700
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-educacion",
+      "nombre": "Maestría En Educación",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 13760200
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-educacion-mediada-por-tic",
+      "nombre": "Maestría En Educación Mediada Por Tic",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 12384100
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-enfermeria",
+      "nombre": "Maestría En Enfermería",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 12489800
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-epidemiologia",
+      "nombre": "Maestría En Epidemiología",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 20915600
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-epidemiologia-clinica",
+      "nombre": "Maestría En Epidemiología Clínica",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 21882800
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-estadistica-aplicada",
+      "nombre": "Maestría En Estadística Aplicada",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 13760200
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-filosofia",
+      "nombre": "Maestría En Filosofía",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 0
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-finanzas",
+      "nombre": "Maestría En Finanzas",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 27527100
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-fisica-aplicada",
+      "nombre": "Maestría En Fisica Aplicada",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 13760200
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-gestion-de-riesgos-naturales-prevencion-y-atencion-de-desastres",
+      "nombre": "Maestría En Gestión De Riesgos Naturales, Prevención Y Atención De Desastres",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 22864700
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-gobierno-de-tecnologia-informatica",
+      "nombre": "Maestría En Gobierno De Tecnología Informática",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 22864700
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-historia",
+      "nombre": "Maestría En Historia",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 0
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-ingenieria-administrativa",
+      "nombre": "Maestría En Ingeniería Administrativa",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 22864700
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-ingenieria-ambiental",
+      "nombre": "Maestría En Ingeniería Ambiental",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 22864700
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-ingenieria-biomedica",
+      "nombre": "Maestría En Ingeniería Biomédica",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 22864700
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-ingenieria-civil",
+      "nombre": "Maestría En Ingeniería Civil",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 22864700
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-ingenieria-de-sistemas-y-computacion",
+      "nombre": "Maestría En Ingeniería De Sistemas Y Computación",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 22864700
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-ingenieria-electrica",
+      "nombre": "Maestría En Ingeniería Eléctrica",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 22864700
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-ingenieria-electronica",
+      "nombre": "Maestría En Ingeniería Electrónica",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 22864700
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-ingenieria-industrial",
+      "nombre": "Maestría En Ingeniería Industrial",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 22864700
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-ingenieria-mecanica",
+      "nombre": "Maestría En Ingeniería Mecánica",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 22864700
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-la-ensenanza-del-ingles",
+      "nombre": "Maestría En La Enseñanza Del Inglés",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 12156300
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-lenguaje-y-sociedad",
+      "nombre": "Maestría En Lenguaje Y Sociedad",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 13972400
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-literatura-y-escrituras-creativas",
+      "nombre": "Maestría En Literatura Y Escrituras Creativas",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 13092600
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-matematicas",
+      "nombre": "Maestría En Matemáticas",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 11693100
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-mercadeo",
+      "nombre": "Maestría En Mercadeo",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 0
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-negociacion-y-manejo-de-conflictos",
+      "nombre": "Maestría En Negociación Y Manejo De Conflictos",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 19315900
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-negocios-internacionales",
+      "nombre": "Maestría En Negocios Internacionales",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 0
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-pedagogia-social-e-intervencion-educativa-en-contextos-sociales",
+      "nombre": "Maestría En Pedagogía Social E Intervención Educativa En Contextos Sociales",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 0
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-periodismo",
+      "nombre": "Maestría En Periodismo",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 17059400
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-psicologia-enfasis-investigativo",
+      "nombre": "Maestría En Psicología Énfasis Investigativo",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 18088400
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-relaciones-internacionales",
+      "nombre": "Maestría En Relaciones Internacionales",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 17059400
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-relaciones-publicas",
+      "nombre": "Maestría En Relaciones Públicas",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 17059400
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-salud-publica",
+      "nombre": "Maestría En Salud Pública",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 20915600
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-sistemas-integrados-de-gestion",
+      "nombre": "Maestría En Sistemas Integrados De Gestión",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 0
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-trastornos-cognoscitivos-y-del-aprendizaje",
+      "nombre": "Maestría En Trastornos Cognoscitivos Y Del Aprendizaje",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 17059400
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-tributacion-y-aduanas",
+      "nombre": "Maestría En Tributación Y Aduanas",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 19315900
+    },
+    {
+      "id": "posgrado:maestria:maestria-en-urbanismo-y-desarrollo-territorial",
+      "nombre": "Maestría En Urbanismo Y Desarrollo Territorial",
+      "nivel": "posgrado",
+      "subnivel": "Maestría",
+      "valorMatricula": 17489500
+    }
+  ]
+}

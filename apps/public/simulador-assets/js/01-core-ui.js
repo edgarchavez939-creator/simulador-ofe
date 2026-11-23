@@ -342,7 +342,13 @@ function poblarProgramas(tabId) {
   const programs = programasDelCatalogo().filter(program => program.activo && program.nivel === nivel);
   const key = program => JSON.stringify([program.subnivel, program.nombre]);
   const counts = new Map();
-  programs.forEach(program => counts.set(key(program), (counts.get(key(program)) || 0) + 1));
+  const samePriceCounts = new Map(), samePriceOrdinal = new Map();
+  programs.forEach(program => {
+    counts.set(key(program), (counts.get(key(program)) || 0) + 1);
+    const fingerprint = JSON.stringify([key(program), program.valorMatricula]);
+    const count = (samePriceCounts.get(fingerprint) || 0) + 1;
+    samePriceCounts.set(fingerprint, count); samePriceOrdinal.set(program.id, count);
+  });
   sel.innerHTML = '<option value="">— Seleccionar programa —</option>';
   programs.filter(program => nivel !== 'posgrado' || !subnivel || program.subnivel === subnivel)
     .forEach(program => {
@@ -350,8 +356,11 @@ function poblarProgramas(tabId) {
       option.value = program.id;
       // Los consumidores financieros legacy leen textContent para el nombre.
       option.textContent = program.nombre + (nivel === 'posgrado' && !subnivel ? ' ('+program.subnivel+')' : '');
+      // El Excel puede traer dos registros homónimos con igual matrícula.
+      // Se distinguen solo en la etiqueta visual, sin alterar nombre ni ID.
+      const fingerprint = JSON.stringify([key(program), program.valorMatricula]);
       option.label = option.textContent + (counts.get(key(program)) > 1
-        ? ' — Matrícula ' + cop(program.valorMatricula)
+        ? ' — Matrícula ' + cop(program.valorMatricula) + (samePriceCounts.get(fingerprint) > 1 ? ' · Registro ' + samePriceOrdinal.get(program.id) : '')
         : '');
       sel.appendChild(option);
     });
